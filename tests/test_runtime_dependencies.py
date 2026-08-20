@@ -1,15 +1,15 @@
 from pathlib import Path
 
 
-def test_monitor_workflow_is_manual_only_during_migration_and_ocr_ready() -> None:
+def test_monitor_workflow_has_expected_automatic_runs_and_ocr_support() -> None:
     workflow = Path(".github/workflows/monitor.yml").read_text(encoding="utf-8")
 
-    # 公開リポジトリへの移行中は、旧リポジトリとの二重実行を避けるため
-    # 手動実行だけを許可する。Secretsと状態リポジトリ接続の確認後に、
-    # このテストとworkflowを一緒に定期実行向けへ戻す。
-    assert "  schedule:" not in workflow
-    assert "  push:" not in workflow
+    # cronはUTC。日本時間では06:04、11:04、16:04、18:04、20:04、22:04。
+    assert "  schedule:" in workflow
+    assert "    - cron: '4 2,7,9,11,13,21 * * *'" in workflow
+    assert "  push:" in workflow
     assert "workflow_dispatch:" in workflow
+    assert "timeout-minutes: 60" in workflow
     assert "tesseract-ocr tesseract-ocr-jpn" in workflow
     assert "command -v tesseract" in workflow
     assert "tesseract --list-langs | grep -Fx jpn" in workflow
