@@ -1,10 +1,15 @@
 from pathlib import Path
 
 
-def test_monitor_workflow_installs_and_verifies_tesseract_cli() -> None:
+def test_monitor_workflow_is_manual_only_during_migration_and_ocr_ready() -> None:
     workflow = Path(".github/workflows/monitor.yml").read_text(encoding="utf-8")
 
-    assert "cron: '4 2,7,9,11,13,21 * * *'" in workflow
+    # 公開リポジトリへの移行中は、旧リポジトリとの二重実行を避けるため
+    # 手動実行だけを許可する。Secretsと状態リポジトリ接続の確認後に、
+    # このテストとworkflowを一緒に定期実行向けへ戻す。
+    assert "  schedule:" not in workflow
+    assert "  push:" not in workflow
+    assert "workflow_dispatch:" in workflow
     assert "tesseract-ocr tesseract-ocr-jpn" in workflow
     assert "command -v tesseract" in workflow
     assert "tesseract --list-langs | grep -Fx jpn" in workflow
