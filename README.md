@@ -130,7 +130,7 @@ tcg-monitor arm
 
 ## GitHub Actionsの使い方
 
-移行直後は誤作動と二重実行を防ぐため、`monitor` workflowを手動実行だけに制限しています。Secretsと非公開状態リポジトリへの接続を確認し、手動の`dry-run`と`run`が成功してから定期実行を有効化します。
+`monitor` workflowは、Secretsと非公開状態リポジトリへの接続、手動の`dry-run`と`run`を確認したうえで定期実行を有効化しています。監視状態は非公開リポジトリの`monitor-state`ブランチへ保存し、公開リポジトリには置きません。
 
 1. `test` workflowを実行し、ruff、mypy、pytestが成功することを確認します。
 2. `monitor` workflowを`baseline`モードで手動実行します。
@@ -159,7 +159,7 @@ GitHub Actionsの予約実行は混雑により数分以上遅れる場合があ
 - 同一ホスト最低5秒間隔、条件付きGET、20秒×最大3回（合計60秒上限）の限定再試行、別ホスト最大6系統の先読み、実行単位の遮断器を前提にしています。
 - robots.txtと規約は運用者が定期確認してください。代表: `https://geo-online.co.jp/robots.txt`, `https://www.pokemoncenter-online.com/robots.txt`, `https://books.rakuten.co.jp/robots.txt`, `https://www.amazon.co.jp/robots.txt`。
 - 二次情報通知には「二次情報・公式ページで最終確認」と明示し、公式ページやアプリで最終確認してください。
-- Amazon招待リクエストは新規ASINの公式一覧がなく開始日時も公開しないため、ONE PIECEについては実績のある2つの告知アカウントとSNKRDUNKを併用します。Amazon名・招待リクエスト受付・対象BOXが揃う個別投稿だけを採用し、ASINで重複排除して「招待受付を確認した日」としてDiscord通知します。ふるいち公式・公式Xを含む今回の5経路は専用の軽量ジョブで2時間ごとに確認します。Amazonの開始日時は確定できないためCalendarには登録しません。
+- Amazon招待リクエストは新規ASINの公式一覧がなく開始日時も公開しないため、ONE PIECEについては実績のある2つの告知アカウントとSNKRDUNKを併用します。Amazon名・招待リクエスト受付・対象BOXが揃う個別投稿だけを採用し、ASINで重複排除して「招待受付を確認した日」としてDiscord通知します。ふるいち公式・公式Xを含む各経路も通常の定期監視に含め、専用の軽量ジョブは障害調査時の手動実行だけに使います。Amazonの開始日時は確定できないためCalendarには登録しません。
 - 麦わらストアは検証fixture不足のため初期無効のままです。
 
 ## 障害対応
