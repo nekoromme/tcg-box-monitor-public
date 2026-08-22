@@ -72,7 +72,7 @@ def test_priority_sendai_sources_fall_back_when_yahoo_is_empty() -> None:
     ):
         assert by_id[source_id].enabled
         assert by_id[source_id].fallback_on_empty_result
-        assert by_id[source_id].poll_minutes == 240
+        assert by_id[source_id].poll_minutes == 120
 
     magi = by_id["yahoo_realtime_magi_sendai"]
     assert magi.discovery_urls == [
