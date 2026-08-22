@@ -924,6 +924,59 @@ def test_nyuka_now_premium_bandai_includes_older_resale_boxes() -> None:
         for case in cases
     )
 
+
+def test_nyuka_now_premium_bandai_skips_explicitly_excluded_card_collection() -> None:
+    """A valid non-BOX listing must not be reported as a parser failure."""
+    html = """
+    <article>
+      <h2>近日受付開始予定のストア</h2>
+      <h3>プレミアムバンダイ</h3>
+      <table>
+        <tr><th>対象商品</th><td>
+          ONE PIECEカードゲーム プレミアムカードコレクション -ONE PIECE DAY'26-
+        </td></tr>
+        <tr><th>抽選形式</th><td>WEB抽選受付（当選者にはオンライン販売）</td></tr>
+        <tr><th>開始日</th><td>8月22日(土)13:00</td></tr>
+        <tr><th>応募ページ</th><td>
+          <a href="https://p-bandai.jp/item/item-1000256592/">応募ページ</a>
+        </td></tr>
+      </table>
+      <h3>ゲオ</h3><p>別の抽選</p>
+    </article>
+    """
+    cases, releases, alerts = parse_nyuka_now_premium_bandai(
+        html,
+        "https://nyuka-now.com/archives/97393",
+        _source("nyuka_now_premium_bandai_onepiece"),
+        load_config("sites.yaml"),
+    )
+    assert not cases
+    assert not releases
+    assert not alerts
+
+
+def test_nyuka_now_premium_bandai_still_alerts_for_unknown_product_format() -> None:
+    """Do not hide a possible BOX when its format is new and unclassified."""
+    html = """
+    <article>
+      <h3>プレミアムバンダイ</h3>
+      <table>
+        <tr><th>対象商品</th><td>ONE PIECEカードゲーム 未知の商品</td></tr>
+        <tr><th>開始日</th><td>8月22日(土)13:00</td></tr>
+      </table>
+      <h3>ゲオ</h3><p>別の抽選</p>
+    </article>
+    """
+    cases, _, alerts = parse_nyuka_now_premium_bandai(
+        html,
+        "https://nyuka-now.com/archives/97393",
+        _source("nyuka_now_premium_bandai_onepiece"),
+        load_config("sites.yaml"),
+    )
+    assert not cases
+    assert [alert.reason_code for alert in alerts] == ["premium_bandai_products_missing"]
+
+
 def test_nyuka_now_summary_recovers_current_seagull_and_edion_boxes(
     tmp_path: Path,
 ) -> None:

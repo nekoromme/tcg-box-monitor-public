@@ -40,7 +40,19 @@ def _premium_bandai_section(soup: BeautifulSoup) -> tuple[str, list[Tag], list[s
 
 def _products(
     tags: list[Tag], section_text: str, source_url: str, config: Config
-) -> list[tuple[str, str, str]]:
+) -> tuple[list[tuple[str, str, str]], bool]:
+    """Return monitored BOXes and whether every relevant product was excluded.
+
+    The Premium Bandai block sometimes legitimately contains only products that
+    this monitor does not cover, such as card collections or starter decks.  An
+    empty BOX list in that situation is a normal result, not evidence that the
+    page structure changed.
+
+    The boolean is deliberately strict: it is true only when at least one
+    ONE PIECE card product was found and every such candidate matched an
+    explicit exclusion rule.  Unknown products still produce a structure alert
+    so a newly formatted booster BOX cannot disappear silently.
+    """
     game = config.games["one_piece_card"]
     candidates: list[str] = []
     for tag in tags:
@@ -51,9 +63,12 @@ def _products(
         candidates = [section_text]
 
     products: dict[str, tuple[str, str, str]] = {}
+    saw_relevant_candidate = False
+    saw_unexplained_non_box = False
     for value in candidates:
         if not any(word in value for word in game.include_keywords):
             continue
+        saw_relevant_candidate = True
         has_box_code = bool(re.search(r"\b(?:OP|EB|PRB)-\d{2}\b", value, re.I))
         classified = classify_product(
             game,
@@ -62,13 +77,18 @@ def _products(
             source_url,
         )
         if not classified.is_box:
+            if not classified.exclude_reasons:
+                saw_unexplained_non_box = True
             continue
         products[classified.canonical_product_key] = (
             value[:180],
             next((word for word in game.box_product_keywords if word in value), "BOX"),
             classified.canonical_product_key,
         )
-    return list(products.values())
+    only_explicitly_excluded = (
+        saw_relevant_candidate and not products and not saw_unexplained_non_box
+    )
+    return list(products.values()), only_explicitly_excluded
 
 
 def parse_nyuka_now_premium_bandai(
@@ -95,7 +115,7 @@ def parse_nyuka_now_premium_bandai(
     start_match = re.search(r"開始日\s*[：:]?\s*(.{0,100})", section_text)
     parsed = parse_first_datetime(start_match.group(1)) if start_match else None
     start_at: date | datetime | None = parsed.value if parsed else None
-    products = _products(tags, section_text, url, config)
+    products, only_explicitly_excluded = _products(tags, section_text, url, config)
     alerts: list[Alert] = []
     if not start_at:
         alerts.append(
@@ -111,7 +131,7 @@ def parse_nyuka_now_premium_bandai(
                 url,
             ).with_fingerprint()
         )
-    if not products:
+    if not products and not only_explicitly_excluded:
         alerts.append(
             Alert(
                 "one_piece_card",
