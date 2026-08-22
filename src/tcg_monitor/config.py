@@ -44,6 +44,17 @@ _ALLOWED_ACTIVATION_GROUPS = {
     TOHOKU_EXPEDITION_GROUP,
 }
 
+_GENERAL_FIVE_GAMES_SCOPE = "general_five_games"
+_SPECIALIZED_COVERAGE_SCOPE = "specialized"
+_ALLOWED_COVERAGE_SCOPES = {
+    _GENERAL_FIVE_GAMES_SCOPE,
+    _SPECIALIZED_COVERAGE_SCOPE,
+}
+_PARSE_ENABLED_GAME_SUPPORTS = {
+    GameSupport.VERIFIED,
+    GameSupport.PROSPECTIVE,
+}
+
 
 def _list(v: Any) -> list[str]:
     return list(v or [])
@@ -91,6 +102,23 @@ def _validated_system(raw_system: Any) -> dict[str, Any]:
         )
     ):
         raise ConfigError("retry_backoff_seconds must be a list of non-negative numbers")
+    uniform_poll_minutes = system.get("uniform_source_poll_minutes")
+    if (
+        isinstance(uniform_poll_minutes, bool)
+        or not isinstance(uniform_poll_minutes, int)
+        or uniform_poll_minutes <= 0
+    ):
+        raise ConfigError("uniform_source_poll_minutes must be a positive integer")
+    required_game_ids = system.get("general_retail_required_game_ids")
+    if (
+        not isinstance(required_game_ids, list)
+        or not required_game_ids
+        or not all(isinstance(game_id, str) and game_id for game_id in required_game_ids)
+        or len(required_game_ids) != len(set(required_game_ids))
+    ):
+        raise ConfigError(
+            "general_retail_required_game_ids must be a non-empty unique string list"
+        )
     return system
 
 
@@ -180,6 +208,16 @@ def load_config(path: str | Path = "sites.yaml") -> Config:
             product_exclude_keywords=_list(g.get("product_exclude_keywords")),
             product_code_patterns=_list(g.get("product_code_patterns")),
         )
+    required_general_game_ids = tuple(
+        str(game_id)
+        for game_id in system["general_retail_required_game_ids"]
+    )
+    unknown_required_game_ids = set(required_general_game_ids) - set(games)
+    if unknown_required_game_ids:
+        raise ConfigError(
+            "unknown general retailer required game: "
+            + ", ".join(sorted(unknown_required_game_ids))
+        )
     seen_ids: set[str] = set()
     seen_urls: set[str] = set()
     sources: list[SourceConfig] = []
@@ -203,6 +241,31 @@ def load_config(path: str | Path = "sites.yaml") -> Config:
                     f"bad supported_games status: {s['id']}:{game_id}={raw_status}; "
                     f"allowed={allowed}"
                 ) from exc
+        coverage_scope = str(
+            s.get("coverage_scope", _GENERAL_FIVE_GAMES_SCOPE)
+        )
+        if coverage_scope not in _ALLOWED_COVERAGE_SCOPES:
+            raise ConfigError(
+                f"bad coverage_scope: {s['id']}={coverage_scope}"
+            )
+        if coverage_scope == _GENERAL_FIVE_GAMES_SCOPE:
+            missing_required_games = [
+                game_id
+                for game_id in required_general_game_ids
+                if supported_games.get(game_id) not in _PARSE_ENABLED_GAME_SUPPORTS
+            ]
+            if missing_required_games:
+                raise ConfigError(
+                    f"general retailer missing required games: {s['id']}:"
+                    + ",".join(missing_required_games)
+                )
+        poll_minutes = int(s.get("poll_minutes", 10))
+        uniform_poll_minutes = int(system["uniform_source_poll_minutes"])
+        if poll_minutes != uniform_poll_minutes:
+            raise ConfigError(
+                f"non-uniform poll_minutes: {s['id']}={poll_minutes}; "
+                f"required={uniform_poll_minutes}"
+            )
         for url in s.get("discovery_urls", []):
             parsed = urlparse(url)
             if parsed.scheme not in {"http", "https"} or not parsed.netloc:
@@ -276,7 +339,7 @@ def load_config(path: str | Path = "sites.yaml") -> Config:
                 start_labels=_list(s.get("start_labels")),
                 render_mode=render_mode,
                 render_wait_selector=render_wait_selector,
-                poll_minutes=int(s.get("poll_minutes", 10)),
+                poll_minutes=poll_minutes,
                 selectors={k: _list(v) for k, v in (s.get("selectors") or {}).items()},
                 expected_elements=_list(s.get("expected_elements")),
                 robots_url=s.get("robots_url"),
