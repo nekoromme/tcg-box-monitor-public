@@ -27,6 +27,35 @@ def test_config():
     )
 
 
+def test_monitoring_policy_uses_one_interval_and_all_five_games() -> None:
+    config = load_config("sites.yaml")
+    required_games = {
+        "pokemon_card",
+        "one_piece_card",
+        "dragon_ball_fusion_world",
+        "lorcana",
+        "yu_gi_oh",
+    }
+    uniform_minutes = config.system["uniform_source_poll_minutes"]
+
+    assert uniform_minutes == 120
+    assert set(config.system["general_retail_required_game_ids"]) == required_games
+    assert all(
+        source.poll_minutes == uniform_minutes
+        for source in config.sources
+    )
+
+    general_retailer = next(source for source in config.sources if source.id == "geo")
+    assert required_games <= general_retailer.parse_game_ids
+
+    specialized = next(
+        source for source in config.sources
+        if source.id == "pokemon_center_online"
+    )
+    assert "pokemon_card" in specialized.parse_game_ids
+    assert "yu_gi_oh" not in specialized.parse_game_ids
+
+
 def test_bad_lottery_start_policy_is_rejected(tmp_path: Path) -> None:
     config_text = Path("sites.yaml").read_text(encoding="utf-8")
     bad_config = config_text.replace(
