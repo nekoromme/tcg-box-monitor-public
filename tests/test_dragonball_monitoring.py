@@ -329,6 +329,51 @@ def test_seagull_official_oembed_recovers_actual_application_wording() -> None:
     assert cases[0].source_url == status_url
 
 
+def test_seagull_catalog_title_replaces_image_only_box_placeholder() -> None:
+    config, source = _source("yahoo_realtime_seagull_common")
+    status_id = "2090969780274798744"
+    status_url = f"https://x.com/SeagullJP/status/{status_id}"
+    html = f"""
+    <div class="Tweet_TweetContainer">
+      <p class="Tweet_body">
+        8/22日より午前10時より ガルモバ会員様限定にて
+        ドラゴンボールフュージョンワールド BRIGHTNESS OF HOPE
+        抽選申し込みを開始させていただきます。
+      </p>
+      <img src="https://pbs.twimg.com/media/seagull.jpg">
+      <time><a href="{status_url}">8月22日</a></time>
+    </div>
+    """
+    known = Release(
+        "dragon_ball_fusion_world",
+        "ブースターパック BRIGHTNESS OF HOPE [FB11]",
+        "ブースターパック",
+        "FB11",
+        date(2026, 9, 12),
+        None,
+        "https://www.dbs-cardgame.com/fw/jp/products/",
+        "https://www.dbs-cardgame.com/fw/jp/products/",
+        SourceTier.OFFICIAL,
+        "dragonball_official_product_link",
+        "high",
+    ).with_id()
+
+    cases, _, alerts = parse_yahoo_realtime(
+        html,
+        source.discovery_urls[0],
+        source,
+        config,
+        detected_on=date(2026, 8, 24),
+        ocr_reader=lambda _urls: "1BOX",
+        known_releases=[known],
+    )
+
+    assert not alerts
+    assert len(cases) == 1
+    assert cases[0].product_name == "ブースターパック BRIGHTNESS OF HOPE [FB11]"
+    assert cases[0].canonical_product_key == "FB11"
+
+
 def test_dragonball_classifier_excludes_non_box_products() -> None:
     config = load_config("sites.yaml")
     game = config.games["dragon_ball_fusion_world"]

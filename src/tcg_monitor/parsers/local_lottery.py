@@ -1401,10 +1401,19 @@ def parse_yahoo_realtime(
             continue
 
         product = _product_from_tweet(container, combined_text, game_id)
-        if not product and known_release and known_release.game_id == game_id:
+        if (
+            known_release
+            and known_release.game_id == game_id
+            and (
+                not product
+                or is_provisional_product_name(product[0])
+            )
+        ):
             # A social post may spell only the official title (without
-            # ``ブースターパック`` or ``BOX``).  Reuse the already fetched
-            # maker catalog instead of silently discarding a known product.
+            # ``ブースターパック`` or ``BOX``), while image OCR may recover
+            # only the generic word ``1BOX``.  Reuse the already fetched maker
+            # catalog instead of keeping or silently discarding a provisional
+            # product name.
             product = (
                 known_release.product_name,
                 known_release.product_category,
