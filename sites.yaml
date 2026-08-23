@@ -2332,7 +2332,7 @@ sources:
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Apokecamatomeru%20%E3%83%88%E3%83%AC%E3%82%AB%E3%83%97%E3%83%A9%E3%82%B655%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3Apokecamatomeru&ei=UTF-8
-  - https://search.yahoo.co.jp/realtime/search/tweet/2088582782822055952?detail=1&ifr=tl_twdtl&rkf=1
+  - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2Fpokecamatomeru%2Fstatus%2F2088582782822055952&omit_script=1&dnt=1
   - https://twstalker.com/pokecamatomeru
   render_mode: http
   poll_minutes: 120
@@ -2367,7 +2367,7 @@ sources:
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ASeagullJP%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3ASeagullJP&ei=UTF-8
-  - https://search.yahoo.co.jp/realtime/search/tweet/2090969780274798744?detail=1&ifr=tl_twdtl&rkf=1
+  - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FSeagullJP%2Fstatus%2F2090969780274798744&omit_script=1&dnt=1
   - https://twstalker.com/SeagullJP
   render_mode: http
   poll_minutes: 120
@@ -2375,13 +2375,15 @@ sources:
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: 17店舗共通アカウントのガルモバ会員限定BOX抽選を監視する。Yahoo検索が空でも共通プロフィールミラーを確認し、status 2090969780274798744はBRIGHTNESS
-    OF HOPE受付中案件の一回限りの救済経路として個別詳細も確認する。
+  notes: 17店舗共通アカウントのガルモバ会員限定BOX抽選を監視する。Yahoo検索が空・取得不能でも公式X oEmbedと共通プロフィールミラーを順に確認し、status
+    2090969780274798744はBRIGHTNESS OF HOPE受付中案件の一回限りの救済経路として直接確認する。
   parser_kind: yahoo_realtime
   parser_options:
     account: SeagullJP
     retailer_id: seagull_common
     retailer_name: シーガル各店
+    confirmed_application_ends:
+      '2090969780274798744': '2026-09-07T20:00:00+09:00'
 - id: yahoo_realtime_hareruya2
   name: 晴れる屋2公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -3451,7 +3453,7 @@ sources:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ADourakusendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3ADourakusendai&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=%E3%83%88%E3%83%AC%E3%82%AB%E9%81%93%E6%A5%BD%20%E4%BB%99%E5%8F%B0%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://search.yahoo.co.jp/realtime/search/tweet/2084826013847130224?detail=1&ifr=tl_twdtl&rkf=1
+  - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FDourakusendai%2Fstatus%2F2084826013847130224&omit_script=1&dnt=1
   - https://twstalker.com/Dourakusendai
   render_mode: http
   poll_minutes: 120

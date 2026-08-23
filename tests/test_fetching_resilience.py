@@ -934,6 +934,47 @@ def test_yahoo_parser_failure_uses_twstalker_fallback(
     assert [call[0] for call in fetcher.calls] == [yahoo_url, twstalker_url]
 
 
+def test_yahoo_empty_direct_post_fallback_continues_to_profile_mirror(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = load_config("sites.yaml")
+    source = next(
+        item for item in config.sources if item.id == "yahoo_realtime_seagull_common"
+    )
+    yahoo_lottery, yahoo_account, oembed_url, twstalker_url = source.discovery_urls
+    empty_result = "<main>一致する情報は見つかりませんでした</main>"
+    fetcher = FakeHttpFetcher(
+        {
+            yahoo_lottery: _response(yahoo_lottery, 200, empty_result),
+            yahoo_account: _response(yahoo_account, 200, empty_result),
+            oembed_url: _response(oembed_url, 200, '{"html":""}'),
+            twstalker_url: _response(
+                twstalker_url,
+                200,
+                "<main>プロフィールミラーにも候補はありません</main>",
+            ),
+        }
+    )
+    monkeypatch.setattr(
+        pipeline,
+        "parse_yahoo_realtime",
+        lambda *_args, **_kwargs: ([], [], []),
+    )
+
+    _, _, alerts = pipeline.run_pipeline(
+        _config(source),
+        http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+
+    assert not alerts
+    assert [call[0] for call in fetcher.calls] == [
+        yahoo_lottery,
+        yahoo_account,
+        oembed_url,
+        twstalker_url,
+    ]
+
+
 def test_yahoo_repair_url_remains_independent_from_twstalker(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

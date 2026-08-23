@@ -701,6 +701,7 @@ def run_pipeline(
         }
         configured_root_urls = list(source.discovery_urls)
         repair_urls: list[str] = []
+        primary_roots: list[str] = []
         is_yahoo_source = is_yahoo_realtime_source(source)
         if monitor_state is not None and is_yahoo_source:
             repair_urls = yahoo_repair_discovery_urls(
@@ -739,6 +740,7 @@ def run_pipeline(
                 if configured_root_urls
                 else []
             )
+        remaining_configured_roots = set(remaining_roots)
 
         # 設定済みのroot URLだけが次の予備URLを起動できる。自己修復URLの
         # 一時失敗でTwstalkerへ切り替わると、Yahoo正常時省略の意味がなくなる。
@@ -757,6 +759,24 @@ def run_pipeline(
         ) -> None:
             if fallback_roots:
                 queued_urls.append((fallback_roots.pop(0), True))
+
+        def enqueue_fallback_after_root_failure(
+            failed_url: str,
+            fallback_triggers: set[str] = fallback_trigger_urls,
+            yahoo_source: bool = is_yahoo_source,
+            yahoo_roots: list[str] = primary_roots,
+            queued_urls: list[tuple[str, bool]] = discovery_urls,
+        ) -> None:
+            if failed_url not in fallback_triggers:
+                return
+            if yahoo_source and failed_url in yahoo_roots and any(
+                queued_url in yahoo_roots for queued_url, _ in queued_urls
+            ):
+                # Try every configured Yahoo query before consuming one of the
+                # cross-host fallbacks.  A failure on the first query must not
+                # pre-queue every fallback even if the second query also fails.
+                return
+            enqueue_fallback_root()
 
         if not discovery_urls:
             alerts.append(
@@ -808,8 +828,8 @@ def run_pipeline(
                         )
                 else:
                     last_failure_alert = _problem_alert(source, problem)
-                if is_root and url in fallback_trigger_urls:
-                    enqueue_fallback_root()
+                if is_root:
+                    enqueue_fallback_after_root_failure(url)
                 continue
             except Exception as exc:
                 unexpected_problem = FetchProblem(
@@ -825,8 +845,8 @@ def run_pipeline(
                     "fetch_exception",
                     f"取得処理の想定外例外: {type(exc).__name__}: {str(exc)[:180]}",
                 )
-                if is_root and url in fallback_trigger_urls:
-                    enqueue_fallback_root()
+                if is_root:
+                    enqueue_fallback_after_root_failure(url)
                 continue
 
             if result.not_modified:
@@ -1194,6 +1214,20 @@ def run_pipeline(
                     )
                     if primary_without_candidates_requires_fallback:
                         enqueue_fallback_root()
+                    elif (
+                        source.fallback_on_empty_result
+                        and is_root
+                        and url in remaining_configured_roots
+                        and not parsed_cases
+                        and not parsed_releases
+                        and remaining_roots
+                    ):
+                        # Fallbacks are ordered, not mutually exclusive.  If an
+                        # official direct-post endpoint is temporarily empty or
+                        # no longer parseable, continue to the profile mirror
+                        # instead of declaring the source healthy at zero items.
+                        enqueue_fallback_root()
+                        primary_without_candidates_requires_fallback = True
                     # Yahoo can load normally while its temporary image proxy
                     # has already expired.  This is a content failure, so use
                     # Twstalker only then instead of loading it on every
@@ -1274,8 +1308,7 @@ def run_pipeline(
                 )
                 if is_root:
                     last_failure_alert = failure_alert
-                    if url in fallback_trigger_urls:
-                        enqueue_fallback_root()
+                    enqueue_fallback_after_root_failure(url)
                 else:
                     alerts.append(failure_alert)
                 continue

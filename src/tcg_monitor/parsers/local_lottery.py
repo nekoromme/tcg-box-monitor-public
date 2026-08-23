@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import unicodedata
 from collections.abc import Callable
@@ -73,6 +74,30 @@ def _string_list_option(source: SourceConfig, name: str) -> tuple[str, ...]:
     return tuple(raw)
 
 
+def _status_datetime_option(
+    source: SourceConfig,
+    name: str,
+    status_id: str,
+) -> datetime | date | None:
+    """Read a manually confirmed per-post date without hard-coding a retailer."""
+
+    source = source_with_runtime_parser_profile(source)
+    raw = source.parser_options.get(name)
+    if raw is None:
+        return None
+    if not isinstance(raw, dict):
+        raise ValueError(f"bad parser option {name}: {source.id}")
+    value = raw.get(status_id)
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"bad parser option {name}.{status_id}: {source.id}")
+    try:
+        return datetime.fromisoformat(value) if "T" in value else date.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError(f"bad parser option {name}.{status_id}: {source.id}") from exc
+
+
 _SECONDARY_ROUNDUP_MARKERS = (
     "抽選受付中の店舗一覧",
     "受付中の店舗一覧",
@@ -116,10 +141,15 @@ _ACTION_WORDS = (
     "受付開始",
     "WEB受付",
     "抽選申込",
+    "抽選申込み",
+    "抽選申し込み",
     "エントリー受付",
     "エントリーを受付",
     "エントリーを開始",
     "エントリー開始",
+)
+_LOTTERY_APPLICATION_START = re.compile(
+    r"抽選(?:申込(?:み)?|申し込み|応募|予約)(?:受付)?(?:を|が)?(?:開始|スタート)"
 )
 _CLOSED_OR_RESULT_WORDS = (
     "当選者発表",
@@ -402,6 +432,55 @@ def _application_start(text: str, base_date: date | None = None) -> datetime | d
         )
         if parsed.value:
             return parsed.value
+
+    # Official social posts sometimes put the opening date before the action,
+    # for example ``8/22より午前10時より ... 抽選申し込みを開始``.  The
+    # label-first parser above cannot see that order.  Use the last date before
+    # the action so an earlier product release date cannot win by accident.
+    normalized = unicodedata.normalize("NFKC", text)
+    compact_normalized = re.sub(r"\s+", "", normalized)
+    for action in _LOTTERY_APPLICATION_START.finditer(compact_normalized):
+        prefix = compact_normalized[max(0, action.start() - 220) : action.start()]
+        date_matches = list(
+            re.finditer(
+                r"(?:(?:20\d{2})[年./])?\d{1,2}[月/.]\d{1,2}日?",
+                prefix,
+            )
+        )
+        if not date_matches:
+            continue
+        scope = prefix[date_matches[-1].start() :]
+        # A cue is required because a bare release date followed later by
+        # ``抽選申し込みを開始`` is not necessarily the application start.
+        if not any(cue in scope for cue in ("より", "から")):
+            continue
+        start_value = parse_first_datetime(scope, base_date).value
+        if not start_value:
+            continue
+        if isinstance(start_value, datetime):
+            return start_value
+        time_match = re.search(
+            r"(?:(午前|午後|正午|昼))?(\d{1,2})時(?:(\d{1,2})分)?",
+            scope,
+        )
+        if not time_match:
+            return start_value
+        marker, raw_hour, raw_minute = time_match.groups()
+        hour = int(raw_hour)
+        if marker == "午前" and hour == 12:
+            hour = 0
+        elif marker == "午後" and hour < 12:
+            hour += 12
+        elif marker in {"正午", "昼"}:
+            hour = 12
+        return datetime(
+            start_value.year,
+            start_value.month,
+            start_value.day,
+            hour,
+            int(raw_minute or 0),
+            tzinfo=ZoneInfo("Asia/Tokyo"),
+        )
     return None
 
 
@@ -730,7 +809,13 @@ def parse_hobby_station_source(
 def _tweet_container(status_anchor: Tag) -> Tag | None:
     fallback: Tag | None = None
     for parent in status_anchor.parents:
-        if not isinstance(parent, Tag) or parent.name != "div":
+        if not isinstance(parent, Tag):
+            continue
+        # X's official oEmbed endpoint returns a blockquote rather than the
+        # div-based Yahoo/Twstalker markup used by the ordinary discovery path.
+        if parent.name in {"blockquote", "article"} and parent.find("p"):
+            return parent
+        if parent.name != "div":
             continue
         class_attr = parent.get("class")
         classes = (
@@ -940,6 +1025,28 @@ def _post_date(status_id: str, timezone: str) -> date:
     return datetime.fromtimestamp(timestamp_ms / 1000, ZoneInfo(timezone)).date()
 
 
+def _official_oembed_markup(raw: str, url: str, expected_account: str) -> str:
+    """Extract and verify an official X post returned by Twitter oEmbed."""
+
+    if urlsplit(url).netloc.casefold() != "publish.twitter.com":
+        return raw
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("X oEmbed response is not valid JSON") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("X oEmbed response is not an object")
+    status = _status_parts(str(payload.get("url") or ""), expected_account)
+    author_url = str(payload.get("author_url") or "")
+    author_path = urlsplit(author_url).path.strip("/").casefold()
+    embedded_html = payload.get("html")
+    if not status or author_path != expected_account.casefold():
+        raise ValueError("X oEmbed response belongs to a different account")
+    if not isinstance(embedded_html, str) or not embedded_html.strip():
+        raise ValueError("X oEmbed response does not contain post markup")
+    return embedded_html
+
+
 def is_yahoo_realtime_source(source: SourceConfig | str) -> bool:
     return _yahoo_profile(source) is not None
 
@@ -1057,7 +1164,7 @@ def parse_yahoo_realtime(
     if profile is None:
         raise ValueError(f"Yahoo parser profile is missing: {source.id}")
     account, retailer_id, retailer_name = profile
-    soup = BeautifulSoup(html, "lxml")
+    soup = BeautifulSoup(_official_oembed_markup(html, url, account), "lxml")
     detected = detected_on or datetime.now(ZoneInfo(config.timezone)).date()
     cases: dict[str, LotteryCase] = {}
     alerts: list[Alert] = []
@@ -1294,6 +1401,14 @@ def parse_yahoo_realtime(
             continue
 
         product = _product_from_tweet(container, combined_text, game_id)
+        if not product and known_release and known_release.game_id == game_id:
+            # A social post may spell only the official title (without
+            # ``ブースターパック`` or ``BOX``).  Reuse the already fetched
+            # maker catalog instead of silently discarding a known product.
+            product = (
+                known_release.product_name,
+                known_release.product_category,
+            )
         if (
             not product
             and source.id == "yahoo_realtime_dmm_onepiece_secondary"
@@ -1457,6 +1572,11 @@ def parse_yahoo_realtime(
             extraction_method,
             confidence,
             opportunity_kind=opportunity_kind,
+            end_at=_status_datetime_option(
+                source,
+                "confirmed_application_ends",
+                status_id,
+            ),
         ).with_id()
         cases[case.case_id] = case
         if ocr_pending is not None:

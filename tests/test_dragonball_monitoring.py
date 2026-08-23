@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import json
 from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import load_config
+from tcg_monitor.models import Release, SourceTier
 from tcg_monitor.parsers.dragonball_official import (
     discover_dragonball_official_store_urls,
     parse_dragonball_official_products,
@@ -259,6 +261,72 @@ def test_dragonball_livepocket_and_official_x_are_recognized() -> None:
     assert x_cases[0].game_id == "dragon_ball_fusion_world"
     assert x_cases[0].canonical_product_key == "ST01"
     assert not x_alerts
+
+
+def test_seagull_official_oembed_recovers_actual_application_wording() -> None:
+    config, source = _source("yahoo_realtime_seagull_common")
+    status_id = "2090969780274798744"
+    status_url = f"https://x.com/SeagullJP/status/{status_id}"
+    payload = json.dumps(
+        {
+            "url": status_url,
+            "author_name": "シーガル17店舗共通アカウント",
+            "author_url": "https://x.com/SeagullJP",
+            "html": (
+                '<blockquote class="twitter-tweet"><p lang="ja">'
+                "おはようございます！ 8/22日より午前10時より "
+                "ガルモバ会員様限定にて ドラゴンボールフュージョンワールド "
+                "BRIGHTNESS OF HOPE 抽選申し込みを開始させていただきます。"
+                f'</p><a href="{status_url}">August 22, 2026</a></blockquote>'
+            ),
+        },
+        ensure_ascii=False,
+    )
+    known = Release(
+        "dragon_ball_fusion_world",
+        "ブースターパック BRIGHTNESS OF HOPE [FB11]",
+        "ブースターパック",
+        "FB11",
+        date(2026, 9, 12),
+        None,
+        "https://www.dbs-cardgame.com/fw/jp/products/",
+        "https://www.dbs-cardgame.com/fw/jp/products/",
+        SourceTier.OFFICIAL,
+        "dragonball_official_product_link",
+        "high",
+    ).with_id()
+
+    cases, _, alerts = parse_yahoo_realtime(
+        payload,
+        source.discovery_urls[2],
+        source,
+        config,
+        detected_on=date(2026, 8, 24),
+        known_releases=[known],
+    )
+
+    assert not alerts
+    assert len(cases) == 1
+    assert cases[0].retailer_id == "seagull_common"
+    assert cases[0].game_id == "dragon_ball_fusion_world"
+    assert cases[0].canonical_product_key == "FB11"
+    assert cases[0].start_at == datetime(
+        2026,
+        8,
+        22,
+        10,
+        0,
+        tzinfo=ZoneInfo("Asia/Tokyo"),
+    )
+    assert cases[0].end_at == datetime(
+        2026,
+        9,
+        7,
+        20,
+        0,
+        tzinfo=ZoneInfo("Asia/Tokyo"),
+    )
+    assert cases[0].source_url == status_url
 
 
 def test_dragonball_classifier_excludes_non_box_products() -> None:

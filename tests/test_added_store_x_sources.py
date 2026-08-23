@@ -84,7 +84,8 @@ def test_priority_sendai_sources_fall_back_when_yahoo_is_empty() -> None:
     douraku = by_id["yahoo_realtime_toreca_douraku_sendai"]
     assert douraku.lottery_start_policy.value == "first_detection"
     assert "p=%E3%83%88%E3%83%AC%E3%82%AB%E9%81%93%E6%A5%BD" in (douraku.discovery_urls[2])
-    assert "/search/tweet/2084826013847130224" in douraku.discovery_urls[3]
+    assert "publish.twitter.com/oembed" in douraku.discovery_urls[3]
+    assert "2084826013847130224" in douraku.discovery_urls[3]
     assert by_id["livepocket_hmv"].enabled
     hmv_secondary = by_id["yahoo_realtime_hmv_secondary"]
     assert hmv_secondary.enabled
@@ -97,7 +98,8 @@ def test_priority_sendai_sources_fall_back_when_yahoo_is_empty() -> None:
     assert plaza_secondary.enabled
     assert plaza_secondary.source_tier.value == "secondary"
     assert plaza_secondary.lottery_start_policy.value == "first_detection"
-    assert "/search/tweet/2088582782822055952" in (plaza_secondary.discovery_urls[2])
+    assert "publish.twitter.com/oembed" in plaza_secondary.discovery_urls[2]
+    assert "2088582782822055952" in plaza_secondary.discovery_urls[2]
 
 
 def test_douraku_current_roundup_is_scoped_to_sendai_store() -> None:
