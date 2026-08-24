@@ -13,6 +13,11 @@ from zoneinfo import ZoneInfo
 
 from tcg_monitor.config import validate_config
 from tcg_monitor.discord import DiscordAdapter
+from tcg_monitor.expedition_mode import (
+    DEFAULT_EXPEDITION_MODE_PATH,
+    ExpeditionModeError,
+    load_expedition_mode,
+)
 from tcg_monitor.game_modes import (
     DEFAULT_GAME_MODES_PATH,
     LEGACY_ENABLED_GAME_IDS,
@@ -840,6 +845,11 @@ def main(argv: list[str] | None = None) -> int:
         default=DEFAULT_GAME_MODES_PATH,
         help="作品別監視のON/OFFファイル",
     )
+    parser.add_argument(
+        "--expedition-switch",
+        default=DEFAULT_EXPEDITION_MODE_PATH,
+        help="遠征監視のON/OFFファイル",
+    )
     parser.add_argument("--source", action="append")
     parser.add_argument("--game", action="append")
     parser.add_argument("--source-tier", action="append")
@@ -864,9 +874,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"監視モード設定エラー: {exc}", file=sys.stderr)
         return 2
     runtime = config.system.get("runtime", {})
-    additional_monitoring_enabled = bool(
-        runtime.get("additional_monitoring_enabled", False)
-    )
+    try:
+        additional_monitoring_enabled = load_expedition_mode(
+            args.expedition_switch,
+        )
+    except ExpeditionModeError as exc:
+        print(f"遠征モード設定エラー: {exc}", file=sys.stderr)
+        return 2
     confirmed_false_positive_cases = _cleanup_records(
         runtime,
         "confirmed_false_positive_cases",

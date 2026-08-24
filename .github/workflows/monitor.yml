@@ -7,6 +7,7 @@ on:
       - 'src/**'
       - 'sites.yaml'
       - 'GAME_MONITOR_MODES.txt'
+      - 'EXPEDITION_MODE.txt'
       - '.github/workflows/monitor.yml'
   schedule:
     # UTC指定。日本時間では06:04、11:04、16:04、18:04、20:04、22:04。
@@ -37,12 +38,16 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Show enabled games
+      - name: Show monitor modes
         run: |
           echo "### 🎴 作品別監視" >> "$GITHUB_STEP_SUMMARY"
           sed -e 's/#.*//' -e '/^[[:space:]]*$/d' GAME_MONITOR_MODES.txt | while IFS='=' read -r GAME MODE; do
             echo "- ${GAME}: **${MODE}**" >> "$GITHUB_STEP_SUMMARY"
           done
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### 🚗 遠征監視" >> "$GITHUB_STEP_SUMMARY"
+          EXPEDITION_MODE="$(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' EXPEDITION_MODE.txt | tail -n 1 | cut -d= -f2)"
+          echo "- 現在: **${EXPEDITION_MODE:-設定エラー}**" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Check out monitor state
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
