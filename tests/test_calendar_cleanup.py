@@ -195,6 +195,42 @@ def test_cleanup_stops_before_delete_when_state_does_not_match(tmp_path: Path) -
     assert KOJIMA_CASE_ID in state.data["seen_cases"]
 
 
+def test_cleanup_removes_matching_case_recreated_after_calendar_delete(
+    tmp_path: Path,
+) -> None:
+    state = _false_positive_state(tmp_path / "monitor_state.json")
+    state.data["seen_cases"].pop(DMM_CASE_ID)
+    state.data["calendar_sync"].clear()
+    state.data["delivery_journal"].clear()
+    calendar = MagicMock(spec=CalendarAdapter)
+    confirmed = {
+        KOJIMA_CASE_ID: {
+            "retailer_id": "kojima",
+            "retailer_name": "コジマ",
+            "product_name": "ストームエメラルダ",
+            "start_at": "2026-07-30",
+            "source_url": "https://x.com/gamegetnavi/status/2080645250255827125",
+            "event_id": KOJIMA_EVENT_ID,
+        }
+    }
+
+    results = _cleanup_confirmed_false_positive_cases(
+        state,
+        calendar,
+        confirmed,
+    )
+
+    assert results == [
+        {
+            "retailer": "コジマ",
+            "product": "ストームエメラルダ",
+            "status": "state_only",
+        }
+    ]
+    calendar.delete_owned_event.assert_not_called()
+    assert KOJIMA_CASE_ID not in state.data["seen_cases"]
+
+
 def test_cleanup_removes_superseded_hobby_search_social_event(
     tmp_path: Path,
 ) -> None:

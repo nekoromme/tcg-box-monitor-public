@@ -326,10 +326,18 @@ def test_seagull_date_before_release_date_uses_its_own_yori_cue() -> None:
     </div>
     """
 
+    source = _source("yahoo_realtime_seagull_common")
+    source = replace(
+        source,
+        parser_options={
+            **source.parser_options,
+            "confirmed_application_ends": {},
+        },
+    )
     cases, _, alerts = parse_yahoo_realtime(
         html,
         "https://search.yahoo.co.jp/realtime/search",
-        _source("yahoo_realtime_seagull_common"),
+        source,
         load_config("sites.yaml"),
         date(2026, 8, 24),
     )
@@ -340,6 +348,28 @@ def test_seagull_date_before_release_date_uses_its_own_yori_cue() -> None:
         2026, 8, 1, 10, 0, tzinfo=ZoneInfo("Asia/Tokyo")
     )
     assert cases[0].extraction_method == "yahoo_realtime_body_application_period"
+
+
+def test_seagull_expired_confirmed_period_is_not_recreated() -> None:
+    html = """
+    <div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">8/1日より午前10時より
+      ワンピースカードゲーム 世界最強の戦士 1BOXの
+      抽選申し込みを開始します。</p>
+      <time><a href="https://x.com/SeagullJP/status/2083745496301220133">8月2日</a></time>
+    </div>
+    """
+
+    cases, _, alerts = parse_yahoo_realtime(
+        html,
+        "https://search.yahoo.co.jp/realtime/search",
+        _source("yahoo_realtime_seagull_common"),
+        load_config("sites.yaml"),
+        date(2026, 8, 24),
+    )
+
+    assert not alerts
+    assert not cases
 
 
 def test_old_undated_social_post_cannot_become_open_on_detection_day() -> None:

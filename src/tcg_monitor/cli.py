@@ -163,7 +163,9 @@ def _cleanup_confirmed_false_positive_cases(
         has_history = any(key in journal for key in journal_keys)
         if case_record is None and sync_record is None and not has_history:
             continue
-        if not isinstance(case_record, dict) or not isinstance(sync_record, dict):
+        if not isinstance(case_record, dict) or (
+            sync_record is not None and not isinstance(sync_record, dict)
+        ):
             raise RuntimeError(
                 f"誤検知清掃対象の監視状態が不完全です: retailer={expected['retailer_name']}"
             )
@@ -180,24 +182,30 @@ def _cleanup_confirmed_false_positive_cases(
             for field in checked_fields
             if str(case_record.get(field) or "") != expected[field]
         ]
-        event_id = str(sync_record.get("event_id") or "")
-        if mismatched or event_id != expected["event_id"]:
+        event_id = (
+            str(sync_record.get("event_id") or "")
+            if isinstance(sync_record, dict)
+            else ""
+        )
+        if mismatched or (sync_record is not None and event_id != expected["event_id"]):
             detail = ",".join(mismatched) if mismatched else "event_id"
             raise RuntimeError(
                 "誤検知清掃対象が確認済み記録と一致しません: "
                 f"retailer={expected['retailer_name']} mismatch={detail}"
             )
 
-        result = calendar.delete_owned_event(
-            event_id,
-            kind="lottery",
-            internal_id=state.calendar_case_identity(case_id),
-        )
-        if result.get("status") not in {"deleted", "not_found"}:
-            raise RuntimeError(
-                "Google Calendar誤予定の削除が完了しませんでした: "
-                f"retailer={expected['retailer_name']} result={result}"
+        result: dict[str, str] = {"status": "state_only"}
+        if sync_record is not None:
+            result = calendar.delete_owned_event(
+                event_id,
+                kind="lottery",
+                internal_id=state.calendar_case_identity(case_id),
             )
+            if result.get("status") not in {"deleted", "not_found"}:
+                raise RuntimeError(
+                    "Google Calendar誤予定の削除が完了しませんでした: "
+                    f"retailer={expected['retailer_name']} result={result}"
+                )
 
         seen_cases.pop(case_id, None)
         calendar_sync.pop(sync_key, None)

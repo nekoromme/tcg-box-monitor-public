@@ -44,7 +44,7 @@ system:
         retailer_id: seagull_common
         retailer_name: シーガル各店
         product_name: シーガル メンバーサービス
-        start_at: '2026-08-24'
+        start_at: '2026-08-01 10:00:00+09:00'
         source_url: https://x.com/SeagullJP/status/2083745496301220133
         event_id: tcgc63901047700916938ba2f80047bd775c36dab4529a0a0c9c2d7d071931cb
       645a19c17ba2776720e61ee9be16279806675d2183b5d068523e3fac6be5c161:
@@ -2414,6 +2414,7 @@ sources:
     retailer_id: seagull_common
     retailer_name: シーガル各店
     confirmed_application_ends:
+      '2083745496301220133': '2026-08-17T20:00:00+09:00'
       '2090969780274798744': '2026-09-07T20:00:00+09:00'
 - id: yahoo_realtime_hareruya2
   name: 晴れる屋2公式X Yahooリアルタイム検索
