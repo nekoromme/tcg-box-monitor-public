@@ -315,6 +315,54 @@ def test_yahoo_start_is_first_detection_day_and_id_is_stable() -> None:
     assert preserved.start_at == date(2026, 7, 19)
 
 
+def test_seagull_date_before_release_date_uses_its_own_yori_cue() -> None:
+    html = """
+    <div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">8/1日より午前10時より ガルモバ会員様限定にて
+      8月22日発売ワンピースカードゲーム
+      ブースターパック「世界最強の戦士」[OP-17] 1BOXにつきまして
+      抽選申し込みを開始させていただきます。</p>
+      <time><a href="https://x.com/SeagullJP/status/2083745496301220133">August 2</a></time>
+    </div>
+    """
+
+    cases, _, alerts = parse_yahoo_realtime(
+        html,
+        "https://search.yahoo.co.jp/realtime/search",
+        _source("yahoo_realtime_seagull_common"),
+        load_config("sites.yaml"),
+        date(2026, 8, 24),
+    )
+
+    assert not alerts
+    assert len(cases) == 1
+    assert cases[0].start_at == datetime(
+        2026, 8, 1, 10, 0, tzinfo=ZoneInfo("Asia/Tokyo")
+    )
+    assert cases[0].extraction_method == "yahoo_realtime_body_application_period"
+
+
+def test_old_undated_social_post_cannot_become_open_on_detection_day() -> None:
+    html = """
+    <div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">ワンピースカード 世界最強の戦士 ブースターパック 1BOX
+      抽選販売受付 <a href="https://t.co/example">https://t.co/example</a></p>
+      <time><a href="https://x.com/NAKAZATOtoreka/status/2085520547304046878">August 7</a></time>
+    </div>
+    """
+
+    cases, _, alerts = parse_yahoo_realtime(
+        html,
+        "https://search.yahoo.co.jp/realtime/search",
+        _source("yahoo_realtime_tsutaya_nakazato"),
+        load_config("sites.yaml"),
+        date(2026, 8, 24),
+    )
+
+    assert not alerts
+    assert not cases
+
+
 def test_torecaplaza55_official_x_detects_onepiece_web_lottery() -> None:
     html = """
     <div class="Tweet_TweetContainer__random">
@@ -375,6 +423,32 @@ def test_toreca_douraku_current_post_uses_detection_date() -> None:
     assert cases[0].product_name == "最強の戦士"
     assert cases[0].start_at == date(2026, 8, 16)
     assert cases[0].extraction_method == "yahoo_realtime_detected_open"
+
+
+def test_toreca_douraku_expired_post_is_not_reopened_on_late_detection() -> None:
+    config = load_config("sites.yaml")
+    source = next(
+        item for item in config.sources if item.id == "yahoo_realtime_toreca_douraku_sendai"
+    )
+    html = """
+    <div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">ワンピースカードゲーム
+      『最強の戦士』1BOX 抽選販売開催。応募締切 8月22日(土)まで。</p>
+      <time><a href="https://x.com/Dourakusendai/status/2084826013847130224">
+      8月5日</a></time>
+    </div>
+    """
+
+    cases, _, alerts = parse_yahoo_realtime(
+        html,
+        source.discovery_urls[0],
+        source,
+        config,
+        date(2026, 8, 24),
+    )
+
+    assert not alerts
+    assert not cases
 
 
 def test_magi_sendai_actual_style_purchase_right_post_is_detected() -> None:

@@ -40,6 +40,27 @@ system:
         start_at: '2026-08-24'
         source_url: https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u
         event_id: tcgb81dd5f387119d908068894205d1f3249f7b90692663b5a61cebcc4b171a5
+      2e3b0bbc50e59369807ecc791b08e9ca4bd07f47569701c8693f71419ef86948:
+        retailer_id: seagull_common
+        retailer_name: シーガル各店
+        product_name: シーガル メンバーサービス
+        start_at: '2026-08-24'
+        source_url: https://x.com/SeagullJP/status/2083745496301220133
+        event_id: tcgc63901047700916938ba2f80047bd775c36dab4529a0a0c9c2d7d071931cb
+      645a19c17ba2776720e61ee9be16279806675d2183b5d068523e3fac6be5c161:
+        retailer_id: tsutaya_nakazato
+        retailer_name: TSUTAYA中里店（石巻）
+        product_name: ブースターパック「世界最強の戦士」
+        start_at: '2026-08-24'
+        source_url: https://x.com/NAKAZATOtoreka/status/2085520547304046878
+        event_id: tcg096789a9f4364e2b9a557bf06c38ed4a61b7dc874ba963202f13a820187cc
+      8f43f4c71ed4fcdff33b30a30909afac336739a472b8d98c87d3e3f5c3256fff:
+        retailer_id: toreca_douraku_sendai
+        retailer_name: トレカ道楽 仙台駅前アーケード店
+        product_name: 最強の戦士
+        start_at: '2026-08-24'
+        source_url: https://x.com/Dourakusendai/status/2084826013847130224
+        event_id: tcg1aefa6088907dd2b739585cacf15eb1e9b75cf0d05e5a72015bd6450fdbd6
     confirmed_false_positive_releases:
       ec5c020af436d8a7cd994917b711a1094f837829544aea5bb12241fc7aa400c0:
         game_id: pokemon_card
@@ -95,6 +116,9 @@ system:
     - yu_gi_oh
   max_future_days: 365
   implausible_past_days: 45
+  # 開始日を取れないSNS投稿に「初回検出日」を使えるのは、
+  # 投稿から7日以内だけ。店固有の形式はsource単位で上書きできる。
+  detection_fallback_max_age_days: 7
   structure_similarity_warning_threshold: 0.55
   consecutive_http_error_threshold: 2
   unresolved_alert_reminder_hours: 0  # 0: 同じ異常は解消するまで再通知しない
@@ -3487,6 +3511,9 @@ sources:
     account: Dourakusendai
     retailer_id: toreca_douraku_sendai
     retailer_name: トレカ道楽 仙台駅前アーケード店
+    detection_fallback_max_age_days: 30
+    confirmed_application_ends:
+      '2084826013847130224': '2026-08-22'
 - id: yahoo_realtime_magi_sendai
   name: magi仙台店公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search

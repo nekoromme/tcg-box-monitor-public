@@ -449,11 +449,21 @@ def _application_start(text: str, base_date: date | None = None) -> datetime | d
         )
         if not date_matches:
             continue
-        scope = prefix[date_matches[-1].start() :]
-        # A cue is required because a bare release date followed later by
-        # ``抽選申し込みを開始`` is not necessarily the application start.
-        if not any(cue in scope for cue in ("より", "から")):
+        # Walk backwards past product release dates and select the closest date
+        # whose *own* suffix says ``より/から``.  Some retailers write the
+        # otherwise unusual ``8/1日より ... 8月22日発売 ... 抽選申込を開始``;
+        # considering only the final date loses the real application start.
+        start_match = next(
+            (
+                candidate
+                for candidate in reversed(date_matches)
+                if re.match(r"(?:日)?(?:より|から)", prefix[candidate.end() :])
+            ),
+            None,
+        )
+        if start_match is None:
             continue
+        scope = prefix[start_match.start() :]
         start_value = parse_first_datetime(scope, base_date).value
         if not start_value:
             continue
@@ -482,6 +492,81 @@ def _application_start(text: str, base_date: date | None = None) -> datetime | d
             tzinfo=ZoneInfo("Asia/Tokyo"),
         )
     return None
+
+
+def _application_deadline(
+    text: str,
+    base_date: date | None = None,
+) -> datetime | date | None:
+    """Read an application closing date without treating it as a start date."""
+
+    compact = re.sub(r"\s+", "", unicodedata.normalize("NFKC", text))
+    for marker in (
+        "応募締切",
+        "受付締切",
+        "申込締切",
+        "申し込み締切",
+        "応募期限",
+        "受付期限",
+        "申込期限",
+    ):
+        if (index := compact.find(marker)) < 0:
+            continue
+        parsed = parse_first_datetime(
+            compact[index + len(marker) : index + len(marker) + 100],
+            base_date,
+        ).value
+        if parsed:
+            return parsed
+
+    # ``応募期間 本日から8月22日まで`` has no parseable start, but its
+    # deadline is still exact and is essential when a delayed search result is
+    # evaluated after the campaign has closed.
+    date_token = re.compile(
+        r"(?:(?:20\d{2})[/.年])?\d{1,2}[/.月]\d{1,2}日?"
+        r"(?:[()][月火水木金土日][()])?"
+        r"(?:\s*(?:(?:午前|午後|正午|昼))?\s*\d{1,2}時(?:\d{1,2}分?)?)?"
+        r"(?:\s*\d{1,2}[:：]\d{2})?"
+    )
+    for match in _APPLICATION_LABEL.finditer(compact):
+        scope = match.group(1)
+        until = scope.find("まで")
+        if until < 0:
+            continue
+        candidates = list(date_token.finditer(scope[:until]))
+        if not candidates:
+            continue
+        parsed = parse_first_datetime(candidates[-1].group(), base_date).value
+        if parsed:
+            return parsed
+    return None
+
+
+def _detection_fallback_is_fresh(
+    source: SourceConfig,
+    config: Config,
+    posted_on: date,
+    detected_on: date,
+) -> bool:
+    """Bound guessed starts to newly published social posts.
+
+    A source can opt into a longer window for a known, store-specific format;
+    exact starts and deadlines are still parsed independently.
+    """
+
+    source = source_with_runtime_parser_profile(source)
+    raw_limit = source.parser_options.get(
+        "detection_fallback_max_age_days",
+        config.system.get("detection_fallback_max_age_days", 7),
+    )
+    try:
+        limit = int(raw_limit)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"bad detection_fallback_max_age_days: {source.id}") from exc
+    if limit < 0:
+        raise ValueError(f"bad detection_fallback_max_age_days: {source.id}")
+    age = (detected_on - posted_on).days
+    return 0 <= age <= limit
 
 
 def _official_sale_start(
@@ -1316,6 +1401,24 @@ def parse_yahoo_realtime(
         combined_text = f"{post_text}\n{ocr_text}" if ocr_text else post_text
         combined_compact = re.sub(r"\s+", "", combined_text)
         ocr_compact = re.sub(r"\s+", "", ocr_text)
+        application_end = _status_datetime_option(
+            source,
+            "confirmed_application_ends",
+            status_id,
+        ) or _application_deadline(combined_text, posted_on)
+        if application_end is not None:
+            application_end_date = (
+                application_end.date()
+                if isinstance(application_end, datetime)
+                else application_end
+            )
+            # Search and profile mirrors can surface an old post for the first
+            # time after its application has already closed.  It is historical
+            # evidence, not a newly opened lottery.
+            if application_end_date < detected:
+                if ocr_pending is not None:
+                    ocr_pending.pop(status_url, None)
+                continue
         ocr_start = None
         if ocr_text and not uses_detection_policy:
             ocr_start = _application_start(ocr_text, posted_on) or _notice_range_start(
@@ -1504,11 +1607,17 @@ def parse_yahoo_realtime(
         if uses_detection_next_day:
             # This opt-in policy is for sources whose images mix deadlines,
             # winner announcements, release dates, and purchase windows.
-            # Ignore every parsed date and use a stable first-detection fallback.
+            # Ignore candidate start dates and use a stable first-detection
+            # fallback, while an exact application deadline still blocks an
+            # already-closed campaign above.
+            if not _detection_fallback_is_fresh(source, config, posted_on, detected):
+                continue
             start_at = detected + timedelta(days=1)
             extraction_method = "yahoo_realtime_detected_next_day"
             confidence = "low"
         elif uses_first_detection:
+            if not _detection_fallback_is_fresh(source, config, posted_on, detected):
+                continue
             start_at = detected
             extraction_method = "yahoo_realtime_detected_open"
             confidence = "low"
@@ -1558,6 +1667,8 @@ def parse_yahoo_realtime(
                 extraction_method = "yahoo_realtime_secondary_announcement_date"
                 confidence = "medium"
             elif not start_at:
+                if not _detection_fallback_is_fresh(source, config, posted_on, detected):
+                    continue
                 start_at = detected
                 extraction_method = "yahoo_realtime_detected_open"
                 confidence = "low"
@@ -1581,11 +1692,7 @@ def parse_yahoo_realtime(
             extraction_method,
             confidence,
             opportunity_kind=opportunity_kind,
-            end_at=_status_datetime_option(
-                source,
-                "confirmed_application_ends",
-                status_id,
-            ),
+            end_at=application_end,
         ).with_id()
         cases[case.case_id] = case
         if ocr_pending is not None:

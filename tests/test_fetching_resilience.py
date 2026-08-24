@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 import httpx
 import pytest
 import yaml
+from freezegun import freeze_time
 
 import tcg_monitor.pipeline as pipeline
 from tcg_monitor.config import ConfigError, load_config
@@ -683,6 +684,7 @@ def test_yahoo_success_skips_twstalker_fallback() -> None:
     assert [call[0] for call in fetcher.calls] == [yahoo_url]
 
 
+@freeze_time("2026-08-16 12:00:00+09:00")
 def test_priority_store_yahoo_empty_result_uses_profile_fallback() -> None:
     config = load_config("sites.yaml")
     source = next(
@@ -1166,6 +1168,7 @@ def test_conditional_get_can_be_disabled() -> None:
     assert cache == {url: {"etag": '"v1"'}}
 
 
+@freeze_time("2026-08-03 12:00:00+09:00")
 def test_yahoo_provisional_case_is_revisited_from_detail_page(tmp_path) -> None:
     base = load_config("sites.yaml")
     source = next(item for item in base.sources if item.id == "yahoo_realtime_geo_official")
