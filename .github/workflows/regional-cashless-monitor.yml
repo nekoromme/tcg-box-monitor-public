@@ -61,6 +61,14 @@ jobs:
         working-directory: app
         run: python -m pytest
 
+      - name: 既存のDiscord・Google Calendar設定を読み取り検証
+        working-directory: app
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
+        run: python scripts/validate_destinations.py
+
       - name: 状態保存ブランチを確認
         id: state-branch
         working-directory: .relay-repo
