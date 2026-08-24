@@ -100,6 +100,7 @@ from tcg_monitor.parsers.retailer_lottery import (
 )
 from tcg_monitor.parsers.snkrdunk import (
     discover_snkrdunk_article_urls,
+    is_snkrdunk_schedule_healthy_without_candidates,
     is_snkrdunk_schedule_page,
     parse_snkrdunk,
 )
@@ -1174,16 +1175,20 @@ def run_pipeline(
                         for item in discovered
                         if item not in visited_urls
                     )
-                    if not discovered:
+                    if not discovered and not is_snkrdunk_schedule_healthy_without_candidates(
+                        html,
+                        source,
+                    ):
                         alerts.append(
                             _alert(
                                 source.id,
                                 source.name,
                                 url,
                                 "discovery_links_missing",
-                                "発売スケジュールから新弾の予約・抽選記事を発見できません",
+                                "発売スケジュールの商品区画または予約・抽選記事リンクを解析できません",
                             )
                         )
+                    if not discovered:
                         completed_page = True
                         metrics.excluded_count += 1
                     continue

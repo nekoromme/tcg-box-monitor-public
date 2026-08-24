@@ -30,37 +30,83 @@ def is_snkrdunk_schedule_page(html: str) -> bool:
     return bool(heading and "発売スケジュール" in heading.get_text(" ", strip=True))
 
 
-def discover_snkrdunk_article_urls(
-    html: str, url: str, source: SourceConfig, limit: int = 3
-) -> list[str]:
-    """Find the newest relevant per-product articles from the evergreen schedule."""
-    soup = BeautifulSoup(html, "lxml")
+def _schedule_article_text_is_relevant(source: SourceConfig, anchor_text: str) -> bool:
     game_terms = (
         ("ポケカ", "ポケモンカード")
         if source.id == "snkrdunk_pokemon"
         else ("ワンピースカード", "ワンピカード")
     )
+    if not any(term in anchor_text for term in game_terms):
+        return False
     excluded = ("スターター", "デッキ", "相場", "当たり")
+    if any(term in anchor_text for term in excluded):
+        return False
+    is_lottery_article = "抽選" in anchor_text and "予約" in anchor_text
+    is_pokemon_resale_article = (
+        source.id == "snkrdunk_pokemon"
+        and "再販はいつ" in anchor_text
+        and "再販入荷情報" in anchor_text
+    )
+    return is_lottery_article or is_pokemon_resale_article
+
+
+def _canonical_snkrdunk_article_url(url: str, href: str) -> str | None:
+    candidate = urljoin(url, href)
+    parsed = urlparse(candidate)
+    if parsed.netloc.casefold().removeprefix("www.") != "snkrdunk.com":
+        return None
+    match = re.fullmatch(r"/articles/(\d+)/?", parsed.path)
+    if not match:
+        return None
+    # The site adds presentation-only parameters such as ?slide=right.  They
+    # must not create a second identity or make a valid article undiscoverable.
+    return f"https://snkrdunk.com/articles/{match.group(1)}/"
+
+
+def discover_snkrdunk_article_urls(
+    html: str, url: str, source: SourceConfig, limit: int = 3
+) -> list[str]:
+    """Find the newest relevant per-product articles from the evergreen schedule."""
+    soup = BeautifulSoup(html, "lxml")
     found: dict[int, str] = {}
     for anchor in soup.find_all("a", href=True):
         anchor_text = anchor.get_text(" ", strip=True)
-        if not any(term in anchor_text for term in game_terms):
+        if not _schedule_article_text_is_relevant(source, anchor_text):
             continue
-        is_lottery_article = "抽選" in anchor_text and "予約" in anchor_text
-        is_pokemon_resale_article = (
-            source.id == "snkrdunk_pokemon"
-            and "再販はいつ" in anchor_text
-            and "再販入荷情報" in anchor_text
-        )
-        if not (is_lottery_article or is_pokemon_resale_article):
+        candidate = _canonical_snkrdunk_article_url(url, str(anchor.get("href")))
+        if candidate is None:
             continue
-        if any(term in anchor_text for term in excluded):
-            continue
-        candidate = urljoin(url, str(anchor.get("href")))
-        match = re.search(r"https://snkrdunk\.com/articles/(\d+)/?$", candidate)
+        match = re.search(r"/articles/(\d+)/$", candidate)
         if match:
             found[int(match.group(1))] = candidate
     return [found[key] for key in sorted(found, reverse=True)[:limit]]
+
+
+def is_snkrdunk_schedule_healthy_without_candidates(
+    html: str,
+    source: SourceConfig,
+) -> bool:
+    """Distinguish an idle schedule from a schedule whose markup became unreadable."""
+
+    soup = BeautifulSoup(html, "lxml")
+    categories = _CATEGORIES[
+        "pokemon_card" if source.id == "snkrdunk_pokemon" else "one_piece_card"
+    ]
+    has_product_section = any(
+        isinstance(heading, Tag)
+        and heading.name in _HEADINGS
+        and any(category in heading.get_text(" ", strip=True) for category in categories)
+        for heading in soup.find_all(_HEADINGS)
+    )
+    if not has_product_section:
+        return False
+
+    # If a reservation/lottery title is visible but its URL cannot be parsed,
+    # that is a real markup change and must remain an alert.
+    return not any(
+        _schedule_article_text_is_relevant(source, anchor.get_text(" ", strip=True))
+        for anchor in soup.find_all("a", href=True)
+    )
 
 
 def _retailer(value: str, source: SourceConfig) -> tuple[str, str] | None:
@@ -483,5 +529,6 @@ def parse_snkrdunk(
 __all__ = [
     "discover_snkrdunk_article_urls",
     "is_snkrdunk_schedule_page",
+    "is_snkrdunk_schedule_healthy_without_candidates",
     "parse_snkrdunk",
 ]
