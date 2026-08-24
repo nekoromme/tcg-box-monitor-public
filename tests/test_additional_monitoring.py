@@ -87,7 +87,7 @@ def test_promoted_sources_are_always_on(source_id: str) -> None:
         }.items()
     ],
 )
-def test_additional_sources_parse_their_official_x_posts(
+def test_reviewed_sources_parse_their_official_x_posts(
     source_id: str,
     account: str,
     retailer_name: str,
