@@ -61,14 +61,6 @@ jobs:
         working-directory: app
         run: python -m pytest
 
-      - name: 既存のDiscord・Google Calendar設定を読み取り検証
-        working-directory: app
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-          GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
-        run: python scripts/validate_destinations.py
-
       - name: 状態保存ブランチを確認
         id: state-branch
         working-directory: .relay-repo
@@ -110,13 +102,17 @@ jobs:
           git commit -m "Initialize regional cashless state"
           git push origin regional-cashless-state
 
+      - name: 既存Discord設定を投稿なしで読み取り検証
+        working-directory: app
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python scripts/validate_destinations.py --discord-only
+
       - name: 4社の公式地域キャンペーンを監視
         working-directory: app
         shell: bash
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-          GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
           MONITOR_USER_AGENT_CONTACT: https://github.com/nekoromme/regional-cashless-monitor
           STATE_FILE: ${{ github.workspace }}/.relay-state/state/state.json
           LOG_DIR: ${{ github.workspace }}/app/logs
