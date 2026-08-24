@@ -103,6 +103,11 @@ from tcg_monitor.parsers.snkrdunk import (
     is_snkrdunk_schedule_page,
     parse_snkrdunk,
 )
+from tcg_monitor.parsers.tsutaya_line import (
+    is_tsutaya_line_form_url,
+    parse_tsutaya_line_form,
+    tsutaya_line_form_urls,
+)
 from tcg_monitor.parsers.yugioh_official import parse_yugioh_official_products
 from tcg_monitor.source_priority import merge_lotteries, merge_releases
 from tcg_monitor.state import MonitorState
@@ -703,6 +708,7 @@ def run_pipeline(
         repair_urls: list[str] = []
         primary_roots: list[str] = []
         is_yahoo_source = is_yahoo_realtime_source(source)
+        always_fetch_roots = list(tsutaya_line_form_urls(source))
         if monitor_state is not None and is_yahoo_source:
             repair_urls = yahoo_repair_discovery_urls(
                 source,
@@ -723,10 +729,11 @@ def run_pipeline(
                 url
                 for url in configured_root_urls
                 if provider_host(url) != primary_host
+                and url not in always_fetch_roots
             ]
             discovery_urls = [
                 (url, True)
-                for url in [*primary_roots, *repair_urls]
+                for url in [*primary_roots, *repair_urls, *always_fetch_roots]
                 if url not in remaining_roots
             ]
         else:
@@ -745,9 +752,12 @@ def run_pipeline(
         # 設定済みのroot URLだけが次の予備URLを起動できる。自己修復URLの
         # 一時失敗でTwstalkerへ切り替わると、Yahoo正常時省略の意味がなくなる。
         fallback_trigger_urls = (
-            set(configured_root_urls) if not uses_parallel_discovery_paths else set()
+            set(configured_root_urls) - set(always_fetch_roots)
+            if not uses_parallel_discovery_paths
+            else set()
         )
-        supplemental_urls = set(repair_urls)
+        required_supplemental_urls = set(always_fetch_roots)
+        supplemental_urls = set(repair_urls) | required_supplemental_urls
         visited_urls: set[str] = set()
         completed_page = False
         last_failure_alert: Alert | None = None
@@ -826,9 +836,11 @@ def run_pipeline(
                         alerts.append(
                             _host_circuit_alert(problem)
                         )
+                elif url in required_supplemental_urls:
+                    alerts.append(_problem_alert(source, problem))
                 else:
                     last_failure_alert = _problem_alert(source, problem)
-                if is_root:
+                if is_root and url not in required_supplemental_urls:
                     enqueue_fallback_after_root_failure(url)
                 continue
             except Exception as exc:
@@ -838,14 +850,18 @@ def run_pipeline(
                     fetch_method="unknown",
                 )
                 metrics.failed(unexpected_problem)
-                last_failure_alert = _alert(
+                unexpected_alert = _alert(
                     source.id,
                     source.name,
                     url,
                     "fetch_exception",
                     f"取得処理の想定外例外: {type(exc).__name__}: {str(exc)[:180]}",
                 )
-                if is_root:
+                if url in required_supplemental_urls:
+                    alerts.append(unexpected_alert)
+                else:
+                    last_failure_alert = unexpected_alert
+                if is_root and url not in required_supplemental_urls:
                     enqueue_fallback_after_root_failure(url)
                 continue
 
@@ -1174,7 +1190,11 @@ def run_pipeline(
 
                 parser = _parser_for(source)
                 primary_without_candidates_requires_fallback = False
-                if is_yahoo_realtime_source(source):
+                if is_tsutaya_line_form_url(source, url):
+                    parsed_cases, parsed_releases, parsed_alerts = (
+                        parse_tsutaya_line_form(html, url, source, config)
+                    )
+                elif is_yahoo_realtime_source(source):
                     if (
                         url in primary_roots
                         and not yahoo_realtime_page_loaded(html, source)
@@ -1306,7 +1326,9 @@ def run_pipeline(
                     f"Parser例外: {type(exc).__name__}: {str(exc)[:180]}",
                     result.status_code,
                 )
-                if is_root:
+                if url in required_supplemental_urls:
+                    alerts.append(failure_alert)
+                elif is_root:
                     last_failure_alert = failure_alert
                     enqueue_fallback_after_root_failure(url)
                 else:

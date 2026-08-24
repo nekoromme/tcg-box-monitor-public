@@ -122,10 +122,10 @@ class MonitorState:
         if decoded.get("schema_version") != SCHEMA_VERSION:
             raise ValueError("monitor_state schema_versionが不正です")
 
-    def save(self) -> None:
+    def save(self, now: datetime | None = None) -> None:
         """Atomically replace the state only after a complete JSON round-trip."""
 
-        self.prune()
+        self.prune(now)
         serialized = json.dumps(
             self.data,
             ensure_ascii=False,

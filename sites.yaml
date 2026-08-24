@@ -3263,17 +3263,29 @@ sources:
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Atsutayaichi0412%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://twstalker.com/tsutayaichi0412
+  - https://forms.cloud.microsoft/formapi/api/f3b1cae3-b69a-4f4e-8a60-7ba2714fec4f/users/b459d036-98cf-4b78-86c3-9ab4b55edd66/light/runtimeForms('48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u')?$expand=questions($expand=choices)
   render_mode: http
   poll_minutes: 120
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: 本文で商品名または受付開始日が不足する新規画像投稿だけOCRする。
+  notes: 店舗Xを従来どおり監視しつつ、TSUTAYAトレーディングカード公式LINEの共通応募フォームも常時確認する。フォームの店舗選択肢から一関店・築館店を直接判定する。
   parser_kind: yahoo_realtime
   parser_options:
     account: tsutayaichi0412
     retailer_id: tsutaya_ichinoseki_store
     retailer_name: TSUTAYA一関店
+    always_fetch_urls:
+    - https://forms.cloud.microsoft/formapi/api/f3b1cae3-b69a-4f4e-8a60-7ba2714fec4f/users/b459d036-98cf-4b78-86c3-9ab4b55edd66/light/runtimeForms('48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u')?$expand=questions($expand=choices)
+    tsutaya_line_public_form_url: https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u
+    tsutaya_line_application_url: https://liff.line.me/2009900117-pkXJEOv2?providerId=2005096400&accountId=060worwe&liffId=2009900117-pkXJEOv2&walletType=lineAppBrowserWallet&myAppVer=v2&distType=beta&campaign=line-enquete-redirector-full&formUrl=https%3A%2F%2Fforms.cloud.microsoft%2FPages%2FResponsePage.aspx%3Fid%3D48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u&r7a5ad22f971948de9dedf9b99004dd9c=WALLET_ADDRESS&r1c9415bf4a574191b3affb15451f0a57=LINE_UID
+    tsutaya_line_store_targets:
+    - retailer_id: tsutaya_ichinoseki_store
+      retailer_name: TSUTAYA一関店
+      match: TSUTAYA 一関店
+    - retailer_id: tsutaya_tsukidate
+      retailer_name: TSUTAYA築館店
+      match: TSUTAYA 築館店
 - id: yahoo_realtime_torecano_mizusawa
   name: トレカノ奥州水沢店 Yahooリアルタイム検索
   source_type: retailer_official_social_search

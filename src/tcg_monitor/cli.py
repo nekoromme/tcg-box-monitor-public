@@ -817,7 +817,9 @@ def _deliver_alerts(
         )
         for fingerprint, _ in pending_notifications:
             records[fingerprint]["last_notified_at"] = detected_at.isoformat()
-    state.save()
+    # Alert timestamps may be supplied by a replay or deterministic test run.
+    # Use the same clock for retention instead of pruning against wall time.
+    state.save(detected_at)
 
 
 def main(argv: list[str] | None = None) -> int:

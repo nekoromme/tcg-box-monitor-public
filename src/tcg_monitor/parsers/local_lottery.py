@@ -1602,6 +1602,7 @@ def preserve_first_detection_start(
         "yahoo_realtime_detected_next_day",
         "yahoo_realtime_amazon_invitation_seen",
         "yahoo_realtime_official_sale_seen",
+        "tsutaya_line_official_form_first_seen",
         "snkrdunk_open_invitation_seen",
         "takaratomy_mall_first_seen_available",
     }
