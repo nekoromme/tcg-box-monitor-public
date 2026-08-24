@@ -21,7 +21,7 @@
 
 作品ごとのON/OFFは`GAME_MONITOR_MODES.txt`で切り替えます。OFFの作品しか扱わない監視先は、ページ取得前に除外します。
 
-追加監視グループは`sites.yaml`の`system.runtime.additional_monitoring_enabled`で切り替えます。通常は`false`で、機能と対象設定はそのまま保持されます。
+`EXPEDITION_MODE.txt`は、当選時に1回来店すればよい遠征先の一括スイッチです。ルート直下にある最終行を`EXPEDITION_MODE=OFF`から`EXPEDITION_MODE=ON`へ変えると、通常監視へ遠征先7件を追加します。`OFF`中は対象ページへの通信、画像読み取り、監視状態処理を行いません。TCバトロコ盛岡大通は通常監視のため、このスイッチには含まれません。
 
 ## GitHub Actions Secrets
 
@@ -72,4 +72,4 @@ tcg-monitor --state monitor_state.json summary
 - `tcg-monitor status`: 状態JSONを表示
 - `tcg-monitor summary`: Actions用の監視結果を生成
 
-共通オプションとして`--source SOURCE_ID`、`--game GAME_ID`、`--fixture-dir tests/fixtures`、`--config sites.yaml`、`--state monitor_state.json`が使えます。
+共通オプションとして`--source SOURCE_ID`、`--game GAME_ID`、`--fixture-dir tests/fixtures`、`--config sites.yaml`、`--state monitor_state.json`、`--game-switch GAME_MONITOR_MODES.txt`、`--expedition-switch EXPEDITION_MODE.txt`が使えます。
