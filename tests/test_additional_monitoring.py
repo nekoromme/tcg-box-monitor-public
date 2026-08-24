@@ -14,7 +14,7 @@ from tcg_monitor.source_groups import (
     active_source_filter,
 )
 
-ADDITIONAL_SOURCES = {
+PROMOTED_ALWAYS_ON_SOURCES = {
     "yahoo_realtime_batoloco_sendai": (
         "batoloco_SND",
         "TCバトロコ仙台駅東口",
@@ -23,6 +23,9 @@ ADDITIONAL_SOURCES = {
         "tcgpit_sendai",
         "トレーディングカードピット仙台駅東口店",
     ),
+}
+
+ADDITIONAL_SOURCES = {
     "yahoo_realtime_santy_sendai": (
         "santycrissroad",
         "santy仙台クリスロード店",
@@ -59,9 +62,16 @@ def test_exactly_the_reviewed_one_visit_sources_are_in_additional_group() -> Non
     assert all(source.required_store_visits == 1 for source in additional_sources.values())
 
 
-def test_morioka_batoloco_is_always_on() -> None:
+@pytest.mark.parametrize(
+    "source_id",
+    [
+        "yahoo_realtime_batoloco_morioka",
+        *PROMOTED_ALWAYS_ON_SOURCES,
+    ],
+)
+def test_promoted_sources_are_always_on(source_id: str) -> None:
     config = load_config("sites.yaml")
-    source = next(item for item in config.sources if item.id == "yahoo_realtime_batoloco_morioka")
+    source = next(item for item in config.sources if item.id == source_id)
 
     assert source.activation_group == ALWAYS_ON_GROUP
     assert source.enabled is True
@@ -71,7 +81,10 @@ def test_morioka_batoloco_is_always_on() -> None:
     ("source_id", "account", "retailer_name"),
     [
         (source_id, account, retailer_name)
-        for source_id, (account, retailer_name) in ADDITIONAL_SOURCES.items()
+        for source_id, (account, retailer_name) in {
+            **PROMOTED_ALWAYS_ON_SOURCES,
+            **ADDITIONAL_SOURCES,
+        }.items()
     ],
 )
 def test_additional_sources_parse_their_official_x_posts(
@@ -181,9 +194,9 @@ def test_config_rejects_additional_sources_that_are_not_web_and_one_visit(
     new: str,
 ) -> None:
     original = Path("sites.yaml").read_text(encoding="utf-8")
-    marker = "- id: yahoo_realtime_batoloco_sendai"
+    marker = "- id: yahoo_realtime_santy_sendai"
     start = original.index(marker)
-    end = original.find("\n  - id:", start + len(marker))
+    end = original.find("\n- id:", start + len(marker))
     block = original[start:] if end == -1 else original[start:end]
     assert old in block
     invalid_block = block.replace(old, new, 1)
