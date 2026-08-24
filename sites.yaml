@@ -33,6 +33,13 @@ system:
         start_at: '2026-08-12'
         source_url: https://x.com/PokeGetInfoMain/status/2087464419907572128
         event_id: tcg2193158b6acc1392576fb442a616c9d5ad04ed7287fdc27e8e4883e9e43d4
+      8b25b66aef435e6157c10608faf46ebc1b266f92689351ddbedf0b8343f9f11f:
+        retailer_id: tsutaya_tsukidate
+        retailer_name: TSUTAYA築館店
+        product_name: 「拡張パック 30th CELEBRATION」
+        start_at: '2026-08-24'
+        source_url: https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u
+        event_id: tcgb81dd5f387119d908068894205d1f3249f7b90692663b5a61cebcc4b171a5
     confirmed_false_positive_releases:
       ec5c020af436d8a7cd994917b711a1094f837829544aea5bb12241fc7aa400c0:
         game_id: pokemon_card
@@ -3279,12 +3286,12 @@ sources:
     - https://forms.cloud.microsoft/formapi/api/f3b1cae3-b69a-4f4e-8a60-7ba2714fec4f/users/b459d036-98cf-4b78-86c3-9ab4b55edd66/light/runtimeForms('48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u')?$expand=questions($expand=choices)
     tsutaya_line_public_form_url: https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u
     tsutaya_line_application_url: https://liff.line.me/2009900117-pkXJEOv2?providerId=2005096400&accountId=060worwe&liffId=2009900117-pkXJEOv2&walletType=lineAppBrowserWallet&myAppVer=v2&distType=beta&campaign=line-enquete-redirector-full&formUrl=https%3A%2F%2Fforms.cloud.microsoft%2FPages%2FResponsePage.aspx%3Fid%3D48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u&r7a5ad22f971948de9dedf9b99004dd9c=WALLET_ADDRESS&r1c9415bf4a574191b3affb15451f0a57=LINE_UID
+    tsutaya_line_group_retailer_id: tsutaya_ichinoseki_store
+    tsutaya_line_group_retailer_name: TSUTAYA公式LINE抽選
     tsutaya_line_store_targets:
-    - retailer_id: tsutaya_ichinoseki_store
-      retailer_name: TSUTAYA一関店
+    - label: 一関店
       match: TSUTAYA 一関店
-    - retailer_id: tsutaya_tsukidate
-      retailer_name: TSUTAYA築館店
+    - label: 築館店
       match: TSUTAYA 築館店
 - id: yahoo_realtime_torecano_mizusawa
   name: トレカノ奥州水沢店 Yahooリアルタイム検索

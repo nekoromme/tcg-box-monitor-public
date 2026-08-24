@@ -53,20 +53,31 @@ def _question_choices(raw_question: object) -> list[str]:
     ]
 
 
-def _configured_store_targets(source: SourceConfig) -> list[tuple[str, str, str]]:
+def _configured_store_targets(source: SourceConfig) -> list[tuple[str, str]]:
     source = source_with_runtime_parser_profile(source)
     raw = source.parser_options.get("tsutaya_line_store_targets")
     if not isinstance(raw, list) or not raw:
         raise ValueError(f"bad parser option tsutaya_line_store_targets: {source.id}")
-    targets: list[tuple[str, str, str]] = []
+    targets: list[tuple[str, str]] = []
     for item in raw:
         if not isinstance(item, dict):
             raise ValueError(f"bad TSUTAYA LINE store target: {source.id}")
-        values = tuple(item.get(key) for key in ("retailer_id", "retailer_name", "match"))
+        values = tuple(item.get(key) for key in ("label", "match"))
         if not all(isinstance(value, str) and value for value in values):
             raise ValueError(f"bad TSUTAYA LINE store target: {source.id}")
-        targets.append((str(values[0]), str(values[1]), str(values[2])))
+        targets.append((str(values[0]), str(values[1])))
     return targets
+
+
+def _group_retailer(source: SourceConfig, matched_labels: list[str]) -> tuple[str, str]:
+    source = source_with_runtime_parser_profile(source)
+    retailer_id = source.parser_options.get("tsutaya_line_group_retailer_id")
+    retailer_name = source.parser_options.get("tsutaya_line_group_retailer_name")
+    if not isinstance(retailer_id, str) or not retailer_id:
+        raise ValueError(f"bad parser option tsutaya_line_group_retailer_id: {source.id}")
+    if not isinstance(retailer_name, str) or not retailer_name:
+        raise ValueError(f"bad parser option tsutaya_line_group_retailer_name: {source.id}")
+    return retailer_id, f"{retailer_name}（対象: {'・'.join(matched_labels)}）"
 
 
 def _compact(value: str) -> str:
@@ -139,13 +150,14 @@ def parse_tsutaya_line_form(
         raise ValueError("TSUTAYA LINE form product choices are missing")
 
     compact_choices = {_compact(choice) for choice in all_choices}
-    matched_stores = [
-        (retailer_id, retailer_name)
-        for retailer_id, retailer_name, store_match in _configured_store_targets(source)
+    matched_store_labels = [
+        label
+        for label, store_match in _configured_store_targets(source)
         if any(_compact(store_match) in choice for choice in compact_choices)
     ]
-    if not matched_stores:
+    if not matched_store_labels:
         return [], [], []
+    retailer_id, retailer_name = _group_retailer(source, matched_store_labels)
 
     context = f"{title}\n{description}"
     detected = detected_on or datetime.now(ZoneInfo(config.timezone)).date()
@@ -176,23 +188,22 @@ def parse_tsutaya_line_form(
             )
             if not classified.is_box:
                 continue
-            for retailer_id, retailer_name in matched_stores:
-                case = LotteryCase(
-                    game_id,
-                    retailer_id,
-                    retailer_name,
-                    classified.product_name,
-                    classified.product_category,
-                    classified.canonical_product_key,
-                    detected,
-                    campaign_url,
-                    public_form_url,
-                    SourceTier.OFFICIAL,
-                    "tsutaya_line_official_form_first_seen",
-                    "medium",
-                    end_at=end_at,
-                ).with_id()
-                cases[case.case_id] = case
+            case = LotteryCase(
+                game_id,
+                retailer_id,
+                retailer_name,
+                classified.product_name,
+                classified.product_category,
+                classified.canonical_product_key,
+                detected,
+                campaign_url,
+                public_form_url,
+                SourceTier.OFFICIAL,
+                "tsutaya_line_official_form_first_seen",
+                "medium",
+                end_at=end_at,
+            ).with_id()
+            cases[case.case_id] = case
     return list(cases.values()), [], []
 
 

@@ -20,7 +20,18 @@ def _source():  # type: ignore[no-untyped-def]
     )
 
 
-def _form_payload(*, closed: bool = False) -> str:
+def _form_payload(
+    *,
+    closed: bool = False,
+    include_ichinoseki: bool = True,
+    include_tsukidate: bool = True,
+) -> str:
+    iwate_choices = (
+        [{"Description": "0412_TSUTAYA 一関店"}] if include_ichinoseki else []
+    )
+    miyagi_choices = [{"Description": "0611_TSUTAYA 古川バイパス店"}]
+    if include_tsukidate:
+        miyagi_choices.append({"Description": "0616_TSUTAYA 築館店"})
     questions = [
         {
             "title": "希望商品を選択してください（複数選択可）",
@@ -42,7 +53,7 @@ def _form_payload(*, closed: bool = False) -> str:
         {
             "title": "希望店舗を選択してください（岩手県）",
             "questionInfo": json.dumps(
-                {"Choices": [{"Description": "0412_TSUTAYA 一関店"}]},
+                {"Choices": iwate_choices},
                 ensure_ascii=False,
             ),
         },
@@ -50,10 +61,7 @@ def _form_payload(*, closed: bool = False) -> str:
             "title": "希望店舗を選択してください（宮城県）",
             "questionInfo": json.dumps(
                 {
-                    "Choices": [
-                        {"Description": "0611_TSUTAYA 古川バイパス店"},
-                        {"Description": "0616_TSUTAYA 築館店"},
-                    ]
+                    "Choices": miyagi_choices
                 },
                 ensure_ascii=False,
             ),
@@ -80,7 +88,7 @@ def _form_payload(*, closed: bool = False) -> str:
     )
 
 
-def test_official_line_form_emits_each_target_store_without_deck_set() -> None:
+def test_official_line_form_groups_both_target_stores_without_deck_set() -> None:
     config = load_config("sites.yaml")
     source = _source()
     api_url = source.parser_options["always_fetch_urls"][0]
@@ -91,10 +99,14 @@ def test_official_line_form_emits_each_target_store_without_deck_set() -> None:
 
     assert not releases
     assert not alerts
-    assert {case.retailer_id for case in cases} == {
-        "tsutaya_ichinoseki_store",
-        "tsutaya_tsukidate",
-    }
+    assert len(cases) == 1
+    assert cases[0].retailer_id == "tsutaya_ichinoseki_store"
+    assert cases[0].retailer_name == "TSUTAYA公式LINE抽選（対象: 一関店・築館店）"
+    # Keep the already-delivered Ichinoseki identity so grouping cannot notify again.
+    assert (
+        cases[0].case_id
+        == "a18503c74ab3735444f09ceff5e412d112169f328ad77a17853dd2c94bb3e371"
+    )
     assert {case.product_name for case in cases} == {
         "「拡張パック 30th CELEBRATION」"
     }
@@ -107,6 +119,46 @@ def test_official_line_form_emits_each_target_store_without_deck_set() -> None:
     )
     assert all(case.official_url.startswith("https://liff.line.me/") for case in cases)
     assert all("tcg_campaign=2026-09" in case.official_url for case in cases)
+
+
+def test_official_line_form_emits_one_group_case_when_either_store_is_present() -> None:
+    config = load_config("sites.yaml")
+    source = _source()
+    api_url = source.parser_options["always_fetch_urls"][0]
+
+    for include_ichinoseki, include_tsukidate, expected_label in (
+        (True, False, "一関店"),
+        (False, True, "築館店"),
+    ):
+        cases, releases, alerts = parse_tsutaya_line_form(
+            _form_payload(
+                include_ichinoseki=include_ichinoseki,
+                include_tsukidate=include_tsukidate,
+            ),
+            api_url,
+            source,
+            config,
+            date(2026, 8, 24),
+        )
+
+        assert len(cases) == 1
+        assert cases[0].retailer_id == "tsutaya_ichinoseki_store"
+        assert cases[0].retailer_name == (
+            f"TSUTAYA公式LINE抽選（対象: {expected_label}）"
+        )
+        assert not releases
+        assert not alerts
+
+    cases, releases, alerts = parse_tsutaya_line_form(
+        _form_payload(include_ichinoseki=False, include_tsukidate=False),
+        api_url,
+        source,
+        config,
+        date(2026, 8, 24),
+    )
+    assert not cases
+    assert not releases
+    assert not alerts
 
 
 def test_closed_official_line_form_is_healthy_and_emits_nothing() -> None:
@@ -171,7 +223,7 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
 
     assert fetcher.calls == [yahoo_url, api_url]
     assert twstalker_url not in fetcher.calls
-    assert len(cases) == 2
+    assert len(cases) == 1
     assert not releases
     assert not alerts
 
