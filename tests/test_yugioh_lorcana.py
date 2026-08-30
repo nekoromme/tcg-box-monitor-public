@@ -95,7 +95,7 @@ def test_lorcana_catalog_follows_only_booster_details() -> None:
     assert "ヴァインズ・アタック" in releases[0].product_name
 
 
-def test_shared_lottery_parser_recognizes_both_new_games() -> None:
+def test_shared_lottery_parser_recognizes_yugioh_and_lorcana() -> None:
     config, source = _source("livepocket_hobby_station")
     start = datetime(2026, 8, 20, 10, 0, tzinfo=ZoneInfo("Asia/Tokyo"))
     samples = (

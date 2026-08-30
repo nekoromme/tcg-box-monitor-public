@@ -39,6 +39,11 @@ _GAME_WORDS = {
         "LORCANA",
         "ロルカナ",
     ),
+    "gundam_card": (
+        "ガンダムカードゲーム",
+        "ガンダムカード",
+        "GUNDAM CARD GAME",
+    ),
 }
 
 _BOX_CATEGORIES = {
@@ -71,6 +76,11 @@ _BOX_CATEGORIES = {
         "ブースターパック",
     ),
     "lorcana": ("ブースターパック",),
+    "gundam_card": (
+        "エクストラブースターパック",
+        "エクストラブースター",
+        "ブースターパック",
+    ),
 }
 
 _DEFAULT_START_LABELS = (

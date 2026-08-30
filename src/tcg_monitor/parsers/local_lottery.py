@@ -267,6 +267,13 @@ def _game_id(text: str) -> str | None:
     )
     if any(word in folded for word in lorcana_words):
         return "lorcana"
+    gundam_words = (
+        "ガンダムカードゲーム",
+        "ガンダムカード",
+        "gundamcardgame",
+    )
+    if any(word in folded for word in gundam_words):
+        return "gundam_card"
     return None
 
 
@@ -367,6 +374,11 @@ _BOX_CATEGORIES = {
         "ブースターパック",
     ),
     "lorcana": ("ブースターパック",),
+    "gundam_card": (
+        "エクストラブースターパック",
+        "エクストラブースター",
+        "ブースターパック",
+    ),
 }
 
 
@@ -384,12 +396,24 @@ def _box_products(text: str, game_id: str, config: Config) -> list[tuple[str, st
         category = match.group("category")
         title_text = match.group("title").strip()
         product_name = f"{category}「{title_text}」"
+        trailing = text[match.end() : match.end() + 32]
+        product_code = next(
+            (
+                code_match.group("code").upper()
+                for pattern in game.product_code_patterns
+                if (code_match := re.search(pattern, trailing, re.I))
+            ),
+            "",
+        )
+        if product_code:
+            product_name += f" [{product_code}]"
         key = canonical_product_key(game, product_name)
         found[key] = (product_name, category, key)
 
     code_families = {
         "one_piece_card": r"(?:OP|EB|PRB)-\d{2}",
         "dragon_ball_fusion_world": r"(?:FB|SB|ST)\d{2}",
+        "gundam_card": r"(?:GD|EB)\d{2}",
     }
     if code_family := code_families.get(game_id):
         code_pattern = re.compile(
@@ -402,7 +426,7 @@ def _box_products(text: str, game_id: str, config: Config) -> list[tuple[str, st
             title_text = match.group("title").strip(" 　・:：")
             code = match.group("code").upper()
             product_name = f"{category}「{title_text}」[{code}]"
-            found[code] = (product_name, category, code)
+            found.setdefault(code, (product_name, category, code))
 
     # 単一商品のページで引用符がない場合だけ、既存の厳格な分類を使う。
     if not found:
@@ -996,6 +1020,11 @@ def _product_from_tweet(container: Tag, text: str, game_id: str) -> tuple[str, s
             "ブースターパック",
         ),
         "lorcana": ("ブースターパック",),
+        "gundam_card": (
+            "エクストラブースターパック",
+            "エクストラブースター",
+            "ブースターパック",
+        ),
     }
     categories = category_map[game_id]
     # Yahooの強調タグ境界では「抽選 販売」のように語中へ表示用空白が
@@ -1007,6 +1036,7 @@ def _product_from_tweet(container: Tag, text: str, game_id: str) -> tuple[str, s
     code_patterns = {
         "one_piece_card": r"\b(?:OP|EB|PRB)-\d{2}\b",
         "dragon_ball_fusion_world": r"\b(?:FB|SB|ST)\d{2}\b",
+        "gundam_card": r"\b(?:GD|EB)\d{2}\b",
     }
     product_code = (
         re.search(code_pattern, matching_text, re.I)

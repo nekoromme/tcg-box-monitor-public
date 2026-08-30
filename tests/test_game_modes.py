@@ -22,7 +22,8 @@ def test_game_switch_requires_one_explicit_value_per_game(tmp_path: Path) -> Non
         "one_piece_card=OFF\n"
         "dragon_ball_fusion_world=ON\n"
         "yu_gi_oh=OFF\n"
-        "lorcana=ON  # 有効\n",
+        "lorcana=ON  # 有効\n"
+        "gundam_card=ON\n",
         encoding="utf-8",
     )
 
@@ -33,6 +34,7 @@ def test_game_switch_requires_one_explicit_value_per_game(tmp_path: Path) -> Non
             "dragon_ball_fusion_world",
             "yu_gi_oh",
             "lorcana",
+            "gundam_card",
         },
         switch,
     )
@@ -40,6 +42,7 @@ def test_game_switch_requires_one_explicit_value_per_game(tmp_path: Path) -> Non
         "pokemon_card",
         "dragon_ball_fusion_world",
         "lorcana",
+        "gundam_card",
     }
 
 

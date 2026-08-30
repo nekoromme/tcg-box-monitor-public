@@ -52,6 +52,7 @@ from tcg_monitor.parsers.generic import (
     parse_generic,
     parse_onepiece_topics,
 )
+from tcg_monitor.parsers.gundam_official import parse_gundam_official_products
 from tcg_monitor.parsers.local_lottery import (
     discover_livepocket_event_urls,
     is_livepocket_search_page,
@@ -259,6 +260,8 @@ def _parser_for(source: SourceConfig):  # type: ignore[no-untyped-def]
         return parse_yugioh_official_products
     if source_id == "lorcana_official_products":
         return parse_lorcana_official_product
+    if source_id == "gundam_official_products":
+        return parse_gundam_official_products
     if is_official_retailer_source(source_id):
         return parse_official_retailer_detail
     if source_id in {"onepiece_official_topics", "premium_bandai_onepiece"}:
