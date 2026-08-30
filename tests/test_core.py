@@ -20,7 +20,7 @@ def test_config():
     assert sanuma.lottery_start_policy == LotteryStartPolicy.FIRST_DETECTION_NEXT_DAY
 
 
-def test_monitoring_policy_uses_one_interval_and_all_five_games() -> None:
+def test_monitoring_policy_uses_one_interval_and_all_six_games() -> None:
     config = load_config("sites.yaml")
     required_games = {
         "pokemon_card",
@@ -28,6 +28,7 @@ def test_monitoring_policy_uses_one_interval_and_all_five_games() -> None:
         "dragon_ball_fusion_world",
         "lorcana",
         "yu_gi_oh",
+        "gundam_card",
     }
     uniform_minutes = config.system["uniform_source_poll_minutes"]
 

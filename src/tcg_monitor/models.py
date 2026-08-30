@@ -45,6 +45,7 @@ class GameId(StrEnum):
     DRAGON_BALL = "dragon_ball_fusion_world"
     YU_GI_OH = "yu_gi_oh"
     LORCANA = "lorcana"
+    GUNDAM = "gundam_card"
 
 
 class EventKind(StrEnum):

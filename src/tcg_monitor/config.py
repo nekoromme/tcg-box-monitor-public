@@ -126,10 +126,12 @@ _ALLOWED_ACTIVATION_GROUPS = {
     ADDITIONAL_GROUP,
 }
 
-_GENERAL_FIVE_GAMES_SCOPE = "general_five_games"
+# Keep the historical serialized value for runtime-overlay compatibility.  The
+# required title set is configuration-driven and is no longer fixed at five.
+_GENERAL_RETAILER_SCOPE = "general_five_games"
 _SPECIALIZED_COVERAGE_SCOPE = "specialized"
 _ALLOWED_COVERAGE_SCOPES = {
-    _GENERAL_FIVE_GAMES_SCOPE,
+    _GENERAL_RETAILER_SCOPE,
     _SPECIALIZED_COVERAGE_SCOPE,
 }
 _PARSE_ENABLED_GAME_SUPPORTS = {
@@ -329,10 +331,10 @@ def load_config(
                     f"bad supported_games status: {s['id']}:{game_id}={raw_status}; "
                     f"allowed={allowed}"
                 ) from exc
-        coverage_scope = str(s.get("coverage_scope", _GENERAL_FIVE_GAMES_SCOPE))
+        coverage_scope = str(s.get("coverage_scope", _GENERAL_RETAILER_SCOPE))
         if coverage_scope not in _ALLOWED_COVERAGE_SCOPES:
             raise ConfigError(f"bad coverage_scope: {s['id']}={coverage_scope}")
-        if coverage_scope == _GENERAL_FIVE_GAMES_SCOPE:
+        if coverage_scope == _GENERAL_RETAILER_SCOPE:
             missing_required_games = [
                 game_id
                 for game_id in required_general_game_ids
