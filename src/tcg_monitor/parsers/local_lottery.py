@@ -1,3 +1,4 @@
+All checks passed!
 from __future__ import annotations
 
 import json
@@ -1017,7 +1018,7 @@ def _social_status_containers(
     url: str,
     account: str,
 ) -> list[tuple[str, Tag]]:
-    """Return status URLs and their result containers from HTML or Bing RSS."""
+    """Return official status containers from Yahoo, mirrors, or Bing RSS."""
 
     parts = urlsplit(url)
     is_rss = (
