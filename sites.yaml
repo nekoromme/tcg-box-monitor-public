@@ -2507,6 +2507,9 @@ sources:
   purposes:
   - lottery_discovery
   enabled: true
+  activation_group: expedition_tokyo_route
+  application_method: web
+  required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Ahareruya2pokeca%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://twstalker.com/hareruya2pokeca
@@ -2515,7 +2518,7 @@ sources:
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: 現状はポケカ専門店だが、将来対象タイトルが増えた場合も同じBOX判定へ渡す。
+  notes: 系列同時抽選は1人1店舗だけなので、東京道中では駅前の郡山店を選ぶ。現状はポケカ専門店だが、将来対象タイトルが増えた場合も同じBOX判定へ渡す。
   parser_kind: yahoo_realtime
   parser_options:
     account: hareruya2pokeca
@@ -3945,7 +3948,7 @@ sources:
   purposes:
   - lottery_discovery
   enabled: true
-  activation_group: additional
+  activation_group: expedition_sendai
   application_method: web
   required_store_visits: 1
   discovery_urls:
@@ -3976,7 +3979,7 @@ sources:
   purposes:
   - lottery_discovery
   enabled: true
-  activation_group: additional
+  activation_group: expedition_sendai
   application_method: web
   required_store_visits: 1
   discovery_urls:
@@ -4007,7 +4010,7 @@ sources:
   purposes:
   - lottery_discovery
   enabled: true
-  activation_group: additional
+  activation_group: expedition_sendai
   application_method: web
   required_store_visits: 1
   discovery_urls:
@@ -4038,7 +4041,7 @@ sources:
   purposes:
   - lottery_discovery
   enabled: true
-  activation_group: additional
+  activation_group: expedition_sendai
   application_method: web
   required_store_visits: 1
   discovery_urls:
@@ -4069,7 +4072,7 @@ sources:
   purposes:
   - lottery_discovery
   enabled: true
-  activation_group: additional
+  activation_group: expedition_sendai
   application_method: web
   required_store_visits: 1
   discovery_urls:
@@ -4086,3 +4089,629 @@ sources:
     account: KingOfToyss
     retailer_id: omocha_no_ousama
     retailer_name: おもちゃの王様
+- id: yahoo_realtime_batoloco_fukushima
+  name: TCバトロコ福島駅前公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo_route
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_fuku%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/batoloco_fuku
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 福島駅前。Webフォーム応募後、当選時の購入1回だけ。応募にはバトロコ会員カード番号が必要。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: batoloco_fuku
+    retailer_id: batoloco_fukushima
+    retailer_name: TCバトロコ福島駅前
+- id: yahoo_realtime_batoloco_oyama
+  name: TCバトロコ小山駅前公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo_route
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_oyama%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/batoloco_oyama
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 小山駅西口。Webフォーム応募後、当選時の購入1回だけ。応募にはバトロコ会員カード番号が必要。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: batoloco_oyama
+    retailer_id: batoloco_oyama
+    retailer_name: TCバトロコ小山駅前
+- id: yahoo_realtime_pao_omiya
+  name: カードショップ竜星のPAO大宮店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo_route
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APAOtoreka_omiya%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/PAOtoreka_omiya
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 大宮駅東口。公開されたWebフォームまたはLivePocketで応募し、当選時の購入1回だけの回を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: PAOtoreka_omiya
+    retailer_id: pao_omiya
+    retailer_name: カードショップ竜星のPAO大宮店
+- id: yahoo_realtime_cardwings_akihabara_pokemon
+  name: CARD WINGS秋葉原駅前店ポケモンカード公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  coverage_scope: specialized
+  supported_games:
+    pokemon_card: verified
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ACARDWINGS_POKE%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/CARDWINGS_POKE
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 秋葉原駅前。公開LivePocketで応募し、当選時の購入1回だけの回を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: CARDWINGS_POKE
+    retailer_id: cardwings_akihabara
+    retailer_name: CARD WINGS秋葉原駅前店
+- id: yahoo_realtime_dragonstar_akihabara_ekimae
+  name: ドラゴンスター秋葉原駅前店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ads_akiba_ekimae%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/ds_akiba_ekimae
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 秋葉原駅徒歩0分。ドラゴンスター公式アプリから応募し、当選時の購入1回だけの販売抽選を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: ds_akiba_ekimae
+    retailer_id: dragonstar_akihabara_ekimae
+    retailer_name: ドラゴンスター秋葉原駅前店
+- id: yahoo_realtime_bigmagic_akihabara
+  name: BIG MAGIC秋葉原店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: prospective
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abigmagicakb%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/bigmagicakb
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 秋葉原駅前。公開LivePocketで応募できる回だけを対象とし、店頭掲示QRだけの回は共通除外処理で通知しない。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: bigmagicakb
+    retailer_id: bigmagic_akihabara
+    retailer_name: BIG MAGIC秋葉原店
+- id: yahoo_realtime_fukufuku_akihabara
+  name: 福福トレカ秋葉原店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: prospective
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: verified
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_toreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/fukufuku_toreka
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 秋葉原店。Webフォーム応募後、店頭受取を選べる回を対象にする。会員登録やポイントカード条件は各回の本文で確認する。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: fukufuku_toreka
+    retailer_id: fukufuku_akihabara
+    retailer_name: 福福トレカ秋葉原店
+- id: yahoo_realtime_fukufuku_akihabara_onepiece
+  name: 福福トレカ秋葉原店ワンピース公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  coverage_scope: specialized
+  supported_games:
+    one_piece_card: verified
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_one%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/fukufuku_one
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 福福トレカ秋葉原店のワンピースカード専用告知。Web応募後、店頭受取1回だけの回を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: fukufuku_one
+    retailer_id: fukufuku_akihabara
+    retailer_name: 福福トレカ秋葉原店
+- id: yahoo_realtime_dragonstar_akihabara
+  name: ドラゴンスター秋葉原店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ads_akiba%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/ds_akiba
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 秋葉原駅から徒歩約5分。公式アプリから応募し、当選時の購入1回だけの販売抽選を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: ds_akiba
+    retailer_id: dragonstar_akihabara
+    retailer_name: ドラゴンスター秋葉原店
+- id: yahoo_realtime_mint_games_ikebukuro
+  name: MINT GAMES池袋店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AMintGames_IKB%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/MintGames_IKB
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 池袋P'PARCO。公開Webフォームで応募し、当選時の購入1回だけの回を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: MintGames_IKB
+    retailer_id: mint_games_ikebukuro
+    retailer_name: MINT GAMES池袋店
+- id: yahoo_realtime_batoloco_ikebukuro
+  name: TCバトロコ池袋駅前店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: prospective
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ABatoloco_1852%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/Batoloco_1852
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 池袋駅前。新店のため販売抽選実績を継続確認する。Web応募できる回だけを対象とし、リポスト企画は共通除外処理で通知しない。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: Batoloco_1852
+    retailer_id: batoloco_ikebukuro
+    retailer_name: TCバトロコ池袋駅前店
+- id: yahoo_realtime_dragonstar_ikebukuro
+  name: ドラゴンスター池袋店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ads_ikebukur0%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/ds_ikebukur0
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 公式アプリ応募後、当選時に購入する回だけを対象にする。当選後に店頭予約と手付金が必要な2回来店型は共通除外処理で通知しない。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: ds_ikebukur0
+    retailer_id: dragonstar_ikebukuro
+    retailer_name: ドラゴンスター池袋店
+- id: yahoo_realtime_bigmagic_ikebukuro_pokemon
+  name: BIG MAGIC池袋店ポケモンカード公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  coverage_scope: specialized
+  supported_games:
+    pokemon_card: verified
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ABMike_pokemon%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/BMike_pokemon
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: BIG MAGIC池袋店のポケモンカード専用告知。公開LivePocket応募後、当選時の購入1回だけの回を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: BMike_pokemon
+    retailer_id: bigmagic_ikebukuro
+    retailer_name: BIG MAGIC池袋店
+- id: yahoo_realtime_bigmagic_ikebukuro
+  name: BIG MAGIC池袋店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: prospective
+    one_piece_card: prospective
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ABM_ikebukuro%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/BM_ikebukuro
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: BIG MAGIC池袋店の総合告知。公開Webフォームで応募し、当選時の購入1回だけのBOX抽選を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: BM_ikebukuro
+    retailer_id: bigmagic_ikebukuro
+    retailer_name: BIG MAGIC池袋店
+- id: yahoo_realtime_batoloco_shibuya_satellite
+  name: TCバトロコsatellite渋谷駅前店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: verified
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_428%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/batoloco_428
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 渋谷駅前。Webフォーム応募後、当選時の購入1回だけ。同アカウントがセンター街店も案内するため店舗名を本文で確認する。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: batoloco_428
+    retailer_id: batoloco_shibuya_satellite
+    retailer_name: TCバトロコsatellite渋谷駅前店
+    excluded_retailer_mentions:
+    - 渋谷センター街店
+- id: yahoo_realtime_pokemon_card_lounge_shibuya
+  name: POKÉMON CARD LOUNGE公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  coverage_scope: specialized
+  supported_games:
+    pokemon_card: verified
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/PCGL_Shibuya
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: SHIBUYA TSUTAYA。公式Webから抽選予約し、当選時の購入1回だけの回を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: PCGL_Shibuya
+    retailer_id: pokemon_card_lounge_shibuya
+    retailer_name: POKÉMON CARD LOUNGE
+- id: yahoo_realtime_mint_shibuya
+  name: MINT渋谷店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: verified
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Amint_shibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/mint_shibuya
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 渋谷PARCO。公開Webフォームで応募し、当選時の購入1回だけの回を対象にする。フォロー条件は可、リポスト条件は共通除外する。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: mint_shibuya
+    retailer_id: mint_shibuya
+    retailer_name: MINT渋谷店
+- id: yahoo_realtime_tierone_shibuya
+  name: TierOne渋谷店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ATierOneshibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/TierOneshibuya
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 渋谷駅から徒歩約5分。公開Googleフォームで応募し、当選時の購入1回だけ。渋谷・浜松を選ぶ共通フォームでは渋谷だけを選択する。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: TierOneshibuya
+    retailer_id: tierone_shibuya
+    retailer_name: TierOne渋谷店
+- id: yahoo_realtime_batoloco_shibuya_center
+  name: TCバトロコ渋谷センター街店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_1825%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/batoloco_1825
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 渋谷センター街。satellite渋谷駅前店とは別口。Webフォーム応募後、当選時の購入1回だけ。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: batoloco_1825
+    retailer_id: batoloco_shibuya_center
+    retailer_name: TCバトロコ渋谷センター街店
+- id: yahoo_realtime_mint_shinjuku
+  name: MINT新宿店公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: prospective
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  activation_group: expedition_tokyo
+  application_method: web
+  required_store_visits: 1
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Amintshinjuku%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/mintshinjuku
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 新宿マルイアネックス。ブログ内の公開Webフォームで応募し、当選時の購入1回だけの回を対象にする。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: mintshinjuku
+    retailer_id: mint_shinjuku
+    retailer_name: MINT新宿店

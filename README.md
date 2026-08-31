@@ -21,7 +21,13 @@
 
 作品ごとのON/OFFは`GAME_MONITOR_MODES.txt`で切り替えます。OFFの作品しか扱わない監視先は、ページ取得前に除外します。
 
-`EXPEDITION_MODE.txt`は、当選時に1回来店すればよい遠征先の一括スイッチです。ルート直下にある最終行を`EXPEDITION_MODE=OFF`から`EXPEDITION_MODE=ON`へ変えると、通常監視へ遠征先5件を追加します。`OFF`中は対象ページへの通信、画像読み取り、監視状態処理を行いません。TCバトロコ盛岡大通・仙台駅東口とトレーディングカードピット仙台駅東口店は通常監視のため、このスイッチには含まれません。
+`EXPEDITION_MODE.txt`は、当選時に1回来店すればよい遠征先を地域別に切り替えるファイルです。`EXPEDITION_SENDAI`、`EXPEDITION_TOKYO_ROUTE`、`EXPEDITION_TOKYO`をそれぞれ`ON`または`OFF`にできます。`OFF`の地域は、対象ページへの通信、画像読み取り、監視状態処理を行いません。
+
+- `EXPEDITION_SENDAI`: 従来の仙台遠征5店
+- `EXPEDITION_TOKYO_ROUTE`: 福島・郡山・小山・大宮の駅近店
+- `EXPEDITION_TOKYO`: 秋葉原・池袋・渋谷・新宿の駅近店
+
+TCバトロコ盛岡大通・仙台駅東口とトレーディングカードピット仙台駅東口店は通常監視のため、地域スイッチに関係なく動きます。リポスト応募、店頭掲示QRだけの応募、当選後に店頭予約と受取の2回来店が必要な回は通知対象から除外します。
 
 ## GitHub Actions Secrets
 

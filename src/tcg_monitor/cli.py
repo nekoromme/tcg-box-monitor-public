@@ -16,7 +16,7 @@ from tcg_monitor.discord import DiscordAdapter
 from tcg_monitor.expedition_mode import (
     DEFAULT_EXPEDITION_MODE_PATH,
     ExpeditionModeError,
-    load_expedition_mode,
+    load_expedition_modes,
 )
 from tcg_monitor.game_modes import (
     DEFAULT_GAME_MODES_PATH,
@@ -875,7 +875,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     runtime = config.system.get("runtime", {})
     try:
-        additional_monitoring_enabled = load_expedition_mode(
+        expedition_modes = load_expedition_modes(
             args.expedition_switch,
         )
     except ExpeditionModeError as exc:
@@ -936,7 +936,7 @@ def main(argv: list[str] | None = None) -> int:
     source_filter = active_source_filter(
         config.sources,
         requested_source_ids,
-        additional_monitoring_enabled=additional_monitoring_enabled,
+        enabled_expedition_groups=expedition_modes.enabled_groups,
     )
     ocr_cache = state.data.setdefault("ocr_cache", {})
     if args.cmd == "baseline":

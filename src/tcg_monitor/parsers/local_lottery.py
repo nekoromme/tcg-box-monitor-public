@@ -106,6 +106,43 @@ _SECONDARY_ROUNDUP_MARKERS = (
     "抽選受付情報まとめ",
     "抽選リスト",
 )
+
+# The user only wants lotteries that can be entered remotely and need no more
+# than one physical visit to collect a win.  Social accounts also publish
+# repost giveaways and store-only QR/advance-reservation lotteries, so reject
+# those before product classification or OCR can turn them into alerts.
+_DISALLOWED_REMOTE_APPLICATION_MARKERS = (
+    "リポストキャンペーン",
+    "フォロー&リポスト",
+    "フォロー＆リポスト",
+    "フォロー+リポスト",
+    "フォロー＋リポスト",
+    "引用リポスト",
+    "リツイートキャンペーン",
+    "フォロー&rt",
+    "フォロー＆rt",
+    "rt&フォロー",
+    "rt＆フォロー",
+    "フォローとrt",
+    "rtで応募",
+    "rtして応募",
+    "rtキャンペーン",
+)
+_DISALLOWED_REMOTE_APPLICATION_PATTERNS = (
+    re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,40}掲示.{0,30}QRコード", re.IGNORECASE),
+    re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,30}QRコード(?:から|より)", re.IGNORECASE),
+    re.compile(r"当選(?:者|された方).{0,80}店頭.{0,30}予約(?:を|が|手続)", re.IGNORECASE),
+    re.compile(r"予約手付金", re.IGNORECASE),
+)
+
+
+def _requires_disallowed_application(post_text: str) -> bool:
+    compact = re.sub(r"\s+", "", post_text).casefold()
+    return any(marker in compact for marker in _DISALLOWED_REMOTE_APPLICATION_MARKERS) or any(
+        pattern.search(compact) for pattern in _DISALLOWED_REMOTE_APPLICATION_PATTERNS
+    )
+
+
 _APPLICATION_LABEL = re.compile(
     r"(?:販売受付期間|予約受付期間|注文受付期間|販売期間|"
     r"抽選応募受付期間|抽選受付期間|抽選申込期間|抽選申し込み期間|抽選期間|"
@@ -1299,9 +1336,16 @@ def parse_yahoo_realtime(
             continue
         post_text = _tweet_body(container)
         compact_text = re.sub(r"\s+", "", post_text)
+        if _requires_disallowed_application(post_text):
+            continue
         required_mentions = _string_list_option(source, "required_retailer_mentions")
         if required_mentions and not any(
             mention.casefold() in compact_text.casefold() for mention in required_mentions
+        ):
+            continue
+        excluded_mentions = _string_list_option(source, "excluded_retailer_mentions")
+        if any(
+            mention.casefold() in compact_text.casefold() for mention in excluded_mentions
         ):
             continue
         postponement = next(

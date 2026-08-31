@@ -9,7 +9,7 @@ from tcg_monitor.config import ConfigError, load_config
 from tcg_monitor.parsers.local_lottery import parse_yahoo_realtime
 from tcg_monitor.parsers.retailer_lottery import discover_retailer_lottery_urls
 from tcg_monitor.source_groups import (
-    ADDITIONAL_GROUP,
+    EXPEDITION_SENDAI_GROUP,
     active_source_filter,
 )
 
@@ -42,7 +42,7 @@ def test_runtime_overlay_can_add_a_generic_source(
   poll_minutes: 120
   discovery_urls:
     - https://example.invalid/private-store
-  activation_group: additional
+  activation_group: expedition_sendai
   application_method: web
   required_store_visits: 1
   parser_kind: yahoo_realtime
@@ -56,7 +56,7 @@ def test_runtime_overlay_can_add_a_generic_source(
     config = load_config("sites.yaml", private_config_path=overlay)
     source = next(item for item in config.sources if item.id == "example_store_feed")
 
-    assert source.activation_group == ADDITIONAL_GROUP
+    assert source.activation_group == EXPEDITION_SENDAI_GROUP
     assert source.parser_options["account"] == "example_store"
     assert source.poll_minutes == config.system["uniform_source_poll_minutes"]
 
@@ -106,7 +106,7 @@ def test_additional_source_must_be_web_and_one_visit(
   enabled: true
   poll_minutes: 120
   discovery_urls: [https://example.invalid/private-store]
-  activation_group: additional
+  activation_group: expedition_sendai
   application_method: {value if field == 'application_method' else 'web'}
   required_store_visits: {value if field == 'required_store_visits' else '1'}
 """,
@@ -169,7 +169,7 @@ def test_additional_sources_default_to_disabled_without_runtime() -> None:
     assert active_source_filter(
         config.sources,
         set(),
-        additional_monitoring_enabled=False,
+        enabled_expedition_groups=frozenset(),
     ) == set()
 
 

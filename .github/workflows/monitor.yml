@@ -45,9 +45,16 @@ jobs:
             echo "- ${GAME}: **${MODE}**" >> "$GITHUB_STEP_SUMMARY"
           done
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "### 🚗 遠征監視" >> "$GITHUB_STEP_SUMMARY"
-          EXPEDITION_MODE="$(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' EXPEDITION_MODE.txt | tail -n 1 | cut -d= -f2)"
-          echo "- 現在: **${EXPEDITION_MODE:-設定エラー}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "### 🚄 遠征監視" >> "$GITHUB_STEP_SUMMARY"
+          sed -e 's/#.*//' -e '/^[[:space:]]*$/d' EXPEDITION_MODE.txt | while IFS='=' read -r AREA MODE; do
+            case "$AREA" in
+              EXPEDITION_SENDAI) LABEL="仙台" ;;
+              EXPEDITION_TOKYO_ROUTE) LABEL="東京道中" ;;
+              EXPEDITION_TOKYO) LABEL="東京" ;;
+              *) LABEL="$AREA" ;;
+            esac
+            echo "- ${LABEL}: **${MODE:-設定エラー}**" >> "$GITHUB_STEP_SUMMARY"
+          done
 
       - name: Check out monitor state
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

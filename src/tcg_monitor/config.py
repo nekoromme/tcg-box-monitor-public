@@ -24,8 +24,8 @@ from tcg_monitor.models import (
     SourceTier,
 )
 from tcg_monitor.source_groups import (
-    ADDITIONAL_GROUP,
     ALWAYS_ON_GROUP,
+    EXPEDITION_GROUPS,
 )
 
 
@@ -123,7 +123,7 @@ class ConfigError(ValueError):
 
 _ALLOWED_ACTIVATION_GROUPS = {
     ALWAYS_ON_GROUP,
-    ADDITIONAL_GROUP,
+    *EXPEDITION_GROUPS,
 }
 
 # Keep the historical serialized value for runtime-overlay compatibility.  The
@@ -397,11 +397,11 @@ def load_config(
             or required_store_visits < 0
         ):
             raise ConfigError(f"bad required_store_visits: {s['id']}")
-        if activation_group == ADDITIONAL_GROUP and (
+        if activation_group in EXPEDITION_GROUPS and (
             application_method != "web" or required_store_visits != 1
         ):
             raise ConfigError(
-                "additional source must use web application and require "
+                "expedition source must use web application and require "
                 f"exactly one store visit: {s['id']}"
             )
         parser_kind = s.get("parser_kind")
