@@ -201,13 +201,23 @@ def test_reviewed_sources_parse_their_official_x_posts(
 ) -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == source_id)
-    assert source.discovery_urls == [
+    expected_urls = [
         (
             "https://search.yahoo.co.jp/realtime/search?"
             f"p=id%3A{account}%20%E6%8A%BD%E9%81%B8&ei=UTF-8"
         ),
         f"https://twstalker.com/{account}",
     ]
+    if source.activation_group in {
+        EXPEDITION_TOKYO_ROUTE_GROUP,
+        EXPEDITION_TOKYO_GROUP,
+    }:
+        expected_urls.append(
+            "https://www.bing.com/search?format=rss&"
+            f"q=site%3Ax.com%2F{account}%2Fstatus+%E6%8A%BD%E9%81%B8&"
+            "setlang=ja-JP&cc=jp"
+        )
+    assert source.discovery_urls == expected_urls
 
     product = (
         "ポケカ 拡張パック『遠征監視テスト』1BOX"
@@ -237,6 +247,44 @@ def test_reviewed_sources_parse_their_official_x_posts(
     assert len(cases) == 1
     assert cases[0].retailer_name == retailer_name
     assert cases[0].source_url == f"https://x.com/{account}/status/2079755316506599865"
+
+
+def test_bing_rss_fallback_parses_an_official_x_post() -> None:
+    config = load_config("sites.yaml")
+    source = next(
+        item
+        for item in config.sources
+        if item.id == "yahoo_realtime_batoloco_fukushima"
+    )
+    rss = """<?xml version="1.0" encoding="utf-8"?>
+    <rss version="2.0">
+      <channel>
+        <item>
+          <title>TCバトロコ福島駅前 抽選販売のお知らせ</title>
+          <link>https://x.com/batoloco_fuku/status/2079755316506599865</link>
+          <description>
+            ポケカ 拡張パック『遠征監視テスト』1BOX
+            応募受付期間：7/24(金) 10:00から
+          </description>
+        </item>
+      </channel>
+    </rss>
+    """
+
+    cases, _, alerts = parse_yahoo_realtime(
+        rss,
+        source.discovery_urls[-1],
+        source,
+        config,
+        date(2026, 7, 24),
+    )
+
+    assert not alerts
+    assert len(cases) == 1
+    assert cases[0].retailer_name == "TCバトロコ福島駅前"
+    assert cases[0].source_url == (
+        "https://x.com/batoloco_fuku/status/2079755316506599865"
+    )
 
 
 @pytest.mark.parametrize(

@@ -1205,7 +1205,7 @@ def run_pipeline(
                 elif is_yahoo_realtime_source(source):
                     if (
                         url in primary_roots
-                        and not yahoo_realtime_page_loaded(html, source)
+                        and not yahoo_realtime_page_loaded(html, source, url)
                     ):
                         raise ValueError(
                             "Yahoo result contains neither the configured account "

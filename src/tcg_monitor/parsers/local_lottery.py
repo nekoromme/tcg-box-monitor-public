@@ -959,6 +959,8 @@ def _tweet_container(status_anchor: Tag) -> Tag | None:
             continue
         # X's official oEmbed endpoint returns a blockquote rather than the
         # div-based Yahoo/Twstalker markup used by the ordinary discovery path.
+        if parent.name == "item":
+            return parent
         if parent.name in {"blockquote", "article"} and parent.find("p"):
             return parent
         if parent.name != "div":
@@ -983,6 +985,13 @@ def _tweet_body(container: Tag) -> str:
         classes = value if isinstance(value, list) else [value or ""]
         return "Tweet_body" in " ".join(classes)
 
+    if container.name == "item":
+        parts = [
+            node.get_text(" ", strip=True)
+            for node in container.find_all(["title", "description"], recursive=False)
+        ]
+        return " ".join(part for part in parts if part)
+
     mirror_body = container.select_one(".activity-descp > p")
     body = mirror_body or container.find(
         "p",
@@ -1001,6 +1010,33 @@ def _status_parts(href: str, expected_account: str) -> tuple[str, str] | None:
 
 def _official_status_url(account: str, status_id: str) -> str:
     return f"https://x.com/{account}/status/{status_id}"
+
+
+def _social_status_containers(
+    html: str,
+    url: str,
+    account: str,
+) -> list[tuple[str, Tag]]:
+    """Return status URLs and their result containers from HTML or Bing RSS."""
+
+    parts = urlsplit(url)
+    is_rss = (
+        parts.netloc.casefold().removeprefix("www.") == "bing.com"
+        and "format=rss" in parts.query.casefold()
+    )
+    soup = BeautifulSoup(html, "xml" if is_rss else "lxml")
+    records: list[tuple[str, Tag]] = []
+    for anchor in soup.find_all("a", href=True):
+        href = str(anchor.get("href") or "")
+        if _status_parts(href, account) and (container := _tweet_container(anchor)):
+            records.append((href, container))
+    if is_rss:
+        for item in soup.find_all("item"):
+            link = item.find("link")
+            href = link.get_text(strip=True) if link else ""
+            if _status_parts(href, account):
+                records.append((href, item))
+    return records
 
 
 def _known_release_for_text(
@@ -1203,10 +1239,14 @@ def is_yahoo_realtime_source(source: SourceConfig | str) -> bool:
     return _yahoo_profile(source) is not None
 
 
-def yahoo_realtime_page_loaded(html: str, source: SourceConfig | str) -> bool:
+def yahoo_realtime_page_loaded(
+    html: str,
+    source: SourceConfig | str,
+    url: str = "",
+) -> bool:
     """Confirm that Yahoo returned a parseable result or an explicit empty result."""
 
-    if yahoo_realtime_has_matching_status(html, source):
+    if yahoo_realtime_has_matching_status(html, source, url):
         return True
     if not is_yahoo_realtime_source(source):
         return False
@@ -1221,18 +1261,25 @@ def yahoo_realtime_page_loaded(html: str, source: SourceConfig | str) -> bool:
     )
 
 
-def yahoo_realtime_has_matching_status(html: str, source: SourceConfig | str) -> bool:
+def yahoo_realtime_has_matching_status(
+    html: str,
+    source: SourceConfig | str,
+    url: str = "",
+) -> bool:
     """Return whether a Yahoo or mirror page contains the configured account."""
 
     profile = _yahoo_profile(source)
     if profile is None:
         return False
     account, _, _ = profile
-    soup = BeautifulSoup(html, "lxml")
-    return any(
-        _status_parts(str(anchor.get("href") or ""), account)
-        for anchor in soup.find_all("a", href=True)
+    parse_url = (
+        url
+        if url
+        else "https://www.bing.com/search?format=rss"
+        if "<rss" in html[:500].casefold()
+        else ""
     )
+    return bool(_social_status_containers(html, parse_url, account))
 
 
 def yahoo_repair_discovery_urls(
@@ -1316,13 +1363,12 @@ def parse_yahoo_realtime(
     if profile is None:
         raise ValueError(f"Yahoo parser profile is missing: {source.id}")
     account, retailer_id, retailer_name = profile
-    soup = BeautifulSoup(_official_oembed_markup(html, url, account), "lxml")
+    markup = _official_oembed_markup(html, url, account)
     detected = detected_on or datetime.now(ZoneInfo(config.timezone)).date()
     cases: dict[str, LotteryCase] = {}
     alerts: list[Alert] = []
     processed_statuses: set[str] = set()
-    for anchor in soup.find_all("a", href=True):
-        href = str(anchor.get("href"))
+    for href, container in _social_status_containers(markup, url, account):
         status = _status_parts(href, account)
         if not status:
             continue
@@ -1331,9 +1377,6 @@ def parse_yahoo_realtime(
         if status_url in processed_statuses:
             continue
         processed_statuses.add(status_url)
-        container = _tweet_container(anchor)
-        if not container:
-            continue
         post_text = _tweet_body(container)
         compact_text = re.sub(r"\s+", "", post_text)
         if _requires_disallowed_application(post_text):
