@@ -98,6 +98,33 @@ def _status_datetime_option(
         raise ValueError(f"bad parser option {name}.{status_id}: {source.id}") from exc
 
 
+def _status_product_option(
+    source: SourceConfig,
+    status_id: str,
+) -> tuple[str, str] | None:
+    """Read a manually verified product when an official post is image-led."""
+
+    source = source_with_runtime_parser_profile(source)
+    raw = source.parser_options.get("confirmed_products")
+    if raw is None:
+        return None
+    if not isinstance(raw, dict):
+        raise ValueError(f"bad parser option confirmed_products: {source.id}")
+    item = raw.get(status_id)
+    if item is None:
+        return None
+    if not isinstance(item, dict):
+        raise ValueError(f"bad parser option confirmed_products.{status_id}: {source.id}")
+    product_name = item.get("product_name")
+    product_category = item.get("product_category")
+    if not all(
+        isinstance(value, str) and value.strip()
+        for value in (product_name, product_category)
+    ):
+        raise ValueError(f"bad parser option confirmed_products.{status_id}: {source.id}")
+    return str(product_name), str(product_category)
+
+
 _SECONDARY_ROUNDUP_MARKERS = (
     "抽選受付中の店舗一覧",
     "受付中の店舗一覧",
@@ -1620,9 +1647,11 @@ def parse_yahoo_realtime(
         if has_excluded_product and not has_box_signal:
             continue
 
-        product = _product_from_tweet(container, combined_text, game_id)
+        confirmed_product = _status_product_option(source, status_id)
+        product = confirmed_product or _product_from_tweet(container, combined_text, game_id)
         if (
-            known_release
+            not confirmed_product
+            and known_release
             and known_release.game_id == game_id
             and (
                 not product

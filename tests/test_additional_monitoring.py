@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -284,6 +285,45 @@ def test_bing_rss_fallback_parses_an_official_x_post() -> None:
     assert cases[0].retailer_name == "TCバトロコ福島駅前"
     assert cases[0].source_url == (
         "https://x.com/batoloco_fuku/status/2079755316506599865"
+    )
+
+
+def test_tierone_still_open_round_uses_verified_deadline_and_product() -> None:
+    config = load_config("sites.yaml")
+    source = next(
+        item for item in config.sources if item.id == "yahoo_realtime_tierone_shibuya"
+    )
+    html = """
+    <div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">
+      【ポケモンカード 販売情報】
+      ポケモンカード1BOXの抽選受付を開始しました。
+      応募受付期間：8/16(日) 00:00から
+      </p>
+      <time><a href="https://x.com/TierOneshibuya/status/2088908861440930266">
+      8月16日
+      </a></time>
+    </div>
+    """
+
+    cases, _, alerts = parse_yahoo_realtime(
+        html,
+        "https://search.yahoo.co.jp/realtime/search",
+        source,
+        config,
+        date(2026, 8, 31),
+    )
+
+    assert not alerts
+    assert len(cases) == 1
+    assert cases[0].product_name == "拡張パック「30th CELEBRATION」"
+    assert cases[0].end_at == datetime(
+        2026,
+        9,
+        13,
+        23,
+        59,
+        tzinfo=ZoneInfo("Asia/Tokyo"),
     )
 
 
