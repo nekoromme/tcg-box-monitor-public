@@ -146,6 +146,7 @@ def _product_candidates(
         "当選発表",
         "抽選受付について",
         "抽選販売受付について",
+        "について",
     )
     for index, (start, _, game_id) in enumerate(non_overlapping):
         end = (
@@ -166,7 +167,8 @@ def _product_candidates(
             candidate,
             maxsplit=1,
         )[0].strip()
-        candidate = candidate.strip(" 　「」『』【】|｜/\n")[:220]
+        candidate = re.split(r"[\(（]\d+[\)）]", candidate, maxsplit=1)[0].strip()
+        candidate = candidate.strip(" 　「」『』【】[]()（）|｜/\n")[:220]
         game = config.games[game_id]
         classified = classify_product(game, candidate, candidate)
         product_category = classified.product_category
