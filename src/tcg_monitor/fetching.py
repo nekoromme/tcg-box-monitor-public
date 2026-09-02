@@ -421,7 +421,10 @@ class PageFetcher:
         if source.render_mode == RenderMode.PLAYWRIGHT:
             return self._browser(browser_url or url, source)
 
-        cached_record = self._cached_record(cache, url)
+        use_conditional_get = self.conditional_get and not bool(
+            source.parser_options.get("disable_conditional_get", False)
+        )
+        cached_record = self._cached_record(cache, url) if use_conditional_get else {}
         etag = cached_record.get("etag")
         last_modified = cached_record.get("last_modified")
         try:
@@ -477,7 +480,8 @@ class PageFetcher:
         if status == 304:
             self.circuit_breaker.record_success(url)
             cached_record["checked_at"] = now
-            self._update_cache(cache, url, cached_record)
+            if use_conditional_get:
+                self._update_cache(cache, url, cached_record)
             return PageResult(
                 url,
                 "",
@@ -552,17 +556,18 @@ class PageFetcher:
             )
         if kind == PageKind.CONTENT:
             self.circuit_breaker.record_success(url)
-            self._update_cache(
-                cache,
-                url,
-                {
-                    "etag": response.headers.get("etag")
-                    or response.headers.get("ETag"),
-                    "last_modified": response.headers.get("last-modified")
-                    or response.headers.get("Last-Modified"),
-                    "checked_at": now,
-                },
-            )
+            if use_conditional_get:
+                self._update_cache(
+                    cache,
+                    url,
+                    {
+                        "etag": response.headers.get("etag")
+                        or response.headers.get("ETag"),
+                        "last_modified": response.headers.get("last-modified")
+                        or response.headers.get("Last-Modified"),
+                        "checked_at": now,
+                    },
+                )
             return PageResult(url, response.text, status, "http", response.headers)
 
         self.circuit_breaker.record_success(url)

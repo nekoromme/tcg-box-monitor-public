@@ -1168,6 +1168,31 @@ def test_conditional_get_can_be_disabled() -> None:
     assert cache == {url: {"etag": '"v1"'}}
 
 
+def test_source_can_disable_conditional_get() -> None:
+    url = "https://cache.example/source-disabled"
+    http = FakeHttpFetcher(
+        {
+            url: _response(
+                url,
+                200,
+                "<main>キャッシュせず毎回確認する本文です</main>",
+                ETag='"v2"',
+            )
+        }
+    )
+    cache: dict[str, object] = {url: {"etag": '"blocked-shell"'}}
+    source = replace(
+        _source("source-uncached", [url]),
+        parser_options={"disable_conditional_get": True},
+    )
+
+    result = PageFetcher(http, lambda *_args: "").fetch(url, source, cache)
+
+    assert result.fetch_method == "http"
+    assert http.calls == [(url, None, None)]
+    assert cache == {url: {"etag": '"blocked-shell"'}}
+
+
 @freeze_time("2026-08-03 12:00:00+09:00")
 def test_yahoo_provisional_case_is_revisited_from_detail_page(tmp_path) -> None:
     base = load_config("sites.yaml")

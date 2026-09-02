@@ -2317,7 +2317,7 @@ sources:
   - product_name
   - application_start
   - official_application_link
-  notes: DMM通販のワンピース抽選ページを最優先で取得し、その後にLivePocket検索から漏れるフルコンプ、会員ログイン内だけで告知されるシーガル、公式トップから辿れないエディオンを補完する。受付中・受付予定の各見出し配下だけを解析し、確度mediumで登録する。
+  notes: DMM通販のワンピース抽選ページを最優先で取得し、LivePocket検索から漏れるフルコンプと、公式一覧が不安定なシーガル、エディオン、ファミマオンライン、イトーヨーカドー通販を補完する。受付中・受付予定の各見出し配下だけを解析し、確度mediumで登録する。
   parser_options:
     priority_retailers:
     - &id002
@@ -2344,6 +2344,20 @@ sources:
       official_host: dmm.com
       game_id: one_piece_card
       summary_url: https://nyuka-now.com/archives/97393
+    - heading_marker: イトーヨーカドーネット通販
+      retailer_id: itoyokado_online
+      retailer_name: イトーヨーカドーネット通販
+      fallback_url: https://iyec.itoyokado.co.jp/shop/e/eE4reslot/
+      official_host: iyec.itoyokado.co.jp
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
+    - heading_marker: ファミマオンライン
+      retailer_id: famima_online
+      retailer_name: ファミマオンライン
+      fallback_url: https://famima-online.family.co.jp/search?receiveType=1
+      official_host: famima-online.family.co.jp
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
 - id: yahoo_realtime_premium_bandai_onepiece
   name: プレミアムバンダイ公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -2534,7 +2548,7 @@ sources:
   supported_games:
     pokemon_card: verified
     one_piece_card: verified
-    dragon_ball_fusion_world: prospective
+    dragon_ball_fusion_world: verified
     lorcana: prospective
     gundam_card: prospective
     yu_gi_oh: prospective
@@ -2566,7 +2580,7 @@ sources:
   supported_games:
     pokemon_card: verified
     one_piece_card: verified
-    dragon_ball_fusion_world: prospective
+    dragon_ball_fusion_world: verified
     yu_gi_oh: prospective
     lorcana: prospective
     gundam_card: prospective
@@ -2676,12 +2690,16 @@ sources:
   - official_product_link
   - box_lottery
   - application_start
+  fallback_source_ids:
+  - yahoo_realtime_famima
+  - nyuka_now_fullcomp_livepocket
   notes: 公式の商品一覧から対象BOXだけを追う。メンテナンス・地域制限のエラーページは監視異常として通知する。
   parser_kind: retailer_lottery
   parser_options:
     index_url: https://famima-online.family.co.jp/search?receiveType=1
     retailer_id: famima_online
     retailer_name: ファミマオンライン
+    disable_conditional_get: true
 - id: dmm_hobby_lottery
   name: DMM通販 ホビー抽選販売
   source_type: retailer_official
@@ -2815,6 +2833,8 @@ sources:
   - current_lottery_product
   - box_lottery
   - application_start
+  fallback_source_ids:
+  - nyuka_now_fullcomp_livepocket
   notes: 現在承り中の予約・抽選一覧から対象BOXを追い、商品ページで抽選表記と開始日時を再確認する。
   parser_kind: retailer_lottery
   parser_options:
@@ -4218,39 +4238,6 @@ sources:
     account: CARDWINGS_POKE
     retailer_id: cardwings_akihabara
     retailer_name: CARD WINGS秋葉原駅前店
-- id: yahoo_realtime_dragonstar_akihabara_ekimae
-  name: ドラゴンスター秋葉原駅前店公式X Yahooリアルタイム検索
-  source_type: retailer_official_social_search
-  source_tier: official_indirect
-  supported_games:
-    pokemon_card: verified
-    one_piece_card: verified
-    dragon_ball_fusion_world: prospective
-    yu_gi_oh: prospective
-    lorcana: prospective
-    gundam_card: prospective
-  purposes:
-  - lottery_discovery
-  enabled: true
-  activation_group: expedition_tokyo
-  application_method: web
-  required_store_visits: 1
-  discovery_urls:
-  - https://search.yahoo.co.jp/realtime/search?p=id%3Ads_akiba_ekimae%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/ds_akiba_ekimae
-  - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fds_akiba_ekimae%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
-  render_mode: http
-  poll_minutes: 120
-  fallback_on_empty_result: true
-  expected_elements:
-  - official_x_status
-  - conditional_image_ocr
-  notes: 秋葉原駅徒歩0分。ドラゴンスター公式アプリから応募し、当選時の購入1回だけの販売抽選を対象にする。
-  parser_kind: yahoo_realtime
-  parser_options:
-    account: ds_akiba_ekimae
-    retailer_id: dragonstar_akihabara_ekimae
-    retailer_name: ドラゴンスター秋葉原駅前店
 - id: yahoo_realtime_bigmagic_akihabara
   name: BIG MAGIC秋葉原店公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -4346,72 +4333,6 @@ sources:
     account: fukufuku_one
     retailer_id: fukufuku_akihabara
     retailer_name: 福福トレカ秋葉原店
-- id: yahoo_realtime_dragonstar_akihabara
-  name: ドラゴンスター秋葉原店公式X Yahooリアルタイム検索
-  source_type: retailer_official_social_search
-  source_tier: official_indirect
-  supported_games:
-    pokemon_card: verified
-    one_piece_card: verified
-    dragon_ball_fusion_world: prospective
-    yu_gi_oh: prospective
-    lorcana: prospective
-    gundam_card: prospective
-  purposes:
-  - lottery_discovery
-  enabled: true
-  activation_group: expedition_tokyo
-  application_method: web
-  required_store_visits: 1
-  discovery_urls:
-  - https://search.yahoo.co.jp/realtime/search?p=id%3Ads_akiba%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/ds_akiba
-  - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fds_akiba%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
-  render_mode: http
-  poll_minutes: 120
-  fallback_on_empty_result: true
-  expected_elements:
-  - official_x_status
-  - conditional_image_ocr
-  notes: 秋葉原駅から徒歩約5分。公式アプリから応募し、当選時の購入1回だけの販売抽選を対象にする。
-  parser_kind: yahoo_realtime
-  parser_options:
-    account: ds_akiba
-    retailer_id: dragonstar_akihabara
-    retailer_name: ドラゴンスター秋葉原店
-- id: yahoo_realtime_mint_games_ikebukuro
-  name: MINT GAMES池袋店公式X Yahooリアルタイム検索
-  source_type: retailer_official_social_search
-  source_tier: official_indirect
-  supported_games:
-    pokemon_card: verified
-    one_piece_card: verified
-    dragon_ball_fusion_world: prospective
-    yu_gi_oh: prospective
-    lorcana: prospective
-    gundam_card: prospective
-  purposes:
-  - lottery_discovery
-  enabled: true
-  activation_group: expedition_tokyo
-  application_method: web
-  required_store_visits: 1
-  discovery_urls:
-  - https://search.yahoo.co.jp/realtime/search?p=id%3AMintGames_IKB%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/MintGames_IKB
-  - https://www.bing.com/search?format=rss&q=site%3Ax.com%2FMintGames_IKB%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
-  render_mode: http
-  poll_minutes: 120
-  fallback_on_empty_result: true
-  expected_elements:
-  - official_x_status
-  - conditional_image_ocr
-  notes: 池袋P'PARCO。公開Webフォームで応募し、当選時の購入1回だけの回を対象にする。
-  parser_kind: yahoo_realtime
-  parser_options:
-    account: MintGames_IKB
-    retailer_id: mint_games_ikebukuro
-    retailer_name: MINT GAMES池袋店
 - id: yahoo_realtime_batoloco_ikebukuro
   name: TCバトロコ池袋駅前店公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -4445,39 +4366,6 @@ sources:
     account: Batoloco_1852
     retailer_id: batoloco_ikebukuro
     retailer_name: TCバトロコ池袋駅前店
-- id: yahoo_realtime_dragonstar_ikebukuro
-  name: ドラゴンスター池袋店公式X Yahooリアルタイム検索
-  source_type: retailer_official_social_search
-  source_tier: official_indirect
-  supported_games:
-    pokemon_card: verified
-    one_piece_card: verified
-    dragon_ball_fusion_world: prospective
-    yu_gi_oh: prospective
-    lorcana: prospective
-    gundam_card: prospective
-  purposes:
-  - lottery_discovery
-  enabled: true
-  activation_group: expedition_tokyo
-  application_method: web
-  required_store_visits: 1
-  discovery_urls:
-  - https://search.yahoo.co.jp/realtime/search?p=id%3Ads_ikebukur0%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/ds_ikebukur0
-  - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fds_ikebukur0%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
-  render_mode: http
-  poll_minutes: 120
-  fallback_on_empty_result: true
-  expected_elements:
-  - official_x_status
-  - conditional_image_ocr
-  notes: 公式アプリ応募後、当選時に購入する回だけを対象にする。当選後に店頭予約と手付金が必要な2回来店型は共通除外処理で通知しない。
-  parser_kind: yahoo_realtime
-  parser_options:
-    account: ds_ikebukur0
-    retailer_id: dragonstar_ikebukuro
-    retailer_name: ドラゴンスター池袋店
 - id: yahoo_realtime_bigmagic_ikebukuro_pokemon
   name: BIG MAGIC池袋店ポケモンカード公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -4604,39 +4492,6 @@ sources:
     account: PCGL_Shibuya
     retailer_id: pokemon_card_lounge_shibuya
     retailer_name: POKÉMON CARD LOUNGE
-- id: yahoo_realtime_mint_shibuya
-  name: MINT渋谷店公式X Yahooリアルタイム検索
-  source_type: retailer_official_social_search
-  source_tier: official_indirect
-  supported_games:
-    pokemon_card: verified
-    one_piece_card: verified
-    dragon_ball_fusion_world: verified
-    yu_gi_oh: prospective
-    lorcana: prospective
-    gundam_card: prospective
-  purposes:
-  - lottery_discovery
-  enabled: true
-  activation_group: expedition_tokyo
-  application_method: web
-  required_store_visits: 1
-  discovery_urls:
-  - https://search.yahoo.co.jp/realtime/search?p=id%3Amint_shibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/mint_shibuya
-  - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fmint_shibuya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
-  render_mode: http
-  poll_minutes: 120
-  fallback_on_empty_result: true
-  expected_elements:
-  - official_x_status
-  - conditional_image_ocr
-  notes: 渋谷PARCO。公開Webフォームで応募し、当選時の購入1回だけの回を対象にする。フォロー条件は可、リポスト条件は共通除外する。
-  parser_kind: yahoo_realtime
-  parser_options:
-    account: mint_shibuya
-    retailer_id: mint_shibuya
-    retailer_name: MINT渋谷店
 - id: yahoo_realtime_tierone_shibuya
   name: TierOne渋谷店公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -4709,36 +4564,3 @@ sources:
     account: batoloco_1825
     retailer_id: batoloco_shibuya_center
     retailer_name: TCバトロコ渋谷センター街店
-- id: yahoo_realtime_mint_shinjuku
-  name: MINT新宿店公式X Yahooリアルタイム検索
-  source_type: retailer_official_social_search
-  source_tier: official_indirect
-  supported_games:
-    pokemon_card: verified
-    one_piece_card: prospective
-    dragon_ball_fusion_world: prospective
-    yu_gi_oh: prospective
-    lorcana: prospective
-    gundam_card: prospective
-  purposes:
-  - lottery_discovery
-  enabled: true
-  activation_group: expedition_tokyo
-  application_method: web
-  required_store_visits: 1
-  discovery_urls:
-  - https://search.yahoo.co.jp/realtime/search?p=id%3Amintshinjuku%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/mintshinjuku
-  - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fmintshinjuku%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
-  render_mode: http
-  poll_minutes: 120
-  fallback_on_empty_result: true
-  expected_elements:
-  - official_x_status
-  - conditional_image_ocr
-  notes: 新宿マルイアネックス。ブログ内の公開Webフォームで応募し、当選時の購入1回だけの回を対象にする。
-  parser_kind: yahoo_realtime
-  parser_options:
-    account: mintshinjuku
-    retailer_id: mint_shinjuku
-    retailer_name: MINT新宿店

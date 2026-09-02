@@ -131,6 +131,8 @@ def retailer_lottery_index_error(
         "メンテナンス中",
         "ただいまご利用いただけません",
         "エラーが発生",
+        "海外からのアクセスは受け付けておりません",
+        "日本国内からご利用",
         "access denied",
     )
     if any(marker.casefold() in folded for marker in error_markers):

@@ -38,6 +38,23 @@ _GAME_WORDS = {
         "ワンピースカード",
         "ワンピカード",
     ),
+    "dragon_ball_fusion_world": (
+        "ドラゴンボールスーパーカードゲーム",
+        "フュージョンワールド",
+        "DBFW",
+    ),
+    "yu_gi_oh": ("遊戯王OCG", "遊戯王カード", "遊☆戯☆王", "遊戯王"),
+    "lorcana": (
+        "ディズニー・ロルカナ",
+        "ディズニーロルカナ",
+        "LORCANA",
+        "ロルカナ",
+    ),
+    "gundam_card": (
+        "ガンダムカードゲーム",
+        "ガンダムカード",
+        "GUNDAM CARD GAME",
+    ),
 }
 
 OcrReader = Callable[[list[str]], str]
@@ -79,6 +96,108 @@ def _game_id(text: str, source: SourceConfig) -> str | None:
     return None
 
 
+def _game_ids(text: str, source: SourceConfig) -> list[str]:
+    compact = re.sub(r"\s+", "", _normalized(text)).casefold()
+    return [
+        game_id
+        for game_id, words in _GAME_WORDS.items()
+        if source.supports(game_id)
+        and any(
+            re.sub(r"\s+", "", word).casefold() in compact for word in words
+        )
+    ]
+
+
+def _product_candidates(
+    text: str,
+    source: SourceConfig,
+    config: Config,
+) -> list[tuple[str, str, str, str]]:
+    """Extract each supported BOX from a mixed-game Furuichi notice image."""
+
+    normalized = _normalized(text).replace("\r", "\n")
+    occurrences: list[tuple[int, int, str]] = []
+    for game_id, words in _GAME_WORDS.items():
+        if not source.supports(game_id):
+            continue
+        for word in sorted(words, key=len, reverse=True):
+            occurrences.extend(
+                (match.start(), match.end(), game_id)
+                for match in re.finditer(re.escape(word), normalized, re.I)
+            )
+    occurrences.sort(key=lambda item: (item[0], -(item[1] - item[0])))
+    non_overlapping: list[tuple[int, int, str]] = []
+    for occurrence in occurrences:
+        if non_overlapping and occurrence[0] < non_overlapping[-1][1]:
+            continue
+        non_overlapping.append(occurrence)
+
+    products: list[tuple[str, str, str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    stop_markers = (
+        "抽選応募受付期間",
+        "抽選受付期間",
+        "応募受付期間",
+        "受付締切",
+        "応募締切",
+        "発売日",
+        "価格",
+        "当選発表",
+        "抽選受付について",
+        "抽選販売受付について",
+    )
+    for index, (start, _, game_id) in enumerate(non_overlapping):
+        end = (
+            non_overlapping[index + 1][0]
+            if index + 1 < len(non_overlapping)
+            else min(len(normalized), start + 500)
+        )
+        candidate = re.sub(r"\s+", " ", normalized[start:end]).strip()
+        marker_positions = [
+            position
+            for marker in stop_markers
+            if (position := candidate.find(marker)) > 0
+        ]
+        if marker_positions:
+            candidate = candidate[: min(marker_positions)].strip()
+        candidate = candidate.strip(" 　「」『』【】|｜/\n")[:220]
+        game = config.games[game_id]
+        classified = classify_product(game, candidate, candidate)
+        if not classified.is_box:
+            continue
+        identity = (game_id, classified.canonical_product_key)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        products.append(
+            (
+                game_id,
+                candidate,
+                classified.product_category,
+                classified.canonical_product_key,
+            )
+        )
+    return products
+
+
+def _only_explicitly_excluded_products(
+    text: str,
+    game_ids: list[str],
+    config: Config,
+) -> bool:
+    has_box = any(
+        keyword in text
+        for game_id in game_ids
+        for keyword in config.games[game_id].box_product_keywords
+    )
+    has_excluded = any(
+        keyword in text
+        for game_id in game_ids
+        for keyword in config.games[game_id].product_exclude_keywords
+    )
+    return has_excluded and not has_box
+
+
 def _anchor_context(anchor: Tag) -> str:
     values = [anchor.get_text(" ", strip=True)]
     for image in anchor.find_all("img"):
@@ -106,7 +225,7 @@ def discover_furuichi_lottery_urls(
     config: Config,
     limit: int = 20,
 ) -> list[str]:
-    """Follow only supported TCG BOX lottery articles from Furuichi news."""
+    """Follow supported TCG lottery articles; their BOX names may be images."""
 
     soup = BeautifulSoup(html, "lxml")
     found: list[str] = []
@@ -122,16 +241,12 @@ def discover_furuichi_lottery_urls(
         context = _normalized(_anchor_context(anchor))
         if "抽選" not in context:
             continue
-        game_id = _game_id(context, source)
-        if not game_id:
+        game_ids = _game_ids(context, source)
+        if not game_ids or _only_explicitly_excluded_products(
+            context, game_ids, config
+        ):
             continue
-        classified = classify_product(
-            config.games[game_id],
-            context,
-            context,
-            candidate,
-        )
-        if not classified.is_box or candidate in found:
+        if candidate in found:
             continue
         found.append(candidate)
         if len(found) >= limit:
@@ -151,15 +266,11 @@ def furuichi_index_has_target_lottery(
         if not isinstance(anchor, Tag):
             continue
         context = _normalized(_anchor_context(anchor))
-        game_id = _game_id(context, source)
+        game_ids = _game_ids(context, source)
         if (
-            game_id
+            game_ids
             and "抽選" in context
-            and classify_product(
-                config.games[game_id],
-                context,
-                context,
-            ).is_box
+            and not _only_explicitly_excluded_products(context, game_ids, config)
         ):
             return True
     return False
@@ -318,23 +429,12 @@ def parse_furuichi_lottery_detail(
         else title(html) or source.name
     )
     page_text = _normalized(visible_text(html))
-    game_id = _game_id(f"{page_title}\n{page_text}", source)
-    if not game_id or "抽選" not in page_title + page_text:
+    initial_text = f"{page_title}\n{page_text}"
+    article_game_ids = _game_ids(initial_text, source)
+    if not article_game_ids or "抽選" not in page_title + page_text:
         return [], [], []
 
-    product_name = re.sub(
-        r"(?:の)?抽選(?:販売)?受付について.*$",
-        "",
-        page_title,
-    ).strip(" |｜")
-    classified = classify_product(
-        config.games[game_id],
-        product_name,
-        page_text,
-        url,
-    )
-    if not classified.is_box:
-        return [], [], []
+    products = _product_candidates(page_title, source, config)
 
     labels = tuple(source.start_labels) or _DEFAULT_START_LABELS
     start_at, end_at = _labelled_period(page_text, labels)
@@ -342,7 +442,7 @@ def parse_furuichi_lottery_detail(
     confidence = "high"
     ocr_text = ""
     images = _article_image_urls(soup, url)
-    if not start_at and images:
+    if images and (not start_at or not products):
         if ocr_cache is not None:
             ocr_text = str(ocr_cache.get(url) or "").strip()
         if not ocr_text and ocr_reader is not None:
@@ -359,7 +459,7 @@ def parse_furuichi_lottery_detail(
                             "ふるいち公式BOX抽選記事の画像OCRに失敗: "
                             f"{type(exc).__name__}: {str(exc)[:160]}"
                         ),
-                        game_id,
+                        article_game_ids[0],
                     )
                 ]
             if ocr_text and ocr_cache is not None:
@@ -367,9 +467,13 @@ def parse_furuichi_lottery_detail(
         if ocr_text and ocr_cache_meta is not None:
             ocr_cache_meta[url] = {"updated_at": datetime.now(UTC).isoformat()}
         if ocr_text:
-            start_at, end_at = _labelled_period(ocr_text, labels)
-            extraction_method = "furuichi_official_image_application_period"
-            confidence = "medium"
+            if not start_at:
+                start_at, end_at = _labelled_period(ocr_text, labels)
+                extraction_method = "furuichi_official_image_application_period"
+                confidence = "medium"
+            products = _product_candidates(
+                f"{page_title}\n{ocr_text}", source, config
+            )
 
     detected = detected_on or datetime.now(ZoneInfo(config.timezone)).date()
     combined_text = f"{page_text}\n{ocr_text}" if ocr_text else page_text
@@ -395,25 +499,48 @@ def parse_furuichi_lottery_detail(
                 else "ふるいち公式BOX抽選画像から応募開始・締切を解析できません"
             )
             return [], [], [
-                _alert(source, url, page_title, reason, summary, game_id)
+                _alert(source, url, page_title, reason, summary, article_game_ids[0])
             ]
 
-    case = LotteryCase(
-        game_id,
-        "furuichi",
-        "古本市場・ふるいち",
-        product_name,
-        classified.product_category,
-        classified.canonical_product_key,
-        start_at,
-        url,
-        url,
-        source.source_tier,
-        extraction_method,
-        confidence,
-        end_at=end_at,
-    ).with_id()
-    return [case], [], []
+    if not products:
+        combined_game_ids = _game_ids(combined_text, source)
+        has_box_marker = any(
+            keyword in combined_text
+            for game_id in combined_game_ids
+            for keyword in config.games[game_id].box_product_keywords
+        )
+        if not has_box_marker:
+            return [], [], []
+        return [], [], [
+            _alert(
+                source,
+                url,
+                page_title,
+                "furuichi_box_products_missing",
+                "ふるいち公式抽選画像から対象BOXを解析できません",
+                combined_game_ids[0] if combined_game_ids else article_game_ids[0],
+            )
+        ]
+
+    cases = [
+        LotteryCase(
+            game_id,
+            "furuichi",
+            "古本市場・ふるいち",
+            product_name,
+            product_category,
+            canonical_product_key,
+            start_at,
+            url,
+            url,
+            source.source_tier,
+            extraction_method,
+            confidence,
+            end_at=end_at,
+        ).with_id()
+        for game_id, product_name, product_category, canonical_product_key in products
+    ]
+    return cases, [], []
 
 
 __all__ = [

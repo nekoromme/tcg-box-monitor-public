@@ -76,10 +76,6 @@ TOKYO_SOURCES = {
         "CARDWINGS_POKE",
         "CARD WINGS秋葉原駅前店",
     ),
-    "yahoo_realtime_dragonstar_akihabara_ekimae": (
-        "ds_akiba_ekimae",
-        "ドラゴンスター秋葉原駅前店",
-    ),
     "yahoo_realtime_bigmagic_akihabara": (
         "bigmagicakb",
         "BIG MAGIC秋葉原店",
@@ -92,21 +88,9 @@ TOKYO_SOURCES = {
         "fukufuku_one",
         "福福トレカ秋葉原店",
     ),
-    "yahoo_realtime_dragonstar_akihabara": (
-        "ds_akiba",
-        "ドラゴンスター秋葉原店",
-    ),
-    "yahoo_realtime_mint_games_ikebukuro": (
-        "MintGames_IKB",
-        "MINT GAMES池袋店",
-    ),
     "yahoo_realtime_batoloco_ikebukuro": (
         "Batoloco_1852",
         "TCバトロコ池袋駅前店",
-    ),
-    "yahoo_realtime_dragonstar_ikebukuro": (
-        "ds_ikebukur0",
-        "ドラゴンスター池袋店",
     ),
     "yahoo_realtime_bigmagic_ikebukuro_pokemon": (
         "BMike_pokemon",
@@ -124,10 +108,6 @@ TOKYO_SOURCES = {
         "PCGL_Shibuya",
         "POKÉMON CARD LOUNGE",
     ),
-    "yahoo_realtime_mint_shibuya": (
-        "mint_shibuya",
-        "MINT渋谷店",
-    ),
     "yahoo_realtime_tierone_shibuya": (
         "TierOneshibuya",
         "TierOne渋谷店",
@@ -135,10 +115,6 @@ TOKYO_SOURCES = {
     "yahoo_realtime_batoloco_shibuya_center": (
         "batoloco_1825",
         "TCバトロコ渋谷センター街店",
-    ),
-    "yahoo_realtime_mint_shinjuku": (
-        "mintshinjuku",
-        "MINT新宿店",
     ),
 }
 
@@ -339,11 +315,6 @@ def test_tierone_still_open_round_uses_verified_deadline_and_product() -> None:
             "yahoo_realtime_bigmagic_akihabara",
             "bigmagicakb",
             "店頭に掲示されたQRコードより応募してください",
-        ),
-        (
-            "yahoo_realtime_dragonstar_ikebukuro",
-            "ds_ikebukur0",
-            "当選された方は店頭にて予約を行う必要があります。予約手付金が必要です",
         ),
     ],
 )

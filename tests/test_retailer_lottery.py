@@ -17,6 +17,7 @@ from tcg_monitor.parsers.premium_bandai import parse_nyuka_now_lottery_summary
 from tcg_monitor.parsers.retailer_lottery import (
     discover_retailer_lottery_urls,
     parse_retailer_lottery_detail,
+    retailer_lottery_index_error,
 )
 
 
@@ -104,6 +105,20 @@ def _source(
         True,
         ["https://example.com"],
         start_labels or [],
+    )
+
+
+def test_famima_overseas_error_shell_is_monitor_failure() -> None:
+    html = """
+    <html><body><main>
+      <h1>ファミマオンライン</h1>
+      <p>海外からのアクセスは受け付けておりません。</p>
+      <p>日本国内からご利用ください。</p>
+    </main></body></html>
+    """
+
+    assert retailer_lottery_index_error(html, "famima_online_lottery") == (
+        "ファミマオンラインがメンテナンス・地域制限のエラーページを返しました"
     )
 
 
@@ -373,6 +388,43 @@ def test_nyuka_now_recovers_current_dmm_onepiece_lottery() -> None:
         "OP-16",
     }
     assert {case.start_at.isoformat() for case in cases} == {"2026-08-10T15:00:00+09:00"}
+
+
+def test_nyuka_now_recovers_current_famima_and_itoyokado_lotteries() -> None:
+    html = """
+    <article>
+      <h2>抽選・予約応募受付中のストア</h2>
+      <h3>ファミマオンライン</h3>
+      <table>
+        <tr><th>対象商品</th><td>ポケモンカード MEGA 拡張パック 30th CELEBRATION</td></tr>
+        <tr><th>開始日</th><td>2026年9月2日(水)10:00</td></tr>
+      </table>
+      <h3>イトーヨーカドーネット通販</h3>
+      <table>
+        <tr><th>対象商品</th><td>ポケモンカード MEGA 拡張パック 30th CELEBRATION</td></tr>
+        <tr><th>開始日</th><td>2026年9月2日(水)10:00</td></tr>
+      </table>
+    </article>
+    """
+    source = _source("nyuka_now_fullcomp_livepocket", ("pokemon_card",))
+
+    cases, releases, alerts = parse_nyuka_now_lottery_summary(
+        html,
+        "https://nyuka-now.com/archives/2459",
+        source,
+        load_config("sites.yaml"),
+    )
+
+    assert not releases
+    assert not alerts
+    assert {case.retailer_id for case in cases} == {
+        "famima_online",
+        "itoyokado_online",
+    }
+    assert all(
+        case.start_at == datetime(2026, 9, 2, 10, 0, tzinfo=ZoneInfo("Asia/Tokyo"))
+        for case in cases
+    )
 
 
 def test_box_lottery_without_start_raises_manual_check_alert() -> None:

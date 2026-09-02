@@ -118,6 +118,69 @@ def test_furuichi_detail_reads_application_period_from_official_image_once() -> 
     assert cached_cases[0].case_id == case.case_id
 
 
+def test_furuichi_generic_mixed_game_article_reads_each_box_from_image() -> None:
+    html = """
+    <html><head>
+      <meta property="article:published_time" content="2026-09-01T00:00:00+09:00">
+    </head><body><main>
+      <h1>ポケモンカードゲーム　ドラゴンボールスーパーカードゲーム抽選受付について</h1>
+      <img src="/storage/news/news_information/pdl20260901/20260901lp.jpg">
+    </main></body></html>
+    """
+    ocr_text = """
+    ドラゴンボールスーパーカードゲーム フュージョンワールド
+    ブースターパック BRIGHTNESS OF HOPE [FB11]
+    発売日 2026年9月12日
+    ポケモンカードゲーム MEGA 30th CELEBRATION
+    プレミアムデッキセット エーフィ・ブラッキー
+    ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION
+    発売日 2026年9月16日
+    受付締切 2026年9月6日 23:00まで
+    """
+    config, source = _source()
+
+    cases, releases, alerts = parse_furuichi_lottery_detail(
+        html,
+        "https://www.furu1.net/news/news_information/pdl20260901",
+        source,
+        config,
+        detected_on=date(2026, 9, 2),
+        ocr_reader=lambda _urls: ocr_text,
+    )
+
+    assert not releases
+    assert not alerts
+    assert len(cases) == 2
+    assert {case.game_id for case in cases} == {
+        "pokemon_card",
+        "dragon_ball_fusion_world",
+    }
+    assert {case.canonical_product_key for case in cases} >= {"FB11"}
+    assert all("デッキセット" not in case.product_name for case in cases)
+    assert all(
+        case.end_at == datetime(2026, 9, 6, 23, 0, tzinfo=ZoneInfo("Asia/Tokyo"))
+        for case in cases
+    )
+
+
+def test_furuichi_index_follows_generic_supported_game_lottery_article() -> None:
+    html = """
+    <main><article>
+      <a href="/news/news_information/pdl20260901">
+      ポケモンカードゲーム　ドラゴンボールスーパーカードゲーム抽選受付について
+      </a>
+    </article></main>
+    """
+    config, source = _source()
+
+    assert discover_furuichi_lottery_urls(
+        html,
+        "https://www.furu1.net/news/news_information.html",
+        source,
+        config,
+    ) == ["https://www.furu1.net/news/news_information/pdl20260901"]
+
+
 def test_furuichi_deadline_only_image_still_notifies_while_open() -> None:
     html = """
     <html><head>
