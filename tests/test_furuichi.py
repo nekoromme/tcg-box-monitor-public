@@ -127,15 +127,17 @@ def test_furuichi_generic_mixed_game_article_reads_each_box_from_image() -> None
       <img src="/storage/news/news_information/pdl20260901/20260901lp.jpg">
     </main></body></html>
     """
+    # Actual Japanese Tesseract output contains these characteristic errors.
     ocr_text = """
-    ドラゴンボールスーパーカードゲーム フュージョンワールド
-    ブースターパック BRIGHTNESS OF HOPE [FB11]
-    発売日 2026年9月12日
-    ポケモンカードゲーム MEGA 30th CELEBRATION
-    プレミアムデッキセット エーフィ・ブラッキー
-    ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION
-    発売日 2026年9月16日
-    受付締切 2026年9月6日 23:00まで
+    2026 年9月12 日発売予定
+    「 ドラゴンドールスー カードゲームフュージョンワールド
+    ブースタッやク BRICHTNESS OF HOPE [FB11l/
+    2026 年9 月 16 日発売予定
+    「ポケモンカードゲーム MEGA 30th CELEBRATION
+    プレミアムデッキセット エーフィ・ブラッキー]
+    「ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION]
+    (1) 受付方法・期間
+    ・受付期間 : 2026年9月6日 (日) 23:00 まで
     """
     config, source = _source()
 
@@ -156,6 +158,10 @@ def test_furuichi_generic_mixed_game_article_reads_each_box_from_image() -> None
         "dragon_ball_fusion_world",
     }
     assert {case.canonical_product_key for case in cases} >= {"FB11"}
+    dragon_ball = next(
+        case for case in cases if case.game_id == "dragon_ball_fusion_world"
+    )
+    assert dragon_ball.product_name.endswith("BRIGHTNESS OF HOPE [FB11]")
     assert all("デッキセット" not in case.product_name for case in cases)
     assert all(
         case.end_at == datetime(2026, 9, 6, 23, 0, tzinfo=ZoneInfo("Asia/Tokyo"))

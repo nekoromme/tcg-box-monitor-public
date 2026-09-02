@@ -29,6 +29,7 @@ _DEFAULT_START_LABELS = (
     "応募受付期間",
     "抽選応募期間",
     "応募期間",
+    "受付期間",
 )
 _GAME_WORDS = {
     "pokemon_card": ("ポケモンカードゲーム", "ポケモンカード", "ポケカ"),
@@ -160,12 +161,43 @@ def _product_candidates(
         ]
         if marker_positions:
             candidate = candidate[: min(marker_positions)].strip()
+        candidate = re.split(
+            r"20\d{2}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日\s*発売予定",
+            candidate,
+            maxsplit=1,
+        )[0].strip()
         candidate = candidate.strip(" 　「」『』【】|｜/\n")[:220]
         game = config.games[game_id]
         classified = classify_product(game, candidate, candidate)
+        product_category = classified.product_category
+        canonical_product_key = classified.canonical_product_key
         if not classified.is_box:
-            continue
-        identity = (game_id, classified.canonical_product_key)
+            # Tesseract can turn "ブースターパック [FB11]" into
+            # "ブースタッやク [FB11l/".  A Fusion World booster code
+            # plus the surviving booster stem is still specific BOX evidence.
+            code_match = re.search(r"(?i)(?:FB|SB|ST)\d{2}", candidate)
+            if (
+                game_id != "dragon_ball_fusion_world"
+                or not code_match
+                or "ブースタ" not in candidate
+            ):
+                continue
+            code = code_match.group(0).upper()
+            candidate = re.sub(
+                r"ブースタ[^\s]{0,8}ク",
+                "ブースターパック",
+                candidate,
+                count=1,
+            )
+            candidate = re.sub(
+                rf"(?i)\[?{re.escape(code)}[A-Za-z/\]]*",
+                f"[{code}]",
+                candidate,
+                count=1,
+            ).replace("BRICHTNESS", "BRIGHTNESS")
+            product_category = "ブースターパック"
+            canonical_product_key = code
+        identity = (game_id, canonical_product_key)
         if identity in seen:
             continue
         seen.add(identity)
@@ -173,8 +205,8 @@ def _product_candidates(
             (
                 game_id,
                 candidate,
-                classified.product_category,
-                classified.canonical_product_key,
+                product_category,
+                canonical_product_key,
             )
         )
     return products
