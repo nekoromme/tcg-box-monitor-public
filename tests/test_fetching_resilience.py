@@ -228,6 +228,18 @@ def test_challenge_is_not_sent_to_browser() -> None:
     assert not rendered_calls
 
 
+def test_cloudflare_waiting_room_is_classified_as_challenge() -> None:
+    html = """
+    <html><body>
+      <h1>順番待ちに追加されました。</h1>
+      <p>大量のトラフィックが発生しています。仮想キューを使用しています。</p>
+      <footer>Waiting Room powered by Cloudflare</footer>
+    </body></html>
+    """
+
+    assert classify_page(html) == PageKind.CHALLENGE
+
+
 def test_explicit_browser_fallback_recovers_an_http_read_timeout() -> None:
     url = "https://slow-store.example/page"
     read_timeout = httpx.ReadTimeout(

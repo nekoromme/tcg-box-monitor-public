@@ -155,6 +155,9 @@ _CHALLENGE_MARKERS = (
     "人間であることを確認",
     "verify that you're not a robot",
     "verify you are not a robot",
+    "waiting room powered by cloudflare",
+    "順番待ちに追加されました",
+    "仮想キューを使用",
 )
 _LOGIN_MARKERS = (
     "ログインしてください",

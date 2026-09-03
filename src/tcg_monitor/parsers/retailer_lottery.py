@@ -107,6 +107,12 @@ def _index_url(source: SourceConfig | str) -> str | None:
 
 
 def is_retailer_lottery_source(source: SourceConfig | str) -> bool:
+    if isinstance(source, SourceConfig):
+        source = source_with_runtime_parser_profile(source)
+        # Some retailers expose both a normal product index and a stable
+        # campaign page. The latter intentionally does not equal ``index_url``,
+        # but it must still use this parser.
+        return source.parser_kind == "retailer_lottery"
     return _index_url(source) is not None
 
 
