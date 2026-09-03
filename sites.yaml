@@ -2700,6 +2700,45 @@ sources:
     retailer_id: famima_online
     retailer_name: ファミマオンライン
     disable_conditional_get: true
+- id: ministop_online_lottery
+  name: ミニストップオンライン 抽選商品
+  source_type: retailer_official
+  source_tier: official
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: prospective
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  discovery_urls:
+  - https://online.ministop.co.jp/Form/Product/ProductList.aspx?cat=008&dpcnt=40&fpfl=0&img=2&pno=1&sfl=0&shop=0&sort=07&udns=0
+  - https://online.ministop.co.jp/Page/pockemon.aspx
+  start_labels:
+  - 抽選応募受付期間
+  - 抽選受付期間
+  - 応募受付期間
+  - 応募期間
+  render_mode: http_then_browser_if_shell
+  poll_minutes: 120
+  expected_elements:
+  - official_product_link
+  - box_lottery
+  - application_start
+  fallback_source_ids:
+  - yahoo_realtime_ministop_secondary
+  notes: 公式のエンタメ・ホビー新着一覧から対象BOXを追う。アクセス集中時のCloudflare順番待ちは商品ページとして扱わず、ポケカ特設ページと二次情報を予備経路にする。デッキセット、カードセット、単品パック、通常販売は共通のBOX判定で除外する。
+  parser_kind: retailer_lottery
+  parser_options:
+    index_url: https://online.ministop.co.jp/Form/Product/ProductList.aspx?cat=008&dpcnt=40&fpfl=0&img=2&pno=1&sfl=0&shop=0&sort=07&udns=0
+    detail_host: online.ministop.co.jp
+    detail_path_prefix: /Form/Product/ProductDetail.aspx
+    retailer_id: ministop_online
+    retailer_name: ミニストップオンライン
+    disable_conditional_get: true
 - id: dmm_hobby_lottery
   name: DMM通販 ホビー抽選販売
   source_type: retailer_official
@@ -3158,6 +3197,38 @@ sources:
     account: famima_now
     retailer_id: famima_online
     retailer_name: ファミマオンライン
+- id: yahoo_realtime_ministop_secondary
+  name: ミニストップオンライン抽選補完 Yahooリアルタイム検索
+  source_type: secondary_lottery_social_search
+  source_tier: secondary
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: prospective
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - secondary_lottery_discovery
+  enabled: true
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20%E3%83%9F%E3%83%8B%E3%82%B9%E3%83%88%E3%83%83%E3%83%97%E3%82%AA%E3%83%B3%E3%83%A9%E3%82%A4%E3%83%B3%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/gamegetnavi
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - ministop_online_retailer_mention
+  - supported_tcg_box
+  - application_start
+  notes: ミニストップオンライン公式の商品一覧がCloudflare順番待ちになる場合を補う。ミニストップオンライン名・対象BOX・応募開始が本文で揃う個別投稿だけを確度mediumで通知する。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: gamegetnavi
+    retailer_id: ministop_online
+    retailer_name: ミニストップオンライン
+    required_retailer_mentions:
+    - ミニストップオンライン
 - id: tokyo_otaku_mode_lottery
   name: Tokyo Otaku Mode 公式抽選販売
   source_type: retailer_official

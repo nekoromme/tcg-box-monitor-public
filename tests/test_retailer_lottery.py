@@ -16,6 +16,7 @@ from tcg_monitor.models import (
 from tcg_monitor.parsers.premium_bandai import parse_nyuka_now_lottery_summary
 from tcg_monitor.parsers.retailer_lottery import (
     discover_retailer_lottery_urls,
+    is_retailer_lottery_source,
     parse_retailer_lottery_detail,
     retailer_lottery_index_error,
 )
@@ -120,6 +121,75 @@ def test_famima_overseas_error_shell_is_monitor_failure() -> None:
     assert retailer_lottery_index_error(html, "famima_online_lottery") == (
         "ファミマオンラインがメンテナンス・地域制限のエラーページを返しました"
     )
+
+
+def test_ministop_index_follows_box_lottery_and_skips_deck_set() -> None:
+    html = """
+    <main>
+      <article><a href="/Form/Product/ProductDetail.aspx?pid=800001-01&amp;shop=0">
+        【抽選応募】ポケモンカードゲーム MEGA 拡張パック
+        「30th CELEBRATION」1BOX（30パック）
+      </a></article>
+      <article><a href="/Form/Product/ProductDetail.aspx?pid=800002-01&amp;shop=0">
+        【抽選応募】ポケモンカードゲーム MEGA 30th CELEBRATION
+        プレミアムデッキセット エーフィ・ブラッキー
+      </a></article>
+    </main>
+    """
+    source = _source("ministop_online_lottery", ("pokemon_card",))
+
+    assert discover_retailer_lottery_urls(
+        html,
+        source.discovery_urls[0],
+        source,
+        _config(),
+    ) == [
+        "https://online.ministop.co.jp/Form/Product/ProductDetail.aspx?pid=800001-01&shop=0"
+    ]
+
+
+def test_ministop_detail_parses_box_application_period() -> None:
+    html = """
+    <h1>【抽選応募】ONE PIECEカードゲーム
+    ブースターパック 決戦の刻【OP-16】1BOX（24パック）</h1>
+    <p>抽選応募受付期間：2026年7月24日（金）15時～
+    2026年7月31日（金）15時まで</p>
+    """
+    source = _source("ministop_online_lottery", ("one_piece_card",))
+    cases, releases, alerts = parse_retailer_lottery_detail(
+        html,
+        "https://online.ministop.co.jp/Form/Product/ProductDetail.aspx?pid=772754-01&shop=0",
+        source,
+        _config(),
+    )
+
+    assert not releases
+    assert not alerts
+    assert len(cases) == 1
+    assert cases[0].retailer_id == "ministop_online"
+    assert cases[0].canonical_product_key == "OP-16"
+    assert cases[0].start_at == datetime(
+        2026, 7, 24, 15, 0, tzinfo=ZoneInfo("Asia/Tokyo")
+    )
+
+
+def test_ministop_campaign_page_uses_retailer_parser_without_being_index() -> None:
+    source = _source("ministop_online_lottery", ("pokemon_card",))
+
+    assert is_retailer_lottery_source(source)
+    cases, releases, alerts = parse_retailer_lottery_detail(
+        """
+        <h1>ポケモンカードゲーム MEGA 30th CELEBRATION</h1>
+        <p>プレミアムデッキセット エーフィ・ブラッキー抽選販売</p>
+        <p>抽選応募受付期間 2026年9月2日（水）15時～2026年9月4日（金）15時</p>
+        """,
+        "https://online.ministop.co.jp/Page/pockemon.aspx",
+        source,
+        _config(),
+    )
+    assert not cases
+    assert not releases
+    assert not alerts
 
 
 def test_namco_index_follows_only_sendai_and_natori_onepiece_boxes() -> None:
