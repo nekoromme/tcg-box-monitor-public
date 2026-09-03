@@ -60,6 +60,13 @@ system:
         start_at: '2026-08-24'
         source_url: https://x.com/Dourakusendai/status/2084826013847130224
         event_id: tcg1aefa6088907dd2b739585cacf15eb1e9b75cf0d05e5a72015bd6450fdbd6
+      02116066f8932e51ef82c95a1c9c9e977818dfa41f2fd4df8a3ca7f3121c82fe:
+        retailer_id: ministop_online
+        retailer_name: ミニストップオンライン
+        product_name: 30th CELEBRATION
+        start_at: '2026-09-02'
+        source_url: https://x.com/gamegetnavi/status/2095180835343471095
+        event_id: ''
     confirmed_false_positive_releases:
       ec5c020af436d8a7cd994917b711a1094f837829544aea5bb12241fc7aa400c0:
         game_id: pokemon_card
@@ -3229,6 +3236,7 @@ sources:
     retailer_name: ミニストップオンライン
     required_retailer_mentions:
     - ミニストップオンライン
+    strict_product_exclusions: true
 - id: tokyo_otaku_mode_lottery
   name: Tokyo Otaku Mode 公式抽選販売
   source_type: retailer_official

@@ -1640,11 +1640,14 @@ def parse_yahoo_realtime(
         has_box_signal = any(word in combined_text for word in game.box_product_keywords) or bool(
             re.search(r"(?i)\b1?BOX\b", combined_text)
         )
+        strict_product_exclusions = bool(
+            source.parser_options.get("strict_product_exclusions", False)
+        )
         # 遊戯王は商品名そのものがシリーズ区分を兼ねる。低相場シリーズの
         # 投稿に「1BOX」があっても、BOX証拠で除外を打ち消さない。
         if game_id == "yu_gi_oh" and has_excluded_product:
             continue
-        if has_excluded_product and not has_box_signal:
+        if has_excluded_product and (strict_product_exclusions or not has_box_signal):
             continue
 
         confirmed_product = _status_product_option(source, status_id)
