@@ -129,12 +129,41 @@ def test_priority_retailer_accounts_accept_entry_period_wording(
     assert cases[0].start_at.isoformat() == "2026-07-20T10:00:00+09:00"
 
 
-def test_ministop_secondary_strictly_excludes_current_deck_set() -> None:
+def test_ministop_secondary_strictly_excludes_deck_set() -> None:
     html = """
     <div class="Tweet_TweetContainer__random">
       <p class="Tweet_body__random">ミニストップオンライン
       ポケモンカード『30th CELEBRATION』抽選販売を実施
       30周年記念商品 プレミアムデッキセット：エーフィ・ブラッキー
+      受付期間 2026年9月2日(水)～9月4日(金)15時00分</p>
+      <time><a href="https://x.com/gamegetnavi/status/2095180835343471094">
+      9月2日</a></time>
+    </div>
+    """
+    source = next(
+        source
+        for source in load_config("sites.yaml").sources
+        if source.id == "yahoo_realtime_ministop_secondary"
+    )
+
+    cases, releases, alerts = parse_yahoo_realtime(
+        html,
+        "https://search.yahoo.co.jp/realtime/search",
+        source,
+        _config(),
+        date(2026, 9, 3),
+    )
+
+    assert not cases
+    assert not releases
+    assert not alerts
+
+
+def test_ministop_secondary_excludes_confirmed_false_status_with_truncated_body() -> None:
+    html = """
+    <div class="Tweet_TweetContainer__random">
+      <p class="Tweet_body__random">ミニストップオンライン
+      ポケモンカード『30th CELEBRATION』抽選販売を実施
       受付期間 2026年9月2日(水)～9月4日(金)15時00分</p>
       <time><a href="https://x.com/gamegetnavi/status/2095180835343471095">
       9月2日</a></time>

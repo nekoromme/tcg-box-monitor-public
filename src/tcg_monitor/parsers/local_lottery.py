@@ -1400,6 +1400,8 @@ def parse_yahoo_realtime(
         if not status:
             continue
         _, status_id = status
+        if status_id in _string_list_option(source, "excluded_status_ids"):
+            continue
         status_url = _official_status_url(account, status_id)
         if status_url in processed_statuses:
             continue
