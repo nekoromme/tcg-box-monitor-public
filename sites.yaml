@@ -3223,12 +3223,12 @@ sources:
   - https://twstalker.com/gamegetnavi
   render_mode: http
   poll_minutes: 120
-  fallback_on_empty_result: true
+  fallback_on_empty_result: false
   expected_elements:
   - ministop_online_retailer_mention
   - supported_tcg_box
   - application_start
-  notes: ミニストップオンライン公式の商品一覧がCloudflare順番待ちになる場合を補う。ミニストップオンライン名・対象BOX・応募開始が本文で揃う個別投稿だけを確度mediumで通知する。
+  notes: ミニストップオンライン公式の商品一覧がCloudflare順番待ちになる場合を補う。Yahoo検索が正常に0件を返した場合は正常監視として扱い、取得・解析に失敗した場合だけプロフィールミラーへ切り替える。ミニストップオンライン名・対象BOX・応募開始が本文で揃う個別投稿だけを確度mediumで通知する。
   parser_kind: yahoo_realtime
   parser_options:
     account: gamegetnavi

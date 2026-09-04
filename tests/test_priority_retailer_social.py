@@ -145,6 +145,7 @@ def test_ministop_secondary_strictly_excludes_deck_set() -> None:
         for source in load_config("sites.yaml").sources
         if source.id == "yahoo_realtime_ministop_secondary"
     )
+    assert not source.fallback_on_empty_result
 
     cases, releases, alerts = parse_yahoo_realtime(
         html,
