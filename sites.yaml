@@ -3691,7 +3691,11 @@ sources:
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: 通常販売・オリパ・買取投稿を除き、BOX抽選受付だけを対象にする。
+  notes: >-
+    通常販売・オリパ・買取投稿を除き、BOX抽選受付だけを対象にする。
+    直近2回（2026-05-17 アビスアイ、2026-07-25 ストームエメラルダ）は、
+    いずれも受取時のシュリンク除去のみでBOX本体の開封条件はないことを公式投稿画像で確認済み。
+    そのため未開封BOXとして監視対象を継続する。
   parser_kind: yahoo_realtime
   parser_options:
     account: mandaifurukaw3
