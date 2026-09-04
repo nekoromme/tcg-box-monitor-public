@@ -19,6 +19,7 @@ from tcg_monitor.parsers.local_lottery import (
         ("yahoo_realtime_pokedou_morioka", "PokedouTencho_M", "ポケ堂盛岡店"),
         ("yahoo_realtime_pokedou_kitakami", "PokedouTencho_K", "ポケ堂北上店"),
         ("yahoo_realtime_tsutaya_tsukidate", "tsukidateten", "TSUTAYA築館店"),
+        ("yahoo_realtime_mandai_furukawa", "mandaifurukaw3", "万代古川店"),
     ],
 )
 def test_added_store_x_sources_are_wired_to_the_official_accounts(
