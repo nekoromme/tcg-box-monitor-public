@@ -3395,13 +3395,16 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AAKEBONOtoreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AAKEBONOtoreka&ei=UTF-8
+  - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FAKEBONOtoreka%2Fstatus%2F2096070820426899487&omit_script=1&dnt=1
   - https://twstalker.com/AKEBONOtoreka
   render_mode: http
   poll_minutes: 120
+  fallback_on_empty_result: true
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: LivePocket検索の取得制限に備えた公式Xの独立経路。本文で不足する商品名・応募開始日は添付画像OCRで補完し、同一抽選は1件に統合する。
+  notes: LivePocket検索の取得制限に備えた公式Xの独立経路。Yahooの抽選語検索とアカウント全投稿検索を併用し、検索反映が遅い時は既知の公式投稿とプロフィールミラーへ順次切り替える。本文で不足する商品名・応募開始日は添付画像OCRで補完し、同一抽選は1件に統合する。
   parser_kind: yahoo_realtime
   parser_options:
     account: AKEBONOtoreka
