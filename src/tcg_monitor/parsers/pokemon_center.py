@@ -25,7 +25,11 @@ _PUBLICATION_DATE = re.compile(r"(?:公開日[：:]?\s*)?(20\d{2})[-/.年](\d{1,
 def is_pokemon_center_news_index(source_id: str, url: str) -> bool:
     parts = urlsplit(url)
     if source_id == _ONLINE_SOURCE:
-        return parts.netloc == "www.pokemoncenter-online.com" and parts.path.rstrip("/") == "/news"
+        return (
+            parts.netloc == "www.pokemoncenter-online.com"
+            and parts.path.rstrip("/") == "/news"
+            and not parse_qs(parts.query).get("id")
+        )
     if source_id == _STORE_SOURCE:
         return (
             parts.netloc == "shop.pokemon.co.jp"

@@ -194,6 +194,12 @@ def test_reviewed_sources_parse_their_official_x_posts(
             f"q=site%3Ax.com%2F{account}%2Fstatus+%E6%8A%BD%E9%81%B8&"
             "setlang=ja-JP&cc=jp"
         )
+    if source_id == "yahoo_realtime_batoloco_fukushima":
+        expected_urls.insert(
+            1,
+            "https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2F"
+            "batoloco_fuku%2Fstatus%2F2095742710691053657&omit_script=true&lang=ja",
+        )
     assert source.discovery_urls == expected_urls
 
     product = (

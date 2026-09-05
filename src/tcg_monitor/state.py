@@ -267,12 +267,28 @@ class MonitorState:
             "fetch_duration_ms": values.get("fetch_duration_ms", 0),
             "fetched_pages": values.get("fetched_pages", 0),
             "parsed_count": values.get("parsed_count", 0),
+            "candidate_runs": int(previous.get("candidate_runs", 0))
+            + (1 if int(str(values.get("parsed_count") or 0)) > 0 else 0),
+            "last_candidate_at": now.isoformat()
+            if int(str(values.get("parsed_count") or 0)) > 0
+            else previous.get("last_candidate_at"),
+            "evidence_since": previous.get("evidence_since") or now.isoformat(),
+            "routes": values.get("routes", {}),
+            "retailer_ids": values.get("retailer_ids", []),
+            "release_game_ids": values.get("release_game_ids", []),
             "excluded_count": values.get("excluded_count", 0),
             "outcome": "success" if success else "failed",
             "last_error": values.get("last_error"),
             "failure_cause": values.get("failure_cause"),
             "failure_attempts": values.get("failure_attempts"),
         }
+        # 過去に実際に候補を生成したURLのみ、実証済み履歴として引き継ぐ。
+        evidence = dict(_mapping(previous.get("route_evidence")))
+        for url, raw in _mapping(values.get("routes")).items():
+            route = _mapping(raw)
+            if int(route.get("parsed_count") or 0) > 0:
+                evidence[url] = {"last_candidate_at": now.isoformat()}
+        record["route_evidence"] = evidence
         monitors[source_id] = record
         self.save()
 
