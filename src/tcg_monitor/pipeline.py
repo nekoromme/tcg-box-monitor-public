@@ -1371,6 +1371,12 @@ def run_pipeline(
                     parsed_cases, parsed_releases, parsed_alerts = parse_retailer_lottery_detail(
                         html, url, source, config, diagnostics=retailer_diagnostics
                     )
+                elif parser is parse_generic:
+                    generic_diagnostics: dict[str, int] = {}
+                    route["diagnostics"] = generic_diagnostics
+                    parsed_cases, parsed_releases, parsed_alerts = parse_generic(
+                        html, url, source, config, diagnostics=generic_diagnostics,
+                    )
                 else:
                     parsed_cases, parsed_releases, parsed_alerts = parser(
                         html, url, source, config

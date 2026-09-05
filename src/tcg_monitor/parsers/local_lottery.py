@@ -515,8 +515,18 @@ def _period_label_is_start(compact: str, match: re.Match[str]) -> bool:
     return label.endswith(("開始", "開始日時"))
 
 
+def _compact_application_text(text: str) -> str:
+    normalized = unicodedata.normalize("NFKC", text)
+    # Keep a boundary between a slash date and its time: 9/3 17:59 must
+    # never collapse into the impossible date 9/31 at 7:59.
+    normalized = re.sub(
+        r"(\d{1,2}[/.]\d{1,2})\s+(?=\d{1,2}\s*[:時])", r"\1日", normalized,
+    )
+    return re.sub(r"\s+", "", normalized)
+
+
 def _application_start(text: str, base_date: date | None = None) -> datetime | date | None:
-    compact = re.sub(r"\s+", "", text)
+    compact = _compact_application_text(text)
     for match in _APPLICATION_LABEL.finditer(compact):
         parsed = parse_period_start(
             match.group(1),
@@ -593,7 +603,7 @@ def _application_deadline(
 ) -> datetime | date | None:
     """Read an application closing date without treating it as a start date."""
 
-    compact = re.sub(r"\s+", "", unicodedata.normalize("NFKC", text))
+    compact = _compact_application_text(text)
     for marker in (
         "応募締切",
         "受付締切",

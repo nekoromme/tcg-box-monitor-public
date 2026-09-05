@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from datetime import date, datetime
 from urllib.parse import urljoin
+from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -11,6 +12,7 @@ from tcg_monitor.classifier import classify_product
 from tcg_monitor.japanese_datetime import parse_first_datetime, parse_period_start
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
 from tcg_monitor.parsers.common import title, visible_text
+from tcg_monitor.parsers.local_lottery import _application_deadline, _box_products
 
 RETAILERS = {
     "geo": "ゲオ",
@@ -65,7 +67,8 @@ def discover_geo_news_urls(
             for keyword in game.include_keywords
         )
         has_box = any(
-            keyword in anchor_text
+            re.sub(r"\s+", "", keyword).casefold()
+            in re.sub(r"\s+", "", anchor_text).casefold()
             for game in supported_games
             for keyword in game.box_product_keywords
         ) or bool(re.search(r"(?i)\b1?BOX\b", anchor_text))
@@ -219,9 +222,58 @@ def parse_onepiece_topics(
     return list(cases_by_id.values()), [], alerts
 
 
-def parse_generic(
-    html: str, url: str, source: SourceConfig, config: Config
+def parse_geo_news_detail(
+    html: str, url: str, source: SourceConfig, config: Config,
+    diagnostics: dict[str, int] | None = None,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
+    """Separate the named product from mixed-deck and navigation prose."""
+    soup = BeautifulSoup(html, "lxml")
+    heading = soup.find("h1")
+    product_scope = heading.get_text(" ", strip=True) if heading else (title(html) or "")
+    product_scope = product_scope.replace("ARTWORKCOLLECTION", "ARTWORK COLLECTION")
+    text = visible_text(html)
+    start = _lottery_start(text, source, config)
+    end = _application_deadline(text, datetime.now(ZoneInfo(config.timezone)).date())
+    cases: list[LotteryCase] = []
+    alerts: list[Alert] = []
+    for game_id, game in config.games.items():
+        if not source.supports(game_id) or not any(
+            word in product_scope for word in game.include_keywords
+        ):
+            continue
+        for name, _category, _key in _box_products(product_scope, game_id, config):
+            product = classify_product(game, name, name)
+            if not product.is_box:
+                continue
+            if diagnostics is not None:
+                diagnostics["validated_product"] = diagnostics.get("validated_product", 0) + 1
+            if not start:
+                alerts.append(Alert(
+                    game_id, source.id, url, name, ["応募期間"], "lottery_text_without_start",
+                    "公式BOX抽選記事から応募開始を解析できません", None, url,
+                ).with_fingerprint())
+                continue
+            if diagnostics is not None:
+                diagnostics["validated_application_period"] = 1
+            end_date = end.date() if isinstance(end, datetime) else end
+            if end_date and end_date < datetime.now(ZoneInfo(config.timezone)).date():
+                if diagnostics is not None:
+                    diagnostics["application_ended"] = 1
+                continue
+            cases.append(LotteryCase(
+                game_id, "geo", "ゲオ", product.product_name, product.product_category,
+                product.canonical_product_key, start, url, url, source.source_tier,
+                "geo_news_product_application_period", "high", end_at=end,
+            ).with_id())
+    return cases, [], alerts
+
+
+def parse_generic(
+    html: str, url: str, source: SourceConfig, config: Config,
+    diagnostics: dict[str, int] | None = None,
+) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
+    if source.id == "geo" and _GEO_NEWS_DETAIL.fullmatch(url):
+        return parse_geo_news_detail(html, url, source, config, diagnostics)
     text = visible_text(html)
     releases: list[Release] = []
     cases: list[LotteryCase] = []
