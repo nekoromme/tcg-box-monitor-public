@@ -770,6 +770,48 @@ def test_priority_store_yahoo_empty_result_uses_profile_fallback() -> None:
     assert cases[0].canonical_product_key == "OP-17"
 
 
+@freeze_time("2026-09-05 19:15:00+09:00")
+def test_tsutaya_akebono_account_query_recovers_delayed_keyword_index() -> None:
+    """The unfiltered account query must cover a delayed Yahoo keyword index."""
+    config = load_config("sites.yaml")
+    source = next(
+        item for item in config.sources if item.id == "yahoo_realtime_tsutaya_akebono"
+    )
+    yahoo_lottery, yahoo_account, _oembed_url, _twstalker_url = source.discovery_urls
+    status_id = "2096070820426899487"
+    account_html = f"""
+    <div class="Tweet_TweetContainer__current">
+      <p class="Tweet_body__current">【商品情報】9/16（水）発売の
+      ポケモンカードゲーム「拡張パック 30thCELEBRATION」は
+      Livepocketでの抽選販売とさせていただきます。</p>
+      <img src="https://rts-pctr.c.yimg.jp/akebono-30th.jpg">
+      <time><a href="https://x.com/AKEBONOtoreka/status/{status_id}">12:00</a></time>
+    </div>
+    """
+    fetcher = FakeHttpFetcher(
+        {
+            yahoo_lottery: _response(
+                yahoo_lottery,
+                200,
+                "<main>一致する情報は見つかりませんでした</main>",
+            ),
+            yahoo_account: _response(yahoo_account, 200, account_html),
+        }
+    )
+
+    cases, _, alerts = pipeline.run_pipeline(
+        _config(source),
+        http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+
+    assert not alerts
+    assert [call[0] for call in fetcher.calls] == [yahoo_lottery, yahoo_account]
+    assert len(cases) == 1
+    assert cases[0].retailer_id == "tsutaya_akebono"
+    assert cases[0].product_name == "拡張パック 30thCELEBRATION"
+    assert cases[0].source_url == f"https://x.com/AKEBONOtoreka/status/{status_id}"
+
+
 def test_yahoo_ocr_failure_uses_twstalker_and_clears_pending(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
