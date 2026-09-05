@@ -295,6 +295,7 @@ _NON_PRODUCT_HASHTAGS = {
     "トレカノ",
     "WonderGOO",
     "ワングー",
+    "モリロコ",
 }
 _NON_PRODUCT_LABELS = {re.sub(r"\s+", "", value).casefold() for value in _NON_PRODUCT_HASHTAGS}
 _X_EPOCH_MS = 1_288_834_974_657
@@ -632,9 +633,21 @@ def _application_deadline(
         r"(?:\s*\d{1,2}[:：]\d{2})?"
     )
     for match in _APPLICATION_LABEL.finditer(compact):
-        scope = match.group(1)
+        scope = re.split(
+            r"当選(?:発表|連絡|通知)|(?:ご)?購入期間|引[き]?渡し期間|販売期間",
+            match.group(1), maxsplit=1,
+        )[0]
         until = scope.find("まで")
         if until < 0:
+            # A labelled range need not end with まで. Never borrow a date
+            # from a later winner/purchase section of an OCR poster.
+            candidates = list(date_token.finditer(scope))
+            if len(candidates) >= 2 and re.search(
+                r"[~〜～]|から", scope[candidates[0].end():candidates[1].start()],
+            ):
+                parsed = parse_first_datetime(candidates[1].group(), base_date).value
+                if parsed:
+                    return parsed
             continue
         candidates = list(date_token.finditer(scope[:until]))
         if not candidates:
@@ -1151,6 +1164,7 @@ def _product_from_tweet(
     matching_text = re.sub(r"抽選[ \t\u3000]+販売", "抽選販売", text)
     matching_text = re.sub(r"抽選[ \t\u3000]+受付", "抽選受付", matching_text)
     matching_text = matching_text.replace("拡張バック", "拡張パック")
+    matching_text = re.sub(r"(?i)\b30th\s+CEREBRATION\b", "30th CELEBRATION", matching_text)
     category = next((value for value in categories if value in matching_text), "")
     code_patterns = {
         "one_piece_card": r"\b(?:OP|EB|PRB)-\d{2}\b",
@@ -1188,7 +1202,10 @@ def _product_from_tweet(
         )
         for trailing in trailing_matches:
             candidate = trailing.group(1).strip(" 「『【」』】#　")
-            if not any(word in candidate for word in (exclude_keywords or [])):
+            if (
+                not is_provisional_product_name(candidate)
+                and not any(word in candidate for word in (exclude_keywords or []))
+            ):
                 product_name = candidate
                 break
     if not product_name:
@@ -1197,7 +1214,11 @@ def _product_from_tweet(
             if not href.startswith("/realtime/search?p=%23"):
                 continue
             hashtag = anchor.get_text(" ", strip=True).lstrip("#").strip()
-            if hashtag and hashtag not in _NON_PRODUCT_HASHTAGS and len(hashtag) >= 3:
+            if (
+                hashtag and hashtag not in _NON_PRODUCT_HASHTAGS and len(hashtag) >= 3
+                and not is_provisional_product_name(hashtag)
+                and not any(word in hashtag for word in (exclude_keywords or []))
+            ):
                 product_name = hashtag
                 break
     if not product_name and product_code:
@@ -1586,6 +1607,13 @@ def parse_yahoo_realtime(
                 ocr_pending.pop(status_url, None)
         # OCR confuses 月/日 with A/H (e.g. 9A5H). Only normalize the
         # bounded date-shaped token, not arbitrary letters in product names.
+        # A four-digit year can lose 年 entirely (20269A6H). Require the
+        # complete, bounded year/month/day shape; do not repair extra digits.
+        ocr_text = re.sub(
+            r"(?<![A-Za-z0-9])(?P<y>20\d{2})(?P<m>1[0-2]|0?[1-9])A"
+            r"(?P<d>3[01]|[12]\d|0?[1-9])H(?=\s|[（(]|$)",
+            r"\g<y>年\g<m>月\g<d>日", ocr_text,
+        )
         ocr_text = re.sub(
             r"(?<![A-Za-z0-9])(?P<m>1[0-2]|0?[1-9])A(?P<d>3[01]|[12]\d|0?[1-9])H"
             r"(?=\s|[（(]|$)",
