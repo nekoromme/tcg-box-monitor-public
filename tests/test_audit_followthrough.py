@@ -5,10 +5,14 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from tcg_monitor.cli import _cleanup_confirmed_false_positive_cases
+from tcg_monitor.cli import (
+    _cleanup_confirmed_false_positive_cases,
+    _lottery_date_in_delivery_window,
+    _opportunity_is_still_open,
+)
 from tcg_monitor.config import load_config
 from tcg_monitor.google_calendar import CalendarAdapter
-from tcg_monitor.parsers.local_lottery import parse_yahoo_realtime
+from tcg_monitor.parsers.local_lottery import _application_deadline, parse_yahoo_realtime
 from tcg_monitor.parsers.retailer_lottery import discover_retailer_lottery_urls
 from tcg_monitor.state import MonitorState
 
@@ -29,13 +33,79 @@ def test_chomeigaoka_mixed_product_with_actual_cached_ocr():
     diagnostics = {}
     cases, _, _ = parse_yahoo_realtime(
         html, "https://search.yahoo.co.jp/realtime/search",
-        source("yahoo_realtime_tsutaya_chomeigaoka"), CONFIG, date(2026, 9, 5),
+        source("yahoo_realtime_tsutaya_chomeigaoka"), CONFIG, date(2026, 9, 6),
         ocr_cache={status: ocr}, diagnostics=diagnostics,
     )
     assert len(cases) == 1, diagnostics
     assert "デッキ" not in cases[0].product_name
-    assert "30th" in cases[0].product_name
+    assert cases[0].product_name == "拡張パック「30th CELEBRATION」"
     assert cases[0].start_at == date(2026, 9, 4)
+    assert cases[0].end_at == date(2026, 9, 6)
+    assert not _lottery_date_in_delivery_window(
+        date(2026, 9, 4), date(2026, 9, 6), date(2027, 9, 6),
+    )
+    assert _opportunity_is_still_open(cases[0], date(2026, 9, 6))
+    assert not _opportunity_is_still_open(cases[0], date(2026, 9, 7))
+
+
+def test_morioka_store_hashtag_and_conditions_are_not_product_names(tmp_path):
+    status = "https://x.com/batoloco_mrok/status/2096063514163155133"
+    html = f'''<div class="Tweet_TweetContainer__test"><p>
+    #ポケカ 9/16（水）発売 30周年商品の抽選受付フォームです！
+    ツリーに記載のGoogleフォームからご応募ください！
+    ※拡張パックにご当選の場合、デッキセットは自動的に落選とさせていただきます。
+    応募締切:9/13(日)23:59</p>
+    <a href="/realtime/search?p=%23モリロコ">#モリロコ</a>
+    <a href="{status}">投稿</a></div>'''
+    cases, _, _ = parse_yahoo_realtime(
+        html, "https://search.yahoo.co.jp/realtime/search",
+        source("yahoo_realtime_batoloco_morioka"), CONFIG, date(2026, 9, 6),
+    )
+    assert len(cases) == 1
+    case = cases[0]
+    assert case.product_name == "拡張パック（商品名は画像参照）"
+    state = MonitorState.load(tmp_path / "state.json")
+    old_id = "2b86ddcf0c3f84bb8ae869b39543a8f53be0263b0057909c0ba5cc2cddf046fe"
+    state.data["seen_cases"][old_id] = {
+        **case.__dict__, "case_id": old_id,
+        "product_name": "拡張パック「モリロコ」", "canonical_product_key": "モリロコ",
+    }
+    state.data["delivery_journal"][f"lottery:started:{old_id}"] = {
+        "updated_at": "2026-09-05T06:53:17.976095+00:00", "status": "complete",
+    }
+    state.data["calendar_sync"][f"lottery:{old_id}"] = {"event_id": "existing"}
+    state.migrate_case_identity(case)
+    assert state.data["calendar_sync"][f"lottery:{case.case_id}"]["event_id"] == "existing"
+    assert state.data["delivery_journal"][f"lottery:started:{case.case_id}"]["updated_at"] == (
+        "2026-09-05T06:53:17.976095+00:00"
+    )
+
+
+def test_cleanup_exact_chomeigaoka_deck_preserves_box(tmp_path):
+    case_id = "82db0c39e776b9374d92fc5d3f959221b5e0b87952614090ec26393ab90bbf28"
+    expected = CONFIG.system["runtime"]["confirmed_false_positive_cases"][case_id]
+    state = MonitorState.load(tmp_path / "state.json")
+    state.data["seen_cases"] = {
+        case_id: dict(expected), "box": {"product_name": "30th CELEBRATION"},
+    }
+    state.data["calendar_sync"] = {f"lottery:{case_id}": {"event_id": expected["event_id"]}}
+    calendar = MagicMock(spec=CalendarAdapter)
+    calendar.delete_owned_event.return_value = {"status": "deleted"}
+    _cleanup_confirmed_false_positive_cases(state, calendar, {case_id: expected})
+    assert list(state.data["seen_cases"]) == ["box"]
+    calendar.delete_owned_event.assert_called_once_with(
+        expected["event_id"], kind="lottery", internal_id=case_id,
+    )
+
+
+@pytest.mark.parametrize("body,expected", [
+    ("抽選受付期間 9月4日～9月6日 当選連絡期間 9月7日～9月10日", date(2026, 9, 6)),
+    ("抽選受付期間 9月4日 当選連絡期間 9月7日～9月10日", None),
+    ("抽選受付期間 9月4日 ご購入期間 9月16日～9月20日", None),
+    ("発売日9月16日 抽選受付期間 本日から9月6日まで", date(2026, 9, 6)),
+])
+def test_deadline_range_is_scoped_to_application_not_winner_or_purchase(body, expected):
+    assert _application_deadline(body, date(2026, 9, 4)) == expected
 
 
 @pytest.mark.parametrize("condition", [

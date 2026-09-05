@@ -47,6 +47,7 @@ def main() -> None:
     print("# トレカ検知・経路別実証棚卸し\n")
     print(f"履歴参照: `{ref}`。保存スナップショット: {len(commits)}件。")
     print(f"設定: {len(config.sources)}経路、実行対象: {len(enabled)}経路。\n")
+    print(f"今回の状態記録: `{state.get('last_run_summary', {}).get('recorded_at', '不明')}`。\n")
     print("『候補あり』はそのソースの解析実績。通知成功や全URLの検証を意味しない。")
     print("履歴にURL別記録がない期間は、ソース実績から個別URLの作動を推定しない。")
     print("候補ゼロは、未開催・期限切れ・対象外条件・取得不良のいずれもあり得る。\n")
