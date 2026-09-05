@@ -819,8 +819,6 @@ def test_kojima_account_query_recovers_delayed_keyword_index() -> None:
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_kojima_secondary"
     )
-    # The full production graph activates this secondary source through the
-    # official Kojima monitor's fallback_source_ids.
     source = replace(source, enabled=True)
     yahoo_lottery, yahoo_account, _twstalker_url = source.discovery_urls
     status_id = "2095364248327332215"
@@ -860,6 +858,30 @@ def test_kojima_account_query_recovers_delayed_keyword_index() -> None:
         2026, 9, 4, 21, 0, tzinfo=ZoneInfo("Asia/Tokyo")
     )
     assert cases[0].source_url == f"https://x.com/gamegetnavi/status/{status_id}"
+
+
+def test_kojima_uses_enabled_store_scoped_summary_fallback() -> None:
+    config = load_config("sites.yaml")
+    by_id = {source.id: source for source in config.sources}
+
+    summary = by_id["nyuka_now_fullcomp_livepocket"]
+    kojima_profiles = [
+        profile
+        for profile in summary.parser_options["priority_retailers"]
+        if profile["retailer_id"] == "kojima"
+    ]
+    assert summary.enabled
+    assert kojima_profiles == [
+        {
+            "heading_marker": "コジマ（アプリ）",
+            "retailer_id": "kojima",
+            "retailer_name": "コジマ",
+            "fallback_url": "https://www.kojima.net/shop/app/kojima_appli.html",
+            "official_host": "kojima.net",
+            "game_id": "pokemon_card",
+            "summary_url": "https://nyuka-now.com/archives/2459",
+        }
+    ]
 
 
 def test_yahoo_ocr_failure_uses_twstalker_and_clears_pending(

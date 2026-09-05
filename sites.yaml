@@ -171,6 +171,7 @@ games:
       - スターターセット
       - スタートデッキ
       - 構築済みデッキ
+      - デッキセット
       - スペシャルセット
       - カードセット
       - ポケモンセンターセット
@@ -2326,7 +2327,7 @@ sources:
   - product_name
   - application_start
   - official_application_link
-  notes: DMM通販のワンピース抽選ページを最優先で取得し、LivePocket検索から漏れるフルコンプと、公式一覧が不安定なシーガル、エディオン、ファミマオンライン、イトーヨーカドー通販を補完する。受付中・受付予定の各見出し配下だけを解析し、確度mediumで登録する。
+  notes: DMM通販のワンピース抽選ページを最優先で取得し、LivePocket検索から漏れるフルコンプと、公式一覧が不安定なシーガル、エディオン、ファミマオンライン、イトーヨーカドー通販、コジマアプリ抽選を補完する。受付中・受付予定の各見出し配下だけを解析し、確度mediumで登録する。
   parser_options:
     priority_retailers:
     - &id002
@@ -2365,6 +2366,13 @@ sources:
       retailer_name: ファミマオンライン
       fallback_url: https://famima-online.family.co.jp/search?receiveType=1
       official_host: famima-online.family.co.jp
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
+    - heading_marker: コジマ（アプリ）
+      retailer_id: kojima
+      retailer_name: コジマ
+      fallback_url: https://www.kojima.net/shop/app/kojima_appli.html
+      official_host: kojima.net
       game_id: pokemon_card
       summary_url: https://nyuka-now.com/archives/2459
 - id: yahoo_realtime_premium_bandai_onepiece
