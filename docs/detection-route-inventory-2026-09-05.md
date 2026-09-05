@@ -3,7 +3,7 @@
 履歴参照: `82b4c0b4438666878f03ee82b2cfa07fa560d5ad`。保存スナップショット: 86件。
 設定: 112経路、実行対象: 104経路。
 
-今回の状態記録: `2026-09-05T23:19:41.250527+00:00`。
+今回の状態記録: `2026-09-05T23:37:53.617396+00:00`。
 
 『候補あり』はそのソースの解析実績。通知成功や全URLの検証を意味しない。
 履歴にURL別記録がない期間は、ソース実績から個別URLの作動を推定しない。
@@ -14,7 +14,7 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 | ソース | 解析種別 | 有効 | 保存履歴で候補あり/実取得回数 | 今回候補 | 取得状態 |
 |---|---|---|---:|---:|---|
-| pokemon_official_products | 既定 | ON | 78/86 | 1 | success |
+| pokemon_official_products | 既定 | ON | 78/86 | 0 | degraded |
 | onepiece_official_products | 既定 | ON | 86/86 | 1 | success |
 | onepiece_official_topics | 既定 | ON | 86/86 | 22 | success |
 | dragonball_official_products | 既定 | ON | 86/86 | 7 | success |
@@ -86,7 +86,7 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 | aeon_style_online | 既定 | ON | 0/86 | 0 | degraded |
 | livepocket_tsutaya_akebono | livepocket | ON | 0/86 | 0 | degraded |
 | yahoo_realtime_tsutaya_akebono | yahoo_realtime | ON | 19/86 | 1 | success |
-| yahoo_realtime_tsutaya_ichinoseki | yahoo_realtime | ON | 14/86 | 1 | success |
+| yahoo_realtime_tsutaya_ichinoseki | yahoo_realtime | ON | 14/86 | 2 | success |
 | yahoo_realtime_tsutaya_sanuma | yahoo_realtime | ON | 17/86 | 0 | failed |
 | yahoo_realtime_mint_sendai | yahoo_realtime | ON | 86/86 | 0 | failed |
 | yahoo_realtime_tsutaya_ichinoseki_store | yahoo_realtime | ON | 86/86 | 2 | success |
@@ -131,9 +131,9 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### ポケモンカードゲーム公式 商品情報
 
-- [https://www.pokemon-card.com/products/index.html?productType=expansion](https://www.pokemon-card.com/products/index.html?productType=expansion): `parsed`、候補1件。
-- [https://www.pokemon-card.com/products/](https://www.pokemon-card.com/products/): `今回未実行・実証なし`、候補0件。
-- [https://www.pokemon-card.com/info/](https://www.pokemon-card.com/info/): `今回未実行・実証なし`、候補0件。
+- [https://www.pokemon-card.com/products/index.html?productType=expansion](https://www.pokemon-card.com/products/index.html?productType=expansion): `fetch_failed`、候補0件。{"error": "expected_rendered_content_missing"}
+- [https://www.pokemon-card.com/products/](https://www.pokemon-card.com/products/): `fetch_failed`、候補0件。{"error": "expected_rendered_content_missing"}
+- [https://www.pokemon-card.com/info/](https://www.pokemon-card.com/info/): `fetch_failed`、候補0件。{"error": "browser_fetch_failed:TimeoutError"}
 
 ### ONE PIECEカードゲーム公式 商品情報
 
@@ -498,9 +498,9 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### TSUTAYA一関中央店 Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430%E3%80%80%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc](https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430%E3%80%80%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc): `parser_failed`、候補0件。{"diagnostics": {"account_posts": 1}, "error": "ValueError"}
-- [https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430&ei=UTF-8): `parser_failed`、候補0件。{"diagnostics": {"account_posts": 1}, "error": "ValueError"}
-- [https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FTSUTAYA19392430%2Fstatus%2F2096124692696621430&omit_script=1&dnt=1](https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FTSUTAYA19392430%2Fstatus%2F2096124692696621430&omit_script=1&dnt=1): `parsed`、候補1件。{"diagnostics": {"account_posts": 1}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430%E3%80%80%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc](https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430%E3%80%80%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc): `parsed`、候補1件。{"diagnostics": {"account_posts": 3, "not_application_announcement": 1}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 39}}
+- [https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FTSUTAYA19392430%2Fstatus%2F2096124692696621430&omit_script=1&dnt=1](https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FTSUTAYA19392430%2Fstatus%2F2096124692696621430&omit_script=1&dnt=1): `今回未実行・実証なし`、候補0件。
 - [https://twstalker.com/TSUTAYA19392430](https://twstalker.com/TSUTAYA19392430): `今回未実行・実証なし`、候補0件。
 
 ### Vidaway佐沼店（TSUTAYA佐沼）Yahooリアルタイム検索
