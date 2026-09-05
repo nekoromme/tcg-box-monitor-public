@@ -1266,6 +1266,16 @@ sources:
   enabled: true
   discovery_urls:
   - https://books.rakuten.co.jp/event/game/card/entry/
+  parser_kind: retailer_lottery
+  parser_options:
+    index_url: https://books.rakuten.co.jp/event/game/card/entry/
+    detail_host: books.rakuten.co.jp
+    detail_path_prefix: /rb/
+    retailer_id: rakuten_books
+    retailer_name: 楽天ブックス
+    # 公式商品ページの既知の受付期間を再評価（終了済みは通知しない）。
+    supplemental_discovery_urls:
+    - https://books.rakuten.co.jp/rb/18595282/
   page_url_patterns:
   - ^https://books\.rakuten\.co\.jp/event/game/card/entry/?$
   - ^https://books\.rakuten\.co\.jp/rb/\d+/?$

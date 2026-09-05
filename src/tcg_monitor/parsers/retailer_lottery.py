@@ -688,13 +688,77 @@ def _alert(
     ).with_fingerprint()
 
 
+def _parse_rakuten_detail(
+    html: str, url: str, source: SourceConfig, config: Config,
+    diagnostics: dict[str, int] | None,
+) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
+    """Pair the product heading with its labelled period, never a footer campaign.
+
+    The lottery landing page became an index. Its /rb/ pages contain the actual
+    period, separate from release and winner-purchase dates and sitewide copy.
+    """
+    soup = BeautifulSoup(html, "lxml")
+    text = soup.get_text(" ", strip=True)
+    headings = [node.get_text(" ", strip=True) for node in soup.find_all("h1")]
+    headings.append(title(html))
+    product = next((name for name in headings if _game_id(name, source)), "")
+    game_id = _game_id(product, source)
+    if not game_id:
+        return [], [], []
+    classified = classify_product(config.games[game_id], product, product)
+    if not classified.is_box:
+        if diagnostics is not None:
+            diagnostics["excluded_product"] = 1
+        return [], [], []
+    if diagnostics is not None:
+        diagnostics["validated_product"] = 1
+    # Scope to the explicit application field. Never consume purchase/result dates.
+    match = re.search(r"抽選受付期間\s*[：:]\s*(.{1,160}?)(?=当選者販売期間|発送予定日|$)", text)
+    if not match:
+        return [], [], [_alert(source, url, product, "retailer_application_period_missing",
+                              "楽天公式BOX商品ページで抽選受付期間を確認できません", game_id)]
+    parts = re.split(r"\s*[〜～~]\s*", match.group(1), maxsplit=1)
+    if len(parts) != 2:
+        return [], [], [_alert(source, url, product, "retailer_application_period_missing",
+                              "楽天公式BOX抽選の開始・終了を一意に解析できません", game_id)]
+    start_at = parse_first_datetime(parts[0]).value
+    base_date = start_at.date() if isinstance(start_at, datetime) else start_at
+    end_at = parse_first_datetime(parts[1], base_date).value
+    if start_at is None or end_at is None:
+        return [], [], [_alert(source, url, product, "retailer_application_period_missing",
+                              "楽天公式BOX抽選の開始・終了を一意に解析できません", game_id)]
+    start_date = start_at.date() if isinstance(start_at, datetime) else start_at
+    end_date = end_at.date() if isinstance(end_at, datetime) else end_at
+    if end_date < start_date:
+        return [], [], [_alert(source, url, product, "retailer_application_period_missing",
+                              "楽天公式BOX抽選の終了日が開始日より前です", game_id)]
+    if diagnostics is not None:
+        diagnostics["validated_application_period"] = 1
+    now = datetime.now(ZoneInfo(config.timezone))
+    ended = end_at < now if isinstance(end_at, datetime) else end_at < now.date()
+    if ended:
+        if diagnostics is not None:
+            diagnostics["application_ended"] = 1
+        return [], [], []
+    case = LotteryCase(
+        game_id, "rakuten_books", "楽天ブックス", classified.product_name,
+        classified.product_category, classified.canonical_product_key,
+        start_at, url, url, source.source_tier, "rakuten_detail_application_period", "high",
+        end_at=end_at,
+    ).with_id()
+    return [case], [], []
+
+
 def parse_retailer_lottery_detail(
     html: str,
     url: str,
     source: SourceConfig,
     config: Config,
+    diagnostics: dict[str, int] | None = None,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     source = source_with_runtime_parser_profile(source)
+    if source.id == "rakuten_books":
+        return _parse_rakuten_detail(html, url, source, config, diagnostics)
     if source.id == "hobbylink_japan_lottery":
         return _parse_hobbylink_detail(html, url, source, config)
     if source.id == "tokyo_otaku_mode_lottery":
