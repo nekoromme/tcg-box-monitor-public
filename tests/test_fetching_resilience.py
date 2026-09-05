@@ -812,6 +812,56 @@ def test_tsutaya_akebono_account_query_recovers_delayed_keyword_index() -> None:
     assert cases[0].source_url == f"https://x.com/AKEBONOtoreka/status/{status_id}"
 
 
+@freeze_time("2026-09-05 20:30:00+09:00")
+def test_kojima_account_query_recovers_delayed_keyword_index() -> None:
+    """A delayed keyword index must not hide an exact, store-specific lottery."""
+    config = load_config("sites.yaml")
+    source = next(
+        item for item in config.sources if item.id == "yahoo_realtime_kojima_secondary"
+    )
+    # The full production graph activates this secondary source through the
+    # official Kojima monitor's fallback_source_ids.
+    source = replace(source, enabled=True)
+    yahoo_lottery, yahoo_account, _twstalker_url = source.discovery_urls
+    status_id = "2095364248327332215"
+    account_html = f"""
+    <div class="Tweet_TweetContainer__current">
+      <p class="Tweet_body__current">コジマ×ビックカメラ店頭
+      ポケモンカード『30th CELEBRATION』抽選販売発表
+      拡張パックBOX
+      受付期間 9月4日(金)21:00～9月13日(日)
+      当選発表 9月16日(水)0時～
+      購入期間 9月16日(水)～9月23日(水)</p>
+      <time><a href="https://x.com/gamegetnavi/status/{status_id}">9月3日</a></time>
+    </div>
+    """
+    fetcher = FakeHttpFetcher(
+        {
+            yahoo_lottery: _response(
+                yahoo_lottery,
+                200,
+                "<main>一致する情報は見つかりませんでした</main>",
+            ),
+            yahoo_account: _response(yahoo_account, 200, account_html),
+        }
+    )
+
+    cases, _, alerts = pipeline.run_pipeline(
+        _config(source),
+        http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+
+    assert not alerts
+    assert [call[0] for call in fetcher.calls] == [yahoo_lottery, yahoo_account]
+    assert len(cases) == 1
+    assert cases[0].retailer_id == "kojima"
+    assert cases[0].product_name == "拡張パック「30th CELEBRATION」"
+    assert cases[0].start_at == datetime(
+        2026, 9, 4, 21, 0, tzinfo=ZoneInfo("Asia/Tokyo")
+    )
+    assert cases[0].source_url == f"https://x.com/gamegetnavi/status/{status_id}"
+
+
 def test_yahoo_ocr_failure_uses_twstalker_and_clears_pending(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

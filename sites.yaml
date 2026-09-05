@@ -1732,14 +1732,16 @@ sources:
   enabled: false
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20%E3%82%B3%E3%82%B8%E3%83%9E%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi&ei=UTF-8
   - https://twstalker.com/gamegetnavi
   render_mode: http
   poll_minutes: 120
+  fallback_on_empty_result: true
   expected_elements:
   - named_retailer_post
   - supported_tcg_box
   - application_start_or_postponement
-  notes: 同じくアプリ依存のコジマへ共通処理を展開する。コジマ名が本文にない投稿は除外し、公式ページ・アプリで最終確認する。
+  notes: 同じくアプリ依存のコジマへ共通処理を展開する。キーワード検索の反映遅延時は同一アカウント検索へフォールバックする。コジマ名が本文にない投稿と複数店舗のまとめ投稿は除外し、公式ページ・アプリで最終確認する。
   parser_kind: yahoo_realtime
   parser_options:
     account: gamegetnavi
