@@ -230,6 +230,7 @@ def parse_geo_news_detail(
     soup = BeautifulSoup(html, "lxml")
     heading = soup.find("h1") or soup.find("h2")
     product_scope = heading.get_text(" ", strip=True) if heading else (title(html) or "")
+    product_scope = re.sub(r"\s+", " ", product_scope).strip()
     product_scope = product_scope.replace("ARTWORKCOLLECTION", "ARTWORK COLLECTION")
     text = visible_text(html)
     start = _lottery_start(text, source, config)
