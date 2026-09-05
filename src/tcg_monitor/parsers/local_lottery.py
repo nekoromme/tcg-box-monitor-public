@@ -1638,6 +1638,7 @@ def parse_yahoo_realtime(
             continue
 
         game = config.games[game_id]
+        confirmed_product = _status_product_option(source, status_id)
         has_excluded_product = any(word in combined_text for word in game.product_exclude_keywords)
         has_box_signal = any(word in combined_text for word in game.box_product_keywords) or bool(
             re.search(r"(?i)\b1?BOX\b", combined_text)
@@ -1649,10 +1650,13 @@ def parse_yahoo_realtime(
         # 投稿に「1BOX」があっても、BOX証拠で除外を打ち消さない。
         if game_id == "yu_gi_oh" and has_excluded_product:
             continue
-        if has_excluded_product and (strict_product_exclusions or not has_box_signal):
+        if (
+            has_excluded_product
+            and not confirmed_product
+            and (strict_product_exclusions or not has_box_signal)
+        ):
             continue
 
-        confirmed_product = _status_product_option(source, status_id)
         product = confirmed_product or _product_from_tweet(container, combined_text, game_id)
         if (
             not confirmed_product
