@@ -1016,6 +1016,7 @@ def test_kojima_uses_enabled_store_scoped_summary_fallback() -> None:
     ]
 
 
+@freeze_time("2026-07-24 12:00:00+09:00")
 def test_yahoo_ocr_failure_uses_twstalker_and_clears_pending(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -1533,7 +1534,7 @@ def test_ocr_failure_is_pending_before_repeated_alert() -> None:
     html = f"""
     <div class="Tweet_TweetContainer__changed">
       <p class="Tweet_body__changed">【抽選販売について】詳細は画像をご確認ください。
-      応募にはこのポストのリポストが必要です。</p>
+      応募にはWebフォームの入力が必要です。</p>
       <img src="https://pbs.twimg.com/media/test.jpg">
       <time><a href="{status_url}">8時間前</a></time>
     </div>

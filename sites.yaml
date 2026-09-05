@@ -6,6 +6,13 @@ system:
   social_account_fallback: true
   runtime:
     confirmed_false_positive_cases:
+      b0a6499b53846c03ca6bde6287300c5d072e390c2b9ae8ebed41c8175a95620b:
+        retailer_id: santy_sendai
+        retailer_name: santy仙台クリスロード店
+        product_name: 拡張パック「30th CELEBRATION」
+        start_at: '2026-09-05'
+        source_url: https://x.com/santycrissroad/status/2095747915730051152
+        event_id: tcg0b6619c3cdd35df7b67dd4f4abe5cc910818982231bad6c7758b85eea9296
       b3ead67cf50edb332b84384beb3bfc8c708c5eb0601e5cf95895b5f1def6043a:
         retailer_id: kojima
         retailer_name: コジマ
@@ -2910,6 +2917,8 @@ sources:
   parser_kind: retailer_lottery
   parser_options:
     index_url: https://iyec.itoyokado.co.jp/shop/e/eE4reslot/
+    supplemental_discovery_urls:
+    - https://iyec.itoyokado.co.jp/shop/pages/apply_pomega_04.aspx
     retailer_id: itoyokado_online
     retailer_name: イトーヨーカドーネット通販
 - id: hobbylink_japan_lottery
