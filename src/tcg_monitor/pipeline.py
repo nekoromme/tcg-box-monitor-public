@@ -762,6 +762,10 @@ def run_pipeline(
         primary_roots: list[str] = []
         is_yahoo_source = is_yahoo_realtime_source(source)
         always_fetch_roots = list(tsutaya_line_form_urls(source))
+        always_fetch_roots.extend(
+            url for url in source.parser_options.get("supplemental_discovery_urls", [])
+            if isinstance(url, str) and url not in always_fetch_roots
+        )
         if monitor_state is not None and is_yahoo_source:
             repair_urls = yahoo_repair_discovery_urls(
                 source,
@@ -799,6 +803,10 @@ def run_pipeline(
                 else [(configured_root_urls[0], True)]
                 if configured_root_urls
                 else []
+            )
+            discovery_urls.extend(
+                (url, True) for url in always_fetch_roots
+                if url not in {item[0] for item in discovery_urls}
             )
         remaining_configured_roots = set(remaining_roots)
 
@@ -1356,6 +1364,12 @@ def run_pipeline(
                             ocr_cache=ocr_cache,
                             ocr_cache_meta=ocr_cache_meta,
                         )
+                    )
+                elif is_retailer_lottery_source(source):
+                    retailer_diagnostics: dict[str, int] = {}
+                    route["diagnostics"] = retailer_diagnostics
+                    parsed_cases, parsed_releases, parsed_alerts = parse_retailer_lottery_detail(
+                        html, url, source, config, diagnostics=retailer_diagnostics
                     )
                 else:
                     parsed_cases, parsed_releases, parsed_alerts = parser(
