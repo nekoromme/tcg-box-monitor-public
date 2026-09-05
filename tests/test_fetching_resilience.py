@@ -737,14 +737,8 @@ def test_tsutaya_ichinoseki_account_query_recovers_30th_lottery(
       <time><a href="https://x.com/TSUTAYA19392430/status/{status_id}">15:34</a></time>
     </div>
     """
-    ocr_text = """
-    9/16(水)発売 ポケモンカード 記念パック「30th セレブレーション」
-    抽選販売について
-    予約受付期間 9月5日(土)～9月13日(日)23:59まで
-    当選者発表 9月15日(火)
-    ご購入期間 発売日より5日間（9月20日閉店時まで）
-    今回の新弾も「シュリンクを破いて販売」致します
-    """
+    # Use the real noisy production OCR, not an idealized transcription.
+    ocr_text = Path("tests/fixtures/ichinoseki_actual_20260905.txt").read_text()
     monkeypatch.setattr(pipeline, "read_image_text", lambda _urls: ocr_text)
     fetcher = FakeHttpFetcher(
         {
