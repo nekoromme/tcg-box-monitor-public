@@ -523,7 +523,16 @@ def _compact_application_text(text: str) -> str:
     normalized = re.sub(
         r"(\d{1,2}[/.]\d{1,2})\s+(?=\d{1,2}\s*[:時])", r"\1日", normalized,
     )
-    return re.sub(r"\s+", "", normalized)
+    # OCR noise such as "7    9月5日" must not become the invalid month 79.
+    # Preserve numeric token boundaries while still joining Japanese label gaps.
+    return re.sub(
+        r"\s+",
+        lambda match: " " if (
+            normalized[match.start() - 1:match.start()].isdigit()
+            and normalized[match.end():match.end() + 1].isdigit()
+        ) else "",
+        normalized,
+    )
 
 
 def _application_start(text: str, base_date: date | None = None) -> datetime | date | None:

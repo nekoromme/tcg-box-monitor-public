@@ -3,7 +3,7 @@
 履歴参照: `82b4c0b4438666878f03ee82b2cfa07fa560d5ad`。保存スナップショット: 86件。
 設定: 112経路、実行対象: 104経路。
 
-今回の状態記録: `2026-09-05T22:43:53.438875+00:00`。
+今回の状態記録: `2026-09-05T23:19:41.250527+00:00`。
 
 『候補あり』はそのソースの解析実績。通知成功や全URLの検証を意味しない。
 履歴にURL別記録がない期間は、ソース実績から個別URLの作動を推定しない。
@@ -30,7 +30,7 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 | dragonball_official_store | 既定 | ON | 30/86 | 1 | success |
 | yahoo_realtime_dragonball_official_store | yahoo_realtime | ON | 0/86 | 0 | failed |
 | geo | 既定 | ON | 0/86 | 0 | success |
-| yahoo_realtime_geo_official | yahoo_realtime | ON | 86/86 | 5 | success |
+| yahoo_realtime_geo_official | yahoo_realtime | ON | 86/86 | 1 | success |
 | pokemon_center_online | 既定 | ON | 0/86 | 0 | failed |
 | pokemon_center_store | 既定 | ON | 0/86 | 0 | degraded |
 | yahoo_realtime_pokemon_center_store | yahoo_realtime | ON | 50/86 | 2 | success |
@@ -63,7 +63,7 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 | furuichi_official_lottery | 既定 | ON | 25/86 | 2 | success |
 | yahoo_realtime_furuichi | yahoo_realtime | ON | 0/86 | 0 | failed |
 | yahoo_realtime_hmv | yahoo_realtime | ON | 0/86 | 0 | failed |
-| yahoo_realtime_hmv_secondary | yahoo_realtime | ON | 86/86 | 1 | success |
+| yahoo_realtime_hmv_secondary | yahoo_realtime | ON | 86/86 | 0 | failed |
 | famima_online_lottery | retailer_lottery | ON | 0/86 | 0 | degraded |
 | ministop_online_lottery | retailer_lottery | ON | 0/18 | 0 | failed |
 | dmm_hobby_lottery | retailer_lottery | ON | 0/86 | 0 | failed |
@@ -78,7 +78,7 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 | yahoo_realtime_dmm_tsuhan | yahoo_realtime | ON | 0/86 | 0 | failed |
 | yahoo_realtime_dmm_onepiece_secondary | yahoo_realtime | OFF | 1/1 | 1 | success |
 | yahoo_realtime_hobby_search_secondary | yahoo_realtime | OFF | 1/1 | 1 | success |
-| yahoo_realtime_dmm_myca | yahoo_realtime | ON | 86/86 | 10 | success |
+| yahoo_realtime_dmm_myca | yahoo_realtime | ON | 86/86 | 6 | success |
 | yahoo_realtime_edion | yahoo_realtime | ON | 0/86 | 0 | failed |
 | yahoo_realtime_famima | yahoo_realtime | ON | 0/86 | 0 | failed |
 | yahoo_realtime_ministop_secondary | yahoo_realtime | ON | 4/18 | 0 | success |
@@ -88,9 +88,9 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 | yahoo_realtime_tsutaya_akebono | yahoo_realtime | ON | 19/86 | 1 | success |
 | yahoo_realtime_tsutaya_ichinoseki | yahoo_realtime | ON | 14/86 | 1 | success |
 | yahoo_realtime_tsutaya_sanuma | yahoo_realtime | ON | 17/86 | 0 | failed |
-| yahoo_realtime_mint_sendai | yahoo_realtime | ON | 86/86 | 1 | success |
+| yahoo_realtime_mint_sendai | yahoo_realtime | ON | 86/86 | 0 | failed |
 | yahoo_realtime_tsutaya_ichinoseki_store | yahoo_realtime | ON | 86/86 | 2 | success |
-| yahoo_realtime_torecano_mizusawa | yahoo_realtime | ON | 86/86 | 1 | success |
+| yahoo_realtime_torecano_mizusawa | yahoo_realtime | ON | 86/86 | 2 | success |
 | yahoo_realtime_tsutaya_nakazato | yahoo_realtime | ON | 13/86 | 0 | failed |
 | yahoo_realtime_yorozuya_shiwa | yahoo_realtime | ON | 60/86 | 0 | failed |
 | yahoo_realtime_yorozuya_morioka | yahoo_realtime | ON | 60/86 | 0 | failed |
@@ -106,7 +106,7 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 | namco_onepiece_official_shop_miyagi | retailer_lottery | ON | 52/86 | 0 | success |
 | yahoo_realtime_batoloco_morioka | yahoo_realtime | ON | 17/86 | 3 | success |
 | yahoo_realtime_batoloco_sendai | yahoo_realtime | ON | 30/66 | 1 | success |
-| yahoo_realtime_tcgpit_sendai | yahoo_realtime | ON | 66/66 | 4 | success |
+| yahoo_realtime_tcgpit_sendai | yahoo_realtime | ON | 66/66 | 0 | failed |
 | yahoo_realtime_santy_sendai | yahoo_realtime | ON | 46/46 | 0 | failed |
 | yahoo_realtime_tsutaya_higashi_sendai | yahoo_realtime | ON | 0/46 | 2 | success |
 | yahoo_realtime_tsutaya_chomeigaoka | yahoo_realtime | ON | 9/46 | 2 | success |
@@ -118,13 +118,13 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 | yahoo_realtime_cardwings_akihabara_pokemon | yahoo_realtime | ON | 0/38 | 0 | failed |
 | yahoo_realtime_bigmagic_akihabara | yahoo_realtime | ON | 0/38 | 0 | failed |
 | yahoo_realtime_fukufuku_akihabara | yahoo_realtime | ON | 38/38 | 1 | success |
-| yahoo_realtime_fukufuku_akihabara_onepiece | yahoo_realtime | ON | 0/38 | 0 | failed |
+| yahoo_realtime_fukufuku_akihabara_onepiece | yahoo_realtime | ON | 0/38 | 1 | success |
 | yahoo_realtime_batoloco_ikebukuro | yahoo_realtime | ON | 0/38 | 0 | failed |
 | yahoo_realtime_bigmagic_ikebukuro_pokemon | yahoo_realtime | ON | 38/38 | 4 | success |
 | yahoo_realtime_bigmagic_ikebukuro | yahoo_realtime | ON | 0/38 | 0 | failed |
 | yahoo_realtime_batoloco_shibuya_satellite | yahoo_realtime | ON | 0/38 | 0 | failed |
-| yahoo_realtime_pokemon_card_lounge_shibuya | yahoo_realtime | ON | 38/38 | 4 | success |
-| yahoo_realtime_tierone_shibuya | yahoo_realtime | ON | 38/38 | 4 | success |
+| yahoo_realtime_pokemon_card_lounge_shibuya | yahoo_realtime | ON | 38/38 | 0 | failed |
+| yahoo_realtime_tierone_shibuya | yahoo_realtime | ON | 38/38 | 3 | success |
 | yahoo_realtime_batoloco_shibuya_center | yahoo_realtime | ON | 0/38 | 0 | failed |
 
 ## URL別の今回の確認（旧履歴は記録なし）
@@ -227,7 +227,7 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### ゲオ公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3AGEO_official%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3AGEO_official%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補5件。{"diagnostics": {"account_posts": 26, "disallowed_application": 19, "excluded_product": 1, "old_post": 1}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3AGEO_official%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3AGEO_official%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 26, "application_ended": 5, "disallowed_application": 19, "old_post": 1}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3AGEO_official&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3AGEO_official&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "disallowed_application": 4, "not_application_announcement": 36}}
 - [https://search.yahoo.co.jp/realtime/search/tweet/2072968946731594147?detail=1&ifr=tl_twdtl&rkf=1](https://search.yahoo.co.jp/realtime/search/tweet/2072968946731594147?detail=1&ifr=tl_twdtl&rkf=1): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 1, "old_post": 1}}
 
@@ -368,15 +368,15 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### HMV公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "disallowed_application": 14, "not_application_announcement": 25}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "disallowed_application": 15, "not_application_announcement": 24}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 40}}
 - [https://twstalker.com/HMV_Japan](https://twstalker.com/HMV_Japan): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
 
 ### HMV抽選補完 Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20HMV%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20HMV%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 1}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20HMV%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20HMV%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 1, "application_ended": 1}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "retailer_not_matched": 40}}
-- [https://twstalker.com/gamegetnavi](https://twstalker.com/gamegetnavi): `今回未実行・実証なし`、候補0件。
+- [https://twstalker.com/gamegetnavi](https://twstalker.com/gamegetnavi): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
 
 ### ファミマオンライン 抽選商品
 
@@ -440,7 +440,7 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### DMMマイカ公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_Myca%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_Myca%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補8件。{"diagnostics": {"account_posts": 17, "application_ended": 1, "not_application_announcement": 1}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_Myca%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_Myca%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補4件。{"diagnostics": {"account_posts": 17, "application_ended": 5, "not_application_announcement": 1}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_Myca&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_Myca&ei=UTF-8): `parsed`、候補2件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 37}}
 - [https://twstalker.com/DMM_Myca](https://twstalker.com/DMM_Myca): `今回未実行・実証なし`、候補0件。
 
@@ -452,8 +452,8 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### ファミリーマート公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "disallowed_application": 9, "not_application_announcement": 31}}
-- [https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "disallowed_application": 4, "not_application_announcement": 36}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "disallowed_application": 10, "not_application_announcement": 30}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "disallowed_application": 5, "not_application_announcement": 35}}
 - [https://twstalker.com/famima_now](https://twstalker.com/famima_now): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
 
 ### ミニストップオンライン抽選補完 Yahooリアルタイム検索
@@ -505,15 +505,15 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### Vidaway佐沼店（TSUTAYA佐沼）Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3Avw_1323+%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc](https://search.yahoo.co.jp/realtime/search?p=id%3Avw_1323+%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 8, "application_ended": 5, "excluded_product": 1, "not_application_announcement": 2}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3Avw_1323+%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc](https://search.yahoo.co.jp/realtime/search?p=id%3Avw_1323+%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 8, "excluded_product": 1, "not_application_announcement": 2}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3Avw_1323&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Avw_1323&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "excluded_product": 1, "not_application_announcement": 39}}
 - [https://twstalker.com/vw_1323](https://twstalker.com/vw_1323): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
 
 ### MINT仙台店 Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3Amintsendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Amintsendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 5, "application_ended": 3, "not_application_announcement": 1}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3Amintsendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Amintsendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 5, "application_ended": 4, "not_application_announcement": 1}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3Amintsendai&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Amintsendai&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "application_ended": 1, "not_application_announcement": 39}}
-- [https://twstalker.com/mintsendai](https://twstalker.com/mintsendai): `今回未実行・実証なし`、候補0件。
+- [https://twstalker.com/mintsendai](https://twstalker.com/mintsendai): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
 
 ### TSUTAYA一関店 Yahooリアルタイム検索
 
@@ -525,13 +525,13 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### トレカノ奥州水沢店 Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3AWG_Mizusawa_TCG%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3AWG_Mizusawa_TCG%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 4, "application_ended": 1, "not_application_announcement": 1, "tournament_or_result": 1}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3AWG_Mizusawa_TCG%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3AWG_Mizusawa_TCG%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補2件。{"diagnostics": {"account_posts": 4, "not_application_announcement": 1, "tournament_or_result": 1}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3AWG_Mizusawa_TCG&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3AWG_Mizusawa_TCG&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 39, "tournament_or_result": 1}}
 - [https://twstalker.com/WG_Mizusawa_TCG](https://twstalker.com/WG_Mizusawa_TCG): `今回未実行・実証なし`、候補0件。
 
 ### TSUTAYA中里店（石巻）公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3ANAKAZATOtoreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ANAKAZATOtoreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 5, "application_ended": 2, "disallowed_application": 1, "not_application_announcement": 1}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3ANAKAZATOtoreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ANAKAZATOtoreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 5, "application_ended": 1, "disallowed_application": 1, "not_application_announcement": 1}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3ANAKAZATOtoreka&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ANAKAZATOtoreka&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 40}}
 - [https://twstalker.com/NAKAZATOtoreka](https://twstalker.com/NAKAZATOtoreka): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
 
@@ -610,19 +610,20 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 - [https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_mrok%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_mrok%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 6, "not_application_announcement": 1, "tournament_or_result": 1}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_mrok&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_mrok&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 39}}
 - [https://twstalker.com/batoloco_mrok](https://twstalker.com/batoloco_mrok): `今回未実行・実証なし`、候補0件。
+- [https://search.yahoo.co.jp/realtime/search/tweet/2076933479003250751?detail=1&ifr=tl_twdtl&rkf=1](https://search.yahoo.co.jp/realtime/search/tweet/2076933479003250751?detail=1&ifr=tl_twdtl&rkf=1): `parsed_empty`、候補0件。
 - [https://search.yahoo.co.jp/realtime/search/tweet/2096063514163155133?detail=1&ifr=tl_twdtl&rkf=1](https://search.yahoo.co.jp/realtime/search/tweet/2096063514163155133?detail=1&ifr=tl_twdtl&rkf=1): `parsed`、候補1件。{"diagnostics": {"account_posts": 2, "not_application_announcement": 1}}
 
 ### TCバトロコ仙台駅東口公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_SND%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_SND%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 5, "application_ended": 1}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_SND%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_SND%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 5, "application_ended": 3}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_SND&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_SND&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 40}}
 - [https://twstalker.com/batoloco_SND](https://twstalker.com/batoloco_SND): `今回未実行・実証なし`、候補0件。
 
 ### トレーディングカードピット仙台駅東口店公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3Atcgpit_sendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Atcgpit_sendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補4件。{"diagnostics": {"account_posts": 12, "disallowed_application": 1, "excluded_product": 1, "not_application_announcement": 4}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3Atcgpit_sendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Atcgpit_sendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 12, "application_ended": 6, "disallowed_application": 1, "not_application_announcement": 4}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3Atcgpit_sendai&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Atcgpit_sendai&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 40}}
-- [https://twstalker.com/tcgpit_sendai](https://twstalker.com/tcgpit_sendai): `今回未実行・実証なし`、候補0件。
+- [https://twstalker.com/tcgpit_sendai](https://twstalker.com/tcgpit_sendai): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
 
 ### santy仙台クリスロード店公式X Yahooリアルタイム検索
 
@@ -699,10 +700,10 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### 福福トレカ秋葉原店ワンピース公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_one%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_one%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 7, "application_ended": 1, "disallowed_application": 3, "not_application_announcement": 3}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_one%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_one%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 7, "disallowed_application": 3, "not_application_announcement": 3}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_one&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_one&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "disallowed_application": 1, "not_application_announcement": 39}}
-- [https://twstalker.com/fukufuku_one](https://twstalker.com/fukufuku_one): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
-- [https://www.bing.com/search?format=rss&q=site%3Ax.com%2Ffukufuku_one%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp](https://www.bing.com/search?format=rss&q=site%3Ax.com%2Ffukufuku_one%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp): `parsed_empty`、候補0件。
+- [https://twstalker.com/fukufuku_one](https://twstalker.com/fukufuku_one): `今回未実行・実証なし`、候補0件。
+- [https://www.bing.com/search?format=rss&q=site%3Ax.com%2Ffukufuku_one%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp](https://www.bing.com/search?format=rss&q=site%3Ax.com%2Ffukufuku_one%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp): `今回未実行・実証なし`、候補0件。
 
 ### TCバトロコ池袋駅前店公式X Yahooリアルタイム検索
 
@@ -734,14 +735,14 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 
 ### POKÉMON CARD LOUNGE公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補3件。{"diagnostics": {"account_posts": 12, "excluded_product": 2, "not_application_announcement": 7}}
-- [https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 40, "excluded_product": 1, "not_application_announcement": 38}}
-- [https://twstalker.com/PCGL_Shibuya](https://twstalker.com/PCGL_Shibuya): `今回未実行・実証なし`、候補0件。
-- [https://www.bing.com/search?format=rss&q=site%3Ax.com%2FPCGL_Shibuya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp](https://www.bing.com/search?format=rss&q=site%3Ax.com%2FPCGL_Shibuya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp): `今回未実行・実証なし`、候補0件。
+- [https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 12, "application_ended": 5, "not_application_announcement": 7}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "application_ended": 2, "not_application_announcement": 38}}
+- [https://twstalker.com/PCGL_Shibuya](https://twstalker.com/PCGL_Shibuya): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
+- [https://www.bing.com/search?format=rss&q=site%3Ax.com%2FPCGL_Shibuya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp](https://www.bing.com/search?format=rss&q=site%3Ax.com%2FPCGL_Shibuya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp): `parsed_empty`、候補0件。
 
 ### TierOne渋谷店公式X Yahooリアルタイム検索
 
-- [https://search.yahoo.co.jp/realtime/search?p=id%3ATierOneshibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ATierOneshibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補3件。{"diagnostics": {"account_posts": 5, "not_application_announcement": 2}}
+- [https://search.yahoo.co.jp/realtime/search?p=id%3ATierOneshibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ATierOneshibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8): `parsed`、候補2件。{"diagnostics": {"account_posts": 5, "application_ended": 1, "not_application_announcement": 2}}
 - [https://search.yahoo.co.jp/realtime/search?p=id%3ATierOneshibuya&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3ATierOneshibuya&ei=UTF-8): `parsed`、候補1件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 39}}
 - [https://twstalker.com/TierOneshibuya](https://twstalker.com/TierOneshibuya): `今回未実行・実証なし`、候補0件。
 - [https://www.bing.com/search?format=rss&q=site%3Ax.com%2FTierOneshibuya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp](https://www.bing.com/search?format=rss&q=site%3Ax.com%2FTierOneshibuya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp): `今回未実行・実証なし`、候補0件。
@@ -752,4 +753,3 @@ OFFの記録は過去値であり、今回実行したという意味ではな�
 - [https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_1825&ei=UTF-8](https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_1825&ei=UTF-8): `parsed_empty`、候補0件。{"diagnostics": {"account_posts": 40, "not_application_announcement": 40}}
 - [https://twstalker.com/batoloco_1825](https://twstalker.com/batoloco_1825): `fetch_failed`、候補0件。{"error": "host_circuit_open"}
 - [https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fbatoloco_1825%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp](https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fbatoloco_1825%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp): `parsed_empty`、候補0件。
-
