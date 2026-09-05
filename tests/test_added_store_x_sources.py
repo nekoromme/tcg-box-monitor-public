@@ -103,6 +103,26 @@ def test_priority_sendai_sources_fall_back_when_yahoo_is_empty() -> None:
     assert "2088582782822055952" in plaza_secondary.discovery_urls[2]
 
 
+def test_tsutaya_akebono_uses_keyword_and_account_search_fallbacks() -> None:
+    source = next(
+        item
+        for item in load_config("sites.yaml").sources
+        if item.id == "yahoo_realtime_tsutaya_akebono"
+    )
+
+    assert source.fallback_on_empty_result
+    assert source.discovery_urls[0] == (
+        "https://search.yahoo.co.jp/realtime/search?"
+        "p=id%3AAKEBONOtoreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8"
+    )
+    assert source.discovery_urls[1] == (
+        "https://search.yahoo.co.jp/realtime/search?"
+        "p=id%3AAKEBONOtoreka&ei=UTF-8"
+    )
+    assert "2096070820426899487" in source.discovery_urls[2]
+    assert source.discovery_urls[3] == "https://twstalker.com/AKEBONOtoreka"
+
+
 def test_douraku_current_roundup_is_scoped_to_sendai_store() -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == "meli_melo_toreca_douraku_current")
