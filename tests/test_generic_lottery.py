@@ -1,5 +1,7 @@
 from datetime import date, datetime
 
+from freezegun import freeze_time
+
 from tcg_monitor.config import load_config
 from tcg_monitor.parsers.generic import discover_geo_news_urls, parse_generic
 
@@ -45,6 +47,7 @@ def test_geo_index_discovers_card_box_lottery_detail_only() -> None:
     ) == ["https://geo-online.co.jp/news/775"]
 
 
+@freeze_time("2026-08-03 12:00:00+09:00")
 def test_labelled_application_date_wins_over_earlier_release_date() -> None:
     config, source = _source("geo")
     html = """
@@ -70,6 +73,7 @@ def test_labelled_application_date_wins_over_earlier_release_date() -> None:
     assert not alerts
 
 
+@freeze_time("2026-07-13 12:00:00+09:00")
 def test_geo_nested_article_keeps_product_and_application_period_together() -> None:
     config, source = _source("geo")
     html = """
