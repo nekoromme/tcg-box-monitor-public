@@ -50,14 +50,17 @@ def main() -> None:
     print("『候補あり』はそのソースの解析実績。通知成功や全URLの検証を意味しない。")
     print("履歴にURL別記録がない期間は、ソース実績から個別URLの作動を推定しない。")
     print("候補ゼロは、未開催・期限切れ・対象外条件・取得不良のいずれもあり得る。\n")
-    print("| ソース | 有効 | 保存履歴で候補あり/実取得回数 | 今回候補 | 今回の取得状態 |")
-    print("|---|---|---:|---:|---|")
+    print("取得専用（health_only）やアプリ案内ページの候補ゼロは、抽選検知の実証にはならない。")
+    print("OFFの記録は過去値であり、今回実行したという意味ではない。\n")
+    print("| ソース | 解析種別 | 有効 | 保存履歴で候補あり/実取得回数 | 今回候補 | 取得状態 |")
+    print("|---|---|---|---:|---:|---|")
     for source in config.sources:
         records = list(history[source.id].values())
         positive = sum(int(record.get("parsed_count") or 0) > 0 for record in records)
         current = state.get("monitors", {}).get(source.id, {})
         enabled_label = "ON" if source in enabled else "OFF"
-        print(f"| {source.id} | {enabled_label} | {positive}/{len(records)} | "
+        print(f"| {source.id} | {source.parser_kind or '既定'} | "
+              f"{enabled_label} | {positive}/{len(records)} | "
               f"{current.get('parsed_count', '未実行')} | {current.get('outcome', '未実行')} |")
     print("\n## URL別の今回の確認（旧履歴は記録なし）\n")
     for source in enabled:
