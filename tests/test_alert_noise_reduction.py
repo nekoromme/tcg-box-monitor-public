@@ -4,6 +4,8 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from freezegun import freeze_time
+
 from tcg_monitor.cli import _deliver_alerts
 from tcg_monitor.config import load_config
 from tcg_monitor.models import Alert
@@ -18,6 +20,7 @@ def _source(source_id: str):  # type: ignore[no-untyped-def]
     return config, source
 
 
+@freeze_time("2026-08-03 12:00:00+09:00")
 def test_geo_valid_product_period_suppresses_partial_block_alert() -> None:
     config, source = _source("geo")
     html = """

@@ -69,6 +69,9 @@ _PROVISIONAL_PRODUCT_MARKERS = (
 
 def is_provisional_product_name(value: str) -> bool:
     compact = re.sub(r"\s+", "", unicodedata.normalize("NFKC", value))
+    # Known historical store-hashtag misparse, not a physical product.
+    if compact in {"モリロコ", "拡張パック「モリロコ」"}:
+        return True
     return any(marker in compact for marker in _PROVISIONAL_PRODUCT_MARKERS)
 
 
