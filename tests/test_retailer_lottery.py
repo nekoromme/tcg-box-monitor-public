@@ -497,6 +497,44 @@ def test_nyuka_now_recovers_current_famima_and_itoyokado_lotteries() -> None:
     )
 
 
+def test_nyuka_now_recovers_current_kojima_app_lottery_box_only() -> None:
+    html = """
+    <article>
+      <h2>抽選・予約応募受付中のストア</h2>
+      <h3>コジマ（アプリ）</h3>
+      <table>
+        <tr><th>対象商品</th><td><ul>
+          <li>ポケモンカード 30th CELEBRATION BOX</li>
+          <li>ポケモンカード 30th CELEBRATION
+          プレミアムデッキセット エーフィ・ブラッキー</li>
+        </ul></td></tr>
+        <tr><th>開始日</th><td>2026年9月4日(金)21:00</td></tr>
+      </table>
+      <a href="https://www.kojima.net/shop/app/kojima_appli.html">
+        コジマアプリの詳細ページ
+      </a>
+    </article>
+    """
+    source = _source("nyuka_now_fullcomp_livepocket", ("pokemon_card",))
+
+    cases, releases, alerts = parse_nyuka_now_lottery_summary(
+        html,
+        "https://nyuka-now.com/archives/2459",
+        source,
+        load_config("sites.yaml"),
+    )
+
+    assert not releases
+    assert not alerts
+    assert len(cases) == 1
+    assert cases[0].retailer_id == "kojima"
+    assert cases[0].product_name == "ポケモンカード 30th CELEBRATION BOX"
+    assert cases[0].start_at == datetime(
+        2026, 9, 4, 21, 0, tzinfo=ZoneInfo("Asia/Tokyo")
+    )
+    assert cases[0].official_url == "https://www.kojima.net/shop/app/kojima_appli.html"
+
+
 def test_box_lottery_without_start_raises_manual_check_alert() -> None:
     html = """
     <h1>ポケモンカードゲーム 拡張パック「新商品」BOX 抽選販売</h1>
