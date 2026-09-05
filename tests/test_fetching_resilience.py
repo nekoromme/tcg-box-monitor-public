@@ -668,21 +668,27 @@ def test_hobby_station_official_news_falls_back_to_livepocket_search(
     assert not alerts
 
 
-def test_yahoo_success_skips_twstalker_fallback() -> None:
+def test_ichinoseki_empty_search_uses_ordered_fallbacks() -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
-    yahoo_url, twstalker_url = source.discovery_urls
+    yahoo_lottery, yahoo_account, oembed_url, twstalker_url = source.discovery_urls
     fetcher = FakeHttpFetcher(
         {
-            yahoo_url: _response(
-                yahoo_url,
+            yahoo_lottery: _response(
+                yahoo_lottery,
                 200,
                 "<main>一致する情報は見つかりませんでした</main>",
             ),
+            yahoo_account: _response(
+                yahoo_account,
+                200,
+                "<main>一致する情報は見つかりませんでした</main>",
+            ),
+            oembed_url: _response(oembed_url, 200, '{"html": ""}'),
             twstalker_url: _response(
                 twstalker_url,
                 200,
-                "<main>正常時には取得してはいけません</main>",
+                "<main>プロフィールミラー</main>",
             ),
         }
     )
@@ -693,7 +699,75 @@ def test_yahoo_success_skips_twstalker_fallback() -> None:
     )
 
     assert not alerts
-    assert [call[0] for call in fetcher.calls] == [yahoo_url]
+    assert [call[0] for call in fetcher.calls] == [
+        yahoo_lottery,
+        yahoo_account,
+        oembed_url,
+        twstalker_url,
+    ]
+
+
+@freeze_time("2026-09-05 21:41:00+09:00")
+def test_tsutaya_ichinoseki_account_query_recovers_30th_lottery(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Recover the current official post without emitting its starter deck."""
+    config = load_config("sites.yaml")
+    source = next(
+        item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki"
+    )
+    yahoo_lottery, yahoo_account, _oembed_url, _twstalker_url = source.discovery_urls
+    status_id = "2096124692696621430"
+    account_html = f"""
+    <div class="Tweet_TweetContainer__current">
+      <p class="Tweet_body__current">📢ポケカ抽選販売のお知らせ📢
+      ✅9月16日（水）発売✅ 抽選販売のWEB受付を開始します
+      ⚠️申込にVポイントカードが必要です
+      ⬇️30thセレブレーション
+      <a href="https://forms.gle/1cgPaxAsm3J2o9">応募フォーム</a>
+      ⬇️30thプレミアムスターターデッキ
+      <a href="https://forms.gle/xTq4JUYmC8bRnB">応募フォーム</a>
+      #ポケカ抽選</p>
+      <img src="https://rts-pctr.c.yimg.jp/ichinoseki-30th.jpg">
+      <time><a href="https://x.com/TSUTAYA19392430/status/{status_id}">15:34</a></time>
+    </div>
+    """
+    ocr_text = """
+    9/16(水)発売 ポケモンカード 記念パック「30th セレブレーション」
+    抽選販売について
+    予約受付期間 9月5日(土)～9月13日(日)23:59まで
+    当選者発表 9月15日(火)
+    ご購入期間 発売日より5日間（9月20日閉店時まで）
+    今回の新弾も「シュリンクを破いて販売」致します
+    """
+    monkeypatch.setattr(pipeline, "read_image_text", lambda _urls: ocr_text)
+    fetcher = FakeHttpFetcher(
+        {
+            yahoo_lottery: _response(
+                yahoo_lottery,
+                200,
+                "<main>一致する情報は見つかりませんでした</main>",
+            ),
+            yahoo_account: _response(yahoo_account, 200, account_html),
+        }
+    )
+
+    cases, releases, alerts = pipeline.run_pipeline(
+        _config(source),
+        http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+
+    assert not releases
+    assert not alerts
+    assert [call[0] for call in fetcher.calls] == [yahoo_lottery, yahoo_account]
+    assert len(cases) == 1
+    case = cases[0]
+    assert case.retailer_id == "tsutaya_ichinoseki"
+    assert case.canonical_product_key == "30thセレブレーション"
+    assert "スターター" not in case.product_name
+    assert case.start_at == date(2026, 9, 5)
+    assert case.end_at == datetime(2026, 9, 13, 23, 59, tzinfo=ZoneInfo("Asia/Tokyo"))
+    assert case.source_url == f"https://x.com/TSUTAYA19392430/status/{status_id}"
 
 
 @freeze_time("2026-08-16 12:00:00+09:00")
@@ -890,6 +964,11 @@ def test_yahoo_ocr_failure_uses_twstalker_and_clears_pending(
 ) -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
+    source = replace(
+        source,
+        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        fallback_on_empty_result=False,
+    )
     yahoo_url, twstalker_url = source.discovery_urls
     status_id = "2079755316506599865"
     status_url = f"https://x.com/TSUTAYA19392430/status/{status_id}"
@@ -971,6 +1050,11 @@ def test_yahoo_all_primary_queries_succeed_without_twstalker() -> None:
 def test_yahoo_fetch_failure_uses_twstalker_fallback() -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
+    source = replace(
+        source,
+        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        fallback_on_empty_result=False,
+    )
     yahoo_url, twstalker_url = source.discovery_urls
     fetcher = FakeHttpFetcher(
         {
@@ -995,6 +1079,11 @@ def test_yahoo_fetch_failure_uses_twstalker_fallback() -> None:
 def test_yahoo_http_success_with_broken_structure_uses_twstalker() -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
+    source = replace(
+        source,
+        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        fallback_on_empty_result=False,
+    )
     yahoo_url, twstalker_url = source.discovery_urls
     fetcher = FakeHttpFetcher(
         {
@@ -1025,6 +1114,11 @@ def test_yahoo_parser_failure_uses_twstalker_fallback(
 ) -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
+    source = replace(
+        source,
+        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        fallback_on_empty_result=False,
+    )
     yahoo_url, twstalker_url = source.discovery_urls
     fetcher = FakeHttpFetcher(
         {
@@ -1109,6 +1203,11 @@ def test_yahoo_repair_url_remains_independent_from_twstalker(
 ) -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
+    source = replace(
+        source,
+        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        fallback_on_empty_result=False,
+    )
     yahoo_url, twstalker_url = source.discovery_urls
     repair_url = "https://search.yahoo.co.jp/realtime/search/tweet/2080582562012119398?detail=1"
     fetcher = FakeHttpFetcher(

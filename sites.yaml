@@ -3436,12 +3436,16 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430%E3%80%80%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430&ei=UTF-8
+  - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FTSUTAYA19392430%2Fstatus%2F2096124692696621430&omit_script=1&dnt=1
   - https://twstalker.com/TSUTAYA19392430
   render_mode: http
   poll_minutes: 120
+  fallback_on_empty_result: true
   expected_elements:
   - official_x_status
-  notes: 本文、必要時だけ画像OCRの順で受付開始日を探し、取れない場合だけ初回検知日の翌日に固定する。
+  - conditional_image_ocr
+  notes: Yahooの抽選語検索とアカウント全投稿検索を併用し、検索反映が遅い時は既知の公式投稿とプロフィールミラーへ順次切り替える。本文で不足する商品名・応募期間は添付画像OCRで補完し、スターターデッキを除いたBOX抽選だけを検知する。
   parser_kind: yahoo_realtime
   parser_options:
     account: TSUTAYA19392430
