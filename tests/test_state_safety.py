@@ -308,6 +308,32 @@ def test_snkrdunk_invitation_date_is_repaired_from_first_delivery(
     assert prepared.start_at == date(2026, 8, 3)
 
 
+@pytest.mark.parametrize("method", [
+    "furuichi_official_open_detected", "hobby_search_active_lottery_detected",
+])
+@pytest.mark.parametrize("delivery_recorded", [False, True])
+def test_official_first_detection_date_does_not_drift(tmp_path, method, delivery_recorded):
+    current = LotteryCase(
+        "pokemon_card", "furuichi", "古本市場・ふるいち",
+        "拡張パック「30th CELEBRATION」", "拡張パック", "30thCELEBRATION",
+        date(2026, 9, 5), "https://www.furu1.net/news/news_information/pdl20260901",
+        "https://www.furu1.net/news/news_information/pdl20260901",
+        SourceTier.OFFICIAL, method, "low",
+    ).with_id()
+    state = MonitorState.load(tmp_path / "state.json")
+    state.data["seen_cases"][current.case_id] = {
+        **current.__dict__, "start_at": "2026-09-05" if delivery_recorded else "2026-09-02",
+    }
+    if delivery_recorded:
+        state.data["delivery_journal"][f"lottery:started:{current.case_id}"] = {
+            "status": "complete", "updated_at": "2026-09-02T09:42:31+00:00",
+        }
+    prepared, new_count = cli._prepare_cases(state, [current])
+    assert new_count == 0
+    assert prepared[0].case_id == current.case_id
+    assert prepared[0].start_at == date(2026, 9, 2)
+
+
 def test_unchanged_calendar_event_is_not_updated_again(
     tmp_path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

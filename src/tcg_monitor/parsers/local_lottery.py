@@ -1893,6 +1893,8 @@ def preserve_first_detection_start(
         "tsutaya_line_official_form_first_seen",
         "snkrdunk_open_invitation_seen",
         "takaratomy_mall_first_seen_available",
+        "furuichi_official_open_detected",
+        "hobby_search_active_lottery_detected",
     }
     if case.extraction_method not in fallback_methods or not previous:
         return case
