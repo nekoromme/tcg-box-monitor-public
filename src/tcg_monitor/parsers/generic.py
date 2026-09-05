@@ -228,7 +228,7 @@ def parse_geo_news_detail(
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     """Separate the named product from mixed-deck and navigation prose."""
     soup = BeautifulSoup(html, "lxml")
-    heading = soup.find("h1")
+    heading = soup.find("h1") or soup.find("h2")
     product_scope = heading.get_text(" ", strip=True) if heading else (title(html) or "")
     product_scope = product_scope.replace("ARTWORKCOLLECTION", "ARTWORK COLLECTION")
     text = visible_text(html)
