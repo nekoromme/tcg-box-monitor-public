@@ -5,7 +5,7 @@ from collections import deque
 from collections.abc import Callable
 from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -111,6 +111,7 @@ from tcg_monitor.parsers.tsutaya_line import (
     tsutaya_line_form_urls,
 )
 from tcg_monitor.parsers.yugioh_official import parse_yugioh_official_products
+from tcg_monitor.social_discovery import social_discovery_urls
 from tcg_monitor.source_priority import merge_lotteries, merge_releases
 from tcg_monitor.state import MonitorState
 
@@ -129,6 +130,11 @@ class SourceMetrics:
     failure_cause: str | None = None
     failure_attempts: int | None = None
     fetch_duration_ms: int = 0
+    # URLごとに取得と解析を分ける。HTTP 200だけでは検知実証とはしない。
+    routes: dict[str, dict[str, object]] = field(default_factory=dict)
+    retailer_ids: set[str] = field(default_factory=set)
+    retailer_game_ids: set[tuple[str, str]] = field(default_factory=set)
+    release_game_ids: set[str] = field(default_factory=set)
 
     def fetched(self, result: PageResult) -> None:
         self.last_fetch_at = datetime.now(UTC).isoformat()
@@ -167,6 +173,9 @@ class SourceMetrics:
             "failure_cause": self.failure_cause,
             "failure_attempts": self.failure_attempts,
             "fetch_duration_ms": self.fetch_duration_ms,
+            "routes": self.routes,
+            "retailer_ids": sorted(self.retailer_ids),
+            "release_game_ids": sorted(self.release_game_ids),
         }
 
 
@@ -396,6 +405,7 @@ def _healthy_fallbacks(
     config: Config,
     source_outcomes: dict[str, bool],
     degraded_source_ids: set[str] | None = None,
+    evidence: dict[str, SourceMetrics] | None = None,
 ) -> dict[str, list[str]]:
     """Return failed or partially degraded sources covered elsewhere."""
 
@@ -413,6 +423,22 @@ def _healthy_fallbacks(
             for fallback_id in source.fallback_source_ids
             if source_outcomes.get(fallback_id) is True
         ]
+        if evidence is not None:
+            # 同じゲームの別店舗を取得しても、この店舗の代替にはならない。
+            retailer_id = str(source.parser_options.get("retailer_id") or source.id)
+            release_only = "release_discovery" in source.purposes and (
+                "lottery_discovery" not in source.purposes
+            )
+            healthy = [
+                fallback_id
+                for fallback_id in healthy
+                if fallback_id in evidence
+                and (
+                    bool(evidence[fallback_id].release_game_ids)
+                    if release_only
+                    else retailer_id in evidence[fallback_id].retailer_ids
+                )
+            ]
         if not healthy:
             continue
         verified_games = {
@@ -426,6 +452,15 @@ def _healthy_fallbacks(
             if any(
                 by_id[fallback_id].supported_games.get(game_id)
                 == GameSupport.VERIFIED
+                and (
+                    evidence is None
+                    or (
+                        (str(source.parser_options.get("retailer_id") or source.id), game_id)
+                        in evidence[fallback_id].retailer_game_ids
+                        if "lottery_discovery" in source.purposes
+                        else game_id in evidence[fallback_id].release_game_ids
+                    )
+                )
                 for fallback_id in healthy
             )
         }
@@ -664,6 +699,7 @@ def run_pipeline(
     opened_hosts_reported: set[str] = set()
     source_outcomes: dict[str, bool] = {}
     source_failed_hosts: dict[str, set[str]] = {}
+    source_evidence: dict[str, SourceMetrics] = {}
     run_token = datetime.now(UTC).isoformat()
     selected_sources = [
         source
@@ -675,6 +711,18 @@ def run_pipeline(
         )
         and (source_filter is None or source.id in source_filter)
     ]
+    if config.system.get("social_account_fallback", False):
+        selected_sources = [
+            replace(
+                source,
+                discovery_urls=social_discovery_urls(source),
+                fallback_on_empty_result=True,
+            )
+            if source.parser_kind == "yahoo_realtime"
+            and source.source_tier.value != "secondary"
+            else source
+            for source in selected_sources
+        ]
 
     def fetch_page(source: SourceConfig, url: str) -> PageResult:
         browser_url = (
@@ -703,6 +751,7 @@ def run_pipeline(
     for source in selected_sources:
         started = time.perf_counter()
         metrics = SourceMetrics(source.id)
+        source_evidence[source.id] = metrics
         uses_parallel_discovery_paths = source.id in {
             "snkrdunk_pokemon",
             "snkrdunk_onepiece",
@@ -809,6 +858,12 @@ def run_pipeline(
             if url in visited_urls:
                 continue
             visited_urls.add(url)
+            route: dict[str, object] = {
+                "status": "not_fetched",
+                "parsed_count": 0,
+                "root": is_root,
+            }
+            metrics.routes[url] = route
             try:
                 if fixture_dir:
                     fixture = _fixture_path(fixture_dir, source.id, url)
@@ -828,7 +883,12 @@ def run_pipeline(
                     )
                     result = prefetched or fetch_page(source, url)
                 metrics.fetched(result)
+                route.update(status="fetched_unclassified", http_status=result.status_code)
             except (CircuitOpenError, FetchProblem) as problem:
+                route.update(
+                    status="fetch_failed", error=problem.reason,
+                    http_status=problem.status_code,
+                )
                 metrics.failed(problem)
                 source_failed_hosts.setdefault(source.id, set()).add(
                     provider_host(problem.url)
@@ -848,6 +908,7 @@ def run_pipeline(
                     enqueue_fallback_after_root_failure(url)
                 continue
             except Exception as exc:
+                route.update(status="fetch_failed", error=type(exc).__name__)
                 unexpected_problem = FetchProblem(
                     url,
                     f"fetch_exception:{type(exc).__name__}",
@@ -870,6 +931,7 @@ def run_pipeline(
                 continue
 
             if result.not_modified:
+                route["status"] = "not_modified_unparsed"
                 if url not in supplemental_urls:
                     completed_page = True
                 continue
@@ -883,6 +945,7 @@ def run_pipeline(
                         source,
                         config,
                     )
+                    route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
                         for item in discovered
@@ -917,6 +980,7 @@ def run_pipeline(
                         source,
                         config,
                     )
+                    route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
                         for item in discovered
@@ -945,6 +1009,7 @@ def run_pipeline(
 
                 if is_lorcana_product_index(source.id, url):
                     discovered = discover_lorcana_product_urls(html, url)
+                    route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
                         for item in discovered
@@ -968,6 +1033,7 @@ def run_pipeline(
 
                 if is_geo_news_index(source.id, url):
                     discovered = discover_geo_news_urls(html, url, source, config)
+                    route.update(status="discovery", discovered_urls=discovered)
                     if discovered:
                         discovery_urls.extend(
                             (item, False)
@@ -984,6 +1050,7 @@ def run_pipeline(
                 if is_retailer_lottery_index(source, url):
                     index_error = retailer_lottery_index_error(html, source)
                     if index_error:
+                        route.update(status="discovery_failed", error=index_error)
                         alerts.append(
                             _alert(
                                 source.id,
@@ -998,6 +1065,7 @@ def run_pipeline(
                     discovered = discover_retailer_lottery_urls(
                         html, url, source, config
                     )
+                    route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
                         for item in discovered
@@ -1055,6 +1123,7 @@ def run_pipeline(
 
                 if is_dragonball_official_store_index(source.id, url):
                     discovered = discover_dragonball_official_store_urls(html, url)
+                    route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
                         for item in discovered
@@ -1084,6 +1153,7 @@ def run_pipeline(
                     discovered = discover_livepocket_event_urls(
                         html, url, source, config
                     )
+                    route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
                         for item in discovered
@@ -1138,6 +1208,7 @@ def run_pipeline(
                     discovered = discover_pokemon_center_news_urls(
                         html, url, source
                     )
+                    route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
                         for item in discovered
@@ -1173,6 +1244,7 @@ def run_pipeline(
                     discovered = discover_snkrdunk_article_urls(
                         html, url, source
                     )
+                    route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
                         for item in discovered
@@ -1203,6 +1275,8 @@ def run_pipeline(
                         parse_tsutaya_line_form(html, url, source, config)
                     )
                 elif is_yahoo_realtime_source(source):
+                    diagnostics: dict[str, int] = {}
+                    route["diagnostics"] = diagnostics
                     if (
                         url in primary_roots
                         and not yahoo_realtime_page_loaded(html, source, url)
@@ -1223,6 +1297,7 @@ def run_pipeline(
                             ocr_pending=ocr_pending,
                             ocr_cache_meta=ocr_cache_meta,
                             ocr_attempt_token=run_token,
+                            diagnostics=diagnostics,
                         )
                     )
                     if url in primary_roots and (
@@ -1316,6 +1391,17 @@ def run_pipeline(
                 alerts.extend(parsed_alerts)
                 parsed_total = len(parsed_cases) + len(parsed_releases)
                 metrics.parsed_count += parsed_total
+                metrics.retailer_ids.update(case.retailer_id for case in parsed_cases)
+                metrics.retailer_game_ids.update(
+                    (case.retailer_id, case.game_id) for case in parsed_cases
+                )
+                metrics.release_game_ids.update(item.game_id for item in parsed_releases)
+                route.update(
+                    status="parsed" if parsed_total else "parsed_empty",
+                    parsed_count=parsed_total,
+                    retailer_ids=sorted({case.retailer_id for case in parsed_cases}),
+                    alerts=[alert.reason_code for alert in parsed_alerts],
+                )
                 metrics.excluded_count += filtered_item_count
                 if parsed_total == 0 and filtered_item_count == 0:
                     metrics.excluded_count += 1
@@ -1325,6 +1411,7 @@ def run_pipeline(
                 ):
                     completed_page = True
             except Exception as exc:
+                route.update(status="parser_failed", error=type(exc).__name__)
                 metrics.last_error = f"parser_exception:{type(exc).__name__}"
                 failure_alert = _alert(
                     source.id,
@@ -1358,6 +1445,14 @@ def run_pipeline(
                     and alert.target_url not in still_pending
                 )
             ]
+        # 一覧だけ読めて詳細が失敗、または空検索の後に代替経路も失敗した
+        # 場合は、候補ゼロのまま健全扱いにしない。
+        if (
+            metrics.parsed_count == 0
+            and any(item.get("status") in {"fetch_failed", "parser_failed", "discovery_failed"}
+                    for item in metrics.routes.values())
+        ):
+            completed_page = False
         if not completed_page and last_failure_alert:
             alerts.append(last_failure_alert)
         source_outcomes[source.id] = completed_page
@@ -1414,6 +1509,7 @@ def run_pipeline(
         config,
         source_outcomes,
         set(source_failed_hosts),
+        source_evidence,
     )
     visible_alerts = _suppress_covered_transport_alerts(
         alerts + lottery_merge_alerts + release_merge_alerts,

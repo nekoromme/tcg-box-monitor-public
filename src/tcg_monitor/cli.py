@@ -516,6 +516,18 @@ def _summary_markdown(state: MonitorState) -> str:
                 )
                 + " |"
             )
+    if isinstance(monitors, dict):
+        unproven = [
+            source_id for source_id, record in monitors.items()
+            if isinstance(record, dict) and record.get("evidence_since")
+            and not record.get("last_candidate_at")
+        ]
+        lines.extend([
+            "", "### 検知実証（取得成功とは別）", "",
+            "候補実績は本機能導入以降。0件は故障とも抽選なしとも断定できません。",
+            f"候補生成の実証なし: {len(unproven)}経路", "",
+            *[f"- {source_id}" for source_id in sorted(unproven)],
+        ])
     return "\n".join(lines) + "\n"
 
 

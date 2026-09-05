@@ -75,6 +75,9 @@ def _config(*sources: SourceConfig):
             **base.system,
             "minimum_host_interval_seconds": 0,
             "request_timeout_seconds": 1,
+            # Individual legacy fixtures explicitly enumerate their routes.
+            # The production account fallback is covered separately below.
+            "social_account_fallback": False,
         },
         sources=list(sources),
     )
@@ -640,7 +643,8 @@ def test_discovery_urls_fall_back_until_one_succeeds(
     )
 
     assert [call[0] for call in fetcher.calls] == urls
-    assert not alerts
+    # Fetch recovery alone does not prove this empty alternative covers the source.
+    assert [alert.target_url for alert in alerts] == [urls[1]]
 
 
 def test_hobby_station_official_news_falls_back_to_livepocket_search(
@@ -666,7 +670,7 @@ def test_hobby_station_official_news_falls_back_to_livepocket_search(
     )
 
     assert [call[0] for call in fetcher.calls] == [primary, fallback]
-    assert not alerts
+    assert [alert.target_url for alert in alerts] == [primary]
 
 
 def test_ichinoseki_empty_search_uses_ordered_fallbacks() -> None:
@@ -699,7 +703,7 @@ def test_ichinoseki_empty_search_uses_ordered_fallbacks() -> None:
         http_fetcher=fetcher,  # type: ignore[arg-type]
     )
 
-    assert not alerts
+    assert [alert.reason_code for alert in alerts] == ["parser_exception"]
     assert [call[0] for call in fetcher.calls] == [
         yahoo_lottery,
         yahoo_account,
@@ -1126,7 +1130,7 @@ def test_yahoo_fetch_failure_uses_twstalker_fallback() -> None:
         http_fetcher=fetcher,  # type: ignore[arg-type]
     )
 
-    assert not alerts
+    assert [alert.target_url for alert in alerts] == [yahoo_url]
     assert [call[0] for call in fetcher.calls] == [yahoo_url, twstalker_url]
 
 
@@ -1159,7 +1163,7 @@ def test_yahoo_http_success_with_broken_structure_uses_twstalker() -> None:
         http_fetcher=fetcher,  # type: ignore[arg-type]
     )
 
-    assert not alerts
+    assert [alert.reason_code for alert in alerts] == ["parser_exception"]
     assert [call[0] for call in fetcher.calls] == [yahoo_url, twstalker_url]
 
 
@@ -1206,7 +1210,7 @@ def test_yahoo_parser_failure_uses_twstalker_fallback(
         http_fetcher=fetcher,  # type: ignore[arg-type]
     )
 
-    assert not alerts
+    assert [alert.reason_code for alert in alerts] == ["parser_exception"]
     assert [call[0] for call in fetcher.calls] == [yahoo_url, twstalker_url]
 
 
@@ -1327,7 +1331,7 @@ def test_same_host_circuit_breaker_stops_remaining_sources() -> None:
     assert "Cloudflare" in alerts[0].change_summary
 
 
-def test_healthy_fallback_marks_primary_degraded_without_discord_alert(
+def test_empty_fallback_does_not_claim_coverage_or_hide_alert(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -1361,12 +1365,11 @@ def test_healthy_fallback_marks_primary_degraded_without_discord_alert(
         http_fetcher=fetcher,  # type: ignore[arg-type]
     )
 
-    assert not alerts
-    assert state.data["monitors"]["primary"]["outcome"] == "degraded"
-    assert state.data["monitors"]["primary"]["coverage_status"] == ("covered_by_fallback")
-    assert state.data["monitors"]["primary"]["healthy_fallbacks"] == ["fallback"]
-    assert state.data["last_run_summary"]["degraded_monitors"] == 1
-    assert state.data["last_run_summary"]["failed_monitors"] == 0
+    assert [alert.source_id for alert in alerts] == ["primary"]
+    assert state.data["monitors"]["primary"]["outcome"] == "failed"
+    assert not state.data["monitors"]["primary"].get("healthy_fallbacks")
+    assert state.data["last_run_summary"]["degraded_monitors"] == 0
+    assert state.data["last_run_summary"]["failed_monitors"] == 1
     assert state.data["last_run_summary"]["source_failures"] == 1
 
 

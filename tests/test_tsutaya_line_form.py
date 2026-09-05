@@ -213,6 +213,7 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
             **config.system,
             "minimum_host_interval_seconds": 0,
             "request_timeout_seconds": 1,
+            "social_account_fallback": False,
         },
     )
 
@@ -250,6 +251,7 @@ def test_official_form_failure_is_not_hidden_by_healthy_store_x() -> None:
             **config.system,
             "minimum_host_interval_seconds": 0,
             "request_timeout_seconds": 1,
+            "social_account_fallback": False,
         },
     )
 

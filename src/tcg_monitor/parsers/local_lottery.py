@@ -1089,7 +1089,10 @@ def _known_release_for_text(
     return max(matches, key=lambda item: len(release_title_token(item.product_name)), default=None)
 
 
-def _product_from_tweet(container: Tag, text: str, game_id: str) -> tuple[str, str] | None:
+def _product_from_tweet(
+    container: Tag, text: str, game_id: str,
+    exclude_keywords: list[str] | None = None,
+) -> tuple[str, str] | None:
     category_map = {
         "pokemon_card": (
             "強化拡張パック",
@@ -1144,13 +1147,19 @@ def _product_from_tweet(container: Tag, text: str, game_id: str) -> tuple[str, s
         else None
     )
     product_name = ""
-    for candidate in re.findall(r"[「『【《](?:#)?([^」』】》]{2,100})[」』】》]", matching_text):
+    quote_pattern = r"[「『【《](?:#)?([^」』】》]{2,100})[」』】》]"
+    category_pattern = "|".join(map(re.escape, categories))
+    # 商品カテゴリーに直接続く名前を優先。先にデッキ商品が並ぶ混在投稿でも
+    # 無関係な先頭の括弧を拡張パック名にしない。
+    qualified = re.findall(rf"(?:{category_pattern})\s*{quote_pattern}", matching_text)
+    for candidate in [*qualified, *re.findall(quote_pattern, matching_text)]:
         cleaned = candidate.strip(" #　")
         compact_candidate = re.sub(r"\s+", "", cleaned).casefold()
         if (
             cleaned
             and compact_candidate not in _NON_PRODUCT_LABELS
             and not is_provisional_product_name(cleaned)
+            and not any(word in cleaned for word in (exclude_keywords or []))
         ):
             product_name = cleaned
             break
@@ -1243,7 +1252,7 @@ def _post_date(status_id: str, timezone: str) -> date:
 def _official_oembed_markup(raw: str, url: str, expected_account: str) -> str:
     """Extract and verify an official X post returned by Twitter oEmbed."""
 
-    if urlsplit(url).netloc.casefold() != "publish.twitter.com":
+    if urlsplit(url).netloc.casefold() not in {"publish.twitter.com", "publish.x.com"}:
         return raw
     try:
         payload = json.loads(raw)
@@ -1384,7 +1393,12 @@ def parse_yahoo_realtime(
     ocr_pending: dict[str, object] | None = None,
     ocr_cache_meta: dict[str, object] | None = None,
     ocr_attempt_token: str | None = None,
+    diagnostics: dict[str, int] | None = None,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
+    def count(reason: str) -> None:
+        if diagnostics is not None:
+            diagnostics[reason] = diagnostics.get(reason, 0) + 1
+
     source = source_with_runtime_parser_profile(source)
     profile = _yahoo_profile(source)
     if profile is None:
@@ -1406,19 +1420,23 @@ def parse_yahoo_realtime(
         if status_url in processed_statuses:
             continue
         processed_statuses.add(status_url)
+        count("account_posts")
         post_text = _tweet_body(container)
         compact_text = re.sub(r"\s+", "", post_text)
         if _requires_disallowed_application(post_text):
+            count("disallowed_application")
             continue
         required_mentions = _string_list_option(source, "required_retailer_mentions")
         if required_mentions and not any(
             mention.casefold() in compact_text.casefold() for mention in required_mentions
         ):
+            count("retailer_not_matched")
             continue
         excluded_mentions = _string_list_option(source, "excluded_retailer_mentions")
         if any(
             mention.casefold() in compact_text.casefold() for mention in excluded_mentions
         ):
+            count("excluded_retailer")
             continue
         postponement = next(
             (word for word in _POSTPONEMENT_WORDS if word in compact_text),
@@ -1460,11 +1478,14 @@ def parse_yahoo_realtime(
             and not official_lorcana_sale
             and ("抽選" not in compact_text or not (has_action or postponement))
         ):
+            count("not_application_announcement")
             continue
         if any(word in compact_text for word in ("大会", "参加抽選", "当選発表のみ")):
+            count("tournament_or_result")
             continue
         posted_on = _post_date(status_id, config.timezone)
         if (detected - posted_on).days > int(config.system.get("implausible_past_days", 45)):
+            count("old_post")
             continue
         known_release = _known_release_for_text(post_text, source, known_releases)
         game_id = _game_id(post_text) or (known_release.game_id if known_release else None)
@@ -1562,6 +1583,7 @@ def parse_yahoo_realtime(
             # time after its application has already closed.  It is historical
             # evidence, not a newly opened lottery.
             if application_end_date < detected:
+                count("application_ended")
                 if ocr_pending is not None:
                     ocr_pending.pop(status_url, None)
                 continue
@@ -1652,12 +1674,14 @@ def parse_yahoo_realtime(
             continue
         if (
             has_excluded_product
-            and not confirmed_product
-            and (strict_product_exclusions or not has_box_signal)
+            and (strict_product_exclusions or (not confirmed_product and not has_box_signal))
         ):
+            count("excluded_product")
             continue
 
-        product = confirmed_product or _product_from_tweet(container, combined_text, game_id)
+        product = confirmed_product or _product_from_tweet(
+            container, combined_text, game_id, game.product_exclude_keywords,
+        )
         if (
             not confirmed_product
             and known_release
@@ -1749,6 +1773,7 @@ def parse_yahoo_realtime(
             continue
         product_name, product_category = product
         if any(word in product_name for word in game.product_exclude_keywords):
+            count("excluded_product")
             continue
         opportunity_kind = OpportunityKind.LOTTERY
         if official_lorcana_sale and start_at:
@@ -1794,6 +1819,7 @@ def parse_yahoo_realtime(
                 source.parser_options.get("use_announcement_date")
             ) and any(word in compact_text for word in ("受付開始", "受付を開始"))
             if not start_at and deadline_without_start and not may_use_announcement_date:
+                count("missing_application_start")
                 # A secondary search intentionally sees older roundup posts too.
                 # Deadline-only items are incomplete candidates, not monitor faults.
                 if source.source_tier == SourceTier.SECONDARY:

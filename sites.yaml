@@ -2,6 +2,8 @@ schema_version: 2
 timezone: Asia/Tokyo
 
 system:
+  # 公式Xの検索語の反映遅延を、同じ公式アカウントの全投稿検索で補完する。
+  social_account_fallback: true
   runtime:
     confirmed_false_positive_cases:
       b3ead67cf50edb332b84384beb3bfc8c708c5eb0601e5cf95895b5f1def6043a:
@@ -106,7 +108,9 @@ system:
   retry_backoff_seconds: [0, 0]
   max_parallel_hosts: 6
   minimum_host_interval_seconds: 5
-  conditional_get: true
+  # 本文・一覧で発見した詳細URLをキャッシュしていないため、304では再解析や
+  # 詳細ページ/OCRの再試行が消える。本文キャッシュ実装までは毎回本文を取得する。
+  conditional_get: false
   # GitHub Actionsの各定期実行で全監視先を同時に評価する。
   # 現行スケジュールの最短間隔が120分なので、全sourceを120分へ統一する。
   normal_poll_minutes: 120
@@ -169,6 +173,7 @@ games:
       - 'ハイクラスパック.{0,50}(10パック|1BOX)'
     product_exclude_keywords:
       - スターターセット
+      - スターターデッキ
       - スタートデッキ
       - 構築済みデッキ
       - デッキセット
@@ -4237,6 +4242,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_fuku%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2Fbatoloco_fuku%2Fstatus%2F2095742710691053657&omit_script=true&lang=ja
   - https://twstalker.com/batoloco_fuku
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fbatoloco_fuku%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
@@ -4251,6 +4257,14 @@ sources:
     account: batoloco_fuku
     retailer_id: batoloco_fukushima
     retailer_name: TCバトロコ福島駅前
+    # 公式の「受付を開始」告知。開始時刻を推定せず初回検知日・低確度で扱う。
+    use_announcement_date: true
+    # 2026-09-05確認の同店公式投稿・応募フォーム見出しに記載された商品。
+    # oEmbedは添付画像を返さないため、この投稿だけBOX名を補完する。
+    confirmed_products:
+      '2095742710691053657':
+        product_name: 拡張パック「30th CELEBRATION」
+        product_category: 拡張パック
 - id: yahoo_realtime_batoloco_oyama
   name: TCバトロコ小山駅前公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
