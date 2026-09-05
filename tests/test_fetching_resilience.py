@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import threading
 import time
 from dataclasses import replace
@@ -763,11 +764,64 @@ def test_tsutaya_ichinoseki_account_query_recovers_30th_lottery(
     assert len(cases) == 1
     case = cases[0]
     assert case.retailer_id == "tsutaya_ichinoseki"
-    assert case.canonical_product_key == "30thセレブレーション"
+    assert case.canonical_product_key == '拡張パック「30thCELEBRATION」'
     assert "スターター" not in case.product_name
     assert case.start_at == date(2026, 9, 5)
     assert case.end_at == datetime(2026, 9, 13, 23, 59, tzinfo=ZoneInfo("Asia/Tokyo"))
     assert case.source_url == f"https://x.com/TSUTAYA19392430/status/{status_id}"
+
+
+@freeze_time("2026-09-05 22:45:00+09:00")
+def test_tsutaya_ichinoseki_oembed_recovers_mixed_product_post() -> None:
+    """The verified BOX survives when oEmbed has no image and also names a starter."""
+    config = load_config("sites.yaml")
+    source = next(
+        item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki"
+    )
+    yahoo_lottery, yahoo_account, oembed_url, _twstalker_url = source.discovery_urls
+    status_id = "2096124692696621430"
+    status_url = f"https://x.com/TSUTAYA19392430/status/{status_id}"
+    payload = json.dumps(
+        {
+            "url": status_url,
+            "author_url": "https://x.com/TSUTAYA19392430",
+            "html": (
+                '<blockquote class="twitter-tweet"><p lang="ja">'
+                "📢ポケカ抽選販売のお知らせ📢 9月16日（水）発売 "
+                "抽選販売のWEB受付を開始します "
+                "30thセレブレーション 30thプレミアムスターターデッキ "
+                f'</p><a href="{status_url}">September 5, 2026</a></blockquote>'
+            ),
+        },
+        ensure_ascii=False,
+    )
+    empty_result = "<main>一致する情報は見つかりませんでした</main>"
+    fetcher = FakeHttpFetcher(
+        {
+            yahoo_lottery: _response(yahoo_lottery, 200, empty_result),
+            yahoo_account: _response(yahoo_account, 200, empty_result),
+            oembed_url: _response(oembed_url, 200, payload),
+        }
+    )
+
+    cases, releases, alerts = pipeline.run_pipeline(
+        _config(source),
+        http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+
+    assert not releases
+    assert not alerts
+    assert [call[0] for call in fetcher.calls] == [
+        yahoo_lottery,
+        yahoo_account,
+        oembed_url,
+    ]
+    assert len(cases) == 1
+    case = cases[0]
+    assert case.product_name == '拡張パック「30th CELEBRATION」'
+    assert case.start_at == date(2026, 9, 5)
+    assert case.end_at == datetime(2026, 9, 13, 23, 59, tzinfo=ZoneInfo("Asia/Tokyo"))
+    assert case.source_url == status_url
 
 
 @freeze_time("2026-08-16 12:00:00+09:00")
