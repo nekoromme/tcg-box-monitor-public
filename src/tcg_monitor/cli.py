@@ -358,6 +358,8 @@ def _reuse_first_detection_start(state: MonitorState, case: LotteryCase) -> Lott
     first_delivery_start_offsets = {
         "snkrdunk_open_invitation_seen": 0,
         "yahoo_realtime_detected_next_day": 1,
+        "furuichi_official_open_detected": 0,
+        "hobby_search_active_lottery_detected": 0,
     }
     day_offset = first_delivery_start_offsets.get(case.extraction_method)
     if day_offset is None or not previous:
