@@ -156,6 +156,11 @@ _DISALLOWED_REMOTE_APPLICATION_MARKERS = (
     "rtキャンペーン",
 )
 _DISALLOWED_REMOTE_APPLICATION_PATTERNS = (
+    re.compile(
+        r"(?:いいねと|このポストを|指定ポストを|ポストの)リ[ポボ]スト"
+        r"(?!不要|は不要|しなく|必要なし)", re.IGNORECASE,
+    ),
+    re.compile(r"リ[ポボ]スト(?:で|して|が必要|必須)", re.IGNORECASE),
     re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,40}掲示.{0,30}QRコード", re.IGNORECASE),
     re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,30}QRコード(?:から|より)", re.IGNORECASE),
     re.compile(r"当選(?:者|された方).{0,80}店頭.{0,30}予約(?:を|が|手続)", re.IGNORECASE),
@@ -1135,6 +1140,7 @@ def _product_from_tweet(
     # 区切りに使う語だけを限定して正規化する。
     matching_text = re.sub(r"抽選[ \t\u3000]+販売", "抽選販売", text)
     matching_text = re.sub(r"抽選[ \t\u3000]+受付", "抽選受付", matching_text)
+    matching_text = matching_text.replace("拡張バック", "拡張パック")
     category = next((value for value in categories if value in matching_text), "")
     code_patterns = {
         "one_piece_card": r"\b(?:OP|EB|PRB)-\d{2}\b",
@@ -1164,14 +1170,17 @@ def _product_from_tweet(
             product_name = cleaned
             break
     if not product_name and category:
-        trailing = re.search(
+        trailing_matches = re.finditer(
             rf"{re.escape(category)}\s*[「『【]?\s*(?:#)?(.{{2,60}}?)"
             r"(?=(?:の|を)?\s*(?:抽選販売|抽選受付|抽選応募|受付期間|申し込み|申込み)"
             r"|詳細は|[。\n])",
             matching_text,
         )
-        if trailing:
-            product_name = trailing.group(1).strip(" 「『【」』】#　")
+        for trailing in trailing_matches:
+            candidate = trailing.group(1).strip(" 「『【」』】#　")
+            if not any(word in candidate for word in (exclude_keywords or [])):
+                product_name = candidate
+                break
     if not product_name:
         for anchor in container.find_all("a"):
             href = str(anchor.get("href") or "")
@@ -1565,7 +1574,18 @@ def parse_yahoo_realtime(
             # product filters can intentionally exclude the post.
             if ocr_text and ocr_pending is not None:
                 ocr_pending.pop(status_url, None)
+        # OCR confuses 月/日 with A/H (e.g. 9A5H). Only normalize the
+        # bounded date-shaped token, not arbitrary letters in product names.
+        ocr_text = re.sub(
+            r"(?<![A-Za-z0-9])(?P<m>1[0-2]|0?[1-9])A(?P<d>3[01]|[12]\d|0?[1-9])H"
+            r"(?=\s|[（(]|$)",
+            r"\g<m>月\g<d>日", ocr_text,
+        )
+        ocr_text = re.sub(r"(?<=日)\s*\([+@]\)(?=\s*\d{1,2}:)", " ", ocr_text)
         combined_text = f"{post_text}\n{ocr_text}" if ocr_text else post_text
+        if _requires_disallowed_application(combined_text):
+            count("disallowed_application")
+            continue
         combined_compact = re.sub(r"\s+", "", combined_text)
         ocr_compact = re.sub(r"\s+", "", ocr_text)
         application_end = _status_datetime_option(
@@ -1611,6 +1631,9 @@ def parse_yahoo_realtime(
                 ocr_pending.pop(status_url, None)
             continue
         game_id = game_id or _game_id(combined_text)
+        known_release = known_release or _known_release_for_text(
+            combined_text, source, known_releases,
+        )
         if not game_id:
             # 本番では公式商品カタログを先に渡している。そこにも本文/OCRにも
             # 一致しない抽選でも、OCRそのものが失敗した投稿は保留する。

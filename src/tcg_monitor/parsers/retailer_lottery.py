@@ -207,7 +207,10 @@ def _allowed_detail_url(source: SourceConfig | str, candidate: str) -> bool:
             and candidate.rstrip("/") != "https://www.edion.com"
         )
     if source_id == "itoyokado_online_lottery":
-        return host == "iyec.itoyokado.co.jp" and "/shop/g/g" in path
+        return host == "iyec.itoyokado.co.jp" and (
+            path.startswith("/shop/g/g")
+            or bool(re.fullmatch(r"/shop/pages/apply_[A-Za-z0-9_]+\.aspx", path))
+        )
     if source_id == "hobbylink_japan_lottery":
         return host == "support.hlj.co.jp" and path.startswith("/hc/ja/articles/")
     if source_id == "tokyo_otaku_mode_lottery":

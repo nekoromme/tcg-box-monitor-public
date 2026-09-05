@@ -698,7 +698,7 @@ def test_yahoo_image_can_supply_game_before_body_classification() -> None:
     <div class="Tweet_TweetContainer__aezGm">
       <p class="Tweet_body__3tH8T">【抽選販売について】
       「ストームエメラルダ」発売に伴い、Xにて抽選販売と致します。
-      【応募条件】①当アカウントをフォロー ②このポストをリポスト</p>
+      【応募条件】下記Webフォームから応募</p>
       <img data-test="image" src="{image_url}">
       <time><a href="https://x.com/yorozuya_card/status/2079734608745201729">8時間前</a></time>
     </div>
@@ -732,7 +732,7 @@ def test_yahoo_image_can_supply_game_before_body_classification() -> None:
     assert cases[0].source_url in cache
 
 
-def test_x_profile_mirror_catches_actual_yorozuya_post_when_ocr_fails() -> None:
+def test_x_profile_mirror_excludes_actual_yorozuya_repost_application() -> None:
     image_url = "https://pbs.twimg.com/media/HNzGQ0LaYAAXOAx.jpg"
     status_id = "2079755316506599865"
     html = f"""
@@ -785,14 +785,9 @@ def test_x_profile_mirror_catches_actual_yorozuya_post_when_ocr_fails() -> None:
         [known],
     )
 
-    assert calls == [[image_url]]
-    assert len(cases) == 1
-    assert cases[0].game_id == "pokemon_card"
-    assert cases[0].retailer_id == "yorozuya_morioka"
-    assert cases[0].product_name == "ストームエメラルダ"
-    assert cases[0].start_at == date(2026, 7, 22)
-    assert cases[0].source_url == f"https://x.com/yorozuya_card/status/{status_id}"
-    assert not alerts
+    assert calls == []
+    assert cases == []
+    assert alerts == []
 
 
 def test_search_markup_spaces_do_not_turn_lottery_heading_into_product() -> None:
@@ -800,7 +795,7 @@ def test_search_markup_spaces_do_not_turn_lottery_heading_into_product() -> None
     <div class="Tweet_TweetContainer__random">
       <p class="Tweet_body__random">【<em>抽選</em>販売について】
       「ストームエメラルダ」発売に伴い、Xにて<em>抽選</em>販売と致します。
-      【応募条件】当アカウントをフォローし、このポストをリポスト</p>
+      【応募条件】下記Webフォームから応募</p>
       <time><a href="https://x.com/yorozuya_card/status/2079755316506599865">
       9時間前</a></time>
     </div>
@@ -856,7 +851,7 @@ def test_yahoo_image_first_classification_also_supports_onepiece() -> None:
     <div class="PostCard__changedMarkup">
       <p>【抽選販売について】
       「世界最強の戦士」発売に伴い、Xにて抽選販売と致します。
-      【応募条件】このポストをリポスト</p>
+      【応募条件】Webフォームから応募</p>
       <img src="https://rts-pctr.c.yimg.jp/onepiece-image">
       <time><a href="https://twitter.com/yorozuya_card/status/2079734608745201730">8時間前</a></time>
     </div>
