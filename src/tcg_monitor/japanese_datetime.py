@@ -63,12 +63,15 @@ def _date_with_nearby_year(month: int, day: int, base: date, explicit_year: str 
 
 def _date_result(match: re.Match[str], base: date) -> DateParseResult:
     warnings: list[str] = []
-    value = _date_with_nearby_year(
-        int(match.group("m")),
-        int(match.group("d")),
-        base,
-        match.groupdict().get("y"),
-    )
+    try:
+        value = _date_with_nearby_year(
+            int(match.group("m")),
+            int(match.group("d")),
+            base,
+            match.groupdict().get("y"),
+        )
+    except ValueError:
+        return DateParseResult(None, warnings=("invalid_calendar_date",))
     weekday = match.groupdict().get("w")
     if weekday and WD[value.weekday()] != weekday:
         warnings.append("weekday_date_mismatch")
@@ -124,20 +127,25 @@ def parse_first_datetime(text: str, base_date: date | None = None) -> DateParseR
             hour += 12
         if am_pm in {"正午", "昼"}:
             hour = 12
-        inferred_date = _date_with_nearby_year(
-            int(timed_match.group("m")),
-            int(timed_match.group("d")),
-            base,
-            timed_match.groupdict().get("y"),
-        )
-        value = datetime(
-            inferred_date.year,
-            inferred_date.month,
-            inferred_date.day,
-            hour,
-            int(timed_match.groupdict().get("mi") or 0),
-            tzinfo=JP_TZ,
-        )
+        try:
+            inferred_date = _date_with_nearby_year(
+                int(timed_match.group("m")),
+                int(timed_match.group("d")),
+                base,
+                timed_match.groupdict().get("y"),
+            )
+            value = datetime(
+                inferred_date.year,
+                inferred_date.month,
+                inferred_date.day,
+                hour,
+                int(timed_match.groupdict().get("mi") or 0),
+                tzinfo=JP_TZ,
+            )
+        except ValueError:
+            # Invalid OCR must not abort the whole source or turn a later
+            # deadline into a guessed start by skipping to the next date.
+            return DateParseResult(None, warnings=("invalid_datetime",))
         warnings: list[str] = []
         weekday = timed_match.groupdict().get("w")
         if weekday and WD[value.weekday()] != weekday:
@@ -152,6 +160,8 @@ def parse_first_datetime(text: str, base_date: date | None = None) -> DateParseR
         r"(?P<y>20\d{2})[.年](?P<m>\d{1,2})(?![.\d])月?",
         normalized,
     ):
+        if not 1 <= int(month_match.group("m")) <= 12:
+            return DateParseResult(None, warnings=("invalid_calendar_month",))
         return DateParseResult(
             None,
             month_only=(
