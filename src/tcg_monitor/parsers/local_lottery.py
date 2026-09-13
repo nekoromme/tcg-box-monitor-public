@@ -535,9 +535,15 @@ def _compact_application_text(text: str) -> str:
     )
 
 
-def _application_start(text: str, base_date: date | None = None) -> datetime | date | None:
+def _application_start(
+    text: str, base_date: date | None = None, *, include_sales_period: bool = True,
+) -> datetime | date | None:
     compact = _compact_application_text(text)
     for match in _APPLICATION_LABEL.finditer(compact):
+        label = compact[match.start():match.start(1)].rstrip(":：")
+        if not include_sales_period and label == "販売期間":
+            # 当選者向けの購入期間は、新規の応募受付を証明しない。
+            continue
         parsed = parse_period_start(
             match.group(1),
             base_date,
@@ -1634,7 +1640,6 @@ def parse_yahoo_realtime(
             count("disallowed_application")
             continue
         combined_compact = re.sub(r"\s+", "", combined_text)
-        ocr_compact = re.sub(r"\s+", "", ocr_text)
         application_end = _status_datetime_option(
             source,
             "confirmed_application_ends",
@@ -1655,16 +1660,26 @@ def parse_yahoo_realtime(
                     ocr_pending.pop(status_url, None)
                 continue
         ocr_start = None
+        ocr_application_start = None
         if ocr_text and not uses_detection_policy:
-            ocr_start = _application_start(ocr_text, posted_on) or _notice_range_start(
-                ocr_text, posted_on
+            ocr_application_start = _application_start(
+                ocr_text, posted_on, include_sales_period=False,
+            ) or _notice_range_start(ocr_text, posted_on)
+            ocr_start = ocr_application_start or _application_start(
+                ocr_text, posted_on,
             )
         ocr_has_current_or_future_open_period = False
-        if ocr_start:
-            ocr_start_date = ocr_start.date() if isinstance(ocr_start, datetime) else ocr_start
-            ocr_has_current_or_future_open_period = ocr_start_date >= posted_on and any(
-                word in ocr_compact for word in _OPEN_APPLICATION_WORDS
+        if ocr_application_start:
+            ocr_start_date = (
+                ocr_application_start.date()
+                if isinstance(ocr_application_start, datetime)
+                else ocr_application_start
             )
+            # 応募期間のラベル／開始告知からだけ抽出した日時を使う。
+            # 別の単語リストで二重判定すると、「抽選期間」「エントリー期間」
+            # など解析済みの有効な表記が落ちる。日時の解析結果をそのまま使う。
+            # 投稿日より古い受付や、販売・当選発表の日時は救済しない。
+            ocr_has_current_or_future_open_period = ocr_start_date >= posted_on
 
         # 結果専用画像を新規受付にしない一方、公式の開始告知が本文では
         # 「詳細は画像」のみで、画像の注意事項に「当選者」も含む投稿は救う。
@@ -1674,6 +1689,7 @@ def parse_yahoo_realtime(
             any(word in compact_text for word in _OPEN_APPLICATION_WORDS)
             or ocr_has_current_or_future_open_period
         ):
+            count("closed_or_result_notice")
             if ocr_pending is not None:
                 ocr_pending.pop(status_url, None)
             continue
