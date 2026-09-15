@@ -2397,6 +2397,13 @@ sources:
       official_host: famima-online.family.co.jp
       game_id: pokemon_card
       summary_url: https://nyuka-now.com/archives/2459
+    - heading_marker: ファミマオンライン
+      retailer_id: famima_online
+      retailer_name: ファミマオンライン
+      fallback_url: https://famima-online.family.co.jp/search?receiveType=1
+      official_host: famima-online.family.co.jp
+      game_id: one_piece_card
+      summary_url: https://nyuka-now.com/archives/97393
     - heading_marker: コジマ（アプリ）
       retailer_id: kojima
       retailer_name: コジマ
@@ -2726,6 +2733,7 @@ sources:
   discovery_urls:
   - https://famima-online.family.co.jp/search?receiveType=1
   start_labels:
+  - 予約開始日
   - 抽選応募受付期間
   - 抽選受付期間
   - 応募受付期間
@@ -2746,6 +2754,16 @@ sources:
     retailer_id: famima_online
     retailer_name: ファミマオンライン
     disable_conditional_get: true
+    # 2026-09-15にユーザー提供の公式商品画面で確認。期間外は自動で無効。
+    # 抽選発表9/24、受取11/28〜12/11。受取日を発売日として登録しない。
+    confirmed_lotteries:
+    - game_id: one_piece_card
+      product_name: ワンピースカードゲーム ブースターパック【OP-18】
+      product_category: ブースターパック
+      canonical_product_key: OP-18
+      official_url: https://famima-online.family.co.jp/item?itemCode=100162663879694780
+      start_at: '2026-09-15T10:00:00+09:00'
+      end_at: '2026-09-21T23:59:00+09:00'
 - id: ministop_online_lottery
   name: ミニストップオンライン 抽選商品
   source_type: retailer_official

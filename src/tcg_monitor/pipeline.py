@@ -14,6 +14,7 @@ from bs4 import BeautifulSoup
 
 from tcg_monitor.browser_fetch import fetch_rendered_html, pokemon_release_window_url
 from tcg_monitor.config import load_config
+from tcg_monitor.confirmed_lotteries import confirmed_lotteries
 from tcg_monitor.fetching import (
     BrowserFetcher,
     CircuitOpenError,
@@ -1500,6 +1501,10 @@ def run_pipeline(
         root_prefetcher.source_done(source)
 
     root_prefetcher.close()
+
+    # 人が公式画面で確認した期限付き案件も、通常と同じ重複抑止・通知処理へ渡す。
+    # 取得障害の状態は変更しない。補完しただけで監視が復旧したとは扱わない。
+    cases.extend(confirmed_lotteries(config, selected_sources, datetime.now(UTC)))
 
     try:
         cases, lottery_merge_alerts = merge_lotteries(cases)
