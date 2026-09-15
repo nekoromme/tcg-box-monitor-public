@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from datetime import date, datetime
 from urllib.parse import urljoin, urlsplit
 from zoneinfo import ZoneInfo
@@ -769,6 +770,10 @@ def parse_retailer_lottery_detail(
 
     page_title = title(html) or source.name
     text = visible_text(html)
+    if source.id == "famima_online_lottery":
+        # 公式の商品コードは全角の場合がある。同じOP-18を別商品にしない。
+        page_title = unicodedata.normalize("NFKC", page_title)
+        text = unicodedata.normalize("NFKC", text)
     combined = f"{page_title} {text}"
     game_id = _game_id(combined, source)
     if not game_id or "抽選" not in combined:
