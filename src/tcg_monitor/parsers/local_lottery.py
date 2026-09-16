@@ -1905,25 +1905,19 @@ def parse_yahoo_realtime(
                 source.parser_options.get("use_announcement_date")
             ) and any(word in compact_text for word in ("受付開始", "受付を開始"))
             if not start_at and deadline_without_start and not may_use_announcement_date:
-                count("missing_application_start")
                 # A secondary search intentionally sees older roundup posts too.
                 # Deadline-only items are incomplete candidates, not monitor faults.
                 if source.source_tier == SourceTier.SECONDARY:
                     continue
-                alerts.append(
-                    _alert(
-                        source,
-                        status_url,
-                        retailer_name,
-                        "application_deadline_without_start",
-                        (
-                            "受付期間に締切日時しかなく開始日時を確定できないため、"
-                            "Google Calendarへ登録しません"
-                        ),
-                        game_id,
-                    )
-                )
-                continue
+                if not _detection_fallback_is_fresh(source, config, posted_on, detected):
+                    continue
+                # 締切は開始日に転用しない。公式投稿の開始日が読めなければ、
+                # 初回検知の翌日を便宜上の予定日とする。実際の開始日は不明。
+                # 保存済み案件の日付は _reuse_first_detection_start が固定する。
+                start_at = detected + timedelta(days=1)
+                extraction_method = "yahoo_realtime_detected_next_day"
+                confidence = "low"
+                count("application_deadline_without_start")
             # Usually secondary reports must publish an exact start. These two
             # retailer-specific announcement feeds consistently post at opening
             # time, so their post date is a bounded medium-confidence fallback.
