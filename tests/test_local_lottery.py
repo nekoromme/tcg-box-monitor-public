@@ -1594,7 +1594,7 @@ def test_nyuka_now_fullcomp_recovers_unindexed_livepocket_event() -> None:
     assert all(case.source_tier == SourceTier.SECONDARY for case in cases)
 
 
-def test_yahoo_deadline_only_ocr_is_alert_not_calendar_case() -> None:
+def test_yahoo_deadline_only_ocr_uses_provisional_next_day() -> None:
     html = """
     <div class="Tweet_TweetContainer__test">
       <p class="Tweet_body__test">
@@ -1621,9 +1621,12 @@ def test_yahoo_deadline_only_ocr_is_alert_not_calendar_case() -> None:
         {},
     )
 
-    assert not cases
+    assert len(cases) == 1
+    assert cases[0].start_at == date(2026, 7, 26)
+    assert cases[0].end_at == datetime(2026, 7, 30, 18, tzinfo=ZoneInfo("Asia/Tokyo"))
+    assert cases[0].extraction_method == "yahoo_realtime_detected_next_day"
     assert not releases
-    assert [alert.reason_code for alert in alerts] == ["application_deadline_without_start"]
+    assert not alerts
 
 
 def test_configured_policy_uses_first_detection_next_day(tmp_path: Path) -> None:

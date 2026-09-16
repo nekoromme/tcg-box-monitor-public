@@ -356,6 +356,13 @@ def _migrate_existing_release_event_colors(
 def _reuse_first_detection_start(state: MonitorState, case: LotteryCase) -> LotteryCase:
     previous = state.data.get("seen_cases", {}).get(case.case_id, {})
     prepared = preserve_first_detection_start(case, previous)
+    if case.extraction_method == "yahoo_realtime_detected_next_day":
+        if previous.get("extraction_method") == case.extraction_method:
+            # 通知が翌日以降に再試行されても、初回検知から決めた日付は動かさない。
+            return prepared
+        # 旧方式で保存された「開始日」は締切の誤読かもしれない。
+        # 初回の通知履歴があれば下で復元し、なければ今回の検知日を使う。
+        prepared = case
     first_delivery_start_offsets = {
         "snkrdunk_open_invitation_seen": 0,
         "yahoo_realtime_detected_next_day": 1,
@@ -592,6 +599,11 @@ def _lottery_description(case: LotteryCase, detected_at: datetime) -> str:
             f"{_lottery_application_label(case)}: {case.official_url}",
             f"確認元ページ: {case.source_url}",
             f"商品分類: {case.product_category}",
+            *([
+                "受付開始日: 不明",
+                "仮の開始日: 初回検知の翌日（実際の受付開始日ではありません）",
+            ] if case.extraction_method == "yahoo_realtime_detected_next_day" else []),
+            *([f"応募締切: {_format_user_datetime(case.end_at)}"] if case.end_at else []),
             f"検出日時: {detected_at.isoformat()}",
             f"抽出方法: {case.extraction_method}",
             f"抽出確度: {case.confidence}",
@@ -665,6 +677,8 @@ def _lottery_discord_description(case: LotteryCase) -> str:
         date_label = "販売開始"
     elif _is_amazon_invitation(case):
         date_label = "招待受付の確認日（開始日時不明）"
+    elif case.extraction_method == "yahoo_realtime_detected_next_day":
+        date_label = "仮の開始日（開始日不明・初回検知の翌日）"
     else:
         date_label = "受付開始"
     application_label = _lottery_application_label(case)
@@ -674,6 +688,10 @@ def _lottery_discord_description(case: LotteryCase) -> str:
         f"{date_label}: {_format_user_datetime(case.start_at)}",
         f"{application_label}: {case.official_url or case.source_url}",
     ]
+    if case.end_at:
+        lines.append(f"応募締切: {_format_user_datetime(case.end_at)}")
+    if case.extraction_method == "yahoo_realtime_detected_next_day":
+        lines.append("実際の受付開始日ではありません。応募可否・締切は公式ページで確認。")
     if case.source_tier == SourceTier.SECONDARY:
         if case.source_url and case.source_url != case.official_url:
             lines.append(f"確認元ページ: {case.source_url}")
@@ -685,6 +703,8 @@ def _opportunity_title_prefix(case: LotteryCase, config: Config) -> str:
     if _is_amazon_invitation(case):
         return f"【{config.games[case.game_id].short_name}Amazon招待】"
     if case.opportunity_kind == OpportunityKind.LOTTERY:
+        if case.extraction_method == "yahoo_realtime_detected_next_day":
+            return f"【{config.games[case.game_id].short_name}抽選・開始日不明】"
         return config.games[case.game_id].lottery_start_prefix
     return f"【{config.games[case.game_id].short_name}公式販売】"
 
