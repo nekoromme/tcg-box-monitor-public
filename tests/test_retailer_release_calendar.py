@@ -209,3 +209,14 @@ def test_retailer_prefixes_do_not_duplicate_official_products(category, store_na
     ).with_id()
     merged, _ = merge_releases([releases[0], official])
     assert merged == [official]
+
+
+def test_saved_official_month_rejects_conflicting_retailer_day(tmp_path):
+    store = retailer()
+    state = MonitorState.load(tmp_path / "state.json")
+    official = replace(store, source_tier=SourceTier.OFFICIAL,
+                       release_date=None, release_month="2026-12")
+    state.data["seen_releases"][official.release_id] = official.__dict__
+    assert cli._prepare_releases(state, [store]) == ([], 0)
+    state.data["seen_releases"][official.release_id]["release_month"] = "2026-11"
+    assert cli._prepare_releases(state, [store])[0] == [store]

@@ -435,6 +435,15 @@ def _prepare_releases(state: MonitorState, releases: list[Release]) -> tuple[lis
         # 今回メーカーが取得できなくても、過去に確認済みの公式確定日を守る。
         if is_trusted_retailer_release(release) and previous.get("source_tier") == "official":
             saved_date = previous.get("release_date")
+            saved_month = previous.get("release_month")
+            if (not saved_date and saved_month and release.release_date
+                    and release.release_date.strftime("%Y-%m") != saved_month):
+                log_event(
+                    phase="release_filter", outcome="skipped",
+                    reason_code="retailer_conflicts_with_saved_official_month",
+                    product=release.canonical_product_key,
+                )
+                continue
             if saved_date:
                 log_event(
                     phase="release_filter", outcome="preserved",
