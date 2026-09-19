@@ -39,6 +39,7 @@ from tcg_monitor.models import (
 )
 from tcg_monitor.parsers.local_lottery import preserve_first_detection_start
 from tcg_monitor.pipeline import run_pipeline
+from tcg_monitor.release_sources import is_accepted_release, is_trusted_retailer_release
 from tcg_monitor.source_groups import active_source_filter
 from tcg_monitor.state import MonitorState
 
@@ -86,7 +87,9 @@ def _release_description(release: Release, detected_at: datetime) -> str:
     del detected_at
     return "\n".join(
         [
-            f"公式商品ページ: {release.official_url}",
+            (f"公式商品ページ: {release.official_url}"
+             if release.source_tier == SourceTier.OFFICIAL
+             else f"発売日参照先: {release.source_url}（カードラボ掲載・メーカー未確定）"),
             f"商品分類: {release.product_category}",
             f"抽出方法: {release.extraction_method}",
             f"抽出確度: {release.confidence}",
@@ -417,18 +420,41 @@ def _prepare_releases(state: MonitorState, releases: list[Release]) -> tuple[lis
     prepared: list[Release] = []
     new_count = 0
     for release in releases:
-        # 発売情報はメーカー公式で確認できたものだけを採用する。
-        # 店舗・まとめサイトだけの日付は、表示・通知・予定登録へ流さない。
-        # 抽選情報の補完経路はこの処理とは独立している。
-        if release.source_tier != SourceTier.OFFICIAL:
+        # メーカー公式、または検証済みの販売店発売表だけを採用する。
+        # 抽選ページやまとめ記事の日付まで無条件に通さない。
+        if not is_accepted_release(release):
             log_event(
                 phase="release_filter",
                 outcome="skipped",
-                reason_code="official_release_required",
+                reason_code="trusted_release_source_required",
                 product=release.canonical_product_key,
             )
             continue
         canonical_id = state.canonical_release_identity(release)
+        previous = state.data.get("seen_releases", {}).get(canonical_id, {})
+        # 今回メーカーが取得できなくても、過去に確認済みの公式確定日を守る。
+        if is_trusted_retailer_release(release) and previous.get("source_tier") == "official":
+            saved_date = previous.get("release_date")
+            if saved_date:
+                log_event(
+                    phase="release_filter", outcome="preserved",
+                    reason_code="preserve_confirmed_official_date",
+                    product=release.canonical_product_key,
+                )
+                # 未送信の通知や未完了のカレンダー同期は、保存済みの公式値で再試行する。
+                try:
+                    release = replace(
+                        release,
+                        release_date=date.fromisoformat(str(saved_date)),
+                        product_name=str(previous.get("product_name") or release.product_name),
+                        official_url=str(previous.get("official_url") or ""),
+                        source_url=str(previous.get("source_url") or ""),
+                        source_tier=SourceTier.OFFICIAL,
+                        extraction_method=str(previous.get("extraction_method") or ""),
+                        confidence=str(previous.get("confidence") or "high"),
+                    )
+                except ValueError:
+                    continue
         already_known = canonical_id in state.data.get("seen_releases", {})
         if not already_known:
             new_count += 1
@@ -739,13 +765,17 @@ def _release_discord_description(
     lines = [
         f"商品: {release.product_name}",
         release_value,
-        f"公式ページ: {release.official_url or release.source_url}",
+        ((f"公式ページ: {release.official_url or release.source_url}")
+         if release.source_tier == SourceTier.OFFICIAL
+         else f"発売日参照先: {release.source_url}"),
     ]
     if release.release_month and not release.release_date:
         lines.append("発売日が公式発表されたら、改めて通知してカレンダーに登録します。")
     if date_changed:
         lines.append("更新: 発売日が変更されました")
-    if release.source_tier == SourceTier.SECONDARY:
+    if is_trusted_retailer_release(release):
+        lines.append("情報元: カードラボ発売日カレンダー（メーカー公式の日付発表前の補完）")
+    elif release.source_tier == SourceTier.SECONDARY:
         lines.append("情報元: 二次情報（公式ページで最終確認）")
     return "\n".join(lines)
 
@@ -1023,7 +1053,7 @@ def main(argv: list[str] | None = None) -> int:
             _remember_release(state, release)
             if not calendar or not release.release_date:
                 continue
-            if release.source_tier != SourceTier.OFFICIAL:
+            if not is_accepted_release(release):
                 continue
             if not today <= release.release_date <= last_day:
                 continue

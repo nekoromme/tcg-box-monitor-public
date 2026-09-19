@@ -100,6 +100,10 @@ from tcg_monitor.parsers.retailer_lottery import (
     parse_retailer_lottery_detail,
     retailer_lottery_index_error,
 )
+from tcg_monitor.parsers.retailer_release_calendar import (
+    discover_clabo_calendar_urls,
+    parse_clabo_release_calendar,
+)
 from tcg_monitor.parsers.snkrdunk import (
     discover_snkrdunk_article_urls,
     is_snkrdunk_schedule_healthy_without_candidates,
@@ -258,6 +262,8 @@ class _RootPrefetcher:
 
 def _parser_for(source: SourceConfig):  # type: ignore[no-untyped-def]
     source_id = source.id
+    if source_id == "clabo_release_calendar":
+        return parse_clabo_release_calendar
     if source_id == "pokemon_official_products":
         return parse_pokemon_official_products
     if source_id == "onepiece_official_products":
@@ -947,6 +953,20 @@ def run_pipeline(
             html = result.html
 
             try:
+                if source.id == "clabo_release_calendar" and is_root:
+                    discovered = discover_clabo_calendar_urls(html, url)
+                    route.update(status="discovery", discovered_urls=discovered)
+                    discovery_urls.extend(
+                        (item, False) for item in discovered if item not in visited_urls
+                    )
+                    if not discovered:
+                        alerts.append(_alert(
+                            source.id, source.name, url, "expected_element_missing",
+                            "トップページに発売日カレンダーのリンクがありません",
+                        ))
+                        metrics.last_error = "release_calendar_link_missing"
+                    metrics.excluded_count += 1
+                    continue
                 if is_official_retailer_index(source.id, url):
                     discovered = discover_official_retailer_urls(
                         html,
