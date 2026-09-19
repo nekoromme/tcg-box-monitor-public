@@ -549,6 +549,28 @@ sources:
   - implausible_release_date
   poll_minutes: 120
   notes: 発売日は最優先の一次情報。日付変更時は同じrelease_idのカレンダー予定を更新する。
+# 複数作品の発売日を通常HTMLで取得する。記事番号はトップのリンクから自動発見。
+- id: clabo_release_calendar
+  name: カードラボ 発売日カレンダー
+  operator: 株式会社カードラボ
+  source_type: retailer_release_calendar
+  source_tier: official_indirect
+  coverage_scope: general_five_games
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: verified
+    yu_gi_oh: verified
+    gundam_card: verified
+    lorcana: prospective
+  purposes:
+  - release_discovery
+  enabled: true
+  discovery_urls:
+  - https://www.c-labo.jp/
+  render_mode: http
+  poll_minutes: 120
+  notes: メーカー公式で日付未確定の場合に採用。発売日・予約日を混ぜず、メーカー公式発表とは区別する。
 - id: onepiece_official_products
   name: ONE PIECEカードゲーム公式 商品情報
   operator: 株式会社バンダイ
