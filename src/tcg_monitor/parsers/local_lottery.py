@@ -304,6 +304,7 @@ OcrReader = Callable[[list[str]], str]
 
 def _game_id(text: str) -> str | None:
     folded = re.sub(r"\s+", "", unicodedata.normalize("NFKC", text)).casefold()
+    folded = re.sub(r"遊[☆★※]*戯[☆★※]*王", "遊戯王", folded)
     one_piece_words = (
         "ONEPIECEカード",
         "ワンピースカード",
@@ -1812,6 +1813,13 @@ def parse_yahoo_realtime(
                 )
                 confidence = "medium"
         if not product:
+            # 読み取り自体が成功しても、対象作品の商品を解析できなければ
+            # その文章は再利用しない。次回の監視で元画像から再取得する。
+            if ocr_text:
+                if ocr_cache is not None:
+                    ocr_cache.pop(status_url, None)
+                if ocr_cache_meta is not None:
+                    ocr_cache_meta.pop(status_url, None)
             if ocr_error:
                 attempts = _record_ocr_pending(
                     ocr_pending,

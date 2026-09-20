@@ -66,7 +66,14 @@ def _host(value: str) -> str:
 
 
 def _normalized(value: str) -> str:
-    return unicodedata.normalize("NFKC", value)
+    value = unicodedata.normalize("NFKC", value)
+    # 装飾の星は画像OCRで※などに化ける。漢字3文字は必須にして、
+    # 他の作品名まで曖昧一致させず、装飾と文字間の空白だけを吸収する。
+    return re.sub(r"遊[\s☆★※]*戯[\s☆★※]*王", "遊戯王", value)
+
+
+def _game_word_pattern(word: str) -> str:
+    return r"\s*".join(re.escape(char) for char in _normalized(word) if not char.isspace())
 
 
 def _clean_url(value: str) -> str:
@@ -91,7 +98,7 @@ def _game_id(text: str, source: SourceConfig) -> str | None:
     compact = re.sub(r"\s+", "", _normalized(text)).casefold()
     for game_id, words in _GAME_WORDS.items():
         if source.supports(game_id) and any(
-            re.sub(r"\s+", "", word).casefold() in compact for word in words
+            re.sub(r"\s+", "", _normalized(word)).casefold() in compact for word in words
         ):
             return game_id
     return None
@@ -104,7 +111,7 @@ def _game_ids(text: str, source: SourceConfig) -> list[str]:
         for game_id, words in _GAME_WORDS.items()
         if source.supports(game_id)
         and any(
-            re.sub(r"\s+", "", word).casefold() in compact for word in words
+            re.sub(r"\s+", "", _normalized(word)).casefold() in compact for word in words
         )
     ]
 
@@ -124,7 +131,7 @@ def _product_candidates(
         for word in sorted(words, key=len, reverse=True):
             occurrences.extend(
                 (match.start(), match.end(), game_id)
-                for match in re.finditer(re.escape(word), normalized, re.I)
+                for match in re.finditer(_game_word_pattern(word), normalized, re.I)
             )
     occurrences.sort(key=lambda item: (item[0], -(item[1] - item[0])))
     non_overlapping: list[tuple[int, int, str]] = []
@@ -230,6 +237,44 @@ def _only_explicitly_excluded_products(
         for keyword in config.games[game_id].product_exclude_keywords
     )
     return has_excluded and not has_box
+
+
+def _recover_product_lines(text: str, article_game_ids: list[str], config: Config) -> str:
+    """作品名を誤読した商品行を、見出し＋固有の商品証拠で補う。"""
+    lines: list[str] = []
+    # 注意書きや購入期間の再掲は新しい商品として拾わない。
+    product_text = re.split(r"について|受付方法|応募時の注意", text, maxsplit=1)[0]
+    for raw_line in product_text.splitlines():
+        line = _normalized(raw_line)
+        matches: set[str] = set()
+        for game_id, game in config.games.items():
+            unique_keywords = [
+                keyword for keyword in game.box_product_keywords
+                if not any(
+                    keyword in other.box_product_keywords
+                    for other_id, other in config.games.items() if other_id != game_id
+                )
+            ]
+            if any(re.search(_game_word_pattern(word), line, re.I) for word in unique_keywords):
+                matches.add(game_id)
+            if any(re.search(pattern, line, re.I) for pattern in game.product_code_patterns):
+                matches.add(game_id)
+        # 「ブースターパック」「BOX」だけでは作品を決めない。
+        # 見出しにも載る1作品に一意に決まる場合だけ補完する。
+        if len(matches) == 1 and (game_id := next(iter(matches))) in article_game_ids:
+            words = _GAME_WORDS[game_id]
+            other_game_named = any(
+                re.search(_game_word_pattern(word), line, re.I)
+                for other_id, other_words in _GAME_WORDS.items() if other_id != game_id
+                for word in other_words
+            )
+            if not other_game_named and not any(
+                re.search(_game_word_pattern(word), line, re.I) for word in words
+            ):
+                line = f"{words[0]} {line}"
+        lines.append(line)
+    # 日付解析には元の全文を使う。この戻り値は商品判定専用。
+    return "\n".join(lines)
 
 
 def _anchor_context(anchor: Tag) -> str:
@@ -476,7 +521,19 @@ def parse_furuichi_lottery_detail(
     confidence = "high"
     ocr_text = ""
     images = _article_image_urls(soup, url)
+
+    def invalidate_ocr() -> None:
+        # 「文字を取得できた」と「商品・期間を解析できた」は別。
+        # 解析失敗の文章を永久に再利用せず、次の監視で画像を読み直す。
+        if ocr_cache is not None:
+            ocr_cache.pop(url, None)
+        if ocr_cache_meta is not None:
+            ocr_cache_meta.pop(url, None)
+
     if images and (not start_at or not products):
+        cached_meta = ocr_cache_meta.get(url) if ocr_cache_meta is not None else None
+        if isinstance(cached_meta, dict) and cached_meta.get("image_urls") not in (None, images):
+            invalidate_ocr()
         if ocr_cache is not None:
             ocr_text = str(ocr_cache.get(url) or "").strip()
         if not ocr_text and ocr_reader is not None:
@@ -499,14 +556,18 @@ def parse_furuichi_lottery_detail(
             if ocr_text and ocr_cache is not None:
                 ocr_cache[url] = ocr_text
         if ocr_text and ocr_cache_meta is not None:
-            ocr_cache_meta[url] = {"updated_at": datetime.now(UTC).isoformat()}
+            ocr_cache_meta[url] = {
+                "updated_at": datetime.now(UTC).isoformat(),
+                "image_urls": images,
+            }
         if ocr_text:
             if not start_at:
                 start_at, end_at = _labelled_period(ocr_text, labels)
                 extraction_method = "furuichi_official_image_application_period"
                 confidence = "medium"
             products = _product_candidates(
-                f"{page_title}\n{ocr_text}", source, config
+                f"{page_title}\n{_recover_product_lines(ocr_text, article_game_ids, config)}",
+                source, config,
             )
 
     detected = detected_on or datetime.now(ZoneInfo(config.timezone)).date()
@@ -522,6 +583,7 @@ def parse_furuichi_lottery_detail(
             extraction_method = "furuichi_official_open_detected"
             confidence = "low"
         else:
+            invalidate_ocr()
             reason = (
                 "furuichi_lottery_image_missing"
                 if not images
@@ -537,13 +599,8 @@ def parse_furuichi_lottery_detail(
             ]
 
     if not products:
-        combined_game_ids = _game_ids(combined_text, source)
-        has_box_marker = any(
-            keyword in combined_text
-            for game_id in combined_game_ids
-            for keyword in config.games[game_id].box_product_keywords
-        )
-        if not has_box_marker:
+        invalidate_ocr()
+        if _only_explicitly_excluded_products(combined_text, article_game_ids, config):
             return [], [], []
         return [], [], [
             _alert(
@@ -552,7 +609,7 @@ def parse_furuichi_lottery_detail(
                 page_title,
                 "furuichi_box_products_missing",
                 "ふるいち公式抽選画像から対象BOXを解析できません",
-                combined_game_ids[0] if combined_game_ids else article_game_ids[0],
+                article_game_ids[0],
             )
         ]
 
@@ -574,7 +631,25 @@ def parse_furuichi_lottery_detail(
         ).with_id()
         for game_id, product_name, product_category, canonical_product_key in products
     ]
-    return cases, [], []
+    # 混載告知で1作品だけ成功しても、他の作品の失敗を隠さない。
+    parsed_games = {case.game_id for case in cases}
+    missing_games = [
+        game_id for game_id in article_game_ids
+        if game_id not in parsed_games
+        and not _only_explicitly_excluded_products(combined_text, [game_id], config)
+    ]
+    alerts = []
+    if missing_games:
+        invalidate_ocr()
+        alerts = [
+            _alert(
+                source, url, page_title, "furuichi_box_products_missing",
+                f"ふるいち公式抽選画像から{config.games[game_id].name}の商品を解析できません",
+                game_id,
+            )
+            for game_id in missing_games
+        ]
+    return cases, [], alerts
 
 
 __all__ = [
