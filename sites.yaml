@@ -203,6 +203,28 @@ games:
       - 周辺用品
       - キャンペーン
       - 大会
+    # BOX以外で抽選を拾う商品。falseで停止、selected_variants: []は全種類。
+    additional_products:
+      - id: pokemon_30th_cardset
+        enabled: true
+        name: 30th CELEBRATION カードセット
+        category: カードセット
+        aliases:
+          - 30thカードセット
+          - 30thセレブレーションカードセット
+          - 30周年カードセット
+          - 30th CEREBRATION カードセット
+        selected_variants: []
+        variants:
+          - フシギダネ・ヒトカゲ・ゼニガメ
+          - チコリータ・ヒノアラシ・ワニノコ
+          - キモリ・アチャモ・ミズゴロウ
+          - ナエトル・ヒコザル・ポッチャマ
+          - ツタージャ・ポカブ・ミジュマル
+          - ハリマロン・フォッコ・ケロマツ
+          - モクロー・ニャビー・アシマリ
+          - サルノリ・ヒバニー・メッソン
+          - ニャオハ・ホゲータ・クワッス
     official_release_source: pokemon_official_products
     secondary_discovery_source: snkrdunk_pokemon
 

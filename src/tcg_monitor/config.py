@@ -14,6 +14,7 @@ except ModuleNotFoundError:  # pragma: no cover - environment fallback
     yaml = None
 
 from tcg_monitor.models import (
+    AdditionalProduct,
     Config,
     GameConfig,
     GameId,
@@ -269,6 +270,40 @@ def _validate_fallback_sources(sources: list[SourceConfig]) -> None:
         visit(source_id)
 
 
+def _additional_products(raw: object) -> tuple[AdditionalProduct, ...]:
+    if not isinstance(raw, list):
+        raise ConfigError("additional_products must be a list")
+    result = []
+    seen: set[str] = set()
+    for item in raw:
+        if not isinstance(item, dict):
+            raise ConfigError("additional product must be a mapping")
+        for key in ("id", "name", "category"):
+            if not isinstance(item.get(key), str) or not item[key].strip():
+                raise ConfigError(f"additional product requires {key}")
+        if item["id"] in seen:
+            raise ConfigError("duplicate additional product id")
+        seen.add(item["id"])
+        enabled = item.get("enabled", True)
+        if not isinstance(enabled, bool):
+            raise ConfigError("additional product enabled must be true/false")
+        fields = {}
+        for key in ("aliases", "variants", "selected_variants"):
+            values = item.get(key, [])
+            if not isinstance(values, list) or not all(
+                isinstance(value, str) and value.strip() for value in values
+            ):
+                raise ConfigError(f"additional product {key} must be a string list")
+            fields[key] = tuple(values)
+        if not set(fields["selected_variants"]) <= set(fields["variants"]):
+            raise ConfigError("selected_variants contains an unknown variant")
+        result.append(AdditionalProduct(
+            item["id"], item["name"], item["category"], fields["aliases"],
+            fields["variants"], fields["selected_variants"], enabled,
+        ))
+    return tuple(result)
+
+
 def load_config(
     path: str | Path = "sites.yaml",
     private_config_path: str | Path | None = None,
@@ -298,6 +333,7 @@ def load_config(
             box_evidence_patterns=_list(g.get("box_evidence_patterns")),
             product_exclude_keywords=_list(g.get("product_exclude_keywords")),
             product_code_patterns=_list(g.get("product_code_patterns")),
+            additional_products=_additional_products(g.get("additional_products", [])),
         )
     required_general_game_ids = tuple(
         str(game_id) for game_id in system["general_retail_required_game_ids"]

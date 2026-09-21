@@ -3,14 +3,20 @@ from __future__ import annotations
 import re
 from datetime import date, datetime
 from urllib.parse import parse_qs, urljoin, urlsplit
+from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from tcg_monitor.additional_products import (
+    additional_tuples,
+    without_additional_contents,
+)
 from tcg_monitor.classifier import canonical_product_key
 from tcg_monitor.japanese_datetime import parse_period_start
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
 from tcg_monitor.parsers.common import title, visible_text
+from tcg_monitor.parsers.local_lottery import _application_deadline
 
 _ONLINE_SOURCE = "pokemon_center_online"
 _STORE_SOURCE = "pokemon_center_store"
@@ -90,7 +96,9 @@ def _products(text: str, config: Config, allow_loose_packs: bool) -> list[tuple[
         re.I,
     )
     game = config.games["pokemon_card"]
-    output: dict[str, tuple[str, str, str]] = {}
+    output = {key: (name, category, key)
+              for name, category, key in additional_tuples(game, text)}
+    text = without_additional_contents(game, text)
     for match in pattern.finditer(text):
         category = match.group("category")
         title_text = match.group("title").strip()
@@ -170,6 +178,17 @@ def parse_pokemon_center_lottery(
     for group, start_at in starts:
         retailer_name = f"{base_name}・期間{group}" if group else base_name
         for product_name, product_category, product_key in products:
+            end_at = None
+            if additional_tuples(config.games["pokemon_card"], product_name):
+                if any(word in page_title for word in ("受付終了", "当選発表", "抽選結果")):
+                    continue
+                now = datetime.now(ZoneInfo(config.timezone))
+                end_at = _application_deadline(text, now.date())
+                if isinstance(end_at, datetime) and end_at < now:
+                    continue
+                if (isinstance(end_at, date) and not isinstance(end_at, datetime)
+                        and end_at < now.date()):
+                    continue
             cases.append(
                 LotteryCase(
                     "pokemon_card",
@@ -184,6 +203,7 @@ def parse_pokemon_center_lottery(
                     source.source_tier,
                     "pokemon_center_labelled_application_period",
                     "high",
+                    end_at=end_at,
                 ).with_id()
             )
     return cases, [], []

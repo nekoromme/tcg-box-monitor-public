@@ -1271,7 +1271,7 @@ def run_pipeline(
                     "snkrdunk_onepiece",
                 } and is_snkrdunk_schedule_page(html):
                     discovered = discover_snkrdunk_article_urls(
-                        html, url, source
+                        html, url, source, config=config
                     )
                     route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(

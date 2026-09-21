@@ -12,6 +12,11 @@ from zoneinfo import ZoneInfo
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from tcg_monitor.additional_products import (
+    additional_game,
+    additional_tuples,
+    without_additional_contents,
+)
 from tcg_monitor.classifier import canonical_product_key, classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.identity import is_provisional_product_name, release_title_token
@@ -457,7 +462,9 @@ def _box_products(text: str, game_id: str, config: Config) -> list[tuple[str, st
     """Extract only BOX products from a possibly mixed LivePocket sales page."""
     game = config.games[game_id]
     categories = "|".join(map(re.escape, _BOX_CATEGORIES[game_id]))
-    found: dict[str, tuple[str, str, str]] = {}
+    found = {key: (name, category, key)
+             for name, category, key in additional_tuples(game, text)}
+    text = without_additional_contents(game, text)
 
     quoted_pattern = re.compile(
         rf"(?P<category>{categories})\s*[「『【\"“](?P<title>[^」』】\"”]{{2,100}})[」』】\"”]",
@@ -503,7 +510,7 @@ def _box_products(text: str, game_id: str, config: Config) -> list[tuple[str, st
     if not found:
         fallback_name = text.splitlines()[0][:120].strip() or "BOX抽選商品"
         classified = classify_product(game, fallback_name, text)
-        if classified.is_box:
+        if classified.is_target:
             found[classified.canonical_product_key] = (
                 classified.product_name,
                 classified.product_category,
@@ -1544,7 +1551,11 @@ def parse_yahoo_realtime(
             count("old_post")
             continue
         known_release = _known_release_for_text(post_text, source, known_releases)
-        game_id = _game_id(post_text) or (known_release.game_id if known_release else None)
+        game_id = (
+            additional_game(post_text, source, config)
+            or _game_id(post_text)
+            or (known_release.game_id if known_release else None)
+        )
         if postponement:
             if not game_id or not source.supports(game_id):
                 continue
@@ -1694,7 +1705,10 @@ def parse_yahoo_realtime(
             if ocr_pending is not None:
                 ocr_pending.pop(status_url, None)
             continue
-        game_id = game_id or _game_id(combined_text)
+        game_id = (
+            additional_game(combined_text, source, config) or game_id
+            or _game_id(combined_text)
+        )
         known_release = known_release or _known_release_for_text(
             combined_text, source, known_releases,
         )
@@ -1747,7 +1761,9 @@ def parse_yahoo_realtime(
             continue
 
         game = config.games[game_id]
-        confirmed_product = _status_product_option(source, status_id)
+        selected_products = additional_tuples(game, combined_text)
+        selected_product = selected_products[0][:2] if selected_products else None
+        confirmed_product = selected_product or _status_product_option(source, status_id)
         has_excluded_product = any(word in combined_text for word in game.product_exclude_keywords)
         has_box_signal = any(word in combined_text for word in game.box_product_keywords) or bool(
             re.search(r"(?i)\b1?BOX\b", combined_text)
@@ -1757,10 +1773,11 @@ def parse_yahoo_realtime(
         )
         # 遊戯王は商品名そのものがシリーズ区分を兼ねる。低相場シリーズの
         # 投稿に「1BOX」があっても、BOX証拠で除外を打ち消さない。
-        if game_id == "yu_gi_oh" and has_excluded_product:
+        if game_id == "yu_gi_oh" and has_excluded_product and not selected_products:
             continue
         if (
             has_excluded_product
+            and not selected_products
             and (strict_product_exclusions or (not confirmed_product and not has_box_signal))
         ):
             count("excluded_product")
@@ -1866,7 +1883,10 @@ def parse_yahoo_realtime(
                 )
             continue
         product_name, product_category = product
-        if any(word in product_name for word in game.product_exclude_keywords):
+        if (
+            not selected_products
+            and any(word in product_name for word in game.product_exclude_keywords)
+        ):
             count("excluded_product")
             continue
         opportunity_kind = OpportunityKind.LOTTERY
@@ -1963,7 +1983,14 @@ def parse_yahoo_realtime(
             opportunity_kind=opportunity_kind,
             end_at=application_end,
         ).with_id()
-        cases[case.case_id] = case
+        # 同じ応募期間で複数の種類が明記された場合は全てを記録する。
+        if selected_products:
+            for name, category, key in selected_products:
+                selected_case = replace(case, product_name=name, product_category=category,
+                                        canonical_product_key=key, case_id="").with_id()
+                cases[selected_case.case_id] = selected_case
+        else:
+            cases[case.case_id] = case
         if ocr_pending is not None:
             ocr_pending.pop(status_url, None)
     return list(cases.values()), [], alerts

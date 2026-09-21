@@ -159,6 +159,18 @@ class SourceConfig:
 
 
 @dataclass(frozen=True)
+class AdditionalProduct:
+    # 商品群と別表記を設定で管理する。空の選択リストは全種類を意味する。
+    id: str
+    name: str
+    category: str
+    aliases: tuple[str, ...]
+    variants: tuple[str, ...] = ()
+    selected_variants: tuple[str, ...] = ()
+    enabled: bool = True
+
+
+@dataclass(frozen=True)
 class GameConfig:
     id: GameId
     name: str
@@ -172,6 +184,7 @@ class GameConfig:
     box_evidence_patterns: list[str]
     product_exclude_keywords: list[str]
     product_code_patterns: list[str] = field(default_factory=list)
+    additional_products: tuple[AdditionalProduct, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -207,6 +220,12 @@ class ClassifiedProduct:
     canonical_product_key: str
     evidence: list[str]
     exclude_reasons: list[str]
+    explicitly_selected: bool = False
+
+    @property
+    def is_target(self) -> bool:
+        # カードセットをBOXだと偽らず、抽選対象かどうかを別に判定する。
+        return self.is_box or self.explicitly_selected
 
 
 @dataclass(frozen=True)

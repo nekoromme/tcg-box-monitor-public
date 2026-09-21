@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from dataclasses import replace
 from datetime import date, datetime
 from urllib.parse import urljoin, urlsplit
 from zoneinfo import ZoneInfo
@@ -9,6 +10,10 @@ from zoneinfo import ZoneInfo
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from tcg_monitor.additional_products import (
+    additional_game,
+    additional_matches,
+)
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime
@@ -256,12 +261,14 @@ def discover_retailer_lottery_urls(
             if len(found) >= limit:
                 break
             continue
-        game_id = _game_id(context, source)
+        game_id = additional_game(context, source, config) or _game_id(context, source)
         if not game_id:
             continue
         game = config.games[game_id]
-        has_box = any(word in context for word in game.box_product_keywords) or bool(
-            re.search(r"(?i)\b1?BOX\b", context)
+        has_box = (
+            bool(additional_matches(game, context))
+            or any(word in context for word in game.box_product_keywords)
+            or bool(re.search(r"(?i)\b1?BOX\b", context))
         )
         # HLJ's official index names only the game. The linked article carries
         # the individual products, so follow that article and classify each
@@ -380,7 +387,7 @@ def _hobbylink_products(
             product_name,
             product_url,
         )
-        if not classified.is_box:
+        if not classified.is_target:
             continue
         products[classified.canonical_product_key] = (
             game_id,
@@ -491,7 +498,7 @@ def _tokyo_otaku_mode_products(
             product_name,
             line,
         )
-        if not classified.is_box:
+        if not classified.is_target:
             continue
         products[classified.canonical_product_key] = (
             game_id,
@@ -538,7 +545,7 @@ def _parse_tokyo_otaku_mode_detail(
 
     products = _tokyo_otaku_mode_products(soup, source, config)
     if not products:
-        game_id = _game_id(combined, source)
+        game_id = additional_game(combined, source, config) or _game_id(combined, source)
         has_box_category = bool(
             game_id and any(category in combined for category in _BOX_CATEGORIES[game_id])
         )
@@ -710,7 +717,7 @@ def _parse_rakuten_detail(
     if not game_id:
         return [], [], []
     classified = classify_product(config.games[game_id], product, product)
-    if not classified.is_box:
+    if not classified.is_target:
         if diagnostics is not None:
             diagnostics["excluded_product"] = 1
         return [], [], []
@@ -775,18 +782,23 @@ def parse_retailer_lottery_detail(
         page_title = unicodedata.normalize("NFKC", page_title)
         text = unicodedata.normalize("NFKC", text)
     combined = f"{page_title} {text}"
-    game_id = _game_id(combined, source)
+    game_id = additional_game(combined, source, config) or _game_id(combined, source)
     if not game_id or "抽選" not in combined:
         return [], [], []
 
-    product_name = _product_name(page_title, text, game_id)
+    selected = additional_matches(config.games[game_id], page_title)
+    if selected:
+        selected = additional_matches(config.games[game_id], combined)
+    product_name = (
+        selected[0].product_name if selected else _product_name(page_title, text, game_id)
+    )
     classified = classify_product(
         config.games[game_id],
         product_name,
         product_name,
         url,
     )
-    if not classified.is_box:
+    if not classified.is_target:
         return [], [], []
 
     retailer = _retailer(source, combined)
@@ -840,6 +852,11 @@ def parse_retailer_lottery_detail(
         extraction_method,
         confidence,
     ).with_id()
+    if selected:
+        return [replace(case, product_name=item.product_name,
+                        product_category=item.product_category,
+                        canonical_product_key=item.canonical_product_key,
+                        case_id="").with_id() for item in selected], [], []
     return [case], [], []
 
 

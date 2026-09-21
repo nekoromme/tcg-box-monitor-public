@@ -7,6 +7,7 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
+from tcg_monitor.additional_products import additional_game, additional_matches
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime
@@ -77,7 +78,7 @@ def _products(
             value + (" 1BOX" if has_box_code else ""),
             source_url,
         )
-        if not classified.is_box:
+        if not classified.is_target:
             if not classified.exclude_reasons:
                 saw_unexplained_non_box = True
             continue
@@ -293,14 +294,17 @@ def parse_nyuka_now_fullcomp(
 
         parsed_products = 0
         for candidate in candidates:
-            game_id = _supported_game_id(candidate, source)
+            game_id = (additional_game(candidate, source, config)
+                       or _supported_game_id(candidate, source))
             if not game_id:
                 continue
             game = config.games[game_id]
-            if any(word in candidate for word in game.product_exclude_keywords):
+            if not additional_matches(game, candidate) and any(
+                word in candidate for word in game.product_exclude_keywords
+            ):
                 continue
             classified = classify_product(game, candidate, f"{candidate} 1BOX")
-            if not classified.is_box:
+            if not classified.is_target:
                 continue
             parsed_products += 1
             category = next(
@@ -312,8 +316,8 @@ def parse_nyuka_now_fullcomp(
                     game_id,
                     "fullcomp",
                     "フルコンプ",
-                    candidate[:180],
-                    category,
+                    classified.product_name if classified.explicitly_selected else candidate[:180],
+                    classified.product_category if classified.explicitly_selected else category,
                     classified.canonical_product_key,
                     start_at,
                     official_url,
@@ -499,9 +503,13 @@ def _parse_nyuka_now_priority_retailers(
 
         parsed_products = 0
         for candidate in candidates:
-            if not any(word in candidate for word in game.include_keywords):
+            if not additional_matches(game, candidate) and not any(
+                word in candidate for word in game.include_keywords
+            ):
                 continue
-            if any(word in candidate for word in game.product_exclude_keywords):
+            if not additional_matches(game, candidate) and any(
+                word in candidate for word in game.product_exclude_keywords
+            ):
                 continue
             # The campaign URL is shared by several products. Supplying it to
             # the classifier would collapse every product into its URL slug.
@@ -510,7 +518,7 @@ def _parse_nyuka_now_priority_retailers(
                 candidate,
                 f"{candidate} 1BOX",
             )
-            if not classified.is_box:
+            if not classified.is_target:
                 continue
             parsed_products += 1
             category = next(
@@ -522,8 +530,8 @@ def _parse_nyuka_now_priority_retailers(
                     game_id,
                     retailer_id,
                     retailer_name,
-                    candidate[:180],
-                    category,
+                    classified.product_name if classified.explicitly_selected else candidate[:180],
+                    classified.product_category if classified.explicitly_selected else category,
                     classified.canonical_product_key,
                     start_at,
                     official_url,
