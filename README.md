@@ -106,3 +106,15 @@ tcg-monitor --state monitor_state.json summary
 - `tcg-monitor summary`: Actions用の監視結果を生成
 
 共通オプションとして`--source SOURCE_ID`、`--game GAME_ID`、`--fixture-dir tests/fixtures`、`--config sites.yaml`、`--state monitor_state.json`、`--game-switch GAME_MONITOR_MODES.txt`、`--expedition-switch EXPEDITION_MODE.txt`が使えます。
+
+### TSUTAYA公式LINEの応募フォーム
+
+店舗Xと並行して公式フォームを直接監視します。一関店・築館店が選択肢にある場合だけ通知します。
+2026年9月21日受付開始の「30th CELEBRATION カードセット」9種も登録済みです。
+種類名だけの選択肢は、フォーム名に設定済み商品名がある場合に限り判定します。
+
+新しい応募フォームが別URLで公開された場合は、該当ソースの `discovery_urls` と
+`always_fetch_urls` にAPI URLを追加し、`tsutaya_line_forms` に同じ `api_url`・
+`public_form_url`・`application_url`（LINE経由）を登録します。複数の応募期間を並行監視できます。
+フォームURLの自動更新は行いません。応募リンクに個人のLINE UIDやウォレット情報を保存せず、
+LINE側で本人の情報を入力する `LINE_UID`・`WALLET_ADDRESS` を使用します。
