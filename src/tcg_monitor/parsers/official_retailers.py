@@ -371,7 +371,7 @@ def parse_onepiece_official_shop(
         product_text,
         url,
     )
-    if not classified.is_box or "抽選" not in product_text:
+    if not classified.is_target or "抽選" not in product_text:
         return [], [], []
 
     start_at, end_at = _labelled_period(product_text, source.start_labels)
@@ -422,7 +422,7 @@ def parse_konami_style(
         classification_text,
         url,
     )
-    if not classified.is_box:
+    if not classified.is_target:
         return [], [], []
 
     is_lottery = "抽選" in product_text and any(
@@ -486,7 +486,7 @@ def parse_takaratomy_mall(
         product_name,
         product_text,
     )
-    if not classified.is_box:
+    if not classified.is_target:
         return [], [], []
 
     is_lottery = "抽選販売" in product_text
@@ -559,7 +559,7 @@ def parse_premium_bandai_dragonball(
         product_text,
         url,
     )
-    if not classified.is_box or "抽選販売" not in product_text:
+    if not classified.is_target or "抽選販売" not in product_text:
         return [], [], []
 
     start_at, end_at = _labelled_period(product_text, source.start_labels)

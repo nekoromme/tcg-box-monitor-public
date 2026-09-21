@@ -186,7 +186,7 @@ def parse_tsutaya_line_form(
                 product_name,
                 public_form_url,
             )
-            if not classified.is_box:
+            if not classified.is_target:
                 continue
             case = LotteryCase(
                 game_id,

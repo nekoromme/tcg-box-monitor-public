@@ -10,6 +10,11 @@ from zoneinfo import ZoneInfo
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from tcg_monitor.additional_products import (
+    additional_game,
+    additional_matches,
+    additional_tuples,
+)
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.japanese_datetime import (
     normalize_text,
@@ -140,7 +145,9 @@ def _product_candidates(
             continue
         non_overlapping.append(occurrence)
 
-    products: list[tuple[str, str, str, str]] = []
+    products = [(gid, name, category, key)
+                for gid, game in config.games.items() if source.supports(gid)
+                for name, category, key in additional_tuples(game, normalized)]
     seen: set[tuple[str, str]] = set()
     stop_markers = (
         "抽選応募受付期間",
@@ -177,10 +184,12 @@ def _product_candidates(
         candidate = re.split(r"[\(（]\d+[\)）]", candidate, maxsplit=1)[0].strip()
         candidate = candidate.strip(" 　「」『』【】[]()（）|｜/\n")[:220]
         game = config.games[game_id]
+        if additional_matches(game, candidate):
+            continue  # 上で抽出済み。内容物のパック名を別商品にしない。
         classified = classify_product(game, candidate, candidate)
         product_category = classified.product_category
         canonical_product_key = classified.canonical_product_key
-        if not classified.is_box:
+        if not classified.is_target:
             # Tesseract can turn "ブースターパック [FB11]" into
             # "ブースタッやク [FB11l/".  A Fusion World booster code
             # plus the surviving booster stem is still specific BOX evidence.
@@ -226,7 +235,7 @@ def _only_explicitly_excluded_products(
     game_ids: list[str],
     config: Config,
 ) -> bool:
-    has_box = any(
+    has_box = any(additional_matches(config.games[gid], text) for gid in game_ids) or any(
         keyword in text
         for game_id in game_ids
         for keyword in config.games[game_id].box_product_keywords
@@ -321,6 +330,8 @@ def discover_furuichi_lottery_urls(
         if "抽選" not in context:
             continue
         game_ids = _game_ids(context, source)
+        if selected_game := additional_game(context, source, config):
+            game_ids = list(dict.fromkeys([*game_ids, selected_game]))
         if not game_ids or _only_explicitly_excluded_products(
             context, game_ids, config
         ):
@@ -346,6 +357,8 @@ def furuichi_index_has_target_lottery(
             continue
         context = _normalized(_anchor_context(anchor))
         game_ids = _game_ids(context, source)
+        if selected_game := additional_game(context, source, config):
+            game_ids = list(dict.fromkeys([*game_ids, selected_game]))
         if (
             game_ids
             and "抽選" in context
@@ -510,6 +523,8 @@ def parse_furuichi_lottery_detail(
     page_text = _normalized(visible_text(html))
     initial_text = f"{page_title}\n{page_text}"
     article_game_ids = _game_ids(initial_text, source)
+    if selected_game := additional_game(initial_text, source, config):
+        article_game_ids = list(dict.fromkeys([*article_game_ids, selected_game]))
     if not article_game_ids or "抽選" not in page_title + page_text:
         return [], [], []
 

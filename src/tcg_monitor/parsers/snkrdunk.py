@@ -7,6 +7,7 @@ from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
+from tcg_monitor.additional_products import additional_tuples
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime, parse_period_start
@@ -64,22 +65,29 @@ def _canonical_snkrdunk_article_url(url: str, href: str) -> str | None:
 
 
 def discover_snkrdunk_article_urls(
-    html: str, url: str, source: SourceConfig, limit: int = 3
+    html: str, url: str, source: SourceConfig, limit: int = 3, config: Config | None = None
 ) -> list[str]:
     """Find the newest relevant per-product articles from the evergreen schedule."""
     soup = BeautifulSoup(html, "lxml")
     found: dict[int, str] = {}
+    additional: list[str] = []
     for anchor in soup.find_all("a", href=True):
         anchor_text = anchor.get_text(" ", strip=True)
-        if not _schedule_article_text_is_relevant(source, anchor_text):
+        is_additional = bool(config and additional_tuples(
+            config.games[_article_game(source)], anchor_text,
+        )) and any(word in anchor_text for word in ("抽選", "予約", "再販"))
+        if not is_additional and not _schedule_article_text_is_relevant(source, anchor_text):
             continue
         candidate = _canonical_snkrdunk_article_url(url, str(anchor.get("href")))
         if candidate is None:
             continue
+        if is_additional and candidate not in additional:
+            additional.append(candidate)
         match = re.search(r"/articles/(\d+)/$", candidate)
         if match:
             found[int(match.group(1))] = candidate
-    return [found[key] for key in sorted(found, reverse=True)[:limit]]
+    recent = [found[key] for key in sorted(found, reverse=True)[:limit]]
+    return list(dict.fromkeys([*additional, *recent]))
 
 
 def is_snkrdunk_schedule_healthy_without_candidates(
@@ -183,6 +191,9 @@ def _product(html: str, game_id: str, config: Config) -> tuple[str, str, str] | 
     soup = BeautifulSoup(html, "lxml")
     heading = soup.find("h1")
     heading_text = heading.get_text(" ", strip=True) if heading else ""
+    selected = additional_tuples(config.games[game_id], heading_text)
+    if len(selected) == 1:
+        return selected[0]
     all_text = soup.get_text(" ", strip=True)
     categories = sorted(_CATEGORIES[game_id], key=len, reverse=True)
     category = next((value for value in categories if value in heading_text), "")
@@ -415,7 +426,7 @@ def parse_snkrdunk(
     product_name, product_category, product_key = product
     release_date = _release_date(soup)
     releases: list[Release] = []
-    if release_date:
+    if release_date and not additional_tuples(config.games[game_id], product_name):
         releases.append(
             Release(
                 game_id,

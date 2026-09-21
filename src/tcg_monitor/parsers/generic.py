@@ -8,9 +8,13 @@ from zoneinfo import ZoneInfo
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from tcg_monitor.additional_products import (
+    additional_game,
+    additional_matches,
+)
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.japanese_datetime import parse_first_datetime, parse_period_start
-from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
+from tcg_monitor.models import Alert, ClassifiedProduct, Config, LotteryCase, Release, SourceConfig
 from tcg_monitor.parsers.common import title, visible_text
 from tcg_monitor.parsers.local_lottery import _application_deadline, _box_products
 
@@ -61,12 +65,12 @@ def discover_geo_news_urls(
             for game_id in source.supported_games
             if game_id in config.games and source.supports(game_id)
         ]
-        has_game = any(
+        has_game = bool(additional_game(anchor_text, source, config)) or any(
             keyword in anchor_text
             for game in supported_games
             for keyword in game.include_keywords
         )
-        has_box = any(
+        has_box = any(additional_matches(game, anchor_text) for game in supported_games) or any(
             re.sub(r"\s+", "", keyword).casefold()
             in re.sub(r"\s+", "", anchor_text).casefold()
             for game in supported_games
@@ -185,7 +189,7 @@ def parse_onepiece_topics(
         ):
             continue
         classified = classify_product(game, entry[:120], entry, url)
-        if not classified.is_box:
+        if not classified.is_target:
             continue
         parsed = parse_first_datetime(entry)
         official_url = urljoin(url, str(anchor.get("href")))
@@ -238,13 +242,13 @@ def parse_geo_news_detail(
     cases: list[LotteryCase] = []
     alerts: list[Alert] = []
     for game_id, game in config.games.items():
-        if not source.supports(game_id) or not any(
+        if not source.supports(game_id) or not (additional_matches(game, product_scope) or any(
             word in product_scope for word in game.include_keywords
-        ):
+        )):
             continue
         for name, _category, _key in _box_products(product_scope, game_id, config):
             product = classify_product(game, name, name)
-            if not product.is_box:
+            if not product.is_target:
                 continue
             if diagnostics is not None:
                 diagnostics["validated_product"] = diagnostics.get("validated_product", 0) + 1
@@ -296,20 +300,49 @@ def parse_generic(
     for game_id, game in config.games.items():
         if not source.supports(game_id):
             continue
-        has_game_identity = any(keyword in text for keyword in game.include_keywords) or any(
-            re.search(pattern, text, re.I) for pattern in game.product_code_patterns
+        has_game_identity = (
+            bool(additional_matches(game, text))
+            or any(keyword in text for keyword in game.include_keywords)
+            or any(re.search(pattern, text, re.I) for pattern in game.product_code_patterns)
         )
         has_box_keyword = any(keyword in text for keyword in game.box_product_keywords)
         if not has_game_identity and (supported_game_count > 1 or not has_box_keyword):
             continue
-        for block in _page_blocks(html, url, source):
-            classified = classify_product(
-                game, page_title if len(block) > 400 else block[:80], block, url
-            )
-            if not classified.is_box:
+        blocks = _page_blocks(html, url, source)
+        if additional_matches(game, page_title):
+            blocks = [text]
+        candidates: list[tuple[str, ClassifiedProduct]] = []
+        for block in blocks:
+            selected = additional_matches(game, block)
+            if selected:
+                candidates.extend((block, item) for item in selected)
+                for name, _, _ in _box_products(block, game_id, config):
+                    item = classify_product(game, name, name)
+                    if item.is_box:
+                        candidates.append((block, item))
+            else:
+                candidates.append((block, classify_product(
+                    game, page_title if len(block) > 400 else block[:80], block, url
+                )))
+        for block, classified in candidates:
+            if not classified.is_target:
                 continue
+            end_at = None
+            if classified.explicitly_selected:
+                if any(word in page_title for word in ("受付終了", "当選発表", "抽選結果")):
+                    continue
+                now = datetime.now(ZoneInfo(config.timezone))
+                end_at = _application_deadline(block, now.date())
+                if isinstance(end_at, datetime) and end_at < now:
+                    continue
+                if (isinstance(end_at, date) and not isinstance(end_at, datetime)
+                        and end_at < now.date()):
+                    continue
             parsed = parse_first_datetime(block)
-            if "release_discovery" in source.purposes or source.id.endswith("products"):
+            if (
+                classified.is_box
+                and ("release_discovery" in source.purposes or source.id.endswith("products"))
+            ):
                 release_date: date | None = None
                 if isinstance(parsed.value, datetime):
                     release_date = parsed.value.date()
@@ -347,6 +380,7 @@ def parse_generic(
                         source.source_tier,
                         "generic_lottery_label",
                         "high" if source.source_tier.value.startswith("official") else "medium",
+                        end_at=end_at,
                     ).with_id()
                     cases.append(case)
                     successful_lottery_games.add(game_id)
