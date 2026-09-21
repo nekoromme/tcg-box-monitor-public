@@ -6,6 +6,7 @@ from datetime import date, datetime
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from zoneinfo import ZoneInfo
 
+from tcg_monitor.additional_products import additional_matches, compact
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig, SourceTier
@@ -18,13 +19,24 @@ def tsutaya_line_form_urls(source: SourceConfig) -> tuple[str, ...]:
     raw = source.parser_options.get("always_fetch_urls")
     if raw is None:
         return ()
-    if not isinstance(raw, list) or not all(
-        isinstance(value, str) and value for value in raw
-    ):
+    if not isinstance(raw, list) or not all(isinstance(value, str) and value for value in raw):
         raise ValueError(f"bad parser option always_fetch_urls: {source.id}")
     configured = set(source.discovery_urls)
     if any(value not in configured for value in raw):
         raise ValueError(f"always_fetch_urls must also be discovery_urls: {source.id}")
+    forms = source.parser_options.get("tsutaya_line_forms", [])
+    if not isinstance(forms, list):
+        raise ValueError(f"bad parser option tsutaya_line_forms: {source.id}")
+    seen: set[str] = set()
+    for form in forms:
+        if not isinstance(form, dict) or not all(
+            isinstance(form.get(key), str) and form[key]
+            for key in ("api_url", "public_form_url", "application_url")
+        ):
+            raise ValueError(f"bad TSUTAYA LINE form mapping: {source.id}")
+        if form["api_url"] not in raw or form["api_url"] in seen:
+            raise ValueError(f"unregistered or duplicate TSUTAYA LINE form: {source.id}")
+        seen.add(form["api_url"])
     return tuple(raw)
 
 
@@ -123,6 +135,14 @@ def parse_tsutaya_line_form(
     data = json.loads(payload)
     if not isinstance(data, dict):
         raise ValueError("TSUTAYA LINE form response is not an object")
+    error = data.get("error")
+    if isinstance(error, dict):
+        if str(error.get("code")) == "5003":  # Microsoft: form has ended
+            return [], [], []
+        raise ValueError("TSUTAYA LINE form API returned an unexpected error")
+    if "status" not in data:
+        raise ValueError("TSUTAYA LINE form status is missing")
+    source = source_with_runtime_parser_profile(source)
     settings = json.loads(str(data.get("settings") or "{}"))
     if data.get("status") != "Active" or (
         isinstance(settings, dict) and settings.get("FormClosed")
@@ -143,7 +163,8 @@ def parse_tsutaya_line_form(
         if not isinstance(question, dict):
             continue
         choices = _question_choices(question)
-        all_choices.extend(choices)
+        if "希望店舗" in str(question.get("title") or ""):
+            all_choices.extend(choices)
         if "希望商品" in str(question.get("title") or ""):
             product_choices.extend(choices)
     if not product_choices:
@@ -162,22 +183,23 @@ def parse_tsutaya_line_form(
     context = f"{title}\n{description}"
     detected = detected_on or datetime.now(ZoneInfo(config.timezone)).date()
     end_at = _application_end(data.get("settings"), config.timezone)
-    public_form_url = str(
-        source.parser_options.get("tsutaya_line_public_form_url") or url
-    )
+    public_form_url = str(source.parser_options.get("tsutaya_line_public_form_url") or url)
     application_url = str(
-        source.parser_options.get("tsutaya_line_application_url")
-        or public_form_url
+        source.parser_options.get("tsutaya_line_application_url") or public_form_url
     )
+    # Each campaign has its own public form and LINE redirect. Keep legacy
+    # links unchanged so previously delivered BOX lotteries retain their IDs.
+    for form in source.parser_options.get("tsutaya_line_forms", []):
+        if form["api_url"] == url:
+            public_form_url = form["public_form_url"]
+            application_url = form["application_url"]
+            break
     campaign_url = _campaign_url(application_url, title)
     cases: dict[str, LotteryCase] = {}
     for game_id, game in config.games.items():
         if not source.supports(game_id):
             continue
-        if not any(
-            keyword.casefold() in context.casefold()
-            for keyword in game.include_keywords
-        ):
+        if not any(keyword.casefold() in context.casefold() for keyword in game.include_keywords):
             continue
         for product_name in product_choices:
             classified = classify_product(
@@ -186,6 +208,21 @@ def parse_tsutaya_line_form(
                 product_name,
                 public_form_url,
             )
+            if not classified.is_target:
+                # Forms can list only variant names (e.g. starter Pokémon).
+                # Require both a named product in the form title and an exact
+                # configured variant choice; unrelated choices stay excluded.
+                for item in game.additional_products:
+                    if not item.enabled or not any(
+                        compact(alias) in compact(title) for alias in (item.name, *item.aliases)
+                    ):
+                        continue
+                    if not any(compact(product_name) == compact(v) for v in item.variants):
+                        continue
+                    matches = additional_matches(game, f"{item.name} {product_name}")
+                    if matches:
+                        classified = matches[0]
+                        break
             if not classified.is_target:
                 continue
             case = LotteryCase(

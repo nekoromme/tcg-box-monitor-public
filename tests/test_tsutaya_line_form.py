@@ -3,7 +3,10 @@ from __future__ import annotations
 import json
 from dataclasses import replace
 from datetime import date, datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
+
+import pytest
 
 import tcg_monitor.pipeline as pipeline
 from tcg_monitor.config import load_config
@@ -26,9 +29,7 @@ def _form_payload(
     include_ichinoseki: bool = True,
     include_tsukidate: bool = True,
 ) -> str:
-    iwate_choices = (
-        [{"Description": "0412_TSUTAYA 一関店"}] if include_ichinoseki else []
-    )
+    iwate_choices = [{"Description": "0412_TSUTAYA 一関店"}] if include_ichinoseki else []
     miyagi_choices = [{"Description": "0611_TSUTAYA 古川バイパス店"}]
     if include_tsukidate:
         miyagi_choices.append({"Description": "0616_TSUTAYA 築館店"})
@@ -39,12 +40,7 @@ def _form_payload(
                 {
                     "Choices": [
                         {"Description": "「拡張パック 30th CELEBRATION」"},
-                        {
-                            "Description": (
-                                "「プレミアムデッキセット "
-                                "エーフィ・ブラッキー」"
-                            )
-                        },
+                        {"Description": ("「プレミアムデッキセット エーフィ・ブラッキー」")},
                     ]
                 },
                 ensure_ascii=False,
@@ -60,9 +56,7 @@ def _form_payload(
         {
             "title": "希望店舗を選択してください（宮城県）",
             "questionInfo": json.dumps(
-                {
-                    "Choices": miyagi_choices
-                },
+                {"Choices": miyagi_choices},
                 ensure_ascii=False,
             ),
         },
@@ -103,18 +97,12 @@ def test_official_line_form_groups_both_target_stores_without_deck_set() -> None
     assert cases[0].retailer_id == "tsutaya_ichinoseki_store"
     assert cases[0].retailer_name == "TSUTAYA公式LINE抽選（対象: 一関店・築館店）"
     # Keep the already-delivered Ichinoseki identity so grouping cannot notify again.
-    assert (
-        cases[0].case_id
-        == "a18503c74ab3735444f09ceff5e412d112169f328ad77a17853dd2c94bb3e371"
-    )
-    assert {case.product_name for case in cases} == {
-        "「拡張パック 30th CELEBRATION」"
-    }
+    assert cases[0].case_id == "a18503c74ab3735444f09ceff5e412d112169f328ad77a17853dd2c94bb3e371"
+    assert {case.product_name for case in cases} == {"「拡張パック 30th CELEBRATION」"}
     assert all(case.source_tier == SourceTier.OFFICIAL for case in cases)
     assert all(case.start_at == date(2026, 8, 24) for case in cases)
     assert all(
-        case.end_at
-        == datetime(2026, 8, 30, 23, 59, tzinfo=ZoneInfo("Asia/Tokyo"))
+        case.end_at == datetime(2026, 8, 30, 23, 59, tzinfo=ZoneInfo("Asia/Tokyo"))
         for case in cases
     )
     assert all(case.official_url.startswith("https://liff.line.me/") for case in cases)
@@ -143,9 +131,7 @@ def test_official_line_form_emits_one_group_case_when_either_store_is_present() 
 
         assert len(cases) == 1
         assert cases[0].retailer_id == "tsutaya_ichinoseki_store"
-        assert cases[0].retailer_name == (
-            f"TSUTAYA公式LINE抽選（対象: {expected_label}）"
-        )
+        assert cases[0].retailer_name == (f"TSUTAYA公式LINE抽選（対象: {expected_label}）")
         assert not releases
         assert not alerts
 
@@ -194,7 +180,7 @@ class _Fetcher:
 def test_existing_store_source_always_fetches_shared_official_form() -> None:
     config = load_config("sites.yaml")
     source = _source()
-    yahoo_url, twstalker_url, api_url = source.discovery_urls
+    yahoo_url, twstalker_url, api_url, cardset_url = source.discovery_urls
     fetcher = _Fetcher(
         {
             yahoo_url: FetchResult(
@@ -204,6 +190,7 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
                 {},
             ),
             api_url: FetchResult(api_url, 200, _form_payload(), {}),
+            cardset_url: FetchResult(cardset_url, 200, _cardset_payload(), {}),
         }
     )
     config = replace(
@@ -222,9 +209,9 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
         http_fetcher=fetcher,  # type: ignore[arg-type]
     )
 
-    assert fetcher.calls == [yahoo_url, api_url]
+    assert fetcher.calls == [yahoo_url, api_url, cardset_url]
     assert twstalker_url not in fetcher.calls
-    assert len(cases) == 1
+    assert len(cases) == 10
     assert not releases
     assert not alerts
 
@@ -232,7 +219,7 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
 def test_official_form_failure_is_not_hidden_by_healthy_store_x() -> None:
     config = load_config("sites.yaml")
     source = _source()
-    yahoo_url, twstalker_url, api_url = source.discovery_urls
+    yahoo_url, twstalker_url, api_url, cardset_url = source.discovery_urls
     fetcher = _Fetcher(
         {
             yahoo_url: FetchResult(
@@ -242,6 +229,7 @@ def test_official_form_failure_is_not_hidden_by_healthy_store_x() -> None:
                 {},
             ),
             api_url: FetchResult(api_url, 503, "service unavailable", {}),
+            cardset_url: FetchResult(cardset_url, 200, '{"error":{"code":"5003"}}', {}),
         }
     )
     config = replace(
@@ -260,10 +248,70 @@ def test_official_form_failure_is_not_hidden_by_healthy_store_x() -> None:
         http_fetcher=fetcher,  # type: ignore[arg-type]
     )
 
-    assert fetcher.calls == [yahoo_url, api_url]
+    assert fetcher.calls == [yahoo_url, api_url, cardset_url]
     assert twstalker_url not in fetcher.calls
     assert not cases
     assert not releases
     assert len(alerts) == 1
     assert alerts[0].target_url == api_url
     assert alerts[0].reason_code == "repeated_http_error"
+
+
+def _cardset_payload() -> str:
+    return Path("tests/fixtures/tsutaya_line_cardset.json").read_text()
+
+
+def test_live_cardset_variant_choices_and_campaign_links() -> None:
+    config = load_config("sites.yaml")
+    source = _source()
+    form = source.parser_options["tsutaya_line_forms"][0]
+    cases, _, _ = parse_tsutaya_line_form(
+        _cardset_payload(), form["api_url"], source, config, date(2026, 9, 21)
+    )
+    assert len(cases) == 9
+    assert len({case.case_id for case in cases}) == 9
+    assert all(case.product_category == "カードセット" for case in cases)
+    assert all(case.product_name.startswith("30th CELEBRATION カードセット ") for case in cases)
+    assert all(case.retailer_name.endswith("（対象: 一関店・築館店）") for case in cases)
+    assert all(case.source_url == form["public_form_url"] for case in cases)
+    assert all("WALLET_ADDRESS" in case.official_url for case in cases)
+    assert all("LINE_UID" in case.official_url for case in cases)
+    assert all(
+        case.end_at == datetime(2026, 9, 28, tzinfo=ZoneInfo("Asia/Tokyo")) for case in cases
+    )
+    from urllib.parse import parse_qs, urlsplit
+
+    assert parse_qs(urlsplit(cases[0].official_url).query)["formUrl"] == [form["public_form_url"]]
+
+
+def test_variant_choices_require_opt_in_and_matching_form_title() -> None:
+    config = load_config("sites.yaml")
+    source = _source()
+    url = source.parser_options["tsutaya_line_forms"][0]["api_url"]
+    game = config.games["pokemon_card"]
+    item = game.additional_products[0]
+    for products, expected in (
+        ((), 0),
+        ((replace(item, enabled=False),), 0),
+        ((replace(item, selected_variants=(item.variants[0],)),), 1),
+    ):
+        changed = replace(
+            config,
+            games={**config.games, "pokemon_card": replace(game, additional_products=products)},
+        )
+        cases, _, _ = parse_tsutaya_line_form(_cardset_payload(), url, source, changed)
+        assert len(cases) == expected
+    payload = json.loads(_cardset_payload())
+    payload["title"] = "ポケモンカードゲーム 別商品 抽選"
+    cases, _, _ = parse_tsutaya_line_form(json.dumps(payload), url, source, config)
+    assert not cases
+
+
+def test_unknown_api_errors_are_not_treated_as_closed_forms() -> None:
+    config = load_config("sites.yaml")
+    source = _source()
+    url = source.parser_options["always_fetch_urls"][0]
+    for payload in ('{"error":{"code":"5000"}}', "{}"):
+        with pytest.raises(ValueError):
+            parse_tsutaya_line_form(payload, url, source, config)
+    assert parse_tsutaya_line_form('{"error":{"code":"5003"}}', url, source, config) == ([], [], [])
