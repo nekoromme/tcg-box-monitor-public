@@ -124,6 +124,11 @@ def release_dedupe_key(release: Release) -> str:
     )
 
 
+def is_pokemon_30th_cardset(game_id: str, product_key: str) -> bool:
+    """今回のカードセットだけを種類共通で扱い、同名BOXには適用しない。"""
+    return game_id == "pokemon_card" and product_key.split(":", 1)[0] == "pokemon_30th_cardset"
+
+
 def lottery_dedupe_key(case: LotteryCase) -> str:
     token = release_title_token(case.product_name)
     product_haystack = f"{case.canonical_product_key} {case.product_name}"
@@ -141,6 +146,8 @@ def lottery_dedupe_key(case: LotteryCase) -> str:
         if product_code is not None
         else token or case.canonical_product_key
     )
+    if is_pokemon_30th_cardset(case.game_id, case.canonical_product_key):
+        product_identity = "pokemon_30th_cardset"
     retailer_id = case.retailer_id
     if retailer_id == "onepiece_official_shop" or retailer_id.startswith(
         "onepiece_official_shop_"

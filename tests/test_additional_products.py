@@ -169,8 +169,8 @@ def test_social_group_or_variants_with_strict_exclusions(source_id: str) -> None
     )
     assert not alerts
     assert {c.product_name for c in cases} == {f"{FAMILY} {VARIANTS[0]}", f"{FAMILY} {VARIANTS[8]}"}
-    assert len({lottery_dedupe_key(c) for c in cases}) == 2
-    assert len(merge_lotteries(cases + cases)) == 2
+    assert len({lottery_dedupe_key(c) for c in cases}) == 1
+    assert len(merge_lotteries(cases + cases)[0]) == 1
 
 
 @freeze_time("2026-09-21")
