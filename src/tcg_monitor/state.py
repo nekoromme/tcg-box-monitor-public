@@ -356,6 +356,13 @@ class MonitorState:
                 is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
                 and str(raw_record.get("start_at") or "")[:10]
                 != case.start_at.isoformat()[:10]
+                and not (
+                    case.extraction_method == "tsutaya_line_official_form_first_seen"
+                    and raw_record.get("extraction_method")
+                    == "tsutaya_line_official_form_first_seen"
+                    and stable_url_identity(str(raw_record.get("official_url") or ""))
+                    == stable_url_identity(case.official_url)
+                )
             ):
                 continue
             # 旧版で9種を個別通知していても、その配信履歴を共通商品へ引き継ぐ。

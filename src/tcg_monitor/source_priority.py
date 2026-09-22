@@ -10,7 +10,7 @@ from tcg_monitor.identity import (
     lottery_dedupe_key,
     release_dedupe_key,
 )
-from tcg_monitor.models import Alert, LotteryCase, Release
+from tcg_monitor.models import Alert, LotteryCase, Release, stable_url_identity
 from tcg_monitor.release_sources import is_trusted_retailer_release
 
 ORDER = {"official": 0, "official_indirect": 1, "secondary": 2}
@@ -21,11 +21,23 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
     for item in items:
         if is_pokemon_30th_cardset(item.game_id, item.canonical_product_key):
             # 店舗・抽選回は従来どおり区別し、種類だけを共通の商品名にまとめる。
+            # 公式LINEフォームの開始日は取得日なので毎日変わる。同じフォームを
+            # 翌日も新規抽選として通知しないよう、フォーム固有のURLで識別する。
+            # 他店舗の投稿は別の抽選回を区別するため従来の日付キーを使う。
+            if item.extraction_method == "tsutaya_line_official_form_first_seen":
+                identity = "|".join((
+                    item.game_id,
+                    item.retailer_id,
+                    "pokemon_30th_cardset",
+                    stable_url_identity(item.official_url),
+                ))
+            else:
+                identity = lottery_dedupe_key(item)
             item = replace(
                 item,
                 product_name="30th CELEBRATION カードセット",
                 canonical_product_key="pokemon_30th_cardset",
-                case_id=sha256(lottery_dedupe_key(item).encode()).hexdigest(),
+                case_id=sha256(identity.encode()).hexdigest(),
             )
         grouped[lottery_dedupe_key(item)].append(item)
     merged = [

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import replace
 from datetime import date, datetime
+from hashlib import sha256
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -11,8 +12,11 @@ import pytest
 import tcg_monitor.pipeline as pipeline
 from tcg_monitor.config import load_config
 from tcg_monitor.http_client import FetchResult
+from tcg_monitor.identity import lottery_dedupe_key
 from tcg_monitor.models import SourceTier
 from tcg_monitor.parsers.tsutaya_line import parse_tsutaya_line_form
+from tcg_monitor.source_priority import merge_lotteries
+from tcg_monitor.state import MonitorState
 
 
 def _source():  # type: ignore[no-untyped-def]
@@ -284,6 +288,42 @@ def test_live_cardset_variant_choices_and_campaign_links() -> None:
     from urllib.parse import parse_qs, urlsplit
 
     assert parse_qs(urlsplit(cases[0].official_url).query)["formUrl"] == [form["public_form_url"]]
+
+
+def test_cardset_form_keeps_notification_identity_across_daily_scans(tmp_path: Path) -> None:
+    config = load_config("sites.yaml")
+    source = _source()
+    form = source.parser_options["tsutaya_line_forms"][0]
+
+    def grouped_on(day: date):  # type: ignore[no-untyped-def]
+        cases, _, _ = parse_tsutaya_line_form(
+            _cardset_payload(), form["api_url"], source, config, day
+        )
+        return merge_lotteries(cases)[0][0]
+
+    first = grouped_on(date(2026, 9, 22))
+    following = grouped_on(date(2026, 9, 23))
+    assert first.case_id == following.case_id
+
+    # The earlier date-based ID was delivered already. Upgrade its journal
+    # record instead of sending one more notification during the first run.
+    state = MonitorState(tmp_path / "state.json")
+    old_identity = replace(
+        first,
+        case_id=sha256(lottery_dedupe_key(first).encode()).hexdigest(),
+    )
+    state.data["seen_cases"][old_identity.case_id] = {
+        **old_identity.__dict__, "start_at": "2026-09-22",
+    }
+    state.data["delivery_journal"][f"lottery:started:{old_identity.case_id}"] = {
+        "status": "complete", "updated_at": "2026-09-22T10:00:00+09:00",
+    }
+    assert state.migrate_case_identity(following) == old_identity.case_id
+    assert state.delivered(f"lottery:started:{following.case_id}")
+
+    # A different form is a separate application even for the same product.
+    next_form = replace(following, official_url=following.official_url + "&formUrl=new")
+    assert merge_lotteries([next_form])[0][0].case_id != following.case_id
 
 
 def test_variant_choices_require_opt_in_and_matching_form_title() -> None:
