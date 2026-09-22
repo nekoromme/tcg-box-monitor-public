@@ -2,8 +2,14 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
+from dataclasses import replace
+from hashlib import sha256
 
-from tcg_monitor.identity import lottery_dedupe_key, release_dedupe_key
+from tcg_monitor.identity import (
+    is_pokemon_30th_cardset,
+    lottery_dedupe_key,
+    release_dedupe_key,
+)
 from tcg_monitor.models import Alert, LotteryCase, Release
 from tcg_monitor.release_sources import is_trusted_retailer_release
 
@@ -13,6 +19,14 @@ ORDER = {"official": 0, "official_indirect": 1, "secondary": 2}
 def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[Alert]]:
     grouped: dict[str, list[LotteryCase]] = defaultdict(list)
     for item in items:
+        if is_pokemon_30th_cardset(item.game_id, item.canonical_product_key):
+            # 店舗・抽選回は従来どおり区別し、種類だけを共通の商品名にまとめる。
+            item = replace(
+                item,
+                product_name="30th CELEBRATION カードセット",
+                canonical_product_key="pokemon_30th_cardset",
+                case_id=sha256(lottery_dedupe_key(item).encode()).hexdigest(),
+            )
         grouped[lottery_dedupe_key(item)].append(item)
     merged = [
         sorted(values, key=lambda item: ORDER[item.source_tier.value])[0]

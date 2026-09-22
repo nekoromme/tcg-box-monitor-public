@@ -10,6 +10,7 @@ from typing import Any
 
 from tcg_monitor.game_modes import LEGACY_ENABLED_GAME_IDS
 from tcg_monitor.identity import (
+    is_pokemon_30th_cardset,
     is_provisional_product_name,
     release_dedupe_key,
     release_dedupe_key_values,
@@ -338,6 +339,7 @@ class MonitorState:
             for value in (case.official_url, case.source_url)
             if value
         }
+        same_family: list[tuple[str, dict[str, Any]]] = []
         same_article: list[tuple[str, dict[str, Any]]] = []
         same_product_without_article: list[tuple[str, dict[str, Any]]] = []
         for old_id, raw_record in seen_cases.items():
@@ -350,6 +352,23 @@ class MonitorState:
                 != case.opportunity_kind.value
             ):
                 continue
+            if (
+                is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
+                and str(raw_record.get("start_at") or "")[:10]
+                != case.start_at.isoformat()[:10]
+            ):
+                continue
+            # 旧版で9種を個別通知していても、その配信履歴を共通商品へ引き継ぐ。
+            # URLが種類別でも同じ店舗・開始日の回だけをまとめ、次回の抽選は残す。
+            if (
+                is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
+                and is_pokemon_30th_cardset(
+                    case.game_id, str(raw_record.get("canonical_product_key") or "")
+                )
+                and str(raw_record.get("start_at") or "")[:10]
+                == case.start_at.isoformat()[:10]
+            ):
+                same_family.append((old_id, raw_record))
             old_urls = {
                 stable_url_identity(str(value))
                 for value in (
@@ -394,7 +413,9 @@ class MonitorState:
             and release_title_token(str(candidate[1].get("product_name") or ""))
             == current_product_token
         ]
-        if exact_candidates:
+        if same_family:
+            candidates = same_family
+        elif exact_candidates:
             candidates = exact_candidates
         elif title_candidates:
             candidates = title_candidates

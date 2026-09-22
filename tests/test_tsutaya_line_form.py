@@ -211,7 +211,9 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
 
     assert fetcher.calls == [yahoo_url, api_url, cardset_url]
     assert twstalker_url not in fetcher.calls
-    assert len(cases) == 10
+    # 通常BOX1件と、9種類をまとめたカードセット1件。
+    assert len(cases) == 2
+    assert sum(c.canonical_product_key == "pokemon_30th_cardset" for c in cases) == 1
     assert not releases
     assert not alerts
 
