@@ -509,6 +509,7 @@ def test_nyuka_now_recovers_current_kojima_app_lottery_box_only() -> None:
           プレミアムデッキセット エーフィ・ブラッキー</li>
         </ul></td></tr>
         <tr><th>開始日</th><td>2026年9月4日(金)21:00</td></tr>
+        <tr><th>当選発表</th><td>2026年9月10日(木)12:00</td></tr>
       </table>
       <a href="https://www.kojima.net/shop/app/kojima_appli.html">
         コジマアプリの詳細ページ
@@ -528,6 +529,7 @@ def test_nyuka_now_recovers_current_kojima_app_lottery_box_only() -> None:
     assert not alerts
     assert len(cases) == 1
     assert cases[0].retailer_id == "kojima"
+    assert cases[0].result_at == datetime(2026, 9, 10, 12, tzinfo=ZoneInfo("Asia/Tokyo"))
     assert cases[0].product_name == "ポケモンカード 30th CELEBRATION BOX"
     assert cases[0].start_at == datetime(
         2026, 9, 4, 21, 0, tzinfo=ZoneInfo("Asia/Tokyo")

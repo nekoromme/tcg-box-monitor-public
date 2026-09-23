@@ -12,6 +12,7 @@ from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
+from tcg_monitor.result_date import published_result_date
 
 _HEADINGS = {"h2", "h3", "h4", "h5", "h6"}
 
@@ -539,6 +540,8 @@ def _parse_nyuka_now_priority_retailers(
                     source.source_tier,
                     "nyuka_now_priority_retailer_application_start",
                     "medium",
+                    result_at=(published_result_date(section_text, start_at)
+                               if retailer_id == "kojima" else None),
                 ).with_id()
             )
 

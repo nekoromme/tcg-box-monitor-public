@@ -383,7 +383,7 @@ def parse_generic(
                         "high" if source.source_tier.value.startswith("official") else "medium",
                         end_at=end_at,
                         result_at=(published_result_date(block, start_at, end_at)
-                                   if source.id in {"yamada_denki", "kids_republic"} else None),
+                                   if source.id in {"yamada_denki", "kids_republic", "kojima"} else None),
                     ).with_id()
                     cases.append(case)
                     successful_lottery_games.add(game_id)

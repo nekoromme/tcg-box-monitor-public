@@ -7,8 +7,11 @@ from datetime import date, datetime, timedelta
 
 from tcg_monitor.japanese_datetime import normalize_text, parse_first_datetime
 
-RESULT_REMINDER_RETAILERS = frozenset({"yamada_denki", "furuichi", "kids_republic"})
-_LABEL = re.compile(r"(?:抽選結果発表(?:日|日時)?|当選(?:結果)?発表(?:日|日時)?|当落発表(?:日|日時)?|結果発表(?:日|日時)?|抽選結果確認(?:開始日)?)")
+RESULT_REMINDER_RETAILERS = frozenset({
+    "yamada_denki", "furuichi", "kids_republic", "kojima",
+    "tsutaya_ichinoseki_store",
+})
+_LABEL = re.compile(r"(?:抽選結果発表(?:日|日時)?|当選(?:結果)?発表(?:日|日時)?|当落発表(?:日|日時)?|結果発表(?:日|日時)?|当選通知(?:予定日|日)?|抽選結果確認(?:開始日)?)")
 _NEXT_FIELD = re.compile(r"(?:応募|申込|受付|発売|購入|受取|支払|入金|引換|販売|当選者のみ|落選者)\s*(?:期間|開始|締切|期限|日|について|への|には)")
 
 

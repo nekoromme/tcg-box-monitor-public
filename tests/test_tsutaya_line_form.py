@@ -278,6 +278,7 @@ def test_live_cardset_variant_choices_and_campaign_links() -> None:
     assert len({case.case_id for case in cases}) == 9
     assert all(case.product_category == "カードセット" for case in cases)
     assert all(case.product_name.startswith("30th CELEBRATION カードセット ") for case in cases)
+    assert all(case.result_at == date(2026, 10, 9) for case in cases)
     assert all(case.retailer_name.endswith("（対象: 一関店・築館店）") for case in cases)
     assert all(case.source_url == form["public_form_url"] for case in cases)
     assert all("WALLET_ADDRESS" in case.official_url for case in cases)
@@ -288,6 +289,23 @@ def test_live_cardset_variant_choices_and_campaign_links() -> None:
     from urllib.parse import parse_qs, urlsplit
 
     assert parse_qs(urlsplit(cases[0].official_url).query)["formUrl"] == [form["public_form_url"]]
+
+
+def test_confirmed_result_date_does_not_leak_to_a_reused_form() -> None:
+    config = load_config("sites.yaml")
+    source = _source()
+    form = source.parser_options["tsutaya_line_forms"][0]
+    changed = json.loads(_cardset_payload())
+    changed["title"] = changed["title"].replace("2026年10月16日発売", "2026年11月16日発売").replace(
+        "カードセット9種", "カードセット次回9種"
+    )
+
+    cases, _, _ = parse_tsutaya_line_form(
+        json.dumps(changed, ensure_ascii=False), form["api_url"], source, config,
+        date(2026, 9, 21),
+    )
+    assert cases
+    assert all(case.result_at is None for case in cases)
 
 
 def test_cardset_form_keeps_notification_identity_across_daily_scans(tmp_path: Path) -> None:
@@ -304,6 +322,7 @@ def test_cardset_form_keeps_notification_identity_across_daily_scans(tmp_path: P
     first = grouped_on(date(2026, 9, 22))
     following = grouped_on(date(2026, 9, 23))
     assert first.case_id == following.case_id
+    assert first.result_at == following.result_at == date(2026, 10, 9)
 
     # The earlier date-based ID was delivered already. Upgrade its journal
     # record instead of sending one more notification during the first run.

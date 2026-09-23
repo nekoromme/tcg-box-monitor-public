@@ -10,6 +10,7 @@ from tcg_monitor.additional_products import additional_matches, compact
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig, SourceTier
+from tcg_monitor.result_date import published_result_date
 
 
 def tsutaya_line_form_urls(source: SourceConfig) -> tuple[str, ...]:
@@ -195,6 +196,24 @@ def parse_tsutaya_line_form(
             application_url = form["application_url"]
             break
     campaign_url = _campaign_url(application_url, title)
+    # The Microsoft form sometimes lists products and deadlines but puts the
+    # result day only in the retailer's announcement. Pin that date to one
+    # particular form *and* campaign title, never to the shared LINE account.
+    result_at = published_result_date(context, detected, end_at)
+    if result_at is None:
+        for form in source.parser_options.get("tsutaya_line_forms", []):
+            if form["api_url"] != url or not form.get("result_at"):
+                continue
+            expected_title = form.get("result_title_contains")
+            if not isinstance(expected_title, str) or not expected_title:
+                raise ValueError("TSUTAYA LINE confirmed result date requires a title guard")
+            if compact(expected_title) not in compact(title):
+                continue
+            configured = date.fromisoformat(str(form["result_at"]))
+            if end_at is None or configured < end_at.date():
+                raise ValueError("TSUTAYA LINE result date precedes or lacks form deadline")
+            result_at = configured
+            break
     cases: dict[str, LotteryCase] = {}
     for game_id, game in config.games.items():
         if not source.supports(game_id):
@@ -239,6 +258,7 @@ def parse_tsutaya_line_form(
                 "tsutaya_line_official_form_first_seen",
                 "medium",
                 end_at=end_at,
+                result_at=result_at,
             ).with_id()
             cases[case.case_id] = case
     return list(cases.values()), [], []

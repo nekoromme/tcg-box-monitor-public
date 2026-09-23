@@ -12,6 +12,7 @@ from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime, parse_period_start
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
+from tcg_monitor.result_date import published_result_date
 
 _HEADINGS = {"h2", "h3", "h4", "h5", "h6"}
 _START_LABEL = re.compile(
@@ -532,6 +533,11 @@ def parse_snkrdunk(
                 source.source_tier,
                 "snkrdunk_retailer_heading",
                 "medium",
+                result_at=(published_result_date(block_text, start)
+                           if retailer_id == "kojima" and (
+                               "アプリ" in block_text
+                               or "kojima.net/shop/app/" in official_url
+                           ) else None),
             ).with_id()
             cases_by_id[case.case_id] = case
     return list(cases_by_id.values()), releases, alerts

@@ -952,6 +952,8 @@ def parse_curated_store_campaign(
         source_tier=source.source_tier,
         extraction_method="secondary_roundup_store_scoped_period",
         confidence="medium",
+        result_at=(published_result_date(section, start_at, end_at)
+                   if options["retailer_id"] == "kojima" else None),
     ).with_id()
     return [case], [], []
 
@@ -1984,7 +1986,10 @@ def parse_yahoo_realtime(
             opportunity_kind=opportunity_kind,
             end_at=application_end,
             result_at=(published_result_date(combined_text, start_at, application_end)
-                       if retailer_id in RESULT_REMINDER_RETAILERS else None),
+                       if retailer_id in RESULT_REMINDER_RETAILERS
+                       and retailer_id != "tsutaya_ichinoseki_store"
+                       and (retailer_id != "kojima" or "アプリ" in combined_text)
+                       else None),
         ).with_id()
         # 同じ応募期間で複数の種類が明記された場合は全てを記録する。
         if selected_products:
