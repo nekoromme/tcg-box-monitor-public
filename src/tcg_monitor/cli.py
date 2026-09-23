@@ -40,6 +40,7 @@ from tcg_monitor.models import (
 from tcg_monitor.parsers.local_lottery import preserve_first_detection_start
 from tcg_monitor.pipeline import run_pipeline
 from tcg_monitor.release_sources import is_accepted_release, is_trusted_retailer_release
+from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS
 from tcg_monitor.source_groups import active_source_filter
 from tcg_monitor.state import MonitorState
 
@@ -639,6 +640,7 @@ def _lottery_description(case: LotteryCase, detected_at: datetime) -> str:
                 "仮の開始日: 初回検知の翌日（実際の受付開始日ではありません）",
             ] if case.extraction_method == "yahoo_realtime_detected_next_day" else []),
             *([f"応募締切: {_format_user_datetime(case.end_at)}"] if case.end_at else []),
+            *([f"結果発表: {_format_user_datetime(case.result_at)}"] if case.result_at else []),
             f"検出日時: {detected_at.isoformat()}",
             f"抽出方法: {case.extraction_method}",
             f"抽出確度: {case.confidence}",
@@ -725,6 +727,8 @@ def _lottery_discord_description(case: LotteryCase) -> str:
     ]
     if case.end_at:
         lines.append(f"応募締切: {_format_user_datetime(case.end_at)}")
+    if case.result_at:
+        lines.append(f"結果発表: {_format_user_datetime(case.result_at)}")
     if case.extraction_method == "yahoo_realtime_detected_next_day":
         lines.append("実際の受付開始日ではありません。応募可否・締切は公式ページで確認。")
     if case.source_tier == SourceTier.SECONDARY:
@@ -1202,6 +1206,9 @@ def main(argv: list[str] | None = None) -> int:
             if (
                 not in_delivery_window
                 and not _opportunity_is_still_open(case, today)
+                and not (case.result_at and
+                         (case.result_at.date() if isinstance(case.result_at, datetime)
+                          else case.result_at) >= today)
                 and not (already_delivered or calendar_already_exists)
             ):
                 continue
@@ -1212,6 +1219,7 @@ def main(argv: list[str] | None = None) -> int:
                 "product_category",
                 "start_at",
                 "end_at",
+                "result_at",
                 "opportunity_kind",
                 "official_url",
                 "source_url",
@@ -1230,7 +1238,8 @@ def main(argv: list[str] | None = None) -> int:
             )
             calendar_result: dict[str, str] = {"status": "unchanged"}
             uses_calendar = _opportunity_uses_calendar(case)
-            if uses_calendar and (
+            if uses_calendar and (in_delivery_window or _opportunity_is_still_open(case, today)
+                                  or already_delivered or calendar_already_exists) and (
                 not already_delivered
                 or metadata_changed
                 or state.calendar_payload_changed(sync_key, payload_hash)
@@ -1247,12 +1256,61 @@ def main(argv: list[str] | None = None) -> int:
                         f"Google Calendar登録が完了しませんでした: {calendar_result}"
                     )
                 state.mark_calendar_synced(sync_key, payload_hash, calendar_result)
-            if not already_delivered:
+            if not already_delivered and (in_delivery_window or _opportunity_is_still_open(case, today)):
                 discord.send(
                     title_prefix + case.retailer_name + "／" + case.product_name,
                     _lottery_discord_description(case),
                 )
                 state.mark_delivered(key)
+            # 発表予定日は応募開始とは別の予定。同期記録が消えても同じIDで更新する。
+            if (case.retailer_id in RESULT_REMINDER_RETAILERS
+                    and case.result_at is not None):
+                result_day = (case.result_at.date() if isinstance(case.result_at, datetime)
+                              else case.result_at)
+                if today <= result_day <= last_day:
+                    result_key = f"lottery_result:{case.case_id}"
+                    result_summary = (
+                        f"【{config.games[case.game_id].short_name}抽選結果発表】"
+                        f"{case.retailer_name}／{case.product_name}"
+                    )
+                    result_description = (
+                        f"結果確認先: {case.official_url}\n"
+                        f"確認元ページ: {case.source_url}\n内部ID: {case.case_id}"
+                    )
+                    result_hash = _calendar_payload_hash(
+                        result_summary, case.result_at, result_description
+                    )
+                    if state.calendar_payload_changed(result_key, result_hash):
+                        result = calendar.upsert(
+                            "lottery_result", state.calendar_case_identity(case.case_id),
+                            result_summary, case.result_at, result_description,
+                        )
+                        if result.get("status") not in {"inserted", "updated"}:
+                            raise RuntimeError(f"結果発表日のカレンダー登録失敗: {result}")
+                        state.mark_calendar_synced(result_key, result_hash, result)
+        # 記事が受付後に一覧から消えても、保存した発表日に一度だけ知らせる。
+        for case_id, record in list(state.data.get("seen_cases", {}).items()):
+            if not isinstance(record, dict) or record.get("retailer_id") not in RESULT_REMINDER_RETAILERS:
+                continue
+            raw_result = record.get("result_at")
+            if not raw_result:
+                continue
+            try:
+                result_day = date.fromisoformat(str(raw_result)[:10])
+            except ValueError:
+                continue
+            if result_day != today or record.get("game_id") not in config.active_game_ids:
+                continue
+            key = f"lottery:result:{case_id}"
+            if state.delivered(key):
+                continue
+            discord.send(
+                f"【{config.games[record['game_id']].short_name}抽選結果確認】"
+                f"{record.get('retailer_name', '')}／{record.get('product_name', '')}",
+                f"本日結果発表予定。応募先で当落を確認: "
+                f"{record.get('official_url') or record.get('source_url') or ''}",
+            )
+            state.mark_delivered(key)
         release_calendar_results: list[dict[str, str]] = []
         for release in releases:
             previous = state.data["seen_releases"].get(release.release_id, {})

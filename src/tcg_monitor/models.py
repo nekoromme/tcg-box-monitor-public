@@ -245,6 +245,7 @@ class LotteryCase:
     case_id: str = ""
     opportunity_kind: OpportunityKind = OpportunityKind.LOTTERY
     end_at: datetime | date | None = None
+    result_at: datetime | date | None = None
 
     def with_id(self) -> LotteryCase:
         durable_retailer_url = ""

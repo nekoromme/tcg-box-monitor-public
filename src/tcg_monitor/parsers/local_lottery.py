@@ -35,6 +35,7 @@ from tcg_monitor.models import (
     SourceConfig,
     SourceTier,
 )
+from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
 from tcg_monitor.parsers.common import title, visible_text
 
 
@@ -1982,6 +1983,8 @@ def parse_yahoo_realtime(
             confidence,
             opportunity_kind=opportunity_kind,
             end_at=application_end,
+            result_at=(published_result_date(combined_text, start_at, application_end)
+                       if retailer_id in RESULT_REMINDER_RETAILERS else None),
         ).with_id()
         # 同じ応募期間で複数の種類が明記された場合は全てを記録する。
         if selected_products:

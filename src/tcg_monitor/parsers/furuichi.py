@@ -22,6 +22,7 @@ from tcg_monitor.japanese_datetime import (
     parse_period_start,
 )
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
+from tcg_monitor.result_date import published_result_date
 from tcg_monitor.parsers.common import title, visible_text
 
 FURUICHI_SOURCE = "furuichi_official_lottery"
@@ -643,6 +644,7 @@ def parse_furuichi_lottery_detail(
             extraction_method,
             confidence,
             end_at=end_at,
+            result_at=published_result_date(combined_text, start_at, end_at),
         ).with_id()
         for game_id, product_name, product_category, canonical_product_key in products
     ]

@@ -40,10 +40,16 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
                 case_id=sha256(identity.encode()).hexdigest(),
             )
         grouped[lottery_dedupe_key(item)].append(item)
-    merged = [
-        sorted(values, key=lambda item: ORDER[item.source_tier.value])[0]
-        for values in grouped.values()
-    ]
+    merged = []
+    for values in grouped.values():
+        ordered = sorted(values, key=lambda item: ORDER[item.source_tier.value])
+        first = ordered[0]
+        # 公式側が発表日を載せない場合、同じ抽選回の投稿にある日付を補う。
+        if first.result_at is None:
+            dated = next((item for item in ordered if item.result_at is not None), None)
+            if dated:
+                first = replace(first, result_at=dated.result_at)
+        merged.append(first)
     return merged, []
 
 

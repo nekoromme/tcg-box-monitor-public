@@ -88,6 +88,8 @@ def test_furuichi_detail_reads_application_period_from_official_image_once() -> 
         ocr_cache_meta=cache_meta,
     )
 
+    assert cases[0].result_at == datetime(2026, 8, 20, 23, 0, tzinfo=ZoneInfo("Asia/Tokyo"))
+
     assert not releases
     assert not alerts
     assert len(cases) == 1
