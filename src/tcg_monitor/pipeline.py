@@ -81,6 +81,7 @@ from tcg_monitor.parsers.official_retailers import (
     is_official_retailer_source,
     official_retailer_index_should_have_links,
     parse_official_retailer_detail,
+    premium_bandai_recent_news_cases,
 )
 from tcg_monitor.parsers.onepiece_official import parse_onepiece_official_products
 from tcg_monitor.parsers.pokemon_center import (
@@ -758,11 +759,13 @@ def run_pipeline(
     for source in selected_sources:
         started = time.perf_counter()
         metrics = SourceMetrics(source.id)
+        premium_bandai_news_fallback: list[LotteryCase] = []
         source_evidence[source.id] = metrics
         uses_parallel_discovery_paths = source.id in {
             "snkrdunk_pokemon",
             "snkrdunk_onepiece",
             "nyuka_now_fullcomp_livepocket",
+            PREMIUM_BANDAI_DB_SOURCE,
         }
         configured_root_urls = list(source.discovery_urls)
         repair_urls: list[str] = []
@@ -974,6 +977,10 @@ def run_pipeline(
                         source,
                         config,
                     )
+                    if source.id == PREMIUM_BANDAI_DB_SOURCE:
+                        premium_bandai_news_fallback.extend(
+                            premium_bandai_recent_news_cases(html, url, source, config)
+                        )
                     route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
@@ -1471,6 +1478,19 @@ def run_pipeline(
                     alerts.append(failure_alert)
                 continue
 
+        # Prefer a detailed official item period when readable. A newly
+        # announced headline still provides a date-only notice if the item
+        # page is blocked, without guessing its closing time.
+        if premium_bandai_news_fallback:
+            parsed_items = {
+                case.official_url for case in cases
+                if case.game_id == "dragon_ball_fusion_world"
+                and case.retailer_id == "premium_bandai"
+            }
+            cases.extend(
+                case for case in premium_bandai_news_fallback
+                if case.official_url not in parsed_items
+            )
         if is_yahoo_source:
             still_pending = {
                 status_url

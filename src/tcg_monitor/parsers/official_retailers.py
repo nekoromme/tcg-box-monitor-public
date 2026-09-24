@@ -76,7 +76,11 @@ def is_official_retailer_index(source_id: str, url: str) -> bool:
             and path == "/official_shop/onepiece-cardgame"
         )
     if source_id == PREMIUM_BANDAI_DB_SOURCE:
-        return parts.netloc.casefold() == "p-bandai.jp" and path == "/brand/b0062"
+        return parts.netloc.casefold() == "p-bandai.jp" and path in {
+            "/brand/b0062",
+            "/carddas/list-da10-n130",
+            "/carddas/news-list-0",
+        }
     return False
 
 
@@ -169,18 +173,20 @@ def _onepiece_candidate(candidate: str, context: str) -> bool:
 
 def _premium_bandai_candidate(candidate: str, context: str) -> bool:
     parts = urlsplit(candidate)
+    compact = re.sub(r"\s+", "", context)
     has_game = any(
-        word in context
+        word in compact
         for word in (
             "ドラゴンボールスーパーカードゲーム",
             "フュージョンワールド",
             "DBFW",
+            "ドラゴンボールSCGFW",
         )
     )
     has_box = any(
-        word in context
-        for word in ("ブースターパック", "MANGA BOOSTER", "STORY BOOSTER")
-    )
+        word in compact
+        for word in ("ブースターパック", "MANGABOOSTER", "STORYBOOSTER")
+    ) or bool(re.search(r"\bFB\d{2}\b", context))
     return (
         parts.netloc.casefold() == "p-bandai.jp"
         and bool(_P_BANDAI_ITEM.fullmatch(parts.path))
@@ -233,6 +239,55 @@ def discover_official_retailer_urls(
     return found
 
 
+def premium_bandai_recent_news_cases(
+    html: str,
+    url: str,
+    source: SourceConfig,
+    config: Config,
+    today: date | None = None,
+) -> list[LotteryCase]:
+    """Use explicit official start headlines when item details are inaccessible.
+
+    The shop news lists the day an application started, but not the opening
+    time or deadline. Only recent headlines are usable as a timely notice;
+    older listings must never revive a potentially closed draw.
+    """
+
+    if urlsplit(url).path.rstrip("/") != "/carddas/news-list-0":
+        return []
+    detected = today or datetime.now(ZoneInfo(config.timezone)).date()
+    cases: list[LotteryCase] = []
+    game = config.games["dragon_ball_fusion_world"]
+    soup = BeautifulSoup(html, "lxml")
+    for anchor in soup.find_all("a", href=True):
+        if not isinstance(anchor, Tag):
+            continue
+        headline = anchor.get_text(" ", strip=True)
+        match = re.search(r"(?P<year>20\d{2})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日", headline)
+        if not match or "抽選販売開始" not in headline or "【抽選販売】" not in headline:
+            continue
+        start = date(*(int(match.group(part)) for part in ("year", "month", "day")))
+        if not 0 <= (detected - start).days <= 1:
+            continue
+        item_url = _clean_candidate(source.id, urljoin(url, str(anchor["href"])))
+        product_name = headline.split("【抽選販売】", 1)[1]
+        product_name = re.split(r"[」｣]が抽選販売開始", product_name, maxsplit=1)[0]
+        product_name = product_name.strip("｢「」｣ \t")
+        if not _premium_bandai_candidate(item_url, product_name):
+            continue
+        classified = classify_product(game, product_name, "ブースターパック 1BOX", item_url)
+        if not classified.is_target:
+            continue
+        cases.append(LotteryCase(
+            "dragon_ball_fusion_world", "premium_bandai", "プレミアムバンダイ",
+            product_name, classified.product_category, classified.canonical_product_key,
+            start, item_url, item_url, source.source_tier,
+            "premium_bandai_official_news_start_date", "medium",
+            opportunity_kind=OpportunityKind.LOTTERY,
+        ).with_id())
+    return cases
+
+
 def official_retailer_index_should_have_links(source_id: str, html: str) -> bool:
     """Avoid alarms when a news/lottery list legitimately has no active campaign."""
 
@@ -245,8 +300,13 @@ def official_retailer_index_should_have_links(source_id: str, html: str) -> bool
     if source_id == PREMIUM_BANDAI_DB_SOURCE:
         return (
             "抽選" in text
-            and any(word in text for word in ("フュージョンワールド", "DBFW"))
-            and "ブースターパック" in text
+            and any(word in text for word in (
+                "フュージョンワールド", "ドラゴンボールスーパーカードゲーム",
+                "ドラゴンボールSCG FW", "DBSCGFW",
+            ))
+            and any(word in text for word in (
+                "ブースターパック", "STORY BOOSTER", "DUAL EVOLUTION",
+            ))
         )
     return False
 
@@ -616,6 +676,7 @@ __all__ = [
     "PREMIUM_BANDAI_DB_SOURCE",
     "TAKARATOMY_MALL_SOURCE",
     "discover_official_retailer_urls",
+    "premium_bandai_recent_news_cases",
     "is_official_retailer_index",
     "is_official_retailer_source",
     "official_retailer_index_should_have_links",

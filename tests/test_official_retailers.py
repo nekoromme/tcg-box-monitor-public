@@ -22,6 +22,7 @@ from tcg_monitor.parsers.official_retailers import (
     parse_konami_style,
     parse_onepiece_official_shop,
     parse_premium_bandai_dragonball,
+    premium_bandai_recent_news_cases,
     parse_takaratomy_mall,
 )
 from tcg_monitor.pipeline import run_pipeline
@@ -197,6 +198,67 @@ def test_premium_bandai_dragonball_reads_active_booster_lottery() -> None:
     assert cases[0].start_at == datetime(2026, 8, 7, 11, 0, tzinfo=ZoneInfo("Asia/Tokyo"))
     assert cases[0].end_at == datetime(2026, 8, 20, 23, 0, tzinfo=ZoneInfo("Asia/Tokyo"))
     assert _opportunity_is_still_open(cases[0], date(2026, 8, 11))
+
+
+def test_premium_bandai_card_shop_lists_october_relotteries() -> None:
+    config, source = _source("premium_bandai_dragonball")
+    assert source.discovery_urls == [
+        "https://p-bandai.jp/carddas/list-da10-n130/",
+        "https://p-bandai.jp/carddas/news-list-0/",
+    ]
+    for index_url in source.discovery_urls:
+        assert is_official_retailer_index(source.id, index_url)
+
+    # The actual shop titles omit "ブースターパック" for FB09 and abbreviate
+    # "フュージョンワールド" for both products.
+    listing = """
+    <main>
+      <article><a href="/item/item-1000257871/">
+        【抽選販売】ドラゴンボールスーパーカードゲームFW
+        STORY BOOSTER[ST01]【2026年10月発送分】
+      </a></article>
+      <article><a href="/item/item-1000257866/">
+        【抽選販売】ドラゴンボールスーパーカードゲーム FW
+        DUAL EVOLUTION[FB09]【2026年10月発送分】
+      </a></article>
+      <article><a href="/item/item-1000244759/">
+        【抽選販売】ドラゴンボールスーパーカードゲームFW 2nd ANNIVERSARY SET
+      </a></article>
+      <article><a href="/item/item-1000257759/">
+        ONE PIECEカードゲーム プレミアムカードコレクション
+      </a></article>
+    </main>
+    """
+    expected = [
+        "https://p-bandai.jp/item/item-1000257871/",
+        "https://p-bandai.jp/item/item-1000257866/",
+    ]
+    for index_url in source.discovery_urls:
+        assert discover_official_retailer_urls(listing, index_url, source, config) == expected
+
+
+def test_premium_bandai_recent_news_can_warn_when_detail_is_blocked() -> None:
+    config, source = _source("premium_bandai_dragonball")
+    html = """
+    <main>
+      <a href="/item/item-1000257871/">【2026年9月18日】｢【抽選販売】
+        ドラゴンボールスーパーカードゲームFW STORY BOOSTER[ST01]
+        【2026年10月発送分】｣が抽選販売開始!</a>
+      <a href="/item/item-1000257866/">【2026年9月18日】｢【抽選販売】
+        ドラゴンボールスーパーカードゲーム FW DUAL EVOLUTION[FB09]
+        【2026年10月発送分】｣が抽選販売開始!</a>
+      <a href="/item/item-1000244759/">【2026年9月18日】｢【抽選販売】
+        ドラゴンボールスーパーカードゲームFW 2nd ANNIVERSARY SET
+        ｣が抽選販売開始!</a>
+    </main>
+    """
+    url = "https://p-bandai.jp/carddas/news-list-0/"
+    cases = premium_bandai_recent_news_cases(html, url, source, config, date(2026, 9, 18))
+    assert {case.canonical_product_key for case in cases} == {"ST01", "FB09"}
+    assert all(case.start_at == date(2026, 9, 18) for case in cases)
+    assert all(case.end_at is None for case in cases)
+    assert all(case.extraction_method == "premium_bandai_official_news_start_date" for case in cases)
+    assert not premium_bandai_recent_news_cases(html, url, source, config, date(2026, 9, 24))
 
 
 def test_official_store_sources_run_end_to_end_with_fixtures() -> None:

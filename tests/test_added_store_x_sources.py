@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from datetime import date
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -11,6 +13,45 @@ from tcg_monitor.parsers.local_lottery import (
     parse_yahoo_realtime,
     yahoo_repair_discovery_urls,
 )
+
+
+def test_donki_app_cardset_announcement_and_retailer_filter() -> None:
+    config = load_config("sites.yaml")
+    sources = {source.id: source for source in config.sources}
+    assert sources["yahoo_realtime_donki_official"].enabled
+    source = sources["yahoo_realtime_donki_secondary"]
+    assert source.enabled
+    html = """
+    <div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">
+        【ポケカ30th 抽選販売】 ドン・キホーテにて
+        「30th CELEBRATION カードセット」の抽選販売が告知されています。
+        受付期間 9月25日(金)10時00分～10月4日(日)23時59分
+        当選発表 10月15日(木)。majicaアプリ内応募ページから応募。
+        全9種のうちランダムでいずれか1つ購入できます。
+      </p>
+      <time><a href="https://x.com/PokeGetInfoMain/status/2103004467566432292">9月24日</a></time>
+    </div>
+    """
+    cases, releases, alerts = parse_yahoo_realtime(
+        html, source.discovery_urls[0], source, config, date(2026, 9, 24),
+    )
+    assert not releases and not alerts
+    assert len(cases) == 1
+    case = cases[0]
+    assert case.retailer_id == "donki"
+    assert case.canonical_product_key == "pokemon_30th_cardset"
+    assert case.start_at == datetime(2026, 9, 25, 10, 0, tzinfo=ZoneInfo("Asia/Tokyo"))
+    assert case.end_at == datetime(2026, 10, 4, 23, 59, tzinfo=ZoneInfo("Asia/Tokyo"))
+    assert case.result_at == date(2026, 10, 15)
+    assert case.source_tier.value == "secondary"
+    assert case.official_url == "https://www.majica-net.com/app/"
+
+    no_store = html.replace("ドン・キホーテにて", "ほかの店舗にて")
+    cases, _, _ = parse_yahoo_realtime(
+        no_store, source.discovery_urls[0], source, config, date(2026, 9, 24),
+    )
+    assert not cases
 
 
 @pytest.mark.parametrize(

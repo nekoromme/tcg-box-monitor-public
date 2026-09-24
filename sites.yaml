@@ -1008,7 +1008,8 @@ sources:
   classification: browser_fallback_without_challenge_bypass
   enabled: true
   discovery_urls:
-  - https://p-bandai.jp/brand/b0062/
+  - https://p-bandai.jp/carddas/list-da10-n130/
+  - https://p-bandai.jp/carddas/news-list-0/
   start_labels:
   - 受付期間
   - 抽選受付期間
@@ -1020,7 +1021,7 @@ sources:
   - booster_item_link
   - lottery_label
   - labelled_application_period
-  notes: フュージョンワールドの通常ブースターBOX抽選だけを追う。周年セット、カードセット、サプライ、通常販売は既存の商品除外条件で通知しない。CAPTCHA等の迂回は行わない。
+  notes: カードショップ公式の公開商品一覧・新着一覧から対象BOXの個別ページを発見する。周年セット、カードセット、サプライ、通常販売は除外。商品ページがアクセス制限された場合は監視異常として記録し、CAPTCHA等の迂回は行わない。
 - id: dragonball_official_store
   name: フュージョンワールド オフィシャルストア
   operator: 株式会社バンダイナムコアミューズメント
@@ -1156,6 +1157,62 @@ sources:
   poll_minutes: 120
   robots_url: https://geo-online.co.jp/robots.txt
   notes: ワンピースの過去公式例は今回十分確認できていないため、不掲載を異常にしない。関連ページが出た時だけ同じ共通判定へ渡す。
+- id: yahoo_realtime_donki_official
+  name: ドン・キホーテ公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  coverage_scope: specialized
+  supported_games:
+    pokemon_card: verified
+  purposes:
+  - lottery_discovery
+  enabled: true
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Adonki_donki%20%E3%83%9D%E3%82%B1%E3%82%AB%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://twstalker.com/donki_donki
+  render_mode: http
+  poll_minutes: 120
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: majicaアプリ内の販売告知を公式Xの投稿から補完する。公式投稿がない抽選は下の二次情報経路でも確認する。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: donki_donki
+    retailer_id: donki
+    retailer_name: ドン・キホーテ
+- id: yahoo_realtime_donki_secondary
+  name: ドン・キホーテ抽選情報 Yahooリアルタイム検索
+  source_type: retailer_secondary_social_search
+  source_tier: secondary
+  coverage_scope: specialized
+  supported_games:
+    pokemon_card: verified
+  purposes:
+  - secondary_lottery_discovery
+  enabled: true
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APokeGetInfoMain%20%E3%83%89%E3%83%B3%E3%83%BB%E3%82%AD%E3%83%9B%E3%83%BC%E3%83%86%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APokeGetInfoMain&ei=UTF-8
+  - https://twstalker.com/PokeGetInfoMain
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - named_retailer_post
+  - supported_tcg_product
+  - application_start
+  notes: majicaアプリ限定の抽選を、ドンキ名と応募開始日時を本文に明記した個別投稿から補完する。二次情報と表示して公式アプリでの確認を促す。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: PokeGetInfoMain
+    retailer_id: donki
+    retailer_name: ドン・キホーテ
+    required_retailer_mentions:
+    - ドン・キホーテ
+    - ドンキホーテ
+    - ドンキ
+    official_confirmation_url: https://www.majica-net.com/app/
 - id: yahoo_realtime_geo_official
   name: ゲオ公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
