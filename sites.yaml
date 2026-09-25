@@ -658,7 +658,8 @@ sources:
   date_patterns:
   - (?P<year>20\d{2})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日
   - (?P<year>20\d{2})[.](?P<month>\d{1,2})
-  render_mode: http
+  render_mode: http_then_playwright_if_empty
+  render_wait_selector: 'a[href*="/products/boosters/"], a[href*="/products/op"], a[href*="/products/eb"], a[href*="/products/prb"]'
   parser_strategy: onepiece_product_cards_and_embedded_lottery
   fallback_strategy: label_scoped_parser_then_topics_then_snkrdunk
   expected_elements:
