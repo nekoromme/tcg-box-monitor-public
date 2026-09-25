@@ -10,7 +10,7 @@ from tcg_monitor.classifier import classify_product
 from tcg_monitor.japanese_datetime import parse_first_datetime
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
 
-PRODUCT_URL = re.compile(r"/products/(?:op|eb|prb)\d+\.html$", re.I)
+PRODUCT_URL = re.compile(\n    r"/products/(?:boosters/)?(?:op|eb|prb)\\d+(?:\\.html|\\.php|/)(?:\\?.*)?$", re.I\n)
 
 
 def parse_onepiece_official_products(
@@ -28,6 +28,14 @@ def parse_onepiece_official_products(
             continue
         seen_urls.add(official_url)
         block = anchor.get_text(" ", strip=True)
+        # Newer catalog cards keep the release date beside the link, while older
+        # cards put the entire product description inside the link.
+        if "発売日" not in block:
+            card = anchor.find_parent(["li", "article"])
+            if card is not None:
+                card_text = card.get_text(" ", strip=True)
+                if "発売日" in card_text and len(card_text) < 800:
+                    block = card_text
         classified = classify_product(game, block, block, official_url)
         if not classified.is_box:
             continue
