@@ -66,6 +66,27 @@ def test_onepiece_calendar_labels_are_unambiguous() -> None:
     assert onepiece.lottery_start_prefix == "【ワンピ抽選】"
 
 
+def test_onepiece_catalog_accepts_rendered_booster_cards() -> None:
+    from tcg_monitor.parsers.onepiece_official import parse_onepiece_official_products
+
+    config = load_config("sites.yaml")
+    source = next(item for item in config.sources if item.id == "onepiece_official_products")
+    assert source.render_mode.value == "http_then_playwright_if_empty"
+    assert source.render_wait_selector is not None
+    html = (
+        '<main><ul><li><a href="/products/boosters/op18/">'
+        'ブースターパック 新商品【OP-18】</a>'
+        '<span>発売日 2026年11月28日(土)</span></li></ul></main>'
+    )
+    _, releases, alerts = parse_onepiece_official_products(
+        html, source.discovery_urls[0], source, config
+    )
+    assert len(releases) == 1
+    assert releases[0].canonical_product_key == "OP-18"
+    assert releases[0].release_date == date(2026, 11, 28)
+    assert not alerts
+
+
 def test_official_release_fixtures() -> None:
     config = load_config("sites.yaml")
     _, releases, alerts = run_pipeline(
