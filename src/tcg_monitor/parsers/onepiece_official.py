@@ -10,7 +10,9 @@ from tcg_monitor.classifier import classify_product
 from tcg_monitor.japanese_datetime import parse_first_datetime
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
 
-PRODUCT_URL = re.compile(\n    r"/products/(?:boosters/)?(?:op|eb|prb)\\d+(?:\\.html|\\.php|/)(?:\\?.*)?$", re.I\n)
+PRODUCT_URL = re.compile(
+    r"/products/(?:boosters/)?(?:op|eb|prb)\d+(?:\.html|\.php|/)(?:\?.*)?$", re.I
+)
 
 
 def parse_onepiece_official_products(
