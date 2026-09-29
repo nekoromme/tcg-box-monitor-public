@@ -35,8 +35,8 @@ from tcg_monitor.models import (
     SourceConfig,
     SourceTier,
 )
-from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
 from tcg_monitor.parsers.common import title, visible_text
+from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
 
 
 def _livepocket_profile(source: SourceConfig | str) -> tuple[str, str] | None:

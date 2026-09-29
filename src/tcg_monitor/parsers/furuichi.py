@@ -22,8 +22,8 @@ from tcg_monitor.japanese_datetime import (
     parse_period_start,
 )
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
-from tcg_monitor.result_date import published_result_date
 from tcg_monitor.parsers.common import title, visible_text
+from tcg_monitor.result_date import published_result_date
 
 FURUICHI_SOURCE = "furuichi_official_lottery"
 _INDEX_PATH = "/news/news_information.html"

@@ -15,9 +15,9 @@ from tcg_monitor.additional_products import (
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.japanese_datetime import parse_first_datetime, parse_period_start
 from tcg_monitor.models import Alert, ClassifiedProduct, Config, LotteryCase, Release, SourceConfig
-from tcg_monitor.result_date import published_result_date
 from tcg_monitor.parsers.common import title, visible_text
 from tcg_monitor.parsers.local_lottery import _application_deadline, _box_products
+from tcg_monitor.result_date import published_result_date
 
 RETAILERS = {
     "geo": "ゲオ",
@@ -382,8 +382,10 @@ def parse_generic(
                         "generic_lottery_label",
                         "high" if source.source_tier.value.startswith("official") else "medium",
                         end_at=end_at,
-                        result_at=(published_result_date(block, start_at, end_at)
-                                   if source.id in {"yamada_denki", "kids_republic", "kojima"} else None),
+                        result_at=(
+                            published_result_date(block, start_at, end_at)
+                            if source.id in {"yamada_denki", "kids_republic", "kojima"} else None
+                        ),
                     ).with_id()
                     cases.append(case)
                     successful_lottery_games.add(game_id)

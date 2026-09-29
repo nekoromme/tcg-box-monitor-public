@@ -1256,7 +1256,9 @@ def main(argv: list[str] | None = None) -> int:
                         f"Google Calendar登録が完了しませんでした: {calendar_result}"
                     )
                 state.mark_calendar_synced(sync_key, payload_hash, calendar_result)
-            if not already_delivered and (in_delivery_window or _opportunity_is_still_open(case, today)):
+            if not already_delivered and (
+                in_delivery_window or _opportunity_is_still_open(case, today)
+            ):
                 discord.send(
                     title_prefix + case.retailer_name + "／" + case.product_name,
                     _lottery_discord_description(case),
@@ -1290,7 +1292,10 @@ def main(argv: list[str] | None = None) -> int:
                         state.mark_calendar_synced(result_key, result_hash, result)
         # 記事が受付後に一覧から消えても、保存した発表日に一度だけ知らせる。
         for case_id, record in list(state.data.get("seen_cases", {}).items()):
-            if not isinstance(record, dict) or record.get("retailer_id") not in RESULT_REMINDER_RETAILERS:
+            if (
+                not isinstance(record, dict)
+                or record.get("retailer_id") not in RESULT_REMINDER_RETAILERS
+            ):
                 continue
             raw_result = record.get("result_at")
             if not raw_result:
