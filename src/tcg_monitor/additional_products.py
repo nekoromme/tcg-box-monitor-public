@@ -68,7 +68,9 @@ def without_additional_contents(game: GameConfig, text: str) -> str:
     追加商品のある告知では、BOX数の明示がない拡張パック表記を除く。
     通常BOXの告知（追加商品なし）には適用しない。
     """
-    if not additional_matches(game, text):
+    # パックを同梱するカードセットだけが対象。デッキセットと並べて
+    # 告知された通常の拡張パックを、同梱物と誤認して消さない。
+    if not any(m.product_category == "カードセット" for m in additional_matches(game, text)):
         return text
     categories = "|".join(map(re.escape, game.box_product_keywords))
     if not categories:

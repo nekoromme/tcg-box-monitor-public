@@ -225,6 +225,20 @@ games:
           - モクロー・ニャビー・アシマリ
           - サルノリ・ヒバニー・メッソン
           - ニャオハ・ホゲータ・クワッス
+      # デッキセット全般は除外したまま、この商品だけ抽選監視へ追加する。
+      - id: pokemon_30th_premium_deck
+        enabled: true
+        name: 30th CELEBRATION プレミアムデッキセット エーフィ・ブラッキー
+        category: プレミアムデッキセット
+        aliases:
+          - プレミアムデッキセット エーフィ・ブラッキー
+          - プレミアムデッキセット エーフィー・ブラッキー
+          - 30th CELEBRATION プレミアムデッキセット
+          - 30th CEREBRATION プレミアムデッキセット
+          - 30thセレブレーションプレミアムデッキセット
+          - 30周年プレミアムデッキセット
+        selected_variants: []
+        variants: []
     official_release_source: pokemon_official_products
     secondary_discovery_source: snkrdunk_pokemon
 

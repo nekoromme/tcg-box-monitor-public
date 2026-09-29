@@ -86,7 +86,7 @@ def _form_payload(
     )
 
 
-def test_official_line_form_groups_both_target_stores_without_deck_set() -> None:
+def test_official_line_form_groups_both_target_stores_with_selected_deck() -> None:
     config = load_config("sites.yaml")
     source = _source()
     api_url = source.parser_options["always_fetch_urls"][0]
@@ -97,12 +97,15 @@ def test_official_line_form_groups_both_target_stores_without_deck_set() -> None
 
     assert not releases
     assert not alerts
-    assert len(cases) == 1
+    assert len(cases) == 2
     assert cases[0].retailer_id == "tsutaya_ichinoseki_store"
     assert cases[0].retailer_name == "TSUTAYA公式LINE抽選（対象: 一関店・築館店）"
     # Keep the already-delivered Ichinoseki identity so grouping cannot notify again.
     assert cases[0].case_id == "a18503c74ab3735444f09ceff5e412d112169f328ad77a17853dd2c94bb3e371"
-    assert {case.product_name for case in cases} == {"「拡張パック 30th CELEBRATION」"}
+    assert {case.product_name for case in cases} == {
+        "「拡張パック 30th CELEBRATION」",
+        "30th CELEBRATION プレミアムデッキセット エーフィ・ブラッキー",
+    }
     assert all(case.source_tier == SourceTier.OFFICIAL for case in cases)
     assert all(case.start_at == date(2026, 8, 24) for case in cases)
     assert all(
@@ -133,7 +136,7 @@ def test_official_line_form_emits_one_group_case_when_either_store_is_present() 
             date(2026, 8, 24),
         )
 
-        assert len(cases) == 1
+        assert len(cases) == 2
         assert cases[0].retailer_id == "tsutaya_ichinoseki_store"
         assert cases[0].retailer_name == (f"TSUTAYA公式LINE抽選（対象: {expected_label}）")
         assert not releases
@@ -215,8 +218,8 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
 
     assert fetcher.calls == [yahoo_url, api_url, cardset_url]
     assert twstalker_url not in fetcher.calls
-    # 通常BOX1件と、9種類をまとめたカードセット1件。
-    assert len(cases) == 2
+    # 通常BOX、プレミアムデッキ、9種類をまとめたカードセットの3件。
+    assert len(cases) == 3
     assert sum(c.canonical_product_key == "pokemon_30th_cardset" for c in cases) == 1
     assert not releases
     assert not alerts

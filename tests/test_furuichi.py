@@ -154,7 +154,7 @@ def test_furuichi_generic_mixed_game_article_reads_each_box_from_image() -> None
 
     assert not releases
     assert not alerts
-    assert len(cases) == 2
+    assert len(cases) == 3
     assert {case.game_id for case in cases} == {
         "pokemon_card",
         "dragon_ball_fusion_world",
@@ -163,12 +163,13 @@ def test_furuichi_generic_mixed_game_article_reads_each_box_from_image() -> None
     dragon_ball = next(
         case for case in cases if case.game_id == "dragon_ball_fusion_world"
     )
-    pokemon = next(case for case in cases if case.game_id == "pokemon_card")
+    pokemon = next(case for case in cases
+                   if case.game_id == "pokemon_card" and "拡張パック" in case.product_name)
     assert dragon_ball.product_name.endswith("BRIGHTNESS OF HOPE [FB11]")
     assert pokemon.product_name == (
         "ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION"
     )
-    assert all("デッキセット" not in case.product_name for case in cases)
+    assert sum(c.canonical_product_key == "pokemon_30th_premium_deck" for c in cases) == 1
     assert all(
         case.end_at == datetime(2026, 9, 6, 23, 0, tzinfo=ZoneInfo("Asia/Tokyo"))
         for case in cases

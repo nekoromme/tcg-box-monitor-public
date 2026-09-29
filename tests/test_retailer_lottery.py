@@ -497,7 +497,7 @@ def test_nyuka_now_recovers_current_famima_and_itoyokado_lotteries() -> None:
     )
 
 
-def test_nyuka_now_recovers_current_kojima_app_lottery_box_only() -> None:
+def test_nyuka_now_recovers_current_kojima_app_box_and_selected_deck() -> None:
     html = """
     <article>
       <h2>抽選・予約応募受付中のストア</h2>
@@ -527,7 +527,8 @@ def test_nyuka_now_recovers_current_kojima_app_lottery_box_only() -> None:
 
     assert not releases
     assert not alerts
-    assert len(cases) == 1
+    assert len(cases) == 2
+    assert any(c.canonical_product_key == "pokemon_30th_premium_deck" for c in cases)
     assert cases[0].retailer_id == "kojima"
     assert cases[0].result_at == datetime(2026, 9, 10, 12, tzinfo=ZoneInfo("Asia/Tokyo"))
     assert cases[0].product_name == "ポケモンカード 30th CELEBRATION BOX"

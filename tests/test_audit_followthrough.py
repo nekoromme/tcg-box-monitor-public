@@ -36,7 +36,9 @@ def test_chomeigaoka_mixed_product_with_actual_cached_ocr():
         source("yahoo_realtime_tsutaya_chomeigaoka"), CONFIG, date(2026, 9, 6),
         ocr_cache={status: ocr}, diagnostics=diagnostics,
     )
-    assert len(cases) == 1, diagnostics
+    assert len(cases) == 2, diagnostics
+    assert sum(c.canonical_product_key == "pokemon_30th_premium_deck" for c in cases) == 1
+    cases = [c for c in cases if c.canonical_product_key != "pokemon_30th_premium_deck"]
     assert "デッキ" not in cases[0].product_name
     assert cases[0].product_name == "拡張パック「30th CELEBRATION」"
     assert cases[0].start_at == date(2026, 9, 4)

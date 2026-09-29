@@ -82,7 +82,7 @@ def test_rakuten_expired_lottery_is_verified_but_not_emitted():
 
 @freeze_time("2026-08-27 12:00:00+09:00")
 def test_rakuten_deck_does_not_borrow_box_from_footer():
-    html = HTML.replace("拡張パック 30th CELEBRATION", "30th CELEBRATION プレミアムデッキセット")
+    html = HTML.replace("拡張パック 30th CELEBRATION", "通常の構築済みデッキセット")
     cases, _, _ = parse_retailer_lottery_detail(
         html + "<footer>拡張パック1BOX</footer>", DETAIL, SOURCE, CONFIG
     )
