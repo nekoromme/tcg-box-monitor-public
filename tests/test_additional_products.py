@@ -69,7 +69,7 @@ def test_opt_out_and_variant_selection() -> None:
 @pytest.mark.parametrize(
     "name",
     [
-        "プレミアムデッキセット エーフィ・ブラッキー",
+        "プレミアムデッキセット 別の商品",
         "別のカードセット",
         "30th CELEBRATION デッキシールド",
         "ポケモンセンターセット",
@@ -138,7 +138,10 @@ def test_furuichi_image_led_mixed_notice() -> None:
         ocr_reader=lambda _: ocr,
     )
     assert not alerts
-    assert len(cases) == 1 and cases[0].product_name == f"{FAMILY} {VARIANTS[0]}"
+    assert {c.product_name for c in cases} == {
+        f"{FAMILY} {VARIANTS[0]}",
+        "30th CELEBRATION プレミアムデッキセット エーフィ・ブラッキー",
+    }
 
 
 def social_html(text: str, account: str) -> str:

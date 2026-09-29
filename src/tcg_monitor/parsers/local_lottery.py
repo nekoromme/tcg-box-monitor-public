@@ -1993,7 +1993,25 @@ def parse_yahoo_realtime(
         ).with_id()
         # 同じ応募期間で複数の種類が明記された場合は全てを記録する。
         if selected_products:
-            for name, category, key in selected_products:
+            # シーガルなどのBOX＋例外商品の合同告知では、例外商品を
+            # 優先しただけで元のBOX抽選を落とさない。セット内パックは
+            # _box_productsで除去し、通常の除外条件も商品ごとに維持する。
+            products = {p[2]: p for p in selected_products}
+            for name, category, key in _box_products(combined_text, game_id, config):
+                if classify_product(game, name, name).is_target:
+                    products.setdefault(key, (name, category, key))
+            # 引用符のない商品名や既存の画像読み取り補正も維持する。
+            box_product = _product_from_tweet(
+                container, without_additional_contents(game, combined_text),
+                game_id, game.product_exclude_keywords,
+            )
+            if box_product:
+                name, category = box_product
+                if (classify_product(game, name, name).is_box
+                        and not is_provisional_product_name(name)):
+                    key = canonical_product_key(game, name)
+                    products.setdefault(key, (name, category, key))
+            for name, category, key in products.values():
                 selected_case = replace(case, product_name=name, product_category=category,
                                         canonical_product_key=key, case_id="").with_id()
                 cases[selected_case.case_id] = selected_case
