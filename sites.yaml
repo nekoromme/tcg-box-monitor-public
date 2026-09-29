@@ -3434,9 +3434,9 @@ sources:
     retailer_id: tokyo_otaku_mode
     retailer_name: Tokyo Otaku Mode
 - id: aeon_style_online
-  name: イオン（東北地方対象のウェブ応募）
+  name: イオンスタイルオンライン
   operator: イオンリテール株式会社ほか地域会社
-  service_name: イオンスタイルオンライン／地域キャンペーン
+  service_name: イオンスタイルオンライン
   source_type: retailer_official
   source_tier: official
   supported_games:
@@ -3452,10 +3452,10 @@ sources:
   enabled: true
   mode: discovery_and_health
   discovery_urls:
-  - https://aeonretail.com/campaign/
-  - https://www.aeonstyleonline.com/
+  - https://aeonretail.com/Page/k-entry_01.aspx
   fallback_source_ids:
   - snkrdunk_pokemon
+  - aeon_entry_summary
   page_url_patterns:
   - ^https://aeonretail\.com/campaign/.+
   - ^https://www\.aeonstyleonline\.com/.+
@@ -3481,6 +3481,7 @@ sources:
   - 抽選
   - 応募
   start_labels:
+  - エントリー期間
   - 応募受付期間
   - 応募期間
   selectors:
@@ -3509,8 +3510,50 @@ sources:
   - browser_fallback_failed
   calendar_policy: exact_start_only
   poll_minutes: 120
-  robots_url: https://www.aeonstyleonline.com/robots.txt
-  notes: 地域別・期間限定URLが多く入口を断定できない。チャレンジ回避やログイン自動化は行わない。
+  robots_url: https://aeonretail.com/robots.txt
+  parser_kind: aeon_entry
+  notes: 公式エントリー販売の各商品と受付期間を読む。アクセス拒否時は独立した補完記事も確認する。チャレンジ回避やログイン自動化は行わない。
+- id: aeon_entry_summary
+  name: イオンスタイルオンライン エントリー販売補完
+  source_type: secondary_lottery_roundup
+  source_tier: secondary
+  coverage_scope: specialized
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: verified
+  purposes:
+  - secondary_lottery_discovery
+  enabled: true
+  discovery_urls:
+  - https://mikeco-room.com/onepiece-sekaisaikyounosenshi/
+  render_mode: http
+  poll_minutes: 120
+  parser_kind: aeon_entry_summary
+  notes: イオン見出し直下の表のみを読む。公式リンク・対象商品・受付期間が必須。他店の日付は流用しない。商品別名は公式確認済みのものだけ採用し、未知の商品は確認アラートにする。
+  parser_options:
+    products:
+    - aliases: [ストームエメラルダ]
+      game_id: pokemon_card
+      product_name: 拡張パック「ストームエメラルダ」
+      product_category: 拡張パック
+      canonical_product_key: 拡張パック「ストームエメラルダ」
+    - aliases: [世界最強の戦士]
+      game_id: one_piece_card
+      product_name: ブースターパック「世界最強の戦士」 [OP-17]
+      product_category: ブースターパック
+      canonical_product_key: OP-17
+    - aliases: [DUAL EVOLUTION]
+      game_id: dragon_ball_fusion_world
+      product_name: ブースターパック「DUAL EVOLUTION」 [FB09]
+      product_category: ブースターパック
+      canonical_product_key: FB09
+    - aliases: [CROSS FORCE]
+      game_id: dragon_ball_fusion_world
+      product_name: ブースターパック「CROSS FORCE」 [FB10]
+      product_category: ブースターパック
+      canonical_product_key: FB10
+
 - id: livepocket_tsutaya_akebono
   name: TSUTAYAあけぼの店（石巻）LivePocket抽選
   source_type: retailer_official_ticketing

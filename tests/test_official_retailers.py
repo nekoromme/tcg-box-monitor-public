@@ -22,8 +22,8 @@ from tcg_monitor.parsers.official_retailers import (
     parse_konami_style,
     parse_onepiece_official_shop,
     parse_premium_bandai_dragonball,
-    premium_bandai_recent_news_cases,
     parse_takaratomy_mall,
+    premium_bandai_recent_news_cases,
 )
 from tcg_monitor.pipeline import run_pipeline
 from tcg_monitor.source_priority import merge_lotteries
@@ -257,7 +257,9 @@ def test_premium_bandai_recent_news_can_warn_when_detail_is_blocked() -> None:
     assert {case.canonical_product_key for case in cases} == {"ST01", "FB09"}
     assert all(case.start_at == date(2026, 9, 18) for case in cases)
     assert all(case.end_at is None for case in cases)
-    assert all(case.extraction_method == "premium_bandai_official_news_start_date" for case in cases)
+    assert all(
+        case.extraction_method == "premium_bandai_official_news_start_date" for case in cases
+    )
     assert not premium_bandai_recent_news_cases(html, url, source, config, date(2026, 9, 24))
 
 

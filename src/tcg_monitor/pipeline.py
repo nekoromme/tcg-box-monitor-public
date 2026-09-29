@@ -34,6 +34,7 @@ from tcg_monitor.models import (
     SourceConfig,
 )
 from tcg_monitor.ocr import read_image_text
+from tcg_monitor.parsers.aeon_style import parse_aeon_entry, parse_aeon_summary
 from tcg_monitor.parsers.dragonball_official import (
     discover_dragonball_official_store_urls,
     is_dragonball_official_store_index,
@@ -263,6 +264,10 @@ class _RootPrefetcher:
 
 def _parser_for(source: SourceConfig):  # type: ignore[no-untyped-def]
     source_id = source.id
+    if source.parser_kind == "aeon_entry":
+        return parse_aeon_entry
+    if source.parser_kind == "aeon_entry_summary":
+        return parse_aeon_summary
     if source_id == "clabo_release_calendar":
         return parse_clabo_release_calendar
     if source_id == "pokemon_official_products":
