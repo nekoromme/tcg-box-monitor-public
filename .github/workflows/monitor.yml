@@ -12,7 +12,7 @@ on:
       - '.github/workflows/monitor.yml'
   schedule:
     # UTC指定。日本時間の偶数時（00:04〜22:04）に2時間ごと、1日12回。
-    - cron: '4 1-23/2 * * *'
+    - cron: '4 1,3,5,7,9,11,13,15,17,19,21,23 * * *'
   workflow_dispatch:
     inputs:
       mode:
