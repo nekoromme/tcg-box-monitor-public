@@ -237,6 +237,14 @@ def parse_snkr_price(html: str, url: str, release: Release) -> PriceEvidence:
     )
     if product is None:
         return PriceEvidence("error", url=url, error="商品データ形式を確認できず")
+    currency = product.get("currency", product.get("currencyCode"))
+    display_regular = str(product.get("displayRegularPrice", ""))
+    rendered = _text(BeautifulSoup(html, "lxml").get_text(" ", strip=True))
+    quantity_yen = re.search(r"(?<!\d)1個\s*\([^)]*\)\s*[¥￥]\s*([\d,]+)", rendered)
+    if (currency and currency != "JPY") or not (
+        currency == "JPY" or re.match(r"[¥￥]", display_regular) or quantity_yen
+    ):
+        return PriceEvidence("error", url=url, error="日本円の価格と確認できず")
     names = [str(product.get(key, "")) for key in ("name", "localizedName")]
     if not product_matches(release, names):
         return PriceEvidence("mismatch", url=url, title=names[1], error="商品名・言語・単位不一致")
@@ -263,10 +271,8 @@ def parse_snkr_price(html: str, url: str, release: Release) -> PriceEvidence:
             ):
                 prices.append(price)
     # Rendered quantity rows support the same page when data keys change.
-    if not prices:
-        text = _text(BeautifulSoup(html, "lxml").get_text(" ", strip=True))
-        if match := re.search(r"(?<!\d)1個\s*\([^)]*\)\s*[¥￥]\s*([\d,]+)", text):
-            prices.append(int(match[1].replace(",", "")))
+    if not prices and quantity_yen:
+        prices.append(int(quantity_yen[1].replace(",", "")))
     return PriceEvidence(
         "found" if prices else "unpriced",
         url=url,

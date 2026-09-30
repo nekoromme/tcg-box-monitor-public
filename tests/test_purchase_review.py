@@ -48,12 +48,19 @@ def product() -> Release:
     ).with_id()
 
 
-def snkr_html(*, price: int | None = 13001, name: str = "", day: str = "2026年10月10日") -> str:
+def snkr_html(
+    *,
+    price: int | None = 13001,
+    name: str = "",
+    day: str = "2026年10月10日",
+    display_regular: str = "¥10,000",
+) -> str:
     # Minimal observed Next flight schema; a recommendation deliberately has a lower price.
     obj = {
         "apparelData": {
             "id": 886014,
             "regularPrice": 10000,
+            "displayRegularPrice": display_regular,
             "minPrice": 1,
             "name": name or 'Yu-Gi-Oh "ORIGINAL ARTWORK COLLECTION" JP Edition Box',
             "localizedName": name
@@ -100,6 +107,14 @@ def test_no_quantity_one_price_does_not_use_catalog_or_multiple_boxes() -> None:
     )
     assert result.status == "unpriced"
     assert result.price is None
+
+
+def test_non_yen_price_is_not_used_even_for_japanese_edition() -> None:
+    result = parse_snkr_price(
+        snkr_html(display_regular="$100"), "https://snkrdunk.com/apparels/886014", product()
+    )
+    assert result.status == "error"
+    assert "日本円" in result.error
 
 
 @pytest.mark.parametrize(
