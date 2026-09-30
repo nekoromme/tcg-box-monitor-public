@@ -108,6 +108,7 @@ from tcg_monitor.parsers.retailer_lottery import (
     is_retailer_lottery_source,
     parse_retailer_lottery_detail,
     retailer_lottery_index_error,
+    retailer_lottery_index_matches_scope,
 )
 from tcg_monitor.parsers.retailer_release_calendar import (
     discover_clabo_calendar_urls,
@@ -1175,7 +1176,10 @@ def run_pipeline(
                             )
                         )
                     )
-                    if not discovered and has_target_game and has_box_lottery:
+                    if (
+                        not discovered and has_target_game and has_box_lottery
+                        and retailer_lottery_index_matches_scope(html, source, config)
+                    ):
                         alerts.append(
                             _alert(
                                 source.id,

@@ -305,6 +305,52 @@ def _allowed_detail_url(source: SourceConfig | str, candidate: str) -> bool:
     return False
 
 
+def retailer_lottery_index_matches_scope(
+    html: str,
+    source: SourceConfig,
+    config: Config,
+) -> bool:
+    """Check a regional product card before reporting missing detail links.
+
+    A national index can contain other stores' BOX draws and the target
+    store's unrelated events. Those separate cards do not prove that a draw
+    for our target store has lost its detail link.
+    """
+
+    source = source_with_runtime_parser_profile(source)
+    targets = source.parser_options.get("target_context_markers", [])
+    required = source.parser_options.get("required_context_markers", [])
+    if not targets:
+        return True
+    if not isinstance(targets, list) or not all(
+        isinstance(marker, str) and marker for marker in targets
+    ):
+        raise ValueError(f"bad target_context_markers: {source.id}")
+    if not isinstance(required, list) or not all(
+        isinstance(marker, str) and marker for marker in required
+    ):
+        raise ValueError(f"bad required_context_markers: {source.id}")
+    soup = BeautifulSoup(html, "lxml")
+    for node in soup.find_all(["a", "li", "article", "h1", "h2", "h3"]):
+        # An outer article/list item may wrap several unrelated product cards.
+        # Let the inner cards decide, rather than combining their evidence.
+        if node.find(["li", "article"]):
+            continue
+        context = node.get_text(" ", strip=True)
+        if not any(marker in context for marker in targets) or not all(
+            marker in context for marker in required
+        ):
+            continue
+        game_id = additional_game(context, source, config) or _game_id(context, source)
+        if game_id and (
+            additional_matches(config.games[game_id], context)
+            or any(word in context for word in config.games[game_id].box_product_keywords)
+            or re.search(r"(?i)\b1?BOX\b", context)
+        ):
+            return True
+    return False
+
+
 def discover_retailer_lottery_urls(
     html: str,
     url: str,

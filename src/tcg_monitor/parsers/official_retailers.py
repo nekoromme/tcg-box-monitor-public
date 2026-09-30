@@ -424,6 +424,28 @@ def parse_onepiece_official_shop(
     config: Config,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     soup, product_name, product_text = _product_page(html, source.name)
+    # The live site puts an empty logo H1 before the news article. Read the
+    # article's own H1/H2 so navigation and unrelated banners cannot become
+    # the product name or supply a misleading application date.
+    article = soup.find("article")
+    if isinstance(article, Tag):
+        heading = article.find(["h1", "h2"])
+        if isinstance(heading, Tag) and heading.get_text(" ", strip=True):
+            product_name = heading.get_text(" ", strip=True)
+        product_text = article.get_text(" ", strip=True)
+
+    start_at, end_at = _labelled_period(product_text, source.start_labels)
+    # Permanent purchase rules mention BOX lotteries but do not announce a
+    # particular draw. Keep reading these pages in case a real application
+    # period or product code is added; do not silence incomplete draw notices.
+    is_purchase_policy = any(
+        marker in product_name
+        for marker in ("販売方法について", "購入制限について")
+    )
+    has_product_code = bool(re.search(r"\b(?:OP|EB|PRB)-\d{2}\b", product_text, re.I))
+    if is_purchase_policy and not has_product_code and not start_at:
+        return [], [], []
+
     product_name = re.sub(r"(?:事前)?抽選について.*$", "", product_name).strip(" 『』")
     classified = classify_product(
         config.games["one_piece_card"],
@@ -434,7 +456,6 @@ def parse_onepiece_official_shop(
     if not classified.is_target or "抽選" not in product_text:
         return [], [], []
 
-    start_at, end_at = _labelled_period(product_text, source.start_labels)
     if not start_at:
         if any(marker in product_text for marker in _PENDING_DETAIL_MARKERS):
             return [], [], []
