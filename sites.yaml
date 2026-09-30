@@ -536,6 +536,7 @@ sources:
   classification: stable
   enabled: true
   discovery_urls:
+  - https://www.pokemon-card.com/products/resultAPI.php?productType=expansion
   - https://www.pokemon-card.com/products/index.html?productType=expansion
   - https://www.pokemon-card.com/products/
   - https://www.pokemon-card.com/info/
@@ -598,7 +599,7 @@ sources:
   - login_or_error_replacement
   - implausible_release_date
   poll_minutes: 120
-  notes: 発売日は最優先の一次情報。日付変更時は同じrelease_idのカレンダー予定を更新する。
+  notes: 公式検索APIを優先し、正常な商品0件と取得障害を区別する。API障害時は公式商品ページへ切り替える。発売日は最優先の一次情報。日付変更時は同じrelease_idのカレンダー予定を更新する。
 # 複数作品の発売日を通常HTMLで取得する。記事番号はトップのリンクから自動発見。
 - id: clabo_release_calendar
   name: カードラボ 発売日カレンダー
@@ -3140,8 +3141,6 @@ sources:
   parser_kind: retailer_lottery
   parser_options:
     index_url: https://iyec.itoyokado.co.jp/shop/e/eE4reslot/
-    supplemental_discovery_urls:
-    - https://iyec.itoyokado.co.jp/shop/pages/apply_pomega_04.aspx
     retailer_id: itoyokado_online
     retailer_name: イトーヨーカドーネット通販
 - id: hobbylink_japan_lottery

@@ -244,6 +244,129 @@ def test_cloudflare_waiting_room_is_classified_as_challenge() -> None:
     assert classify_page(html) == PageKind.CHALLENGE
 
 
+def test_queue_it_waiting_room_is_blocked_before_browser_rendering() -> None:
+    url = "https://takaratomymall.jp/shop/lorcana"
+    html = (
+        '<html><head><title>Queue-it</title><meta id="queue-it_log"></head>'
+        '<body><script data-queueit-c="takaratomy"></script>'
+        f'<p>{"サイトが混雑しています。" * 120}</p></body></html>'
+    )
+    rendered: list[str] = []
+    fetcher = PageFetcher(
+        FakeHttpFetcher({url: _response(url, 200, html)}),  # type: ignore[arg-type]
+        browser_fetcher=lambda *args: rendered.append(args[0]) or html,
+    )
+    assert classify_page(html) == PageKind.CHALLENGE
+    with pytest.raises(FetchProblem, match="challenge"):
+        fetcher.fetch(url, _source("queue", [url], RenderMode.HTTP_THEN_BROWSER_IF_SHELL), {})
+    assert not rendered
+
+
+def test_closed_tsutaya_line_http_403_does_not_open_host_circuit() -> None:
+    config = load_config("sites.yaml")
+    source = next(
+        item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki_store"
+    )
+    urls = source.parser_options["always_fetch_urls"]
+    payload = json.dumps({"error": {"code": "5003", "message": "This form is ended."}})
+    fetcher = PageFetcher(
+        FakeHttpFetcher({url: _response(url, 403, payload) for url in urls}),  # type: ignore[arg-type]
+        browser_fetcher=lambda *_args: "",
+    )
+    for url in urls:
+        result = fetcher.fetch(url, source, {})
+        assert result.status_code == 403
+        assert result.html == payload
+    assert not fetcher.circuit_breaker.open_hosts
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        '<html>Forbidden</html>',
+        '{"error":{"code":"5003","message":"Access denied"}}',
+        '{"error":{"code":"5002","message":"This form is ended."}}',
+    ],
+)
+def test_tsutaya_line_real_http_403_remains_a_failure(payload: str) -> None:
+    config = load_config("sites.yaml")
+    source = next(
+        item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki_store"
+    )
+    url = source.parser_options["always_fetch_urls"][0]
+    fetcher = PageFetcher(
+        FakeHttpFetcher({url: _response(url, 403, payload)}),  # type: ignore[arg-type]
+        browser_fetcher=lambda *_args: "",
+    )
+    with pytest.raises(FetchProblem):
+        fetcher.fetch(url, source, {})
+
+
+def test_unregistered_form_cannot_use_closed_tsutaya_403_exception() -> None:
+    url = "https://forms.cloud.microsoft/other-form"
+    payload = '{"error":{"code":"5003","message":"This form is ended."}}'
+    fetcher = PageFetcher(
+        FakeHttpFetcher({url: _response(url, 403, payload)}),  # type: ignore[arg-type]
+        browser_fetcher=lambda *_args: "",
+    )
+    with pytest.raises(FetchProblem):
+        fetcher.fetch(url, _source("other", [url]), {})
+
+
+def test_quiet_official_account_remains_healthy_when_optional_mirror_is_blocked(
+    tmp_path: Path,
+) -> None:
+    config = load_config("sites.yaml")
+    source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
+    source = replace(
+        source,
+        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        fallback_on_empty_result=True,
+    )
+    primary, mirror = source.discovery_urls
+    html = """
+    <div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">本日の営業時間のお知らせです。</p>
+      <time><a href="https://x.com/TSUTAYA19392430/status/2105067964882198698">9月30日</a></time>
+    </div>
+    """
+    fetcher = FakeHttpFetcher({
+        primary: _response(primary, 200, html),
+        mirror: _response(mirror, 403, "Forbidden"),
+    })
+    state = MonitorState.load(tmp_path / "state.json")
+    state.record_monitor(source.id, {}, success=False)
+    cases, releases, alerts = pipeline.run_pipeline(
+        _config(source), monitor_state=state, http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+    assert not cases and not releases and not alerts
+    record = state.data["monitors"][source.id]
+    assert record["outcome"] == "success"
+    assert record["consecutive_failures"] == 0
+    assert [call[0] for call in fetcher.calls] == [primary, mirror]
+
+
+def test_empty_search_and_failed_mirror_are_still_unhealthy(tmp_path: Path) -> None:
+    config = load_config("sites.yaml")
+    source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
+    source = replace(
+        source,
+        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        fallback_on_empty_result=True,
+    )
+    primary, mirror = source.discovery_urls
+    fetcher = FakeHttpFetcher({
+        primary: _response(primary, 200, "<main>一致する情報は見つかりませんでした</main>"),
+        mirror: _response(mirror, 403, "Forbidden"),
+    })
+    state = MonitorState.load(tmp_path / "state.json")
+    _, _, alerts = pipeline.run_pipeline(
+        _config(source), monitor_state=state, http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+    assert alerts
+    assert state.data["monitors"][source.id]["outcome"] == "failed"
+
+
 def test_explicit_browser_fallback_recovers_an_http_read_timeout() -> None:
     url = "https://slow-store.example/page"
     read_timeout = httpx.ReadTimeout(

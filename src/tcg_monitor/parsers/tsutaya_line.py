@@ -45,6 +45,23 @@ def is_tsutaya_line_form_url(source: SourceConfig, url: str) -> bool:
     return url in tsutaya_line_form_urls(source)
 
 
+def is_closed_tsutaya_line_form(source: SourceConfig, url: str, payload: str) -> bool:
+    """Recognize the registered form API's normal HTTP 403 end-of-entry response."""
+
+    if not is_tsutaya_line_form_url(source, url):
+        return False
+    try:
+        data = json.loads(payload)
+    except (ValueError, TypeError):
+        return False
+    error = data.get("error") if isinstance(data, dict) else None
+    return (
+        isinstance(error, dict)
+        and str(error.get("code")) == "5003"
+        and str(error.get("message", "")).startswith("This form is ended.")
+    )
+
+
 def _question_choices(raw_question: object) -> list[str]:
     if not isinstance(raw_question, dict):
         return []

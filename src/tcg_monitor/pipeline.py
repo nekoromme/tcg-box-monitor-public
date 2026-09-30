@@ -31,6 +31,7 @@ from tcg_monitor.models import (
     GameSupport,
     LotteryCase,
     Release,
+    RenderMode,
     SourceConfig,
 )
 from tcg_monitor.ocr import read_image_text
@@ -90,7 +91,11 @@ from tcg_monitor.parsers.pokemon_center import (
     is_pokemon_center_news_index,
     parse_pokemon_center_lottery,
 )
-from tcg_monitor.parsers.pokemon_official_products import parse_pokemon_official_products
+from tcg_monitor.parsers.pokemon_official_products import (
+    discover_pokemon_product_api_pages,
+    is_pokemon_products_api,
+    parse_pokemon_official_products,
+)
 from tcg_monitor.parsers.premium_bandai import (
     parse_nyuka_now_lottery_summary,
     parse_nyuka_now_premium_bandai,
@@ -333,6 +338,8 @@ def _alert(
 
 
 def _fixture_path(fixture_dir: str, source_id: str, url: str) -> Path:
+    if source_id == "pokemon_official_products" and is_pokemon_products_api(url):
+        return Path(fixture_dir) / "pokemon_official_products_api.json"
     url_parts = urlsplit(url)
     if url_parts.netloc.casefold().removeprefix("www.") in {
         "livepocket.jp",
@@ -510,8 +517,6 @@ def _suppress_covered_transport_alerts(
 ) -> list[Alert]:
     """Keep raw health in state, but notify only when coverage is unavailable."""
 
-    if not covered_sources:
-        return alerts
     kept: list[Alert] = []
     for alert in alerts:
         if alert.reason_code not in _TRANSPORT_ALERT_REASONS:
@@ -539,7 +544,8 @@ def _suppress_covered_transport_alerts(
             ]
         )
         if failed_sources and all(
-            source_id in covered_sources for source_id in failed_sources
+            source_outcomes.get(source_id) is True or source_id in covered_sources
+            for source_id in failed_sources
         ):
             continue
         kept.append(alert)
@@ -738,6 +744,18 @@ def run_pipeline(
         ]
 
     def fetch_page(source: SourceConfig, url: str) -> PageResult:
+        if source.id == "pokemon_official_products" and is_pokemon_products_api(url):
+            # The catalog's public API distinguishes a successful zero-result
+            # search from a browser shell that failed to load its cards.
+            fetch_url = pokemon_release_window_url(
+                url, int(config.system.get("max_future_days", 365)),
+            )
+            result = page_fetcher.fetch(
+                fetch_url,
+                replace(source, render_mode=RenderMode.HTTP, render_wait_selector=None),
+                http_cache,
+            )
+            return replace(result, url=url)
         browser_url = (
             pokemon_release_window_url(
                 url,
@@ -838,6 +856,8 @@ def run_pipeline(
         completed_page = False
         last_failure_alert: Alert | None = None
         yahoo_primary_parsed_item = False
+        yahoo_primary_complete_posts = False
+        yahoo_primary_unresolved_posts = False
 
         def enqueue_fallback_root(
             queued_urls: list[tuple[str, bool]] = discovery_urls,
@@ -1310,6 +1330,12 @@ def run_pipeline(
                     continue
 
                 parser = _parser_for(source)
+                if source.id == "pokemon_official_products":
+                    discovery_urls.extend(
+                        (item, False)
+                        for item in discover_pokemon_product_api_pages(html, url)
+                        if item not in visited_urls
+                    )
                 primary_without_candidates_requires_fallback = False
                 if is_tsutaya_line_form_url(source, url):
                     parsed_cases, parsed_releases, parsed_alerts = (
@@ -1345,6 +1371,23 @@ def run_pipeline(
                         parsed_cases or parsed_releases
                     ):
                         yahoo_primary_parsed_item = True
+                    if url in primary_roots and diagnostics.get("account_posts", 0) > 0:
+                        # A quiet account is healthy when every retrieved post
+                        # was explicitly excluded. Unknown posts/OCR failures
+                        # still need the alternative route.
+                        excluded_posts = sum(
+                            diagnostics.get(reason, 0)
+                            for reason in (
+                                "disallowed_application", "retailer_not_matched",
+                                "excluded_retailer", "not_application_announcement",
+                                "tournament_or_result", "old_post", "application_ended",
+                                "closed_or_result_notice", "excluded_product",
+                            )
+                        )
+                        if excluded_posts == diagnostics["account_posts"]:
+                            yahoo_primary_complete_posts = True
+                        elif not parsed_cases and not parsed_releases:
+                            yahoo_primary_unresolved_posts = True
                     has_queued_primary = any(
                         queued_url in primary_roots
                         for queued_url, _ in discovery_urls
@@ -1511,12 +1554,27 @@ def run_pipeline(
                     and alert.target_url not in still_pending
                 )
             ]
-        # 一覧だけ読めて詳細が失敗、または空検索の後に代替経路も失敗した
-        # 場合は、候補ゼロのまま健全扱いにしない。
+        # New-candidate count is not a fetch-health signal: fully interpreted
+        # official posts may all be closed or outside the configured scope.
+        # Keep trying mirrors for search-index lag, but their failure cannot
+        # turn those valid primary results into a source outage.
+        healthy_quiet_yahoo = (
+            is_yahoo_source
+            and yahoo_primary_complete_posts
+            and not yahoo_primary_unresolved_posts
+            and not _current_ocr_pending_urls(ocr_pending, source.id, run_token)
+        )
+        if healthy_quiet_yahoo:
+            completed_page = True
+        # An unread detail, required LINE form, malformed primary result, or
+        # unresolved image must still fail even when another route is empty.
         if (
             metrics.parsed_count == 0
-            and any(item.get("status") in {"fetch_failed", "parser_failed", "discovery_failed"}
-                    for item in metrics.routes.values())
+            and any(
+                item.get("status") in {"fetch_failed", "parser_failed", "discovery_failed"}
+                and not (healthy_quiet_yahoo and item_url in remaining_configured_roots)
+                for item_url, item in metrics.routes.items()
+            )
         ):
             completed_page = False
         if not completed_page and last_failure_alert:

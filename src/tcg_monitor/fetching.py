@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 
 from tcg_monitor.http_client import HttpAttemptsExhausted, HttpFetcher
 from tcg_monitor.models import RenderMode, SourceConfig
+from tcg_monitor.parsers.tsutaya_line import is_closed_tsutaya_line_form
 
 BrowserFetcher = Callable[[str, str | None, int], str]
 
@@ -228,6 +229,10 @@ def classify_page(html: str) -> PageKind:
     folded = html.casefold()
     soup = BeautifulSoup(html, "lxml")
     text = soup.get_text(" ", strip=True)
+    if soup.select_one("meta#queue-it_log") and soup.select_one(
+        "script[data-queueit-c]"
+    ):
+        return PageKind.CHALLENGE
     has_challenge_marker = any(
         marker in folded for marker in _CHALLENGE_MARKERS
     )
@@ -495,6 +500,9 @@ class PageFetcher:
             )
 
         kind = classify_page(response.text)
+        if status == 403 and is_closed_tsutaya_line_form(source, url, response.text):
+            self.circuit_breaker.record_success(url)
+            return PageResult(url, response.text, status, "http", response.headers)
         if status >= 400:
             blocked = status in {403, 429} or kind in {
                 PageKind.CHALLENGE,
