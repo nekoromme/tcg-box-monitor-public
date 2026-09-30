@@ -18,6 +18,11 @@ from tcg_monitor.purchase_review import (
     price_message,
     run_purchase_reviews,
 )
+from tcg_monitor.review_modes import (
+    PurchaseReviewModes,
+    ReviewModeError,
+    load_purchase_review_modes,
+)
 from tcg_monitor.review_sources import (
     ContentEvidence,
     PriceEvidence,
@@ -205,7 +210,7 @@ def monitor(tmp_path: Path):  # type: ignore[no-untyped-def]
     return config, state, discord, source
 
 
-def run(monitor, day: int, hour: int = 0, releases=None):  # type: ignore[no-untyped-def]
+def run(monitor, day: int, hour: int = 0, releases=None, modes=None):  # type: ignore[no-untyped-def]
     config, state, discord, source = monitor
     return run_purchase_reviews(
         config,
@@ -214,6 +219,7 @@ def run(monitor, day: int, hour: int = 0, releases=None):  # type: ignore[no-unt
         discord,
         datetime(2026, 10, day, hour, 4, tzinfo=JST),
         source=source,
+        modes=modes,
     )
 
 
@@ -389,6 +395,90 @@ def test_shared_set_name_does_not_match_another_box_or_deck_variant() -> None:
             "プレミアムデッキセット エーフィ・ブラッキー」"
         ],
     )
+
+
+def test_review_switches_can_be_independently_disabled_or_removed(tmp_path: Path) -> None:
+    path = tmp_path / "trial.txt"
+    assert load_purchase_review_modes(path) == PurchaseReviewModes()
+    path.write_text("EARLY_CONTENT=ON\nPRE_RELEASE_PRICE=OFF\n")
+    assert load_purchase_review_modes(path) == PurchaseReviewModes(True, False)
+    path.write_text("# 価格のみ\n PRE_RELEASE_PRICE = on # 試運転\n")
+    assert load_purchase_review_modes(path) == PurchaseReviewModes(False, True)
+    path.write_text("")
+    assert load_purchase_review_modes(path) == PurchaseReviewModes()
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "EARLY_CONTENT=ON\nEARLY_CONTENT=OFF",
+        "EARLY_CONTENT=YES",
+        "UNKNOWN=OFF",
+        "ON",
+    ],
+)
+def test_invalid_review_switch_is_rejected(tmp_path: Path, text: str) -> None:
+    path = tmp_path / "trial.txt"
+    path.write_text(text)
+    with pytest.raises(ReviewModeError):
+        load_purchase_review_modes(path)
+
+
+def test_early_only_never_fetches_snkr_or_promises_price_notification(monitor) -> None:  # type: ignore[no-untyped-def]
+    _, state, discord, source = monitor
+    modes = PurchaseReviewModes(early_content=True)
+    run(monitor, 3, modes=modes)
+    run(monitor, 8, modes=modes)
+    run(monitor, 9, modes=modes)
+    assert discord.send.call_count == 1
+    assert "直前価格通知: OFF" in discord.send.call_args.args[1]
+    source.price.assert_not_called()
+    assert source.content.call_count == 1
+    assert not state.data["purchase_reviews"][release_dedupe_key(product())].get("price_sent")
+
+
+def test_price_only_fetches_when_due_and_never_sends_early_phase(monitor) -> None:  # type: ignore[no-untyped-def]
+    _, state, discord, source = monitor
+    modes = PurchaseReviewModes(pre_release_price=True)
+    run(monitor, 3, modes=modes)
+    source.content.assert_not_called()
+    source.price.assert_not_called()
+    run(monitor, 8, modes=modes)
+    run(monitor, 9, modes=modes)
+    assert discord.send.call_count == 1
+    assert "直前価格" in discord.send.call_args.args[0]
+    assert source.price.call_count == 1
+    assert not state.data["purchase_reviews"][release_dedupe_key(product())].get("early_sent")
+
+
+def test_disable_and_reenable_keeps_delivery_history(monitor) -> None:  # type: ignore[no-untyped-def]
+    config, state, discord, source = monitor
+    run(monitor, 3, modes=PurchaseReviewModes(True, True))
+    before = json.dumps(state.data, default=str)
+    run(monitor, 8, modes=PurchaseReviewModes())
+    assert json.dumps(state.data, default=str) == before
+    source.price.assert_not_called()
+    reloaded = MonitorState.load(state.path)
+    run((config, reloaded, discord, source), 8, modes=PurchaseReviewModes(True, True))
+    run((config, reloaded, discord, source), 9, modes=PurchaseReviewModes(True, True))
+    assert discord.send.call_count == 2
+
+
+@pytest.mark.parametrize("switch", [None, "EARLY_CONTENT=YES"])
+def test_missing_or_invalid_trial_file_does_not_break_main_run(
+    monitor,
+    tmp_path,
+    monkeypatch,
+    switch,
+):  # type: ignore[no-untyped-def]
+    _, _, discord, source = monitor
+    monkeypatch.chdir(tmp_path)
+    if switch is not None:
+        Path("PURCHASE_REVIEW_MODES.txt").write_text(switch)
+    assert run(monitor, 8) == []
+    discord.send.assert_not_called()
+    source.content.assert_not_called()
+    source.price.assert_not_called()
 
 
 def test_limited_family_is_conditional_and_not_claimed_to_be_limited_production() -> None:

@@ -13,6 +13,11 @@ from tcg_monitor.identity import release_dedupe_key
 from tcg_monitor.logging_config import log_event
 from tcg_monitor.models import Config, Release, SourceTier
 from tcg_monitor.release_sources import is_accepted_release
+from tcg_monitor.review_modes import (
+    PurchaseReviewModes,
+    ReviewModeError,
+    load_purchase_review_modes,
+)
 from tcg_monitor.review_sources import ContentEvidence, PriceEvidence, ReviewSource
 from tcg_monitor.state import MonitorState
 
@@ -68,7 +73,14 @@ def family_assessment(release: Release) -> tuple[str, str, str]:
     )
 
 
-def early_message(release: Release, evidence: ContentEvidence, now: datetime, lead: int) -> str:
+def early_message(
+    release: Release,
+    evidence: ContentEvidence,
+    now: datetime,
+    lead: int,
+    *,
+    price_enabled: bool = True,
+) -> str:
     family, rank, reason = family_assessment(release)
     lines = [
         f"商品: {release.product_name}",
@@ -105,7 +117,11 @@ def early_message(release: Release, evidence: ContentEvidence, now: datetime, le
         lines.append(f"情報取得: 未確認（{evidence.error}）")
     lines += [
         f"公式／情報元: {evidence.url}",
-        "次回: 発売2日前のスニダン価格判定。未掲載・取得不能なら前日に再確認。",
+        (
+            "次回: 発売2日前のスニダン価格判定。未掲載・取得不能なら前日に再確認。"
+            if price_enabled
+            else "直前価格通知: OFF（早期チェックのみ試運転）"
+        ),
         f"確認時刻: {now:%Y-%m-%d %H:%M} JST",
     ]
     return "\n".join(lines)
@@ -189,9 +205,24 @@ def run_purchase_reviews(
     now: datetime,
     *,
     source: ReviewSource | None = None,
+    modes: PurchaseReviewModes | None = None,
 ) -> list[dict[str, str]]:
     settings = config.system.get("purchase_review", {})
     if not isinstance(settings, dict) or not settings.get("enabled", False):
+        return []
+    if modes is None:
+        try:
+            modes = load_purchase_review_modes()
+        except (ReviewModeError, OSError, UnicodeError) as exc:
+            log_event(
+                phase="purchase_review",
+                status="disabled",
+                reason_code="invalid_trial_switch",
+                error_type=type(exc).__name__,
+                error=str(exc),
+            )
+            return []  # A broken trial switch cannot stop lotteries/releases.
+    if not modes.early_content and not modes.pre_release_price:
         return []
     now = now.astimezone(ZoneInfo(config.timezone))
     products: dict[str, Release] = {}
@@ -225,10 +256,14 @@ def run_purchase_reviews(
         if not 1 <= days <= int(settings.get("content_check_window_days", 21)):
             continue  # Never send a pre-release signal after the release date.
         record = records.setdefault(key, {})
+        early_pending = modes.early_content and not record.get("early_sent")
+        price_pending = modes.pre_release_price and not record.get("price_sent") and days <= 2
+        if not early_pending and not price_pending:
+            continue
         record["release_date"] = release.release_date.isoformat()
         lead = int(leads.get(release.game_id, 7))
         content = ContentEvidence(**record.get("content", {}))
-        if (not record.get("early_sent") or days <= 2) and (
+        if (early_pending or price_pending) and (
             record.get("content_checked_on") != now.date().isoformat() or content.error
         ):
             refreshed = source.content(release)
@@ -237,14 +272,20 @@ def run_purchase_reviews(
             record["content"] = asdict(content)
             record["content_checked_on"] = now.date().isoformat()
         if (
-            not record.get("early_sent")
+            early_pending
             and (days <= lead or content.complete)
             and (not content.error or days < lead or now.hour >= 20)
         ):
             try:
                 result = discord.send(
                     f"【{config.games[release.game_id].short_name}早期・中身チェック】{release.product_name}",
-                    early_message(release, content, now, lead),
+                    early_message(
+                        release,
+                        content,
+                        now,
+                        lead,
+                        price_enabled=modes.pre_release_price,
+                    ),
                 )
                 if result.get("status") == "sent":
                     record["early_sent"] = now.isoformat()
@@ -260,7 +301,7 @@ def run_purchase_reviews(
                     product=key,
                     error_type=type(exc).__name__,
                 )
-        if record.get("price_sent") or days > 2:
+        if not price_pending:
             continue
         if days == 2 and record.get("price_missing_on") == now.date().isoformat():
             continue  # An absent page explicitly switches this product to the D-1 phase.
