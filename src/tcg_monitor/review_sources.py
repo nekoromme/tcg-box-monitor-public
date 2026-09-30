@@ -289,14 +289,39 @@ class ReviewSource:
 
     def content(self, release: Release) -> ContentEvidence:
         url = release.official_url or release.source_url
+        index = CARD_INDEXES.get(release.game_id, "")
+        allowed_host = urlsplit(index).hostname or ""
+        host = urlsplit(url).hostname or ""
+        official_domain = allowed_host.removeprefix("www.").removeprefix("db.")
+        if not official_domain or not (
+            host == official_domain or host.endswith("." + official_domain)
+        ):
+            return ContentEvidence(
+                url=url,
+                card_index_url=index,
+                card_list_label="公式の商品別収録ページは未確認",
+                error="公式の商品別ページが未確認",
+            )
         try:
             response = self.fetcher.fetch(url)
             if response.status_code != 200:
                 return ContentEvidence(
-                    url=url, card_list_url=url, error=f"HTTP {response.status_code}"
+                    url=url,
+                    card_list_url=url,
+                    card_index_url=index,
+                    error=f"HTTP {response.status_code}",
+                )
+            soup = BeautifulSoup(response.text, "lxml")
+            headings = " ".join(node.get_text(" ", strip=True) for node in soup.select("title, h1"))
+            if _product_token(release.product_name) not in _product_token(headings):
+                return ContentEvidence(
+                    url=url,
+                    card_index_url=index,
+                    card_list_label="商品ページ照合未完了",
+                    error="商品名をページ見出しで確認できず",
                 )
             result = parse_content(response.text, url)
-            result.card_index_url = CARD_INDEXES.get(release.game_id, "")
+            result.card_index_url = index
             # Also support product pages embedding their full card list.
             if result.card_list_url == url and result.total_cards:
                 result.card_count = card_list_count(response.text)
@@ -310,7 +335,9 @@ class ReviewSource:
                     )
             return result
         except Exception as exc:
-            return ContentEvidence(url=url, card_list_url=url, error=type(exc).__name__)
+            return ContentEvidence(
+                url=url, card_list_url=url, card_index_url=index, error=type(exc).__name__
+            )
 
     def price(self, release: Release, known_url: str = "") -> PriceEvidence:
         candidates: list[str] = []

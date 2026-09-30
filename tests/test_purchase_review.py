@@ -345,6 +345,21 @@ def test_search_missing_and_provider_blocked_are_distinct() -> None:
     assert source.price(product()).status == "missing"
 
 
+def test_generic_or_unofficial_pages_cannot_supply_another_sets_features() -> None:
+    fetcher = Mock()
+    fetcher.fetch.return_value = FetchResult(
+        "index", 200, "<title>商品情報</title><main>別の商品にはグランドマスターレア</main>", {}
+    )
+    result = ReviewSource(fetcher).content(product())
+    assert result.error
+    assert result.features == {}
+    result = ReviewSource(fetcher).content(
+        replace(product(), official_url="https://shop.example/releases/")
+    )
+    assert result.error
+    assert result.card_index_url
+
+
 def test_japanese_marketplace_translation_is_discovered_then_quantity_price_is_read() -> None:
     fetcher = Mock()
     search = """<title>ORIGINAL ARTWORK COLLECTIONのおすすめアイテム</title>
