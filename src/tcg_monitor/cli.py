@@ -39,6 +39,7 @@ from tcg_monitor.models import (
 )
 from tcg_monitor.parsers.local_lottery import preserve_first_detection_start
 from tcg_monitor.pipeline import run_pipeline
+from tcg_monitor.purchase_review import run_purchase_reviews
 from tcg_monitor.release_sources import is_accepted_release, is_trusted_retailer_release
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS
 from tcg_monitor.source_groups import active_source_filter
@@ -1459,6 +1460,9 @@ def main(argv: list[str] | None = None) -> int:
                     ensure_ascii=False,
                 )
             )
+        review_results = run_purchase_reviews(config, state, releases, discord, detected_at)
+        if review_results:
+            print(json.dumps({"purchase_reviews": review_results}, ensure_ascii=False))
         _deliver_alerts(
             state,
             discord,

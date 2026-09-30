@@ -32,6 +32,7 @@ def _default_data() -> dict[str, Any]:
         "armed": False,
         "seen_cases": {},
         "seen_releases": {},
+        "purchase_reviews": {},
         "ocr_cache": {},
         "ocr_cache_meta": {},
         "ocr_pending": {},
@@ -87,6 +88,7 @@ class MonitorState:
         for key in (
             "seen_cases",
             "seen_releases",
+            "purchase_reviews",
             "ocr_cache",
             "ocr_cache_meta",
             "ocr_pending",

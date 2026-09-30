@@ -215,6 +215,21 @@ def _validated_system(raw_system: Any) -> dict[str, Any]:
         or len(required_game_ids) != len(set(required_game_ids))
     ):
         raise ConfigError("general_retail_required_game_ids must be a non-empty unique string list")
+    review = system.get("purchase_review", {})
+    if not isinstance(review, dict) or not isinstance(review.get("enabled", False), bool):
+        raise ConfigError("purchase_review must be a mapping with boolean enabled")
+    window = review.get("content_check_window_days", 21)
+    if isinstance(window, bool) or not isinstance(window, int) or not 3 <= window <= 60:
+        raise ConfigError("purchase_review content_check_window_days must be from 3 to 60")
+    leads = review.get("early_lead_days", {})
+    if not isinstance(leads, dict) or any(
+        game not in {item.value for item in GameId}
+        or isinstance(days, bool)
+        or not isinstance(days, int)
+        or not 3 <= days <= window
+        for game, days in leads.items()
+    ):
+        raise ConfigError("purchase_review early_lead_days must use known games and days 3..window")
     return system
 
 
