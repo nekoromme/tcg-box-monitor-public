@@ -808,7 +808,7 @@ def run_pipeline(
             )
 
         # Yahoo検索は同一ホストの検索語違いをすべて通常経路として扱う。
-        # Twstalkerなど別ホストのURLは、Yahooの取得・解析に失敗した時だけ
+        # 登録済みの別ホストのURLは、Yahooの取得・解析に失敗した時だけ
         # 順番に使う。仮商品名の自己修復URLは予備経路ではないため常に残す。
         if is_yahoo_source and configured_root_urls:
             primary_host = provider_host(configured_root_urls[0])
@@ -1426,7 +1426,7 @@ def run_pipeline(
                         primary_without_candidates_requires_fallback = True
                     # Yahoo can load normally while its temporary image proxy
                     # has already expired.  This is a content failure, so use
-                    # Twstalker only then instead of loading it on every
+                    # configured fallback only then instead of loading it on every
                     # otherwise healthy Yahoo run.
                     if (
                         is_root
@@ -1665,6 +1665,7 @@ def run_pipeline(
         with suppress(Exception):
             monitor_state.record_run_summary(
                 {
+                    "monitored_source_ids": sorted(source_outcomes),
                     "successful_monitors": successful_monitors,
                     "degraded_monitors": degraded_monitors,
                     "failed_monitors": failed_monitors,

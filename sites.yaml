@@ -887,7 +887,7 @@ sources:
   - lottery_discovery
   - official_sale_discovery
   classification: browser_fallback_without_challenge_bypass
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://www.konamistyle.jp/products/list.php?category_id=1001087&mode=search
   fallback_source_ids:
@@ -904,7 +904,7 @@ sources:
   - yugioh_product_link
   - target_box
   - labelled_application_or_order_period
-  notes: 現行OCGカテゴリの対象BOXだけを個別ページまで追う。抽選と期間付き受注販売を区別し、通常在庫、デッキ、サプライ、除外指定シリーズは通知しない。403やCAPTCHA等は迂回せず、KONAMI
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：yahoo_realtime_konami_style。履歴と設定は保持し、毎回のHTTP取得対象から外す。
     STYLE公式Xの告知で補完する。
 - id: yahoo_realtime_konami_style
   name: KONAMI STYLE公式X Yahooリアルタイム検索
@@ -921,7 +921,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Akonamistyle%20%E9%81%8A%E6%88%AF%E7%8E%8B%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/konamistyle
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Akonamistyle&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -982,7 +982,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ADisneyLOR_JP%20%E7%99%BA%E5%A3%B2%20%E4%BA%88%E7%B4%84%E9%96%8B%E5%A7%8B&ei=UTF-8
-  - https://twstalker.com/DisneyLOR_JP
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ADisneyLOR_JP&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -1094,7 +1094,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Adbfw_cardgameJP%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/dbfw_cardgameJP
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Adbfw_cardgameJP&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -1199,7 +1199,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Adonki_donki%20%E3%83%9D%E3%82%B1%E3%82%AB%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/donki_donki
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Adonki_donki&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -1283,7 +1283,7 @@ sources:
   purposes:
   - lottery_discovery
   classification: stable
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://www.pokemoncenter-online.com/news/
   - https://www.pokemoncenter-online.com/lottery/landing-page.html
@@ -1326,6 +1326,8 @@ sources:
     - a[href*="/news/"]
   date_patterns:
   - (?P<year>20\d{2})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日（[月火水木金土日]）(?P<hour>\d{1,2})時(?P<minute>\d{2})分
+  fallback_source_ids:
+  - snkrdunk_pokemon
   render_mode: http
   parser_strategy: pokemon_center_product_period
   fallback_strategy: common_label_then_general_japanese_date
@@ -1344,7 +1346,7 @@ sources:
   calendar_policy: timed_or_all_day_when_date_explicit
   poll_minutes: 120
   robots_url: https://www.pokemoncenter-online.com/robots.txt
-  notes: ポケモンセンターセット等はBOX同梱でも販売単位がセットなので除外。
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：snkrdunk_pokemon。履歴と設定は保持し、毎回のHTTP取得対象から外す。
 - id: pokemon_center_store
   name: ポケモンセンター各店 公式お知らせ
   operator: 株式会社ポケモンセンター
@@ -1357,18 +1359,19 @@ sources:
   purposes:
   - lottery_discovery
   classification: stable
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://shop.pokemon.co.jp/ja/shop/common/news/
   fallback_source_ids:
   - yahoo_realtime_pokemon_center_store
+  - snkrdunk_pokemon
   render_mode: http
   poll_minutes: 120
   expected_elements:
   - official_lottery_article
   - labelled_application_period
   - target_product
-  notes: 実店舗共通の公式抽選記事を監視。応募期間①・②だけを開始日として扱い、当選結果発表日はカレンダーへ登録しない。
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：yahoo_realtime_pokemon_center_store, snkrdunk_pokemon。履歴と設定は保持し、毎回のHTTP取得対象から外す。
 - id: yahoo_realtime_pokemon_center_store
   name: ポケモンセンター公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -1494,11 +1497,13 @@ sources:
   purposes:
   - lottery_discovery
   classification: fallback_required
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://limited.yodobashi.com/
   fallback_source_ids:
   - yahoo_realtime_yodobashi
+  - snkrdunk_pokemon
+  - snkrdunk_onepiece
   page_url_patterns:
   - ^https://limited\.yodobashi\.com/?$
   - ^https://limited\.yodobashi\.com/a/[A-Za-z0-9_-]+/?$
@@ -1554,7 +1559,7 @@ sources:
   calendar_policy: timed_or_all_day_when_date_explicit
   poll_minutes: 120
   robots_url: https://limited.yodobashi.com/robots.txt
-  notes: ワンピースの不掲載を異常にしない。結果・注文期限の日時を除外。
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：yahoo_realtime_yodobashi, snkrdunk_pokemon, snkrdunk_onepiece。履歴と設定は保持し、毎回のHTTP取得対象から外す。
 - id: yahoo_realtime_yodobashi
   name: ヨドバシカメラ公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -1598,12 +1603,14 @@ sources:
   purposes:
   - lottery_discovery
   classification: fallback_required
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://www.kidsrepublic.jp/campaign
   fallback_source_ids:
-  - snkrdunk_pokemon
   - yahoo_realtime_kids_republic_official
+  - nyuka_now_fullcomp_livepocket
+  - snkrdunk_pokemon
+  - secondary_onepiece_news
   page_url_patterns:
   - ^https://www\.kidsrepublic\.jp/campaign/campaign_detail/[A-Za-z0-9_-]+/?$
   include_keywords:
@@ -1611,6 +1618,12 @@ sources:
   - ポケモンカードゲーム
   - 遊戯王OCG
   - 遊戯王
+  - ONE PIECEカード
+  - ワンピースカード
+  - フュージョンワールド
+  - ドラゴンボール
+  - ロルカナ
+  - ガンダムカードゲーム
   exclude_keywords:
   - 当選発表のみ
   - キャンペーンのみ
@@ -1670,7 +1683,7 @@ sources:
   calendar_policy: timed_or_all_day_when_date_explicit
   poll_minutes: 120
   robots_url: https://www.kidsrepublic.jp/robots.txt
-  notes: ポケモンカードと遊戯王OCGを監視し、ワンピースは対象にしない。アプリ応募とウェブ応募、地域、販売単位をブロック単位で判定。取得制限時は公式Xで補完する。
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：yahoo_realtime_kids_republic_official, nyuka_now_fullcomp_livepocket, snkrdunk_pokemon, secondary_onepiece_news。履歴と設定は保持し、毎回のHTTP取得対象から外す。
 - id: yahoo_realtime_kids_republic_official
   name: キッズリパブリック公式X Yahooリアルタイム検索
   operator: イオンリテール株式会社
@@ -1689,14 +1702,14 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Akidsrepublicjp%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/kidsrepublicjp
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Akidsrepublicjp&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
   - official_x_status
   - supported_tcg_box
   - application_start
-  notes: キッズリパブリック公式キャンペーン一覧が取得制限された場合の公式補完経路。ポケカ・遊戯王OCGのBOX抽選開始告知だけを抽出する。
+  notes: キッズリパブリック公式キャンペーン一覧が取得制限された場合の公式補完経路。ポケカ・遊戯王・ワンピース・ドラゴンボールを含む有効なゲームのBOX抽選開始告知を抽出する。今後のロルカナ・ガンダムも商品条件を満たせば対象。入荷Nowのゲーム別まとめと同一抽選へ統合する。
   parser_kind: yahoo_realtime
   parser_options:
     account: kidsrepublicjp
@@ -2194,6 +2207,26 @@ sources:
       retailer_name: ホビーサーチ
       aliases:
       - ホビーサーチ
+    - retailer_id: hmv
+      retailer_name: HMV
+      aliases:
+      - HMV
+      - エイチエムブイ
+    - retailer_id: ministop_online
+      retailer_name: ミニストップオンライン
+      aliases:
+      - ミニストップオンライン
+      - ミニストップ
+    - retailer_id: famima_online
+      retailer_name: ファミマオンライン
+      aliases:
+      - ファミマオンライン
+      - ファミリーマートオンライン
+    - retailer_id: dmm_tsuhan
+      retailer_name: DMM通販
+      aliases:
+      - DMM通販
+      - DMM.com
 - id: snkrdunk_onepiece
   name: スニーカーダンク ワンピースカード抽選・発売情報
   operator: 株式会社SODA
@@ -2429,13 +2462,12 @@ sources:
   enabled: true
   discovery_urls:
   - https://www.hbst.net/category/news/
-  - https://livepocket.jp/event/search?word=%E3%83%9B%E3%83%93%E3%83%BC%E3%82%B9%E3%83%86%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3&pref=%E5%85%A8%E5%9B%BD%E5%90%84%E5%9C%B0&timespec=1&button=
   render_mode: http
   poll_minutes: 120
   expected_elements:
   - livepocket_event_link
   - application_period
-  notes: 公式ニュース本文を最優先し、LivePocket検索は予備経路。開催日ではなく応募期間または販売受付期間を取得する。
+  notes: 公式ニュース本文と元の公式Xを監視する。LivePocketは応募先リンクを通知するだけで取得しない。開催日ではなく応募期間または販売受付期間を取得する。
   parser_kind: livepocket
   parser_options:
     retailer_id: hobby_station
@@ -2453,19 +2485,20 @@ sources:
     gundam_card: prospective
   purposes:
   - lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://livepocket.jp/event/search?word=%E3%83%95%E3%83%AB%E3%82%B3%E3%83%B3%E3%83%97&pref=%E5%85%A8%E5%9B%BD%E5%90%84%E5%9C%B0&timespec=1&button=
   - https://t.livepocket.jp/event/search?word=%E3%83%95%E3%83%AB%E3%82%B3%E3%83%B3%E3%83%97&pref=%E5%85%A8%E5%9B%BD%E5%90%84%E5%9C%B0&timespec=1&button=
   fallback_source_ids:
-  - nyuka_now_fullcomp_livepocket
   - yahoo_realtime_fullcomp_sendai
+  - nyuka_now_fullcomp_livepocket
+  - secondary_onepiece_news
   render_mode: http
   poll_minutes: 120
   expected_elements:
   - livepocket_event_link
   - application_period
-  notes: LivePocket検索を主経路とし、入荷Nowの店舗別LivePocket公式リンクと追加の公式経路を併用する。同じ店舗・商品・開始日の通知とカレンダー予定は1件に統合する。
+  notes: 取得制限のある元ページの巡回を停止。LivePocket自体は取得せず、次の既存経路で監視する：yahoo_realtime_fullcomp_sendai, nyuka_now_fullcomp_livepocket, secondary_onepiece_news。履歴と設定は保持し、毎回のHTTP取得対象から外す。
   parser_kind: livepocket
   parser_options:
     retailer_id: fullcomp
@@ -2483,37 +2516,45 @@ sources:
     gundam_card: prospective
   purposes:
   - lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://livepocket.jp/event/search?word=HMV%E3%83%88%E3%83%AC%E3%82%AB%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97&pref=%E5%85%A8%E5%9B%BD%E5%90%84%E5%9C%B0&timespec=1&button=
   - https://t.livepocket.jp/event/search?word=HMV%E3%83%88%E3%83%AC%E3%82%AB%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97&pref=%E5%85%A8%E5%9B%BD%E5%90%84%E5%9C%B0&timespec=1&button=
+  fallback_source_ids:
+  - yahoo_realtime_hmv
+  - snkrdunk_pokemon
+  - snkrdunk_onepiece
+  - secondary_onepiece_news
+  - nyuka_now_fullcomp_livepocket
   render_mode: http
   poll_minutes: 120
   expected_elements:
   - livepocket_event_link
   - application_period
-  notes: HMV総合公式Xに出ないトレカ抽選をLivePocket検索から検知する。検索結果の開催日は使わず、個別ページの応募期間を取得する。
+  notes: 取得制限のある元ページの巡回を停止。LivePocket自体は取得せず、次の既存経路で監視する：yahoo_realtime_hmv, snkrdunk_pokemon, snkrdunk_onepiece, secondary_onepiece_news, nyuka_now_fullcomp_livepocket。履歴と設定は保持し、毎回のHTTP取得対象から外す。
   parser_kind: livepocket
   parser_options:
     retailer_id: hmv
     retailer_name: HMV
 - id: nyuka_now_fullcomp_livepocket
-  name: 入荷Now ポケカ抽選補完欄
+  name: 入荷Now ゲーム別抽選補完欄
   source_type: secondary_lottery_summary
   source_tier: secondary
   supported_games:
     pokemon_card: verified
     one_piece_card: verified
-    dragon_ball_fusion_world: prospective
+    dragon_ball_fusion_world: verified
     lorcana: prospective
     gundam_card: prospective
-    yu_gi_oh: prospective
+    yu_gi_oh: verified
   purposes:
   - lottery_discovery
   enabled: true
   discovery_urls:
   - https://nyuka-now.com/archives/97393
   - https://nyuka-now.com/archives/2459
+  - https://nyuka-now.com/archives/72605
+  - https://nyuka-now.com/archives/141863
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -2522,7 +2563,7 @@ sources:
   - product_name
   - application_start
   - official_application_link
-  notes: DMM通販のワンピース抽選ページを最優先で取得し、LivePocket検索から漏れるフルコンプと、公式一覧が不安定なシーガル、エディオン、ファミマオンライン、イトーヨーカドー通販、コジマアプリ抽選を補完する。受付中・受付予定の各見出し配下だけを解析し、確度mediumで登録する。
+  notes: 同じ入荷Nowのポケカ・ワンピース・遊戯王・ドラゴンボール各種まとめを各1回取得し、キッズリパブリック・HMV・ミニストップを含む店舗別欄を補完する。受付中・受付予定だけを解析し、終了済みの抽選や日付不足は通知しない。LivePocketの応募リンクは保存するが取得しない。
   parser_options:
     information_provider: nyuka_now
     priority_retailers:
@@ -2610,6 +2651,90 @@ sources:
       official_host: torecaplaza55.com
       game_id: pokemon_card
       summary_url: https://nyuka-now.com/archives/2459
+    - heading_marker: キッズリパブリック
+      retailer_id: kids_republic
+      retailer_name: キッズリパブリック
+      fallback_url: https://www.kidsrepublic.jp/campaign
+      official_host: kidsrepublic.jp
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
+    - heading_marker: キッズリパブリック
+      retailer_id: kids_republic
+      retailer_name: キッズリパブリック
+      fallback_url: https://www.kidsrepublic.jp/campaign
+      official_host: kidsrepublic.jp
+      game_id: one_piece_card
+      summary_url: https://nyuka-now.com/archives/97393
+    - heading_marker: キッズリパブリック
+      retailer_id: kids_republic
+      retailer_name: キッズリパブリック
+      fallback_url: https://www.kidsrepublic.jp/campaign
+      official_host: kidsrepublic.jp
+      game_id: yu_gi_oh
+      summary_url: https://nyuka-now.com/archives/72605
+    - heading_marker: キッズリパブリック
+      retailer_id: kids_republic
+      retailer_name: キッズリパブリック
+      fallback_url: https://www.kidsrepublic.jp/campaign
+      official_host: kidsrepublic.jp
+      game_id: dragon_ball_fusion_world
+      summary_url: https://nyuka-now.com/archives/141863
+    - heading_marker: HMV
+      retailer_id: hmv
+      retailer_name: HMV
+      fallback_url: https://www.hmv.co.jp/
+      official_host: hmv.co.jp
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
+    - heading_marker: HMV
+      retailer_id: hmv
+      retailer_name: HMV
+      fallback_url: https://www.hmv.co.jp/
+      official_host: hmv.co.jp
+      game_id: one_piece_card
+      summary_url: https://nyuka-now.com/archives/97393
+    - heading_marker: HMV
+      retailer_id: hmv
+      retailer_name: HMV
+      fallback_url: https://www.hmv.co.jp/
+      official_host: hmv.co.jp
+      game_id: yu_gi_oh
+      summary_url: https://nyuka-now.com/archives/72605
+    - heading_marker: HMV
+      retailer_id: hmv
+      retailer_name: HMV
+      fallback_url: https://www.hmv.co.jp/
+      official_host: hmv.co.jp
+      game_id: dragon_ball_fusion_world
+      summary_url: https://nyuka-now.com/archives/141863
+    - heading_marker: ミニストップ
+      retailer_id: ministop_online
+      retailer_name: ミニストップオンライン
+      fallback_url: https://online.ministop.co.jp/
+      official_host: online.ministop.co.jp
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
+    - heading_marker: ミニストップ
+      retailer_id: ministop_online
+      retailer_name: ミニストップオンライン
+      fallback_url: https://online.ministop.co.jp/
+      official_host: online.ministop.co.jp
+      game_id: one_piece_card
+      summary_url: https://nyuka-now.com/archives/97393
+    - heading_marker: ミニストップ
+      retailer_id: ministop_online
+      retailer_name: ミニストップオンライン
+      fallback_url: https://online.ministop.co.jp/
+      official_host: online.ministop.co.jp
+      game_id: yu_gi_oh
+      summary_url: https://nyuka-now.com/archives/72605
+    - heading_marker: ミニストップ
+      retailer_id: ministop_online
+      retailer_name: ミニストップオンライン
+      fallback_url: https://online.ministop.co.jp/
+      official_host: online.ministop.co.jp
+      game_id: dragon_ball_fusion_world
+      summary_url: https://nyuka-now.com/archives/141863
 - id: yahoo_realtime_premium_bandai_onepiece
   name: プレミアムバンダイ公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -2623,7 +2748,7 @@ sources:
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Ap_bandai%20ONE%20PIECE%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3Ap_bandai%20%E3%83%AF%E3%83%B3%E3%83%94%E3%82%AB%E3%83%BC%E3%83%89%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/p_bandai
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ap_bandai&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -2685,14 +2810,13 @@ sources:
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Atorepla_ec%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3Atorepla_ec&ei=UTF-8
-  - https://twstalker.com/torepla_ec
   render_mode: http
   poll_minutes: 120
   fallback_on_empty_result: true
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: 通販のWeb抽選を公式Xから検知し、店頭受取だけでなく郵送対応の募集も対象にする。Yahoo検索が空でも公式プロフィールミラーを確認する。
+  notes: 通販のWeb抽選を公式Xから検知し、店頭受取だけでなく郵送対応の募集も対象にする。Yahoo検索が空でも公式アカウント全投稿検索を確認する。
   parser_kind: yahoo_realtime
   parser_options:
     account: torepla_ec
@@ -2752,14 +2876,13 @@ sources:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ASeagullJP%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3ASeagullJP&ei=UTF-8
   - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FSeagullJP%2Fstatus%2F2090969780274798744&omit_script=1&dnt=1
-  - https://twstalker.com/SeagullJP
   render_mode: http
   poll_minutes: 120
   fallback_on_empty_result: true
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: 17店舗共通アカウントのガルモバ会員限定BOX抽選を監視する。Yahoo検索が空・取得不能でも公式X oEmbedと共通プロフィールミラーを順に確認し、status
+  notes: 17店舗共通アカウントのガルモバ会員限定BOX抽選を監視する。Yahoo検索が空・取得不能でも公式X oEmbedと共通アカウント全投稿検索を順に確認し、status
     2090969780274798744はBRIGHTNESS OF HOPE受付中案件の一回限りの救済経路として直接確認する。
   parser_kind: yahoo_realtime
   parser_options:
@@ -2785,7 +2908,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Ahareruya2pokeca%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/hareruya2pokeca
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ahareruya2pokeca&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fhareruya2pokeca%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -2848,7 +2971,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Afuru1tenpo%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/furu1tenpo
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Afuru1tenpo&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -2876,14 +2999,14 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/HMV_Japan
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   fallback_on_empty_result: true
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: HMVの店頭・オンライン抽選告知をゲーム名とBOX条件で絞る。Yahoo検索が空でも公式プロフィールミラーを確認し、LivePocket公式検索を独立経路として併用する。
+  notes: HMV公式投稿をYahooの抽選語検索・アカウント全投稿検索で監視する。総合公式に出ないトレカ抽選は既存のonepiecenyuka・SNKRDUNK・入荷NowのHMV欄で補完し、同じ店舗・商品・開始日の通知は統合する。LivePocket自体は取得しない。
   parser_kind: yahoo_realtime
   parser_options:
     account: HMV_Japan
@@ -2935,7 +3058,7 @@ sources:
     gundam_card: prospective
   purposes:
   - lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://famima-online.family.co.jp/search?receiveType=1
   start_labels:
@@ -2953,7 +3076,9 @@ sources:
   fallback_source_ids:
   - yahoo_realtime_famima
   - nyuka_now_fullcomp_livepocket
-  notes: 公式の商品一覧から対象BOXだけを追う。メンテナンス・地域制限のエラーページは監視異常として通知する。
+  - snkrdunk_pokemon
+  - snkrdunk_onepiece
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：yahoo_realtime_famima, nyuka_now_fullcomp_livepocket, snkrdunk_pokemon, snkrdunk_onepiece。履歴と設定は保持し、毎回のHTTP取得対象から外す。
   parser_kind: retailer_lottery
   parser_options:
     index_url: https://famima-online.family.co.jp/search?receiveType=1
@@ -2983,7 +3108,7 @@ sources:
     gundam_card: prospective
   purposes:
   - lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://online.ministop.co.jp/Form/Product/ProductList.aspx?cat=008&dpcnt=40&fpfl=0&img=2&pno=1&sfl=0&shop=0&sort=07&udns=0
   - https://online.ministop.co.jp/Page/pockemon.aspx
@@ -3000,7 +3125,9 @@ sources:
   - application_start
   fallback_source_ids:
   - nyuka_now_fullcomp_livepocket
-  notes: 公式のエンタメ・ホビー新着一覧から対象BOXを追う。アクセス集中時のCloudflare順番待ちは商品ページとして扱わず、ポケカ特設ページと二次情報を予備経路にする。デッキセット、カードセット、単品パック、通常販売は共通のBOX判定で除外する。
+  - secondary_onepiece_news
+  - snkrdunk_pokemon
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：nyuka_now_fullcomp_livepocket, secondary_onepiece_news, snkrdunk_pokemon。履歴と設定は保持し、毎回のHTTP取得対象から外す。
   parser_kind: retailer_lottery
   parser_options:
     index_url: https://online.ministop.co.jp/Form/Product/ProductList.aspx?cat=008&dpcnt=40&fpfl=0&img=2&pno=1&sfl=0&shop=0&sort=07&udns=0
@@ -3022,7 +3149,7 @@ sources:
     gundam_card: prospective
   purposes:
   - lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://www.dmm.com/mono/hobby/-/list/=/article=directory/id=5027/
   start_labels:
@@ -3038,7 +3165,8 @@ sources:
   fallback_source_ids:
   - yahoo_realtime_dmm_tsuhan
   - nyuka_now_fullcomp_livepocket
-  notes: DMM通販の商品抽選販売一覧からカードBOXの個別商品ページを追う。ログイン要求時はDMM通販公式Xと入荷NowのDMM通販欄だけで補完し、非公式X投稿は通知根拠にしない。
+  - secondary_onepiece_news
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：yahoo_realtime_dmm_tsuhan, nyuka_now_fullcomp_livepocket, secondary_onepiece_news。履歴と設定は保持し、毎回のHTTP取得対象から外す。
   parser_kind: retailer_lottery
   parser_options:
     index_url: https://www.dmm.com/mono/hobby/-/list/=/article=directory/id=5027/
@@ -3059,7 +3187,7 @@ sources:
     gundam_card: prospective
   purposes:
   - lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://www.1999.co.jp/list/3352/7/1
   start_labels:
@@ -3074,7 +3202,9 @@ sources:
   - active_lottery_marker
   fallback_source_ids:
   - snkrdunk_pokemon
-  notes: ポケモンカード商品一覧で「抽選販売」中のBOXだけを個別ページまで追う。公式ページを取得できない場合は、SNKRDUNKの対象BOX記事にあるホビーサーチ欄と公式商品リンクで補完する。非公式X投稿だけでは通常通知しない。
+  - snkrdunk_onepiece
+  - secondary_onepiece_news
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：snkrdunk_pokemon, snkrdunk_onepiece, secondary_onepiece_news。履歴と設定は保持し、毎回のHTTP取得対象から外す。
   parser_kind: retailer_lottery
   parser_options:
     index_url: https://www.1999.co.jp/list/3352/7/1
@@ -3202,7 +3332,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Ahobbylink_jp%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/hobbylink_jp
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ahobbylink_jp&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3230,7 +3360,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3A7_netshopping%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/7_netshopping
+  - https://search.yahoo.co.jp/realtime/search?p=id%3A7_netshopping&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3258,7 +3388,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AENETJP%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/ENETJP
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AENETJP&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3286,7 +3416,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Ads_ecommerce%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/ds_ecommerce
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ads_ecommerce&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3314,7 +3444,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_tsuhan%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/DMM_tsuhan
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_tsuhan&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3406,7 +3536,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_Myca%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/DMM_Myca
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ADMM_Myca&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3434,7 +3564,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Aedion_PR%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/edion_PR
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Aedion_PR&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3462,7 +3592,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/famima_now
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Afamima_now&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3558,13 +3688,15 @@ sources:
   purposes:
   - lottery_discovery
   classification: browser_or_access_limited
-  enabled: true
+  enabled: false
   mode: discovery_and_health
   discovery_urls:
   - https://aeonretail.com/Page/k-entry_01.aspx
   fallback_source_ids:
   - snkrdunk_pokemon
+  - snkrdunk_onepiece
   - nyuka_now_fullcomp_livepocket
+  - secondary_onepiece_news
   page_url_patterns:
   - ^https://aeonretail\.com/campaign/.+
   - ^https://www\.aeonstyleonline\.com/.+
@@ -3621,7 +3753,7 @@ sources:
   poll_minutes: 120
   robots_url: https://aeonretail.com/robots.txt
   parser_kind: aeon_entry
-  notes: 公式エントリー販売の各商品と受付期間を読む。アクセス拒否時は独立した補完記事も確認する。チャレンジ回避やログイン自動化は行わない。
+  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：snkrdunk_pokemon, snkrdunk_onepiece, nyuka_now_fullcomp_livepocket, secondary_onepiece_news。履歴と設定は保持し、毎回のHTTP取得対象から外す。
 - id: aeon_entry_summary
   name: イオンスタイルオンライン エントリー販売補完
   source_type: secondary_lottery_roundup
@@ -3676,7 +3808,7 @@ sources:
     gundam_card: prospective
   purposes:
   - lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://livepocket.jp/event/search?word=TSUTAYA%E3%80%80%E3%81%82%E3%81%91%E3%81%BC%E3%81%AE&pref=%E5%AE%AE%E5%9F%8E%E7%9C%8C&timespec=1&button=
   - https://t.livepocket.jp/event/search?word=TSUTAYA%E3%80%80%E3%81%82%E3%81%91%E3%81%BC%E3%81%AE&pref=%E5%AE%AE%E5%9F%8E%E7%9C%8C&timespec=1&button=
@@ -3687,7 +3819,7 @@ sources:
   expected_elements:
   - livepocket_event_link
   - application_period
-  notes: 検索結果の開催日は使わず、BOX抽選の個別ページにある応募期間または販売受付期間を取得する。
+  notes: 取得制限のある元ページの巡回を停止。LivePocket自体は取得せず、次の既存経路で監視する：yahoo_realtime_tsutaya_akebono。履歴と設定は保持し、毎回のHTTP取得対象から外す。
   parser_kind: livepocket
   parser_options:
     retailer_id: tsutaya_akebono
@@ -3710,14 +3842,13 @@ sources:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AAKEBONOtoreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3AAKEBONOtoreka&ei=UTF-8
   - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FAKEBONOtoreka%2Fstatus%2F2096070820426899487&omit_script=1&dnt=1
-  - https://twstalker.com/AKEBONOtoreka
   render_mode: http
   poll_minutes: 120
   fallback_on_empty_result: true
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: LivePocket検索の取得制限に備えた公式Xの独立経路。Yahooの抽選語検索とアカウント全投稿検索を併用し、検索反映が遅い時は既知の公式投稿とプロフィールミラーへ順次切り替える。本文で不足する商品名・応募開始日は添付画像OCRで補完し、同一抽選は1件に統合する。
+  notes: LivePocket検索の取得制限に備えた公式Xの独立経路。Yahooの抽選語検索とアカウント全投稿検索を併用し、検索反映が遅い時は既知の公式投稿とアカウント全投稿検索へ順次切り替える。本文で不足する商品名・応募開始日は添付画像OCRで補完し、同一抽選は1件に統合する。
   parser_kind: yahoo_realtime
   parser_options:
     account: AKEBONOtoreka
@@ -3741,14 +3872,13 @@ sources:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430%E3%80%80%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc
   - https://search.yahoo.co.jp/realtime/search?p=id%3ATSUTAYA19392430&ei=UTF-8
   - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FTSUTAYA19392430%2Fstatus%2F2096124692696621430&omit_script=1&dnt=1
-  - https://twstalker.com/TSUTAYA19392430
   render_mode: http
   poll_minutes: 120
   fallback_on_empty_result: true
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: Yahooの抽選語検索とアカウント全投稿検索を併用し、検索反映が遅い時は既知の公式投稿とプロフィールミラーへ順次切り替える。本文で不足する商品名・応募期間は添付画像OCRで補完し、スターターデッキを除いたBOX抽選だけを検知する。
+  notes: Yahooの抽選語検索とアカウント全投稿検索を併用し、検索反映が遅い時は既知の公式投稿とアカウント全投稿検索へ順次切り替える。本文で不足する商品名・応募期間は添付画像OCRで補完し、スターターデッキを除いたBOX抽選だけを検知する。
   parser_kind: yahoo_realtime
   parser_options:
     account: TSUTAYA19392430
@@ -3776,7 +3906,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Avw_1323+%E6%8A%BD%E9%81%B8&ei=UTF-8&ifr=tl_sc
-  - https://twstalker.com/vw_1323
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Avw_1323&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3804,7 +3934,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Amintsendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/mintsendai
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Amintsendai&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3831,7 +3961,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Atsutayaichi0412%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/tsutayaichi0412
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Atsutayaichi0412&ei=UTF-8
   - https://forms.cloud.microsoft/formapi/api/f3b1cae3-b69a-4f4e-8a60-7ba2714fec4f/users/b459d036-98cf-4b78-86c3-9ab4b55edd66/light/runtimeForms('48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUM1NCTUw5SzdMMk1ITFFZU1BPNE43SEpUUi4u')?$expand=questions($expand=choices)
   - https://forms.cloud.microsoft/formapi/api/f3b1cae3-b69a-4f4e-8a60-7ba2714fec4f/users/b459d036-98cf-4b78-86c3-9ab4b55edd66/light/runtimeForms('48qx85q2Tk-KYHuicU_sTzbQWbTPmHhLhsOatLVe3WZUMVBWWVhLTTRJVTlLSkNVQTU3VVJWRklBSi4u')?$expand=questions($expand=choices)
   render_mode: http
@@ -3880,7 +4010,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AWG_Mizusawa_TCG%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/WG_Mizusawa_TCG
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AWG_Mizusawa_TCG&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3908,7 +4038,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ANAKAZATOtoreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/NAKAZATOtoreka
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ANAKAZATOtoreka&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3936,7 +4066,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AShiwaten_card%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/Shiwaten_card
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AShiwaten_card&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3964,7 +4094,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Ayorozuya_card%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/yorozuya_card
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ayorozuya_card&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -3992,7 +4122,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AGtakamatsu_card%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/Gtakamatsu_card
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AGtakamatsu_card&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4020,7 +4150,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Amandaifurukaw3%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/mandaifurukaw3
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Amandaifurukaw3&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4055,7 +4185,6 @@ sources:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ADourakusendai&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=%E3%83%88%E3%83%AC%E3%82%AB%E9%81%93%E6%A5%BD%20%E4%BB%99%E5%8F%B0%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2FDourakusendai%2Fstatus%2F2084826013847130224&omit_script=1&dnt=1
-  - https://twstalker.com/Dourakusendai
   render_mode: http
   poll_minutes: 120
   fallback_on_empty_result: true
@@ -4063,7 +4192,7 @@ sources:
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: 店頭受取・郵送対応を含むBOX抽選投稿を監視する。Yahoo検索が空でも公式プロフィールミラーを確認する。status 2084826013847130224は検索一覧から漏れた受付中案件の一回限りの救済経路として個別詳細も確認する。
+  notes: 店頭受取・郵送対応を含むBOX抽選投稿を監視する。Yahoo検索が空でも公式アカウント全投稿検索を確認する。status 2084826013847130224は検索一覧から漏れた受付中案件の一回限りの救済経路として個別詳細も確認する。
   parser_kind: yahoo_realtime
   parser_options:
     account: Dourakusendai
@@ -4088,7 +4217,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Amagi_sendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/magi_sendai
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Amagi_sendai&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   fallback_on_empty_result: true
@@ -4096,7 +4225,7 @@ sources:
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: magi仙台店のBOX購入権抽選を公式Xから検知する。Yahoo検索が空でも公式プロフィールミラーを確認する。
+  notes: magi仙台店のBOX購入権抽選を公式Xから検知する。Yahoo検索が空でも公式アカウント全投稿検索を確認する。
   parser_kind: yahoo_realtime
   parser_options:
     account: magi_sendai
@@ -4154,7 +4283,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Afc_sendaieki%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/fc_sendaieki
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Afc_sendaieki&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4178,8 +4307,8 @@ sources:
   - lottery_discovery
   enabled: true
   discovery_urls:
-  - https://search.yahoo.co.jp/realtime/search?p=id%3APokedouTencho_M%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/PokedouTencho_M
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APokedou_Morioka%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APokedou_Morioka&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4188,7 +4317,7 @@ sources:
   notes: ポケ堂盛岡店のBOX抽選告知を公式Xから検知し、画像中心の投稿はOCRで補完する。
   parser_kind: yahoo_realtime
   parser_options:
-    account: PokedouTencho_M
+    account: Pokedou_Morioka
     retailer_id: pokedou_morioka
     retailer_name: ポケ堂盛岡店
 - id: yahoo_realtime_pokedou_kitakami
@@ -4203,8 +4332,8 @@ sources:
   - lottery_discovery
   enabled: true
   discovery_urls:
-  - https://search.yahoo.co.jp/realtime/search?p=id%3APokedouTencho_K%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/PokedouTencho_K
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APokedou_Kitakam%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APokedou_Kitakam&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4213,7 +4342,7 @@ sources:
   notes: ポケ堂北上店のBOX抽選告知を公式Xから検知し、画像中心の投稿はOCRで補完する。
   parser_kind: yahoo_realtime
   parser_options:
-    account: PokedouTencho_K
+    account: Pokedou_Kitakam
     retailer_id: pokedou_kitakami
     retailer_name: ポケ堂北上店
 - id: yahoo_realtime_tsutaya_tsukidate
@@ -4232,7 +4361,7 @@ sources:
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Atsukidateten%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/tsukidateten
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Atsukidateten&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4303,7 +4432,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_mrok%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/batoloco_mrok
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_mrok&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4334,7 +4463,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_SND%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/batoloco_SND
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_SND&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4365,7 +4494,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Atcgpit_sendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/tcgpit_sendai
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Atcgpit_sendai&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4396,7 +4525,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Asantycrissroad%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/santycrissroad
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Asantycrissroad&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4427,7 +4556,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AYTHtoreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/YTHtoreka
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AYTHtoreka&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4458,7 +4587,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ATBSSENDAICHOMEI%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/TBSSENDAICHOMEI
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ATBSSENDAICHOMEI&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4489,7 +4618,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ASURUGAYA_RIFU%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/SURUGAYA_RIFU
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ASURUGAYA_RIFU&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4520,7 +4649,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AKingOfToyss%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/KingOfToyss
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AKingOfToyss&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
@@ -4552,7 +4681,7 @@ sources:
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_fuku%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://publish.twitter.com/oembed?url=https%3A%2F%2Fx.com%2Fbatoloco_fuku%2Fstatus%2F2095742710691053657&omit_script=true&lang=ja
-  - https://twstalker.com/batoloco_fuku
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_fuku&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fbatoloco_fuku%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4593,7 +4722,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_oyama%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/batoloco_oyama
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_oyama&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fbatoloco_oyama%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4626,7 +4755,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3APAOtoreka_omiya%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/PAOtoreka_omiya
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APAOtoreka_omiya&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2FPAOtoreka_omiya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4655,7 +4784,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ACARDWINGS_POKE%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/CARDWINGS_POKE
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ACARDWINGS_POKE&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2FCARDWINGS_POKE%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4688,7 +4817,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Abigmagicakb%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/bigmagicakb
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abigmagicakb&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fbigmagicakb%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4721,7 +4850,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_toreka%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/fukufuku_toreka
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_toreka&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Ffukufuku_toreka%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4750,7 +4879,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_one%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/fukufuku_one
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Afukufuku_one&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Ffukufuku_one%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4783,7 +4912,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ABatoloco_1852%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/Batoloco_1852
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ABatoloco_1852&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2FBatoloco_1852%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4812,7 +4941,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ABMike_pokemon%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/BMike_pokemon
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ABMike_pokemon&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2FBMike_pokemon%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4845,7 +4974,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ABM_ikebukuro%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/BM_ikebukuro
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ABM_ikebukuro&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2FBM_ikebukuro%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4878,7 +5007,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_428%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/batoloco_428
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_428&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fbatoloco_428%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4909,7 +5038,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/PCGL_Shibuya
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APCGL_Shibuya&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2FPCGL_Shibuya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4942,7 +5071,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3ATierOneshibuya%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/TierOneshibuya
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ATierOneshibuya&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2FTierOneshibuya%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -4981,7 +5110,7 @@ sources:
   required_store_visits: 1
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_1825%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://twstalker.com/batoloco_1825
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Abatoloco_1825&ei=UTF-8
   - https://www.bing.com/search?format=rss&q=site%3Ax.com%2Fbatoloco_1825%2Fstatus+%E6%8A%BD%E9%81%B8&setlang=ja-JP&cc=jp
   render_mode: http
   poll_minutes: 120
@@ -5087,3 +5216,31 @@ sources:
       retailer_name: フルコンプ
       required_retailer_mentions:
       - フルコンプ
+- id: yahoo_realtime_hobby_station_official
+  name: ホビーステーション公式X Yahooリアルタイム検索
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  supported_games:
+    pokemon_card: verified
+    one_piece_card: verified
+    dragon_ball_fusion_world: prospective
+    yu_gi_oh: prospective
+    lorcana: prospective
+    gundam_card: prospective
+  purposes:
+  - lottery_discovery
+  enabled: true
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ahbst_event%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Ahbst_event&ei=UTF-8
+  render_mode: http
+  poll_minutes: 120
+  expected_elements:
+  - official_x_status
+  - conditional_image_ocr
+  notes: 公式サイトが案内するイベント公式アカウントhbst_eventのBOX購入抽選を監視する。LivePocketへのリンクは通知だけに使い、サイト自体は取得しない。公式ニュースと同じ店舗・商品・開始日の抽選は統合する。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: hbst_event
+    retailer_id: hobby_station
+    retailer_name: ホビーステーション

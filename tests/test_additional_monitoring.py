@@ -183,7 +183,7 @@ def test_reviewed_sources_parse_their_official_x_posts(
             "https://search.yahoo.co.jp/realtime/search?"
             f"p=id%3A{account}%20%E6%8A%BD%E9%81%B8&ei=UTF-8"
         ),
-        f"https://twstalker.com/{account}",
+        f"https://search.yahoo.co.jp/realtime/search?p=id%3A{account}&ei=UTF-8",
     ]
     if source.activation_group in {
         EXPEDITION_TOKYO_ROUTE_GROUP,

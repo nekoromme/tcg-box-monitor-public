@@ -182,6 +182,13 @@ def _fullcomp_sections(
     for heading in soup.find_all(list(_HEADINGS)):
         if "フルコンプ" not in heading.get_text(" ", strip=True):
             continue
+        scope = heading.find_previous("h2")
+        if isinstance(scope, Tag) and not any(
+            marker in scope.get_text(" ", strip=True)
+            for marker in _CURRENT_LOTTERY_SCOPE_MARKERS
+        ):
+            # 共通まとめの終了済み抽選を、別経路への切替時に再発見しない。
+            continue
         level = int(heading.name[1])
         text_parts: list[str] = []
         tags: list[Tag] = []
@@ -249,6 +256,13 @@ def _supported_game_id(text: str, source: SourceConfig) -> str | None:
         "pokemon_card"
     ):
         return "pokemon_card"
+    for game_id, markers in (
+        ("yu_gi_oh", ("遊戯王OCG", "遊戯王")),
+        ("lorcana", ("ディズニー・ロルカナ", "ロルカナ")),
+        ("gundam_card", ("ガンダムカードゲーム", "GUNDAM CARD GAME")),
+    ):
+        if source.supports(game_id) and any(marker.casefold() in folded for marker in markers):
+            return game_id
     return None
 
 
@@ -293,6 +307,10 @@ def parse_nyuka_now_fullcomp(
             )
             continue
 
+        end_match = re.search(r"終了日\s*[：:]?\s*(.{0,100})", section_text)
+        parsed_end = parse_first_datetime(end_match.group(1)) if end_match else None
+        end_at = parsed_end.value if parsed_end else None
+
         parsed_products = 0
         for candidate in candidates:
             game_id = (additional_game(candidate, source, config)
@@ -326,6 +344,7 @@ def parse_nyuka_now_fullcomp(
                     source.source_tier,
                     "nyuka_now_fullcomp_application_start",
                     "medium",
+                    end_at=end_at,
                 ).with_id()
             )
         all_excluded = candidates and all(
@@ -481,6 +500,8 @@ def _parse_nyuka_now_priority_retailers(
         tags,
         _,
     ) in _priority_retailer_sections(soup, url, source):
+        if game_id not in config.active_game_ids or not source.supports(game_id):
+            continue
         game = config.games[game_id]
         candidates = _fullcomp_product_candidates(tags)
         start_match = re.search(r"開始日\s*[：:]?\s*(.{0,100})", section_text)
@@ -588,7 +609,11 @@ def parse_nyuka_now_lottery_summary(
     # プレバン欄も同じ取得結果から読む。店舗ごとに同じまとめを再取得しない。
     premium_cases: list[LotteryCase] = []
     premium_alerts: list[Alert] = []
-    if _premium_bandai_section(BeautifulSoup(html, "lxml")) is not None:
+    if (
+        url.rstrip("/") == "https://nyuka-now.com/archives/97393"
+        and source.supports("one_piece_card")
+        and _premium_bandai_section(BeautifulSoup(html, "lxml")) is not None
+    ):
         premium_cases, _, premium_alerts = parse_nyuka_now_premium_bandai(
             html, url, source, config,
         )

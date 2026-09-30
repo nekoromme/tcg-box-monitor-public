@@ -4,7 +4,7 @@ import json
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -12,11 +12,18 @@ from tcg_monitor.game_modes import LEGACY_ENABLED_GAME_IDS
 from tcg_monitor.identity import (
     is_pokemon_30th_cardset,
     is_provisional_product_name,
+    lottery_dedupe_key,
+    lottery_dedupe_key_values,
     release_dedupe_key,
     release_dedupe_key_values,
     release_title_token,
 )
-from tcg_monitor.models import LotteryCase, Release, stable_url_identity
+from tcg_monitor.models import (
+    LotteryCase,
+    Release,
+    is_shared_retailer_application_url,
+    stable_url_identity,
+)
 
 SCHEMA_VERSION = 2
 ALERT_RETENTION_DAYS = 30
@@ -332,9 +339,9 @@ class MonitorState:
         """
 
         seen_cases = _mapping(self.data.setdefault("seen_cases", {}))
-        if case.case_id in seen_cases:
+        current_record = seen_cases.get(case.case_id)
+        if current_record is not None:
             self._drop_same_event_provisional_duplicates(case, seen_cases)
-            return None
 
         current_urls = {
             stable_url_identity(value)
@@ -344,8 +351,15 @@ class MonitorState:
         same_family: list[tuple[str, dict[str, Any]]] = []
         same_article: list[tuple[str, dict[str, Any]]] = []
         same_product_without_article: list[tuple[str, dict[str, Any]]] = []
+        same_campaign: list[tuple[str, dict[str, Any]]] = []
+        campaign_key = lottery_dedupe_key(case)
         for old_id, raw_record in seen_cases.items():
-            if not isinstance(raw_record, dict):
+            if old_id == case.case_id or not isinstance(raw_record, dict):
+                continue
+            if current_record is not None and is_provisional_product_name(
+                str(raw_record.get("product_name") or "")
+            ):
+                # 既知案件の仮商品名は上の専用処理で、予定の履歴を確認済み。
                 continue
             if (
                 raw_record.get("game_id") != case.game_id
@@ -354,6 +368,29 @@ class MonitorState:
                 != case.opportunity_kind.value
             ):
                 continue
+            if (
+                is_shared_retailer_application_url(case.retailer_id, case.official_url)
+                and str(raw_record.get("start_at") or "")[:10]
+                != case.start_at.isoformat()[:10]
+            ):
+                continue
+            # 公式投稿と補助記事のURLが異なっても、同じ店舗・商品・開始日
+            # の回なら、前の巡回の配信済み履歴を引き継ぐ。
+            try:
+                old_start = date.fromisoformat(str(raw_record.get("start_at") or "")[:10])
+            except ValueError:
+                old_start = None
+            if old_start is not None and not is_provisional_product_name(
+                str(raw_record.get("product_name") or "")
+            ):
+                old_campaign_key = lottery_dedupe_key_values(
+                    case.game_id, case.retailer_id,
+                    str(raw_record.get("product_name") or ""),
+                    str(raw_record.get("canonical_product_key") or ""),
+                    old_start, case.opportunity_kind,
+                )
+                if old_campaign_key == campaign_key:
+                    same_campaign.append((old_id, raw_record))
             if (
                 is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
                 and str(raw_record.get("start_at") or "")[:10]
@@ -436,6 +473,8 @@ class MonitorState:
             candidates = exact_candidates
         elif title_candidates:
             candidates = title_candidates
+        elif same_campaign:
+            candidates = same_campaign
         elif len(same_article) == 1 and is_provisional_product_name(
             str(same_article[0][1].get("product_name") or "")
         ):
@@ -447,6 +486,10 @@ class MonitorState:
             candidates = same_product_without_article
         else:
             return None
+        candidates = list({old_id: (old_id, record)
+                           for old_id, record in [*candidates, *same_campaign]}.values())
+        if isinstance(current_record, dict):
+            candidates.append((case.case_id, current_record))
 
         journal = _mapping(self.data.setdefault("delivery_journal", {}))
 
@@ -456,7 +499,7 @@ class MonitorState:
                 _mapping(journal.get(f"lottery:{kind}:{old_id}"))
                 for kind in ("started", "scheduled")
             ]
-            delivered = any(record for record in delivery_records)
+            delivered = any(record.get("status") == "complete" for record in delivery_records)
             updated_at = max(
                 (str(record.get("updated_at") or "") for record in delivery_records),
                 default="",
@@ -468,7 +511,8 @@ class MonitorState:
         migrated = {**previous, "case_id": case.case_id}
         seen_cases[case.case_id] = migrated
         for candidate_id in equivalent_ids:
-            seen_cases.pop(candidate_id, None)
+            if candidate_id != case.case_id:
+                seen_cases.pop(candidate_id, None)
 
         migrations = _mapping(self.data.setdefault("case_id_migrations", {}))
         prior_migration = _mapping(migrations.get(old_id))
@@ -501,15 +545,17 @@ class MonitorState:
             delivered_records = [
                 journal[old_key] for old_key in old_keys if old_key in journal
             ]
-            if delivered_records and new_key not in journal:
+            if delivered_records:
                 journal[new_key] = max(
                     delivered_records,
-                    key=lambda record: str(
-                        record.get("updated_at") if isinstance(record, dict) else ""
+                    key=lambda record: (
+                        isinstance(record, dict) and record.get("status") == "complete",
+                        str(record.get("updated_at") if isinstance(record, dict) else ""),
                     ),
                 )
             for old_key in old_keys:
-                journal.pop(old_key, None)
+                if old_key != new_key:
+                    journal.pop(old_key, None)
 
         calendar_sync = existing_sync
         old_sync_keys = [
@@ -522,8 +568,9 @@ class MonitorState:
                     calendar_sync[new_sync_key] = calendar_sync[old_sync_key]
                     break
         for old_sync_key in old_sync_keys:
-            calendar_sync.pop(old_sync_key, None)
-        return old_id
+            if old_sync_key != new_sync_key:
+                calendar_sync.pop(old_sync_key, None)
+        return old_id if old_id != case.case_id else None
 
     def _drop_same_event_provisional_duplicates(
         self,

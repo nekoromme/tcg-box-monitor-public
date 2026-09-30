@@ -1300,6 +1300,11 @@ def _application_url(container: Tag, status_url: str) -> str:
             return f"https://www.amazon.co.jp/dp/{match.group(1).upper()}"
         if match := _FURUICHI_ARTICLE_URL.search(candidate_text):
             return "https://www.furu1.net/news/news_information/" + match.group(1)
+        if match := re.search(
+            r"https://(?:t\.)?livepocket\.jp/e/[A-Za-z0-9_-]+", candidate_text,
+        ):
+            # 応募先として通知するだけで、LivePocketの取得は行わない。
+            return match.group(0)
     for anchor in container.find_all("a", href=True):
         href = str(anchor.get("href"))
         label = anchor.get_text(" ", strip=True)

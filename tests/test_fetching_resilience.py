@@ -320,7 +320,8 @@ def test_quiet_official_account_remains_healthy_when_optional_mirror_is_blocked(
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
-        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        discovery_urls=[source.discovery_urls[0],
+                        f"https://twstalker.com/{source.parser_options['account']}"],
         fallback_on_empty_result=True,
     )
     primary, mirror = source.discovery_urls
@@ -371,7 +372,7 @@ def test_explicit_social_exclusions_do_not_become_mirror_failures(
 ) -> None:
     configured = next(s for s in load_config("sites.yaml").sources if s.id == source_id)
     source = replace(
-        configured, discovery_urls=[configured.discovery_urls[0], configured.discovery_urls[-1]],
+        configured, discovery_urls=[configured.discovery_urls[0], f"https://twstalker.com/{configured.parser_options['account']}"],
         fallback_on_empty_result=True,
     )
     primary, mirror = source.discovery_urls
@@ -444,7 +445,8 @@ def test_empty_search_and_failed_mirror_are_still_unhealthy(tmp_path: Path) -> N
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
-        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        discovery_urls=[source.discovery_urls[0],
+                        f"https://twstalker.com/{source.parser_options['account']}"],
         fallback_on_empty_result=True,
     )
     primary, mirror = source.discovery_urls
@@ -863,35 +865,24 @@ def test_discovery_urls_fall_back_until_one_succeeds(
     assert [alert.target_url for alert in alerts] == [urls[1]]
 
 
-def test_hobby_station_official_news_falls_back_to_livepocket_search(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    config = load_config("sites.yaml")
-    source = next(item for item in config.sources if item.id == "livepocket_hobby_station")
-    primary, fallback = source.discovery_urls
-    fetcher = FakeHttpFetcher(
-        {
-            primary: _response(primary, 202, ""),
-            fallback: _response(
-                fallback,
-                200,
-                "<main><h1>検索結果</h1><p>現在、対象の抽選はありません。</p></main>",
-            ),
-        }
-    )
-
+def test_hobby_station_failed_news_does_not_fetch_livepocket() -> None:
+    source = next(item for item in load_config("sites.yaml").sources
+                  if item.id == "livepocket_hobby_station")
+    primary, = source.discovery_urls
+    fetcher = FakeHttpFetcher({primary: _response(primary, 202, "")})
     _, _, alerts = pipeline.run_pipeline(
-        _config(source),
-        http_fetcher=fetcher,  # type: ignore[arg-type]
+        _config(source), http_fetcher=fetcher,  # type: ignore[arg-type]
     )
-
-    assert [call[0] for call in fetcher.calls] == [primary, fallback]
+    assert [call[0] for call in fetcher.calls] == [primary]
     assert [alert.target_url for alert in alerts] == [primary]
 
 
 def test_ichinoseki_empty_search_uses_ordered_fallbacks() -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
+    # 旧ミラー形式もパーサー単体の検証用に保持。本番の巡回先には登録しない。
+    source = replace(source, discovery_urls=[*source.discovery_urls,
+                     f"https://twstalker.com/{source.parser_options['account']}"])
     yahoo_lottery, yahoo_account, oembed_url, twstalker_url = source.discovery_urls
     fetcher = FakeHttpFetcher(
         {
@@ -937,7 +928,7 @@ def test_tsutaya_ichinoseki_account_query_recovers_30th_lottery(
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki"
     )
-    yahoo_lottery, yahoo_account, _oembed_url, _twstalker_url = source.discovery_urls
+    yahoo_lottery, yahoo_account, _oembed_url = source.discovery_urls
     status_id = "2096124692696621430"
     account_html = f"""
     <div class="Tweet_TweetContainer__current">
@@ -992,7 +983,7 @@ def test_tsutaya_ichinoseki_oembed_recovers_mixed_product_post() -> None:
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki"
     )
-    yahoo_lottery, yahoo_account, oembed_url, _twstalker_url = source.discovery_urls
+    yahoo_lottery, yahoo_account, oembed_url = source.discovery_urls
     status_id = "2096124692696621430"
     status_url = f"https://x.com/TSUTAYA19392430/status/{status_id}"
     payload = json.dumps(
@@ -1044,6 +1035,9 @@ def test_priority_store_yahoo_empty_result_uses_profile_fallback() -> None:
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_toreca_douraku_sendai"
     )
+    # 旧ミラー形式もパーサー単体の検証用に保持。本番の巡回先には登録しない。
+    source = replace(source, discovery_urls=[*source.discovery_urls,
+                     f"https://twstalker.com/{source.parser_options['account']}"])
     (
         yahoo_url,
         yahoo_profile_url,
@@ -1119,7 +1113,7 @@ def test_tsutaya_akebono_account_query_recovers_delayed_keyword_index() -> None:
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_tsutaya_akebono"
     )
-    yahoo_lottery, yahoo_account, _oembed_url, _twstalker_url = source.discovery_urls
+    yahoo_lottery, yahoo_account, _oembed_url = source.discovery_urls
     status_id = "2096070820426899487"
     account_html = f"""
     <div class="Tweet_TweetContainer__current">
@@ -1235,7 +1229,8 @@ def test_yahoo_ocr_failure_uses_twstalker_and_clears_pending(
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
-        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        discovery_urls=[source.discovery_urls[0],
+                        f"https://twstalker.com/{source.parser_options['account']}"],
         fallback_on_empty_result=False,
     )
     yahoo_url, twstalker_url = source.discovery_urls
@@ -1290,16 +1285,16 @@ def test_yahoo_all_primary_queries_succeed_without_twstalker() -> None:
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_premium_bandai_onepiece"
     )
-    yahoo_english, yahoo_japanese, twstalker_url = source.discovery_urls
+    yahoo_english, yahoo_japanese, yahoo_account = source.discovery_urls
     empty_result = "<main>一致する情報は見つかりませんでした</main>"
     fetcher = FakeHttpFetcher(
         {
             yahoo_english: _response(yahoo_english, 200, empty_result),
             yahoo_japanese: _response(yahoo_japanese, 200, empty_result),
-            twstalker_url: _response(
-                twstalker_url,
+            yahoo_account: _response(
+                yahoo_account,
                 200,
-                "<main>正常時には取得してはいけません</main>",
+                "<main>一致する情報は見つかりませんでした</main>",
             ),
         }
     )
@@ -1313,6 +1308,7 @@ def test_yahoo_all_primary_queries_succeed_without_twstalker() -> None:
     assert [call[0] for call in fetcher.calls] == [
         yahoo_english,
         yahoo_japanese,
+        yahoo_account,
     ]
 
 
@@ -1321,7 +1317,8 @@ def test_yahoo_fetch_failure_uses_twstalker_fallback() -> None:
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
-        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        discovery_urls=[source.discovery_urls[0],
+                        f"https://twstalker.com/{source.parser_options['account']}"],
         fallback_on_empty_result=False,
     )
     yahoo_url, twstalker_url = source.discovery_urls
@@ -1350,7 +1347,8 @@ def test_yahoo_http_success_with_broken_structure_uses_twstalker() -> None:
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
-        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        discovery_urls=[source.discovery_urls[0],
+                        f"https://twstalker.com/{source.parser_options['account']}"],
         fallback_on_empty_result=False,
     )
     yahoo_url, twstalker_url = source.discovery_urls
@@ -1385,7 +1383,8 @@ def test_yahoo_parser_failure_uses_twstalker_fallback(
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
-        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        discovery_urls=[source.discovery_urls[0],
+                        f"https://twstalker.com/{source.parser_options['account']}"],
         fallback_on_empty_result=False,
     )
     yahoo_url, twstalker_url = source.discovery_urls
@@ -1432,6 +1431,9 @@ def test_yahoo_empty_direct_post_fallback_continues_to_profile_mirror(
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_seagull_common"
     )
+    # 旧ミラー形式もパーサー単体の検証用に保持。本番の巡回先には登録しない。
+    source = replace(source, discovery_urls=[*source.discovery_urls,
+                     f"https://twstalker.com/{source.parser_options['account']}"])
     yahoo_lottery, yahoo_account, oembed_url, twstalker_url = source.discovery_urls
     empty_result = "<main>一致する情報は見つかりませんでした</main>"
     fetcher = FakeHttpFetcher(
@@ -1474,7 +1476,8 @@ def test_yahoo_repair_url_remains_independent_from_twstalker(
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
-        discovery_urls=[source.discovery_urls[0], source.discovery_urls[-1]],
+        discovery_urls=[source.discovery_urls[0],
+                        f"https://twstalker.com/{source.parser_options['account']}"],
         fallback_on_empty_result=False,
     )
     yahoo_url, twstalker_url = source.discovery_urls
@@ -1903,10 +1906,10 @@ def test_access_limited_production_sources_declare_healthy_alternatives() -> Non
     ]
     assert by_id["yahoo_realtime_yamada_secondary"].source_tier == (SourceTier.SECONDARY)
     assert by_id["yahoo_realtime_kojima_secondary"].source_tier == (SourceTier.SECONDARY)
-    assert by_id["pokemon_center_store"].fallback_source_ids == [
-        "yahoo_realtime_pokemon_center_store"
-    ]
-    assert by_id["yodobashi"].fallback_source_ids == ["yahoo_realtime_yodobashi"]
+    assert "yahoo_realtime_pokemon_center_store" in (
+        by_id["pokemon_center_store"].fallback_source_ids
+    )
+    assert "yahoo_realtime_yodobashi" in by_id["yodobashi"].fallback_source_ids
     assert by_id["konami_style_yugioh"].fallback_source_ids == ["yahoo_realtime_konami_style"]
     assert by_id["takaratomy_mall_lorcana"].render_mode == (
         RenderMode.HTTP_THEN_BROWSER_ONCE_NO_CHALLENGE_BYPASS
@@ -1915,19 +1918,16 @@ def test_access_limited_production_sources_declare_healthy_alternatives() -> Non
     assert by_id["takaratomy_mall_lorcana"].fallback_source_ids == [
         "yahoo_realtime_lorcana_official"
     ]
-    assert by_id["kids_republic"].fallback_source_ids == [
-        "snkrdunk_pokemon",
-        "yahoo_realtime_kids_republic_official",
-    ]
+    assert {"snkrdunk_pokemon", "yahoo_realtime_kids_republic_official",
+            "nyuka_now_fullcomp_livepocket"} <= set(by_id["kids_republic"].fallback_source_ids)
     assert by_id["kids_republic"].supported_games["yu_gi_oh"] == (GameSupport.VERIFIED)
-    assert by_id["aeon_style_online"].fallback_source_ids == [
-        "snkrdunk_pokemon", "nyuka_now_fullcomp_livepocket"
-    ]
-    assert by_id["dmm_hobby_lottery"].fallback_source_ids == [
-        "yahoo_realtime_dmm_tsuhan",
-        "nyuka_now_fullcomp_livepocket",
-    ]
-    assert by_id["hobby_search_lottery"].fallback_source_ids == ["snkrdunk_pokemon"]
+    assert {"snkrdunk_pokemon", "nyuka_now_fullcomp_livepocket"} <= set(
+        by_id["aeon_style_online"].fallback_source_ids
+    )
+    assert {"yahoo_realtime_dmm_tsuhan", "nyuka_now_fullcomp_livepocket"} <= set(
+        by_id["dmm_hobby_lottery"].fallback_source_ids
+    )
+    assert "snkrdunk_pokemon" in by_id["hobby_search_lottery"].fallback_source_ids
     assert by_id["edion_online_lottery"].fallback_source_ids == ["yahoo_realtime_edion"]
     assert by_id["hobbylink_japan_lottery"].fallback_source_ids == [
         "yahoo_realtime_hobbylink_japan"

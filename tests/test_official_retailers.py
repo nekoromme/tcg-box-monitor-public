@@ -264,8 +264,10 @@ def test_premium_bandai_recent_news_can_warn_when_detail_is_blocked() -> None:
 
 
 def test_official_store_sources_run_end_to_end_with_fixtures() -> None:
+    base = load_config("sites.yaml")
     config = replace(
-        load_config("sites.yaml"),
+        base,
+        sources=[replace(source, enabled=True) for source in base.sources],
         system={
             **load_config("sites.yaml").system,
             "implausible_past_days": 5_000,

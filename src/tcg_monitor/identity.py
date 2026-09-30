@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from datetime import datetime
+from datetime import date, datetime
 
 from tcg_monitor.models import LotteryCase, OpportunityKind, Release
 
@@ -26,6 +26,18 @@ _NOISE_WORDS = (
     "ドラゴンボールスーパーカードゲーム",
     "フュージョンワールド",
     "DBFW",
+    "遊戯王OCG デュエルモンスターズ",
+    "遊戯王OCG",
+    "遊戯王",
+    "デュエルモンスターズ",
+    "ディズニー・ロルカナ・トレーディングカードゲーム",
+    "ディズニー・ロルカナ・TCG",
+    "ディズニー・ロルカナ",
+    "ディズニーロルカナ",
+    "ロルカナ",
+    "日本語版",
+    "ガンダムカードゲーム",
+    "GUNDAM CARD GAME",
     "強化拡張パック",
     "ハイクラスパック",
     "再拡張パック",
@@ -33,6 +45,9 @@ _NOISE_WORDS = (
     "エクストラブースター",
     "プレミアムブースター",
     "ブースターパック",
+    "基本パック",
+    "コンセプトパック",
+    "スペシャルパック",
     "MANGA BOOSTER",
     "STORY BOOSTER",
     "ブースター",
@@ -130,12 +145,27 @@ def is_pokemon_30th_cardset(game_id: str, product_key: str) -> bool:
 
 
 def lottery_dedupe_key(case: LotteryCase) -> str:
-    token = release_title_token(case.product_name)
-    product_haystack = f"{case.canonical_product_key} {case.product_name}"
+    return lottery_dedupe_key_values(
+        case.game_id, case.retailer_id, case.product_name,
+        case.canonical_product_key, case.start_at, case.opportunity_kind,
+    )
+
+
+def lottery_dedupe_key_values(
+    game_id: str,
+    retailer_id: str,
+    product_name: str,
+    canonical_product_key: str,
+    start_at: date | datetime,
+    opportunity_kind: OpportunityKind = OpportunityKind.LOTTERY,
+) -> str:
+    """Identify a campaign across official posts, ticket links and summaries."""
+    token = release_title_token(product_name)
+    product_haystack = f"{canonical_product_key} {product_name}"
     product_code_pattern = {
         "one_piece_card": _ONE_PIECE_CODE,
         "dragon_ball_fusion_world": _DRAGONBALL_CODE,
-    }.get(case.game_id)
+    }.get(game_id)
     product_code = (
         product_code_pattern.search(product_haystack)
         if product_code_pattern is not None
@@ -144,11 +174,10 @@ def lottery_dedupe_key(case: LotteryCase) -> str:
     product_identity = (
         product_code.group(0).upper()
         if product_code is not None
-        else token or case.canonical_product_key
+        else token or canonical_product_key
     )
-    if is_pokemon_30th_cardset(case.game_id, case.canonical_product_key):
+    if is_pokemon_30th_cardset(game_id, canonical_product_key):
         product_identity = "pokemon_30th_cardset"
-    retailer_id = case.retailer_id
     if retailer_id == "onepiece_official_shop" or retailer_id.startswith(
         "onepiece_official_shop_"
     ):
@@ -158,21 +187,22 @@ def lottery_dedupe_key(case: LotteryCase) -> str:
         retailer_id = "onepiece_official_shop"
     # 同じ抽選をLivePocketでは時刻付き、Xでは日付だけで取得する場合がある。
     # 通知単位では同日開始の同一店舗・同一商品を1件として扱う。
-    start_day = case.start_at.date() if isinstance(case.start_at, datetime) else case.start_at
+    start_day = start_at.date() if isinstance(start_at, datetime) else start_at
     parts = [
-        case.game_id,
+        game_id,
         retailer_id,
         product_identity,
         start_day.isoformat(),
     ]
-    if case.opportunity_kind != OpportunityKind.LOTTERY:
-        parts.append(case.opportunity_kind.value)
+    if opportunity_kind != OpportunityKind.LOTTERY:
+        parts.append(opportunity_kind.value)
     return "|".join(parts)
 
 
 __all__ = [
     "is_provisional_product_name",
     "lottery_dedupe_key",
+    "lottery_dedupe_key_values",
     "release_dedupe_key",
     "release_dedupe_key_values",
     "release_title_token",

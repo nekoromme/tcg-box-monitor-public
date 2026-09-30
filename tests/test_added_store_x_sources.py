@@ -56,8 +56,8 @@ def test_donki_app_cardset_announcement_and_retailer_filter() -> None:
 @pytest.mark.parametrize(
     ("source_id", "account", "retailer_name"),
     [
-        ("yahoo_realtime_pokedou_morioka", "PokedouTencho_M", "ポケ堂盛岡店"),
-        ("yahoo_realtime_pokedou_kitakami", "PokedouTencho_K", "ポケ堂北上店"),
+        ("yahoo_realtime_pokedou_morioka", "Pokedou_Morioka", "ポケ堂盛岡店"),
+        ("yahoo_realtime_pokedou_kitakami", "Pokedou_Kitakam", "ポケ堂北上店"),
         ("yahoo_realtime_tsutaya_tsukidate", "tsukidateten", "TSUTAYA築館店"),
         ("yahoo_realtime_mandai_furukawa", "mandaifurukaw3", "万代古川店"),
     ],
@@ -74,7 +74,7 @@ def test_added_store_x_sources_are_wired_to_the_official_accounts(
             "https://search.yahoo.co.jp/realtime/search?"
             f"p=id%3A{account}%20%E6%8A%BD%E9%81%B8&ei=UTF-8"
         ),
-        f"https://twstalker.com/{account}",
+        f"https://search.yahoo.co.jp/realtime/search?p=id%3A{account}&ei=UTF-8",
     ]
 
     html = f"""
@@ -119,7 +119,7 @@ def test_priority_sendai_sources_fall_back_when_yahoo_is_empty() -> None:
             "https://search.yahoo.co.jp/realtime/search?"
             "p=id%3Amagi_sendai%20%E6%8A%BD%E9%81%B8&ei=UTF-8"
         ),
-        "https://twstalker.com/magi_sendai",
+        "https://search.yahoo.co.jp/realtime/search?p=id%3Amagi_sendai&ei=UTF-8",
     ]
     assert magi.lottery_start_policy.value == "first_detection"
     douraku = by_id["yahoo_realtime_toreca_douraku_sendai"]
@@ -127,7 +127,7 @@ def test_priority_sendai_sources_fall_back_when_yahoo_is_empty() -> None:
     assert "p=%E3%83%88%E3%83%AC%E3%82%AB%E9%81%93%E6%A5%BD" in (douraku.discovery_urls[2])
     assert "publish.twitter.com/oembed" in douraku.discovery_urls[3]
     assert "2084826013847130224" in douraku.discovery_urls[3]
-    assert by_id["livepocket_hmv"].enabled
+    assert not by_id["livepocket_hmv"].enabled
     hmv_secondary = by_id["yahoo_realtime_hmv_secondary"]
     assert not hmv_secondary.enabled
     central = by_id["secondary_onepiece_news"]
@@ -167,7 +167,7 @@ def test_tsutaya_akebono_uses_keyword_and_account_search_fallbacks() -> None:
         "p=id%3AAKEBONOtoreka&ei=UTF-8"
     )
     assert "2096070820426899487" in source.discovery_urls[2]
-    assert source.discovery_urls[3] == "https://twstalker.com/AKEBONOtoreka"
+    assert len(source.discovery_urls) == 3
 
 
 def test_douraku_current_roundup_is_scoped_to_sendai_store() -> None:
@@ -312,7 +312,7 @@ def test_added_official_x_fallbacks_parse_yugioh_box_lotteries(
     source = next(item for item in config.sources if item.id == source_id)
     assert source.discovery_urls == [
         source.discovery_urls[0],
-        f"https://twstalker.com/{account}",
+        f"https://search.yahoo.co.jp/realtime/search?p=id%3A{account}&ei=UTF-8",
     ]
     assert f"id%3A{account}" in source.discovery_urls[0]
 
@@ -351,7 +351,7 @@ def test_lorcana_official_x_fallback_parses_booster_reservation() -> None:
             "p=id%3ADisneyLOR_JP%20%E7%99%BA%E5%A3%B2%20"
             "%E4%BA%88%E7%B4%84%E9%96%8B%E5%A7%8B&ei=UTF-8"
         ),
-        "https://twstalker.com/DisneyLOR_JP",
+        "https://search.yahoo.co.jp/realtime/search?p=id%3ADisneyLOR_JP&ei=UTF-8",
     ]
     html = """
     <div class="Tweet_TweetContainer__test">

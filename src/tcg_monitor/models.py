@@ -33,6 +33,18 @@ def stable_url_identity(value: str) -> str:
     )
 
 
+def is_shared_retailer_application_url(retailer_id: str, value: str) -> bool:
+    """These guides have no campaign identifier and are reused for later draws."""
+    parts = urlsplit(value)
+    host = parts.netloc.casefold().removeprefix("www.")
+    path = parts.path.rstrip("/")
+    return (retailer_id, host, path) in {
+        ("kids_republic", "kidsrepublic.jp", "/campaign"),
+        ("hmv", "hmv.co.jp", ""),
+        ("ministop_online", "online.ministop.co.jp", ""),
+    }
+
+
 class SourceTier(StrEnum):
     OFFICIAL = "official"
     OFFICIAL_INDIRECT = "official_indirect"
@@ -299,6 +311,15 @@ class LotteryCase:
             self.canonical_product_key,
             article_identity,
         ]
+        if not has_article_status_id and is_shared_retailer_application_url(
+            self.retailer_id, self.official_url,
+        ):
+            # 補助まとめに個別の応募URLがない時、同じ案内URLを使う
+            # 翌月の同商品抽選まで「通知済み」にしない。
+            start_day = (
+                self.start_at.date() if isinstance(self.start_at, datetime) else self.start_at
+            )
+            identity_parts.append(start_day.isoformat())
         # Preserve every historical lottery ID.  Only newly introduced ordinary
         # official-store sales need a kind suffix so a sale and a lottery for the
         # same product page cannot suppress one another.

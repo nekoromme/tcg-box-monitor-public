@@ -119,7 +119,8 @@ def test_production_account_search_recovers_candidate_and_records_route(tmp_path
 def test_pokemon_center_index_to_detail_reparses_with_legacy_etag(
     tmp_path, source_id, index, detail
 ):
-    source = replace(next(s for s in CONFIG.sources if s.id == source_id), discovery_urls=[index])
+    source = replace(next(s for s in CONFIG.sources if s.id == source_id),
+                     discovery_urls=[index], enabled=True)
     assert is_pokemon_center_news_index(source_id, index)
     assert not is_pokemon_center_news_index(source_id, detail)
     fetcher = Fetcher(

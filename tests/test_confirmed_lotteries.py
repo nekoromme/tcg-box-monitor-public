@@ -10,6 +10,7 @@ from tcg_monitor.parsers.retailer_lottery import parse_retailer_lottery_detail
 def test_confirmed_famima_period_and_game_switch() -> None:
     config = load_config("sites.yaml")
     source = next(s for s in config.sources if s.id == "famima_online_lottery")
+    source = replace(source, enabled=True)  # 停止した実取得とは別に、保存済み期間の処理を検証。
     now = datetime.fromisoformat("2026-09-15T15:48:00+09:00")
     cases = confirmed_lotteries(config, [source], now)
     assert len(cases) == 1

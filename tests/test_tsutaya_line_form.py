@@ -187,7 +187,7 @@ class _Fetcher:
 def test_existing_store_source_always_fetches_shared_official_form() -> None:
     config = load_config("sites.yaml")
     source = _source()
-    yahoo_url, twstalker_url, api_url, cardset_url = source.discovery_urls
+    yahoo_url, account_url, api_url, cardset_url = source.discovery_urls
     fetcher = _Fetcher(
         {
             yahoo_url: FetchResult(
@@ -195,6 +195,9 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
                 200,
                 "<main>一致する情報は見つかりませんでした</main>",
                 {},
+            ),
+            account_url: FetchResult(
+                account_url, 200, "<main>一致する情報は見つかりませんでした</main>", {},
             ),
             api_url: FetchResult(api_url, 200, _form_payload(), {}),
             cardset_url: FetchResult(cardset_url, 200, _cardset_payload(), {}),
@@ -216,8 +219,8 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
         http_fetcher=fetcher,  # type: ignore[arg-type]
     )
 
-    assert fetcher.calls == [yahoo_url, api_url, cardset_url]
-    assert twstalker_url not in fetcher.calls
+    assert fetcher.calls == [yahoo_url, account_url, api_url, cardset_url]
+    assert all("twstalker.com" not in url for url in fetcher.calls)
     # 通常BOX、プレミアムデッキ、9種類をまとめたカードセットの3件。
     assert len(cases) == 3
     assert sum(c.canonical_product_key == "pokemon_30th_cardset" for c in cases) == 1
@@ -228,7 +231,7 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
 def test_official_form_failure_is_not_hidden_by_healthy_store_x() -> None:
     config = load_config("sites.yaml")
     source = _source()
-    yahoo_url, twstalker_url, api_url, cardset_url = source.discovery_urls
+    yahoo_url, account_url, api_url, cardset_url = source.discovery_urls
     fetcher = _Fetcher(
         {
             yahoo_url: FetchResult(
@@ -236,6 +239,9 @@ def test_official_form_failure_is_not_hidden_by_healthy_store_x() -> None:
                 200,
                 "<main>一致する情報は見つかりませんでした</main>",
                 {},
+            ),
+            account_url: FetchResult(
+                account_url, 200, "<main>一致する情報は見つかりませんでした</main>", {},
             ),
             api_url: FetchResult(api_url, 503, "service unavailable", {}),
             cardset_url: FetchResult(cardset_url, 200, '{"error":{"code":"5003"}}', {}),
@@ -257,8 +263,8 @@ def test_official_form_failure_is_not_hidden_by_healthy_store_x() -> None:
         http_fetcher=fetcher,  # type: ignore[arg-type]
     )
 
-    assert fetcher.calls == [yahoo_url, api_url, cardset_url]
-    assert twstalker_url not in fetcher.calls
+    assert fetcher.calls == [yahoo_url, account_url, api_url, cardset_url]
+    assert all("twstalker.com" not in url for url in fetcher.calls)
     assert not cases
     assert not releases
     assert len(alerts) == 1

@@ -537,6 +537,10 @@ def _summary_markdown(state: MonitorState) -> str:
         *(f"| {label} | {value} |" for label, value in rows),
     ]
     monitors = state.data.get("monitors", {})
+    monitored_ids = summary.get("monitored_source_ids")
+    if isinstance(monitors, dict) and isinstance(monitored_ids, list):
+        # 停止した監視先の履歴は保持し、今回の実行結果には混ぜない。
+        monitors = {key: value for key, value in monitors.items() if key in monitored_ids}
     if isinstance(monitors, dict) and monitors:
         lines.extend(
             [
