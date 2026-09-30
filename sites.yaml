@@ -1840,12 +1840,14 @@ sources:
   purposes:
   - secondary_lottery_discovery
   - postponement_monitoring
-  enabled: false
+  enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20%E3%83%A4%E3%83%9E%E3%83%80%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi&ei=UTF-8
   - https://twstalker.com/gamegetnavi
   render_mode: http
   poll_minutes: 120
+  fallback_on_empty_result: true
   expected_elements:
   - named_retailer_post
   - supported_tcg_box
@@ -1854,6 +1856,37 @@ sources:
   parser_kind: yahoo_realtime
   parser_options:
     account: gamegetnavi
+    retailer_id: yamada_denki
+    retailer_name: ヤマダデンキ
+    required_retailer_mentions:
+    - ヤマダデンキ
+    - ヤマダ電機
+    - YAMADA
+    official_confirmation_url: https://www.yamada-denki.jp/service/pointservice/digital-kaiin.html
+- id: yahoo_realtime_yamada_onepiece_secondary
+  name: ヤマダデンキ抽選情報 補完アカウント
+  source_type: retailer_secondary_social_search
+  source_tier: secondary
+  coverage_scope: specialized
+  supported_games:
+    one_piece_card: prospective
+  purposes:
+  - secondary_lottery_discovery
+  enabled: true
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Apremier777aa%20%E3%83%A4%E3%83%9E%E3%83%80%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Apremier777aa&ei=UTF-8
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - named_retailer_post
+  - supported_tcg_box
+  - application_start_or_postponement
+  notes: 2026年9月29日23時開始のEB-05抽選を告知した二次情報アカウントで補完する。ヤマダ名・対象商品・応募開始日時が明記された個別告知だけを確度mediumで登録し、公式アプリで最終確認する。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: premier777aa
     retailer_id: yamada_denki
     retailer_name: ヤマダデンキ
     required_retailer_mentions:

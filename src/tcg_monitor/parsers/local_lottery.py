@@ -1203,7 +1203,8 @@ def _product_from_tweet(
         else None
     )
     product_name = ""
-    quote_pattern = r"[「『【《](?:#)?([^」』】》]{2,100})[」』】》]"
+    # 商品名の外側の「」に含まれる商品コード【EB-05】も最後まで読む。
+    quote_pattern = r"[「『【《](?:#)?((?:【[^】]{1,40}】|[^「『【《」』】》]){2,100})[」』】》]"
     category_pattern = "|".join(map(re.escape, categories))
     # 商品カテゴリーに直接続く名前を優先。先にデッキ商品が並ぶ混在投稿でも
     # 無関係な先頭の括弧を拡張パック名にしない。
@@ -1513,6 +1514,12 @@ def parse_yahoo_realtime(
                 r"抽選で.{0,100}(?:購入|買える).{0,30}(?:権利|チャンス)",
                 compact_text,
             )
+        )
+        # 「抽選！ 応募期間：9/29 23時～10/1まで」のような短い告知も
+        # 受付の証拠になる。「販売期間」は当選者向けの購入期間なので
+        # ここでは使わず、結果発表だけの投稿を受付と取り違えない。
+        has_action = has_action or bool(
+            _application_start(post_text, detected, include_sales_period=False)
         )
         amazon_invitation = (
             bool(source.parser_options.get("amazon_invitation"))

@@ -496,11 +496,10 @@ def test_amazon_source_configuration_keeps_manual_and_social_modes_separate() ->
         assert "amazon_asin_link" in by_id[source_id].expected_elements
 
 
-def test_nonofficial_social_accounts_cannot_trigger_normal_notifications() -> None:
+def test_other_nonofficial_social_feeds_remain_disabled() -> None:
     by_id = {source.id: source for source in load_config("sites.yaml").sources}
 
     for source_id in (
-        "yahoo_realtime_yamada_secondary",
         "yahoo_realtime_kojima_secondary",
         "yahoo_realtime_amazon_onepiece_secondary",
         "yahoo_realtime_amazon_gamegetnavi_secondary",

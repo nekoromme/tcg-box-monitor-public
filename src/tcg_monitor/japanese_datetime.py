@@ -82,7 +82,9 @@ def parse_first_datetime(text: str, base_date: date | None = None) -> DateParseR
     base = base_date or datetime.now(JP_TZ).date()
     normalized = normalize_text(text)
     timed_patterns = [
-        r"(?:(?P<y>20\d{2})年)?(?P<m>\d{1,2})月(?P<d>\d{1,2})日"
+        # SNSでは「9/29 23時」「10/28 12時頃」の表記も使われる。
+        # 日本語の日付と同じく時刻を保持し、終日予定へ落とさない。
+        r"(?:(?P<y>20\d{2})[/.年])?(?P<m>\d{1,2})[/.月](?P<d>\d{1,2})日?"
         r"(?:[()](?P<w>[月火水木金土日])[()])?\s*"
         r"(?:(?P<ap>午前|午後|正午|昼))?\s*(?P<h>\d{1,2})時(?P<mi>\d{1,2})?分?",
         r"(?:(?P<y>20\d{2})[/.年])?(?P<m>\d{1,2})[/.月](?P<d>\d{1,2})日?"
