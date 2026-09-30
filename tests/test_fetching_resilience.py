@@ -346,6 +346,99 @@ def test_quiet_official_account_remains_healthy_when_optional_mirror_is_blocked(
     assert [call[0] for call in fetcher.calls] == [primary, mirror]
 
 
+@pytest.mark.parametrize(
+    ("source_id", "body", "status_id", "reason"),
+    [
+        ("yahoo_realtime_dmm_tsuhan", "ガンプラの抽選受付開始", "2105067964882198698",
+         "excluded_product"),
+        ("yahoo_realtime_premium_bandai_onepiece", "METAL ROBOT魂の抽選販売受付開始",
+         "2105067964882198698", "excluded_product"),
+        ("yahoo_realtime_magi_sendai", "スタートデッキ100 バトルコレクション 抽選販売受付開始",
+         "2105067964882198698", "excluded_product"),
+        ("yahoo_realtime_konami_style", "遊戯王 デュエルセット WCS2026 抽選受付開始",
+         "2105067964882198698", "excluded_product"),
+        ("yahoo_realtime_batoloco_morioka", "ポケカ 抽選販売の受け取りは本日締め切りです！",
+         "2105067964882198698", "closed_or_result_notice"),
+        ("yahoo_realtime_batoloco_sendai", "ポケモンカードの抽選販売分のみ。抽選は終了してます。",
+         "2105067964882198698", "closed_or_result_notice"),
+        ("yahoo_realtime_great_yorozuya_morioka", "ポケカ 拡張パック「30th CELEBRATION」抽選販売",
+         "2099836252782764138", "old_post"),
+    ],
+)
+@freeze_time("2026-09-30 09:00:00")
+def test_explicit_social_exclusions_do_not_become_mirror_failures(
+    tmp_path: Path, source_id: str, body: str, status_id: str, reason: str,
+) -> None:
+    configured = next(s for s in load_config("sites.yaml").sources if s.id == source_id)
+    source = replace(
+        configured, discovery_urls=[configured.discovery_urls[0], configured.discovery_urls[-1]],
+        fallback_on_empty_result=True,
+    )
+    primary, mirror = source.discovery_urls
+    account = source.parser_options["account"]
+    html = f"""<div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">{body}</p>
+      <a href="https://x.com/{account}/status/{status_id}">投稿</a>
+    </div>"""
+    fetcher = FakeHttpFetcher({
+        primary: _response(primary, 200, html), mirror: _response(mirror, 403, "Forbidden"),
+    })
+    state = MonitorState.load(tmp_path / "state.json")
+    cases, releases, alerts = pipeline.run_pipeline(
+        _config(source), monitor_state=state, http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+    assert not cases and not releases and not alerts
+    record = state.data["monitors"][source_id]
+    assert record["outcome"] == "success"
+    assert record["routes"][primary]["diagnostics"][reason] == 1
+
+
+@freeze_time("2026-09-30 09:00:00")
+def test_catalog_miss_without_explicit_exclusion_remains_unresolved(tmp_path: Path) -> None:
+    configured = next(
+        s for s in load_config("sites.yaml").sources if s.id == "yahoo_realtime_dmm_tsuhan"
+    )
+    source = replace(configured, fallback_on_empty_result=True)
+    primary, mirror = source.discovery_urls
+    html = """<div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">新商品の抽選販売受付開始。詳細はこちら。</p>
+      <a href="https://x.com/DMM_tsuhan/status/2105067964882198698">投稿</a>
+    </div>"""
+    fetcher = FakeHttpFetcher({
+        primary: _response(primary, 200, html), mirror: _response(mirror, 403, "Forbidden"),
+    })
+    state = MonitorState.load(tmp_path / "state.json")
+    pipeline.run_pipeline(
+        _config(source), monitor_state=state, http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+    record = state.data["monitors"][source.id]
+    assert record["outcome"] == "failed"
+    assert record["routes"][primary]["diagnostics"]["unclassified_lottery"] == 1
+
+
+def test_hobbylink_api_fetches_all_pages_without_loading_blocked_html(tmp_path: Path) -> None:
+    source = next(s for s in load_config("sites.yaml").sources if s.id == "hobbylink_japan_lottery")
+    primary, blocked_html = source.discovery_urls
+    next_url = primary + "&page=2"
+    article = {
+        "title": "公式メンテナンス告知", "created_at": "2026-09-30T03:00:00Z",
+        "html_url": "https://support.hlj.co.jp/hc/ja/articles/1234", "body": "お知らせ",
+    }
+    page1 = json.dumps({"count": 2, "page": 1, "articles": [article], "next_page": next_url})
+    page2 = json.dumps({"count": 2, "page": 2, "articles": [article], "next_page": None})
+    fetcher = FakeHttpFetcher({
+        primary: _response(primary, 200, page1), next_url: _response(next_url, 200, page2),
+        blocked_html: _response(blocked_html, 403, "Forbidden"),
+    })
+    state = MonitorState.load(tmp_path / "state.json")
+    cases, releases, alerts = pipeline.run_pipeline(
+        _config(source), monitor_state=state, http_fetcher=fetcher,  # type: ignore[arg-type]
+    )
+    assert not cases and not releases and not alerts
+    assert state.data["monitors"][source.id]["outcome"] == "success"
+    assert [call[0] for call in fetcher.calls] == [primary, next_url]
+
+
 def test_empty_search_and_failed_mirror_are_still_unhealthy(tmp_path: Path) -> None:
     config = load_config("sites.yaml")
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")

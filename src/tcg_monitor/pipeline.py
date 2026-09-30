@@ -101,7 +101,9 @@ from tcg_monitor.parsers.premium_bandai import (
     parse_nyuka_now_premium_bandai,
 )
 from tcg_monitor.parsers.retailer_lottery import (
+    discover_hobbylink_article_api_pages,
     discover_retailer_lottery_urls,
+    is_hobbylink_articles_api,
     is_retailer_lottery_index,
     is_retailer_lottery_source,
     parse_retailer_lottery_detail,
@@ -981,6 +983,12 @@ def run_pipeline(
             html = result.html
 
             try:
+                if source.id == "hobbylink_japan_lottery" and is_hobbylink_articles_api(url):
+                    discovery_urls.extend(
+                        (item, False)
+                        for item in discover_hobbylink_article_api_pages(html, url)
+                        if item not in visited_urls
+                    )
                 if source.id == "clabo_release_calendar" and is_root:
                     discovered = discover_clabo_calendar_urls(html, url)
                     route.update(status="discovery", discovered_urls=discovered)
@@ -1382,6 +1390,7 @@ def run_pipeline(
                                 "excluded_retailer", "not_application_announcement",
                                 "tournament_or_result", "old_post", "application_ended",
                                 "closed_or_result_notice", "excluded_product",
+                                "unsupported_game",
                             )
                         )
                         if excluded_posts == diagnostics["account_posts"]:

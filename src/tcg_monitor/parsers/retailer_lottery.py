@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import json
 import re
 import unicodedata
 from dataclasses import replace
 from datetime import date, datetime
+from html import escape
+from typing import Any
 from urllib.parse import urljoin, urlsplit
 from zoneinfo import ZoneInfo
 
@@ -125,6 +128,84 @@ def is_retailer_lottery_source(source: SourceConfig | str) -> bool:
 def is_retailer_lottery_index(source: SourceConfig | str, url: str) -> bool:
     expected = _index_url(source)
     return expected is not None and url.rstrip("/") == expected.rstrip("/")
+
+
+def is_hobbylink_articles_api(url: str) -> bool:
+    parsed = urlsplit(url)
+    return parsed.scheme == "https" and parsed.netloc == "support.hlj.co.jp" and (
+        parsed.path == "/api/v2/help_center/ja/sections/203939188/articles.json"
+    )
+
+
+def _hobbylink_api_page(html: str, url: str) -> tuple[list[dict[str, Any]], str | None]:
+    """Validate the retailer's public Zendesk article list, including pagination."""
+
+    data = json.loads(html)
+    if not isinstance(data, dict):
+        raise ValueError("HLJ article API: expected an object")
+    articles = data.get("articles")
+    count, page = data.get("count"), data.get("page")
+    if (
+        not isinstance(articles, list)
+        or type(count) is not int or count < len(articles)
+        or type(page) is not int or page < 1
+        or "next_page" not in data
+    ):
+        raise ValueError("HLJ article API: invalid article list")
+    next_page = data["next_page"]
+    if next_page is not None and (
+        not isinstance(next_page, str)
+        or not is_hobbylink_articles_api(next_page)
+        or next_page == url
+    ):
+        raise ValueError("HLJ article API: invalid next page")
+    if page == 1 and next_page is None and count != len(articles):
+        raise ValueError("HLJ article API: incomplete article list")
+    for article in articles:
+        if not isinstance(article, dict) or not all(
+            isinstance(article.get(key), str) and article[key]
+            for key in ("title", "html_url", "created_at")
+        ) or not isinstance(article.get("body"), str):
+            raise ValueError("HLJ article API: incomplete article")
+        link = urlsplit(article["html_url"])
+        if link.scheme != "https" or link.netloc != "support.hlj.co.jp" or not (
+            link.path.startswith("/hc/ja/articles/")
+        ):
+            raise ValueError("HLJ article API: nonofficial article URL")
+    return articles, next_page
+
+
+def discover_hobbylink_article_api_pages(html: str, url: str) -> list[str]:
+    _, next_page = _hobbylink_api_page(html, url)
+    return [next_page] if next_page else []
+
+
+def _parse_hobbylink_api(
+    html: str, url: str, source: SourceConfig, config: Config,
+) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
+    articles, _ = _hobbylink_api_page(html, url)
+    cases: list[LotteryCase] = []
+    alerts: list[Alert] = []
+    for article in articles:
+        if article.get("draft") or "抽選" not in article["title"]:
+            continue
+        published = datetime.fromisoformat(article["created_at"].replace("Z", "+00:00"))
+        if published.tzinfo is None:
+            raise ValueError("HLJ article API: publication timezone missing")
+        published_text = published.astimezone(ZoneInfo(config.timezone)).strftime(
+            "%Y年%m月%d日 %H:%M"
+        )
+        article_html = (
+            f"<title>{escape(article['title'])}</title><article>"
+            f"<h1>{escape(article['title'])}</h1><time>{published_text}</time>"
+            f"{article['body']}</article>"
+        )
+        parsed, _, article_alerts = _parse_hobbylink_detail(
+            article_html, article["html_url"], source, config,
+        )
+        cases.extend(parsed)
+        alerts.extend(article_alerts)
+    return cases, [], alerts
 
 
 def retailer_lottery_index_error(
@@ -771,6 +852,8 @@ def parse_retailer_lottery_detail(
     if source.id == "rakuten_books":
         return _parse_rakuten_detail(html, url, source, config, diagnostics)
     if source.id == "hobbylink_japan_lottery":
+        if is_hobbylink_articles_api(url):
+            return _parse_hobbylink_api(html, url, source, config)
         return _parse_hobbylink_detail(html, url, source, config)
     if source.id == "tokyo_otaku_mode_lottery":
         return _parse_tokyo_otaku_mode_detail(html, url, source, config)

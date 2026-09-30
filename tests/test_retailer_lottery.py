@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import json
 from dataclasses import replace
 from datetime import datetime
 from zoneinfo import ZoneInfo
+
+import pytest
 
 from tcg_monitor.config import load_config
 from tcg_monitor.models import (
@@ -15,6 +18,7 @@ from tcg_monitor.models import (
 )
 from tcg_monitor.parsers.premium_bandai import parse_nyuka_now_lottery_summary
 from tcg_monitor.parsers.retailer_lottery import (
+    discover_hobbylink_article_api_pages,
     discover_retailer_lottery_urls,
     is_retailer_lottery_source,
     parse_retailer_lottery_detail,
@@ -326,6 +330,57 @@ def test_hobbylink_index_follows_game_lottery_article_without_product_name() -> 
         source,
         _config(),
     ) == ["https://support.hlj.co.jp/hc/ja/articles/59743843810969-lottery"]
+
+
+def test_hobbylink_public_api_preserves_official_article_and_application_links() -> None:
+    config = load_config("sites.yaml")
+    source = next(s for s in config.sources if s.id == "hobbylink_japan_lottery")
+    article_url = "https://support.hlj.co.jp/hc/ja/articles/62299569999897"
+    body = """
+    <a href="https://www.hlj.co.jp/product/PKM-BOX.html">ポケモンカードゲーム MEGA
+    拡張パック ストームエメラルダ 1Box 30pcs</a>
+    <h2>エントリー受付期間</h2><p>2026年9月30日(水)〜10月7日(水)23時59分まで</p>
+    <a href="https://forms.gle/officialApplication">応募フォームはこちら</a>
+    """
+    payload = json.dumps({
+        "count": 1, "page": 1, "next_page": None,
+        "articles": [{"title": "【抽選販売】ポケモンカードゲーム 抽選販売応募概要",
+                      "html_url": article_url, "created_at": "2026-09-30T03:05:00Z",
+                      "body": body, "draft": False}],
+    })
+    cases, releases, alerts = parse_retailer_lottery_detail(
+        payload, source.discovery_urls[0], source, config,
+    )
+    assert not alerts and not releases
+    assert len(cases) == 1
+    assert cases[0].source_url == article_url
+    assert cases[0].official_url == "https://forms.gle/officialApplication"
+    assert cases[0].start_at.isoformat().startswith("2026-09-30")
+
+
+@pytest.mark.parametrize("payload", [
+    "<html>Just a moment...</html>",
+    '{"error":"access denied"}',
+    '{"count":1,"page":1,"next_page":null,"articles":[]}',
+    '{"count":0,"page":1,"next_page":"https://example.com/articles","articles":[]}',
+])
+def test_hobbylink_invalid_api_is_not_a_successful_empty_result(payload: str) -> None:
+    config = load_config("sites.yaml")
+    source = next(s for s in config.sources if s.id == "hobbylink_japan_lottery")
+    with pytest.raises(ValueError):
+        parse_retailer_lottery_detail(payload, source.discovery_urls[0], source, config)
+
+
+def test_hobbylink_public_api_follows_next_page_and_accepts_real_zero() -> None:
+    config = load_config("sites.yaml")
+    source = next(s for s in config.sources if s.id == "hobbylink_japan_lottery")
+    url = source.discovery_urls[0]
+    next_url = url + "&page=2"
+    payload = json.dumps({"count": 1, "page": 1, "articles": [], "next_page": next_url})
+    assert discover_hobbylink_article_api_pages(payload, url) == [next_url]
+    empty = json.dumps({"count": 0, "page": 1, "articles": [], "next_page": None})
+    assert discover_hobbylink_article_api_pages(empty, url) == []
+    assert parse_retailer_lottery_detail(empty, url, source, config) == ([], [], [])
 
 
 def test_hobbylink_detail_uses_article_date_when_page_only_publishes_deadline() -> None:

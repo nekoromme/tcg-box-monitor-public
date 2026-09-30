@@ -96,6 +96,40 @@ def _source(source_id: str) -> SourceConfig:
     )
 
 
+def test_non_tcg_keyword_does_not_hide_unread_image_or_supported_box() -> None:
+    config = load_config("sites.yaml")
+    source = _source("yahoo_realtime_dmm_tsuhan")
+    url = source.discovery_urls[0]
+    status_url = "https://x.com/DMM_tsuhan/status/2105067964882198698"
+    html = f"""<div class="Tweet_TweetContainer__test">
+      <p class="Tweet_body__test">ガンプラ等の抽選受付開始。対象商品は画像をご確認ください。</p>
+      <img src="https://pbs.twimg.com/media/current.jpg">
+      <a href="{status_url}">投稿</a>
+    </div>"""
+    pending: dict[str, object] = {}
+    diagnostics: dict[str, int] = {}
+
+    def unread_image(_: str) -> str:
+        raise RuntimeError("image download failed")
+
+    cases, _, _ = parse_yahoo_realtime(
+        html, url, source, config, date(2026, 9, 30), ocr_reader=unread_image,
+        known_releases=[], ocr_pending=pending, diagnostics=diagnostics,
+    )
+    assert not cases and status_url in pending
+    assert not diagnostics.get("excluded_product")
+    mixed_html = html.replace(
+        "ガンプラ等の抽選受付開始。対象商品は画像をご確認ください。",
+        'ガンプラとONE PIECEカードゲーム ブースターパック「決戦の刻」の抽選受付開始。'
+        '応募期間：2026年9月30日12:00〜10月3日23:59',
+    ).replace('<img src="https://pbs.twimg.com/media/current.jpg">', '')
+    cases, _, alerts = parse_yahoo_realtime(
+        mixed_html, url, source, config, date(2026, 9, 30), known_releases=[],
+    )
+    assert len(cases) == 1 and not alerts
+    assert cases[0].game_id == "one_piece_card"
+
+
 def test_livepocket_follows_only_box_lottery_details() -> None:
     html = """
     <main><ul>

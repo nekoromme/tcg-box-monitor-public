@@ -2634,6 +2634,13 @@ sources:
     account: p_bandai
     retailer_id: premium_bandai
     retailer_name: プレミアムバンダイ
+    non_target_product_keywords:
+    - METAL ROBOT魂
+    - METAL BUILD
+    - MGSD
+    - S.H.Figuarts
+    - グレートザウルス
+    - たまごっちMAO
 - id: nyuka_now_premium_bandai_onepiece
   name: 入荷Now プレミアムバンダイ抽選欄
   source_type: secondary_lottery_summary
@@ -3158,6 +3165,7 @@ sources:
   - lottery_discovery
   enabled: true
   discovery_urls:
+  - https://support.hlj.co.jp/api/v2/help_center/ja/sections/203939188/articles.json?per_page=100
   - https://support.hlj.co.jp/hc/ja/sections/203939188-%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B
   start_labels:
   - 抽選応募受付期間
@@ -3172,7 +3180,7 @@ sources:
   - application_start
   fallback_source_ids:
   - yahoo_realtime_hobbylink_japan
-  notes: 公式お知らせの記事から対象BOX・受付開始日・応募フォームを直接取得する。実行環境から403になる場合は公式X経路で継続する。
+  notes: 公式の公開記事APIから対象BOX・受付開始日・応募フォームを取得し、全ページを巡回する。APIが壊れた場合のみ通常の公式お知らせへ切り替える。公式Xも継続する。
   parser_kind: retailer_lottery
   parser_options:
     index_url: https://support.hlj.co.jp/hc/ja/sections/203939188-%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B
@@ -3318,6 +3326,12 @@ sources:
     account: DMM_tsuhan
     retailer_id: dmm_tsuhan
     retailer_name: DMM通販
+    non_target_product_keywords:
+    - ガンプラ
+    - プラモデル
+    - オーブンレンジ
+    - ラジコン
+    - 鉄道模型
 - id: yahoo_realtime_dmm_onepiece_secondary
   name: ワンピースカード入荷情報X DMM通販抽選補完
   source_type: secondary_social_search
@@ -4088,6 +4102,8 @@ sources:
     account: magi_sendai
     retailer_id: magi_sendai
     retailer_name: magi仙台店
+    non_target_product_keywords:
+    - スタートデッキ100
 - id: meli_melo_toreca_douraku_current
   name: トレカ道楽仙台店 現行抽選補完
   source_type: secondary_lottery_roundup

@@ -1579,6 +1579,24 @@ def parse_yahoo_realtime(
         if any(word in compact_text for word in ("大会", "参加抽選", "当選発表のみ")):
             count("tournament_or_result")
             continue
+        # These posts concern an already closed lottery or the winner's
+        # collection deadline, even though they contain "抽選販売".
+        # A new application announcement in the same post must still be read.
+        if not any(word in compact_text for word in _OPEN_APPLICATION_WORDS) and (
+            re.search(
+                r"抽選(?:受付|応募|申込(?:み)?|申し込み)?(?:は|が)(?:終了|締切)",
+                compact_text,
+            )
+            or re.search(
+                r"抽選(?:販売)?の(?:受け取り|受取り|引き取り|取り置き|引取)"
+                r"(?:は|が)?(?:本日|今日|明日)?(?:が|で|は)?(?:締め?切り?|締切|終了)",
+                compact_text,
+            )
+        ):
+            count("closed_or_result_notice")
+            if ocr_pending is not None:
+                ocr_pending.pop(status_url, None)
+            continue
         posted_on = _post_date(status_id, config.timezone)
         if (detected - posted_on).days > int(config.system.get("implausible_past_days", 45)):
             count("old_post")
@@ -1781,9 +1799,21 @@ def parse_yahoo_realtime(
                         )
                     )
                 continue
+            # Explicit retailer-specific exclusions are evidence of an
+            # out-of-scope product. An unmatched maker catalog alone is not.
+            # An unread image above must remain pending even in a toy post.
+            if any(
+                word.casefold() in combined_text.casefold()
+                for word in _string_list_option(source, "non_target_product_keywords")
+            ):
+                count("excluded_product")
+                if ocr_pending is not None:
+                    ocr_pending.pop(status_url, None)
+                continue
             # OCRが成功した、または画像がない状態で公式商品一覧にも一致しない
             # 投稿は、従来どおり他TCGとして静かに除外する。
             if known_releases is not None:
+                count("unclassified_lottery")
                 if ocr_pending is not None:
                     ocr_pending.pop(status_url, None)
                 continue
@@ -1802,6 +1832,7 @@ def parse_yahoo_realtime(
             )
             continue
         if not source.supports(game_id):
+            count("unsupported_game")
             continue
 
         game = config.games[game_id]
@@ -1818,6 +1849,7 @@ def parse_yahoo_realtime(
         # 遊戯王は商品名そのものがシリーズ区分を兼ねる。低相場シリーズの
         # 投稿に「1BOX」があっても、BOX証拠で除外を打ち消さない。
         if game_id == "yu_gi_oh" and has_excluded_product and not selected_products:
+            count("excluded_product")
             continue
         if (
             has_excluded_product
@@ -1949,12 +1981,16 @@ def parse_yahoo_realtime(
             # fallback, while an exact application deadline still blocks an
             # already-closed campaign above.
             if not _detection_fallback_is_fresh(source, config, posted_on, detected):
+                if posted_on < detected:
+                    count("old_post")
                 continue
             start_at = detected + timedelta(days=1)
             extraction_method = "yahoo_realtime_detected_next_day"
             confidence = "low"
         elif uses_first_detection:
             if not _detection_fallback_is_fresh(source, config, posted_on, detected):
+                if posted_on < detected:
+                    count("old_post")
                 continue
             start_at = detected
             extraction_method = "yahoo_realtime_detected_open"
@@ -1982,6 +2018,8 @@ def parse_yahoo_realtime(
                 if source.source_tier == SourceTier.SECONDARY:
                     continue
                 if not _detection_fallback_is_fresh(source, config, posted_on, detected):
+                    if posted_on < detected:
+                        count("old_post")
                     continue
                 # 締切は開始日に転用しない。公式投稿の開始日が読めなければ、
                 # 初回検知の翌日を便宜上の予定日とする。実際の開始日は不明。
@@ -2001,6 +2039,8 @@ def parse_yahoo_realtime(
                 confidence = "medium"
             elif not start_at:
                 if not _detection_fallback_is_fresh(source, config, posted_on, detected):
+                    if posted_on < detected:
+                        count("old_post")
                     continue
                 start_at = detected
                 extraction_method = "yahoo_realtime_detected_open"
