@@ -149,6 +149,14 @@ def _validated_system(raw_system: Any) -> dict[str, Any]:
     if not isinstance(raw_system, dict):
         raise ConfigError("system must be a mapping")
     system = dict(raw_system)
+    approved_providers = system.get("secondary_provider_allowlist")
+    if approved_providers is not None and (
+        not isinstance(approved_providers, list)
+        or not 1 <= len(approved_providers) <= 3
+        or not all(isinstance(value, str) and value for value in approved_providers)
+        or len(set(approved_providers)) != len(approved_providers)
+    ):
+        raise ConfigError("secondary_provider_allowlist must contain one to three unique providers")
     runtime = system.get("runtime", {})
     if not isinstance(runtime, dict):
         raise ConfigError("runtime must be a mapping")
@@ -446,6 +454,14 @@ def load_config(
         parser_options = s.get("parser_options", {})
         if not isinstance(parser_options, dict):
             raise ConfigError(f"bad parser_options: {s['id']}")
+        approved_providers = system.get("secondary_provider_allowlist")
+        if (approved_providers is not None and tier == SourceTier.SECONDARY
+                and s.get("enabled", True)):
+            provider = parser_options.get("information_provider")
+            if provider not in approved_providers:
+                raise ConfigError(f"unapproved secondary information provider: {s['id']}")
+            if parser_kind == "yahoo_realtime" and parser_options.get("account") != provider:
+                raise ConfigError(f"secondary account does not match approved provider: {s['id']}")
         sources.append(
             SourceConfig(
                 id=s["id"],

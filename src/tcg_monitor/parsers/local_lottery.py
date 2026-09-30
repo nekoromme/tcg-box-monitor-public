@@ -61,6 +61,9 @@ def _yahoo_profile(source: SourceConfig | str) -> tuple[str, str, str] | None:
         options = source.parser_options
         if source.parser_kind == "yahoo_realtime":
             account = options.get("account")
+            if isinstance(account, str) and account and options.get("retailer_profiles"):
+                # 店舗を固定せず、1回取得した大手アカウントの投稿を店舗別に振り分ける。
+                return account, "secondary_multi_retailer", source.name
             retailer_id = options.get("retailer_id")
             retailer_name = options.get("retailer_name")
             if all(
@@ -748,9 +751,24 @@ def _notice_range_scope(text: str) -> str | None:
     """Return a loose OCR notice scope only when it contains a period marker."""
     compact = re.sub(r"\s+", "", text)
     match = re.search(r"抽選販売のお知らせ[：:]?(.{0,180})", compact)
-    if not match or not any(marker in match.group(1) for marker in ("まで", "～", "〜")):
+    if match and any(marker in match.group(1) for marker in ("まで", "～", "〜")):
+        return match.group(1)
+    # アプリ画面の青い「応募期間」見出しがOCRで消えても、同じ画像に
+    # 「抽選販売受付」と開始・終了を含む独立した行が残ることがある。
+    # 発売日を拾わず、当選発表・当選者の販売期間より前の範囲だけを見る。
+    if "抽選販売受付" not in compact:
         return None
-    return match.group(1)
+    # 通常画像と濃淡補正画像の認識結果が連結される。前の画像にある
+    # 「抽選結果」で、後の画像の応募期間まで切り落とさない。
+    ranges: set[str] = set()
+    for scope in re.split(r"抽選\s*販売\s*受付", text)[1:]:
+        scope = re.split(r"当選者販売期間|購入期間|当選発表|抽選結果", scope, maxsplit=1)[0]
+        ranges.update(re.sub(r"\s+", "", line) for line in scope.splitlines() if (
+            "まで" in line and any(marker in line for marker in ("から", "～", "〜"))
+            and len(re.findall(r"\d{1,2}[月/]\d{1,2}日?", line)) >= 2
+            and not any(marker in line for marker in ("発売", "販売期間", "購入期間"))
+        ))
+    return next(iter(ranges)) if len(ranges) == 1 else None
 
 
 def _notice_range_start(text: str, base_date: date | None = None) -> datetime | date | None:
@@ -1467,6 +1485,11 @@ def parse_yahoo_realtime(
             diagnostics[reason] = diagnostics.get(reason, 0) + 1
 
     source = source_with_runtime_parser_profile(source)
+    if source.parser_options.get("retailer_profiles"):
+        return _parse_secondary_social_feed(
+            html, url, source, config, detected_on, ocr_reader, ocr_cache,
+            known_releases, ocr_pending, ocr_cache_meta, ocr_attempt_token, diagnostics,
+        )
     profile = _yahoo_profile(source)
     if profile is None:
         raise ValueError(f"Yahoo parser profile is missing: {source.id}")
@@ -1584,6 +1607,17 @@ def parse_yahoo_realtime(
                     game_id,
                 )
             )
+            continue
+        body_end = _status_datetime_option(source, "confirmed_application_ends", status_id) or (
+            _application_deadline(post_text, posted_on)
+        )
+        body_end_date = body_end.date() if isinstance(body_end, datetime) else body_end
+        if body_end_date is not None and body_end_date < detected:
+            # 共通フィードには過去の告知も並ぶ。締切が明示済みなら画像を
+            # 再取得・再認識する前に除外し、初回の統合巡回を無駄に遅らせない。
+            count("application_ended")
+            if ocr_pending is not None:
+                ocr_pending.pop(status_url, None)
             continue
         # 二次情報の店舗一覧は、本文に店舗名が含まれていても各店の新規開始告知
         # ではない。個別店舗の告知だけを候補にし、まとめ投稿から案件を作らない。
@@ -2027,6 +2061,71 @@ def parse_yahoo_realtime(
         if ocr_pending is not None:
             ocr_pending.pop(status_url, None)
     return list(cases.values()), [], alerts
+
+
+def _parse_secondary_social_feed(
+    html: str,
+    url: str,
+    source: SourceConfig,
+    config: Config,
+    detected_on: date | None,
+    ocr_reader: OcrReader | None,
+    ocr_cache: dict[str, str] | None,
+    known_releases: list[Release] | None,
+    ocr_pending: dict[str, object] | None,
+    ocr_cache_meta: dict[str, object] | None,
+    ocr_attempt_token: str | None,
+    diagnostics: dict[str, int] | None,
+) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
+    """共通フィードを一度分解し、店舗名が明記された単店の投稿だけを解析する。"""
+    profiles = source.parser_options["retailer_profiles"]
+    account = str(source.parser_options["account"])
+    if source.source_tier != SourceTier.SECONDARY or not isinstance(profiles, list):
+        raise ValueError(f"bad secondary retailer profiles: {source.id}")
+    for item in profiles:
+        if not isinstance(item, dict) or not all(
+            isinstance(item.get(key), str) and item[key]
+            for key in ("retailer_id", "retailer_name")
+        ) or not isinstance(item.get("required_retailer_mentions"), list) or not all(
+            isinstance(value, str) and value for value in item["required_retailer_mentions"]
+        ) or not item["required_retailer_mentions"]:
+            raise ValueError(f"bad secondary retailer profile: {source.id}")
+
+    grouped: dict[str, list[str]] = {}
+    processed: set[str] = set()
+    for href, container in _social_status_containers(html, url, account):
+        if href in processed:
+            continue
+        processed.add(href)
+        body = re.sub(r"\s+", "", _tweet_body(container)).casefold()
+        matched = [item for item in profiles if any(
+            alias.casefold() in body for alias in item["required_retailer_mentions"]
+        )]
+        # 店舗一覧や合同まとめの日付を、列挙された全店舗へ流用しない。
+        if len(matched) != 1:
+            if diagnostics is not None:
+                reason = "ambiguous_retailer_post" if matched else "retailer_not_configured"
+                diagnostics[reason] = diagnostics.get(reason, 0) + 1
+            continue
+        grouped.setdefault(matched[0]["retailer_id"], []).append(str(container))
+
+    cases: dict[str, LotteryCase] = {}
+    alerts: dict[str, Alert] = {}
+    for item in profiles:
+        markup = grouped.get(item["retailer_id"])
+        if not markup:
+            continue
+        options = dict(source.parser_options)
+        options.pop("retailer_profiles")
+        options.update(item)
+        scoped = replace(source, parser_options=options)
+        parsed, _, found_alerts = parse_yahoo_realtime(
+            "\n".join(markup), url, scoped, config, detected_on, ocr_reader, ocr_cache,
+            known_releases, ocr_pending, ocr_cache_meta, ocr_attempt_token, diagnostics,
+        )
+        cases.update((case.case_id, case) for case in parsed)
+        alerts.update((alert.fingerprint, alert) for alert in found_alerts)
+    return list(cases.values()), [], list(alerts.values())
 
 
 def preserve_first_detection_start(

@@ -4,6 +4,8 @@ timezone: Asia/Tokyo
 system:
   # 公式Xの検索語の反映遅延を、同じ公式アカウントの全投稿検索で補完する。
   social_account_fallback: true
+  # 抽選の補完元はこの3運営元だけ。店ごとの個人・ブログ追加を防ぐ。
+  secondary_provider_allowlist: [onepiecenyuka, nyuka_now, snkrdunk]
   runtime:
     confirmed_false_positive_cases:
       82db0c39e776b9374d92fc5d3f959221b5e0b87952614090ec26393ab90bbf28:
@@ -1205,7 +1207,7 @@ sources:
     pokemon_card: verified
   purposes:
   - secondary_lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3APokeGetInfoMain%20%E3%83%89%E3%83%B3%E3%83%BB%E3%82%AD%E3%83%9B%E3%83%BC%E3%83%86%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3APokeGetInfoMain&ei=UTF-8
@@ -1840,7 +1842,7 @@ sources:
   purposes:
   - secondary_lottery_discovery
   - postponement_monitoring
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20%E3%83%A4%E3%83%9E%E3%83%80%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi&ei=UTF-8
@@ -1872,7 +1874,7 @@ sources:
     one_piece_card: prospective
   purposes:
   - secondary_lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Apremier777aa%20%E3%83%A4%E3%83%9E%E3%83%80%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3Apremier777aa&ei=UTF-8
@@ -2128,6 +2130,7 @@ sources:
   notes: 公式監視不能部分の代替。記事の発見だけでなく、同じ記事内に後日追加される店舗行も監視する。リンク先公式情報を優先し、二次情報であることを通知へ表示する。
   parser_kind: snkrdunk
   parser_options:
+    information_provider: snkrdunk
     retailers: &id001
     - retailer_id: pokemon_center_online
       retailer_name: ポケモンセンターオンライン
@@ -2268,6 +2271,7 @@ sources:
   notes: 2026-07-13時点の世界最強の戦士記事は発売日と楽天ブックス等の抽選行を掲載。公式商品一覧または公式店舗ページが得られた時は同一案件へ統合して確度を上げる。
   parser_kind: snkrdunk
   parser_options:
+    information_provider: snkrdunk
     retailers: *id001
 - id: premium_bandai_onepiece
   name: プレミアムバンダイ（ワンピースカード）
@@ -2507,6 +2511,7 @@ sources:
   - official_application_link
   notes: DMM通販のワンピース抽選ページを最優先で取得し、LivePocket検索から漏れるフルコンプと、公式一覧が不安定なシーガル、エディオン、ファミマオンライン、イトーヨーカドー通販、コジマアプリ抽選を補完する。受付中・受付予定の各見出し配下だけを解析し、確度mediumで登録する。
   parser_options:
+    information_provider: nyuka_now
     priority_retailers:
     - &id002
       heading_marker: シーガル
@@ -2560,6 +2565,38 @@ sources:
       official_host: kojima.net
       game_id: pokemon_card
       summary_url: https://nyuka-now.com/archives/2459
+
+    - heading_marker: イオンスタイルオンライン
+      retailer_id: aeon_style_online
+      retailer_name: イオンスタイルオンライン
+      fallback_url: https://aeonretail.com/Page/k-entry_0
+      official_host: aeonretail.com
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
+
+    - heading_marker: イオンスタイルオンライン
+      retailer_id: aeon_style_online
+      retailer_name: イオンスタイルオンライン
+      fallback_url: https://aeonretail.com/Page/k-entry_0
+      official_host: aeonretail.com
+      game_id: one_piece_card
+      summary_url: https://nyuka-now.com/archives/97393
+
+    - heading_marker: ドン・キホーテ（アプリ）
+      retailer_id: donki
+      retailer_name: ドン・キホーテ
+      fallback_url: https://www.majica-net.com/app/
+      official_host: majica-net.com
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
+
+    - heading_marker: トレカプラザ55通販
+      retailer_id: torecaplaza55
+      retailer_name: トレカプラザ55通販店
+      fallback_url: https://torecaplaza55.com/
+      official_host: torecaplaza55.com
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
 - id: yahoo_realtime_premium_bandai_onepiece
   name: プレミアムバンダイ公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -2593,7 +2630,7 @@ sources:
     one_piece_card: verified
   purposes:
   - lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://nyuka-now.com/archives/97393
   fallback_source_ids:
@@ -2654,7 +2691,7 @@ sources:
     yu_gi_oh: prospective
   purposes:
   - secondary_lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Apokecamatomeru%20%E3%83%88%E3%83%AC%E3%82%AB%E3%83%97%E3%83%A9%E3%82%B655%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3Apokecamatomeru&ei=UTF-8
@@ -2845,7 +2882,7 @@ sources:
     yu_gi_oh: prospective
   purposes:
   - secondary_lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20HMV%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi&ei=UTF-8
@@ -2942,7 +2979,7 @@ sources:
   - box_lottery
   - application_start
   fallback_source_ids:
-  - yahoo_realtime_ministop_secondary
+  - nyuka_now_fullcomp_livepocket
   notes: 公式のエンタメ・ホビー新着一覧から対象BOXを追う。アクセス集中時のCloudflare順番待ちは商品ページとして扱わず、ポケカ特設ページと二次情報を予備経路にする。デッキセット、カードセット、単品パック、通常販売は共通のBOX判定で除外する。
   parser_kind: retailer_lottery
   parser_options:
@@ -3425,7 +3462,7 @@ sources:
     gundam_card: prospective
   purposes:
   - secondary_lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi%20%E3%83%9F%E3%83%8B%E3%82%B9%E3%83%88%E3%83%83%E3%83%97%E3%82%AA%E3%83%B3%E3%83%A9%E3%82%A4%E3%83%B3%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://twstalker.com/gamegetnavi
@@ -3502,7 +3539,7 @@ sources:
   - https://aeonretail.com/Page/k-entry_01.aspx
   fallback_source_ids:
   - snkrdunk_pokemon
-  - aeon_entry_summary
+  - nyuka_now_fullcomp_livepocket
   page_url_patterns:
   - ^https://aeonretail\.com/campaign/.+
   - ^https://www\.aeonstyleonline\.com/.+
@@ -3571,7 +3608,7 @@ sources:
     dragon_ball_fusion_world: verified
   purposes:
   - secondary_lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://mikeco-room.com/onepiece-sekaisaikyounosenshi/
   render_mode: http
@@ -4049,7 +4086,7 @@ sources:
     one_piece_card: verified
   purposes:
   - secondary_lottery_discovery
-  enabled: true
+  enabled: false
   discovery_urls:
   - https://meli-melo.blog.jp/archives/1083580084.html
   render_mode: http
@@ -4931,3 +4968,95 @@ sources:
     account: batoloco_1825
     retailer_id: batoloco_shibuya_center
     retailer_name: TCバトロコ渋谷センター街店
+
+- id: secondary_onepiece_news
+  name: ワンピースカードゲーム速報 店舗横断補完
+  source_type: secondary_social_search
+  source_tier: secondary
+  coverage_scope: specialized
+  supported_games:
+    one_piece_card: verified
+  purposes:
+  - secondary_lottery_discovery
+  enabled: true
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Aonepiecenyuka%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3Aonepiecenyuka&ei=UTF-8
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - approved_account_post
+  - named_single_retailer
+  - supported_tcg_product
+  - application_period_or_image_ocr
+  notes: フォロワー1万人超の継続的な抽選速報アカウントを店舗横断で1回取得する。単店告知だけを店舗に振り分け、本文・画像に明示された応募開始日時を使う。投稿日時や締切から開始日を作らない。
+  parser_kind: yahoo_realtime
+  parser_options:
+    information_provider: onepiecenyuka
+    account: onepiecenyuka
+    retailer_profiles:
+    - retailer_id: yamada_denki
+      retailer_name: ヤマダデンキ
+      required_retailer_mentions:
+      - ヤマダデンキ
+      - ヤマダ電機
+      - YAMADA
+      official_confirmation_url: https://www.yamada-denki.jp/service/pointservice/digital-kaiin.html
+    - retailer_id: kojima
+      retailer_name: コジマ
+      required_retailer_mentions:
+      - コジマ
+      official_confirmation_url: https://www.kojima.net/shop/app/kojima_appli.html
+    - retailer_id: geo
+      retailer_name: ゲオ
+      required_retailer_mentions:
+      - ゲオ
+      - GEO
+    - retailer_id: yodobashi
+      retailer_name: ヨドバシカメラ
+      required_retailer_mentions:
+      - ヨドバシ
+    - retailer_id: kids_republic
+      retailer_name: キッズリパブリック
+      required_retailer_mentions:
+      - キッズリパブリック
+    - retailer_id: aeon_style_online
+      retailer_name: イオンスタイルオンライン
+      required_retailer_mentions:
+      - イオンスタイルオンライン
+    - retailer_id: torecaplaza55
+      retailer_name: トレカプラザ55通販店
+      required_retailer_mentions:
+      - トレカプラザ55
+      - トレプラ55
+    - retailer_id: hmv
+      retailer_name: HMV
+      required_retailer_mentions:
+      - HMV
+    - retailer_id: dmm_tsuhan
+      retailer_name: DMM通販
+      required_retailer_mentions:
+      - DMM通販
+    - retailer_id: hobby_search
+      retailer_name: ホビーサーチ
+      required_retailer_mentions:
+      - ホビーサーチ
+    - retailer_id: ministop_online
+      retailer_name: ミニストップオンライン
+      required_retailer_mentions:
+      - ミニストップオンライン
+    - retailer_id: premium_bandai
+      retailer_name: プレミアムバンダイ
+      required_retailer_mentions:
+      - プレミアムバンダイ
+      - プレバン
+    - retailer_id: furuichi
+      retailer_name: ふるいち
+      required_retailer_mentions:
+      - ふるいち
+      - 古本市場
+    - retailer_id: fullcomp
+      retailer_name: フルコンプ
+      required_retailer_mentions:
+      - フルコンプ

@@ -1705,7 +1705,7 @@ def test_access_limited_production_sources_declare_healthy_alternatives() -> Non
     ]
     assert by_id["kids_republic"].supported_games["yu_gi_oh"] == (GameSupport.VERIFIED)
     assert by_id["aeon_style_online"].fallback_source_ids == [
-        "snkrdunk_pokemon", "aeon_entry_summary"
+        "snkrdunk_pokemon", "nyuka_now_fullcomp_livepocket"
     ]
     assert by_id["dmm_hobby_lottery"].fallback_source_ids == [
         "yahoo_realtime_dmm_tsuhan",

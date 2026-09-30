@@ -19,7 +19,7 @@ def test_donki_app_cardset_announcement_and_retailer_filter() -> None:
     sources = {source.id: source for source in config.sources}
     assert sources["yahoo_realtime_donki_official"].enabled
     source = sources["yahoo_realtime_donki_secondary"]
-    assert source.enabled
+    assert not source.enabled  # 個人別の補完を廃止し、入荷Nowの共通欄へ移した。
     html = """
     <div class="Tweet_TweetContainer__test">
       <p class="Tweet_body__test">
@@ -129,14 +129,21 @@ def test_priority_sendai_sources_fall_back_when_yahoo_is_empty() -> None:
     assert "2084826013847130224" in douraku.discovery_urls[3]
     assert by_id["livepocket_hmv"].enabled
     hmv_secondary = by_id["yahoo_realtime_hmv_secondary"]
-    assert hmv_secondary.enabled
+    assert not hmv_secondary.enabled
+    central = by_id["secondary_onepiece_news"]
+    assert central.enabled
+    assert any(p["retailer_id"] == "hmv" for p in central.parser_options["retailer_profiles"])
     assert hmv_secondary.source_tier.value == "secondary"
     assert hmv_secondary.fallback_on_empty_result
     assert hmv_secondary.discovery_urls[1] == (
         "https://search.yahoo.co.jp/realtime/search?p=id%3Agamegetnavi&ei=UTF-8"
     )
     plaza_secondary = by_id["yahoo_realtime_torecaplaza55_secondary"]
-    assert plaza_secondary.enabled
+    assert not plaza_secondary.enabled
+    shared_summary = by_id["nyuka_now_fullcomp_livepocket"]
+    assert shared_summary.enabled
+    assert any(p["retailer_id"] == "torecaplaza55"
+               for p in shared_summary.parser_options["priority_retailers"])
     assert plaza_secondary.source_tier.value == "secondary"
     assert plaza_secondary.lottery_start_policy.value == "first_detection"
     assert "publish.twitter.com/oembed" in plaza_secondary.discovery_urls[2]

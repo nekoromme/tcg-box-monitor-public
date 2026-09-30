@@ -12,7 +12,7 @@ from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
-from tcg_monitor.result_date import published_result_date
+from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
 
 _HEADINGS = {"h2", "h3", "h4", "h5", "h6"}
 
@@ -502,6 +502,10 @@ def _parse_nyuka_now_priority_retailers(
             )
             continue
 
+        end_match = re.search(r"終了日\s*[：:]?\s*(.{0,100})", section_text)
+        parsed_end = parse_first_datetime(end_match.group(1)) if end_match else None
+        end_at = parsed_end.value if parsed_end else None
+
         parsed_products = 0
         for candidate in candidates:
             if not additional_matches(game, candidate) and not any(
@@ -540,8 +544,9 @@ def _parse_nyuka_now_priority_retailers(
                     source.source_tier,
                     "nyuka_now_priority_retailer_application_start",
                     "medium",
-                    result_at=(published_result_date(section_text, start_at)
-                               if retailer_id == "kojima" else None),
+                    end_at=end_at,
+                    result_at=(published_result_date(section_text, start_at, end_at)
+                               if retailer_id in RESULT_REMINDER_RETAILERS else None),
                 ).with_id()
             )
 
@@ -580,10 +585,17 @@ def parse_nyuka_now_lottery_summary(
     priority_cases, priority_releases, priority_alerts = _parse_nyuka_now_priority_retailers(
         html, url, source, config
     )
+    # プレバン欄も同じ取得結果から読む。店舗ごとに同じまとめを再取得しない。
+    premium_cases: list[LotteryCase] = []
+    premium_alerts: list[Alert] = []
+    if _premium_bandai_section(BeautifulSoup(html, "lxml")) is not None:
+        premium_cases, _, premium_alerts = parse_nyuka_now_premium_bandai(
+            html, url, source, config,
+        )
     return (
-        [*fullcomp_cases, *priority_cases],
+        [*fullcomp_cases, *priority_cases, *premium_cases],
         [*fullcomp_releases, *priority_releases],
-        [*fullcomp_alerts, *priority_alerts],
+        [*fullcomp_alerts, *priority_alerts, *premium_alerts],
     )
 
 

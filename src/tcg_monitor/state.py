@@ -384,6 +384,14 @@ class MonitorState:
                 )
                 if value
             }
+            if (case.retailer_id == "yamada_denki"
+                    and stable_url_identity(str(raw_record.get("source_url") or ""))
+                    != stable_url_identity(case.source_url)
+                    and str(raw_record.get("start_at") or "")[:10]
+                    != case.start_at.isoformat()[:10]):
+                # アプリ紹介URLは毎回同じ。情報源の交代では同じ開始日の
+                # 配信履歴を引き継ぐが、次回の同商品抽選まで通知済みにしない。
+                continue
             if current_urls & old_urls:
                 same_article.append((old_id, raw_record))
             same_amazon_product = (

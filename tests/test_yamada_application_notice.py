@@ -63,11 +63,13 @@ def test_yamada_closed_application_is_not_announced_again() -> None:
 
 def test_yamada_application_sources_are_enabled_with_empty_search_fallback() -> None:
     config = load_config("sites.yaml")
+    source = next(item for item in config.sources if item.id == "secondary_onepiece_news")
+    assert source.enabled
+    assert source.fallback_on_empty_result
+    assert len(source.discovery_urls) == 2
     for source_id in (
         "yahoo_realtime_yamada_secondary",
         "yahoo_realtime_yamada_onepiece_secondary",
     ):
         source = next(item for item in config.sources if item.id == source_id)
-        assert source.enabled
-        assert source.fallback_on_empty_result
-        assert len(source.discovery_urls) >= 2
+        assert not source.enabled

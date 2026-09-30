@@ -608,6 +608,9 @@ def _is_amazon_invitation(case: LotteryCase) -> bool:
 
 
 def _lottery_application_label(case: LotteryCase) -> str:
+    if case.retailer_id == "yamada_denki" and case.opportunity_kind == OpportunityKind.LOTTERY:
+        # このURLはアプリの紹介ページ。Webの応募フォームと誤認させない。
+        return "公式アプリ案内（応募はアプリ内）"
     if _is_amazon_invitation(case):
         return "Amazon招待リクエストページ"
     if case.retailer_id == "furuichi":
@@ -622,6 +625,34 @@ def _lottery_application_label(case: LotteryCase) -> str:
     return "公式応募ページ"
 
 
+def _lottery_application_guidance(case: LotteryCase) -> list[str]:
+    """応募ボタンがWebにない店舗は、通知とカレンダーに同じ手順を載せる。"""
+    if case.retailer_id == "yamada_denki" and case.opportunity_kind == OpportunityKind.LOTTERY:
+        return ["応募方法: ヤマダデジタル会員アプリ →「店頭セール」→ 対象商品の抽選バナー"]
+    return []
+
+
+def _lottery_application_url(case: LotteryCase) -> str:
+    if _lottery_application_guidance(case):
+        return "https://www.yamada-denki.jp/service/pointservice/digital-kaiin.html"
+    return case.official_url or case.source_url
+
+
+def _lottery_confirmation_note(case: LotteryCase) -> str:
+    if _lottery_application_guidance(case):
+        return "情報元: 二次情報（応募前にアプリ内の募集内容・条件を確認）"
+    return "情報元: 二次情報（応募前に公式ページで確認）"
+
+
+def _lottery_result_confirmation(retailer_id: str, official_url: str) -> str:
+    if retailer_id == "yamada_denki":
+        return (
+            "結果確認方法: ヤマダデジタル会員アプリ → マイページ →「抽選販売申込履歴」\n"
+            "公式アプリ案内: https://www.yamada-denki.jp/service/pointservice/digital-kaiin.html"
+        )
+    return f"結果確認先: {official_url}"
+
+
 def _lottery_description(case: LotteryCase, detected_at: datetime) -> str:
     opportunity_label = (
         "Amazon招待"
@@ -632,7 +663,8 @@ def _lottery_description(case: LotteryCase, detected_at: datetime) -> str:
         [
             f"種別: {opportunity_label}",
             f"店舗・サービス: {case.retailer_name}",
-            f"{_lottery_application_label(case)}: {case.official_url}",
+            *_lottery_application_guidance(case),
+            f"{_lottery_application_label(case)}: {_lottery_application_url(case)}",
             f"確認元ページ: {case.source_url}",
             f"商品分類: {case.product_category}",
             *([
@@ -723,7 +755,8 @@ def _lottery_discord_description(case: LotteryCase) -> str:
         f"店舗: {case.retailer_name}",
         f"商品: {case.product_name}",
         f"{date_label}: {_format_user_datetime(case.start_at)}",
-        f"{application_label}: {case.official_url or case.source_url}",
+        *_lottery_application_guidance(case),
+        f"{application_label}: {_lottery_application_url(case)}",
     ]
     if case.end_at:
         lines.append(f"応募締切: {_format_user_datetime(case.end_at)}")
@@ -734,7 +767,7 @@ def _lottery_discord_description(case: LotteryCase) -> str:
     if case.source_tier == SourceTier.SECONDARY:
         if case.source_url and case.source_url != case.official_url:
             lines.append(f"確認元ページ: {case.source_url}")
-        lines.append("情報元: 二次情報（応募前に公式ページで確認）")
+        lines.append(_lottery_confirmation_note(case))
     return "\n".join(lines)
 
 
@@ -1276,7 +1309,7 @@ def main(argv: list[str] | None = None) -> int:
                         f"{case.retailer_name}／{case.product_name}"
                     )
                     result_description = (
-                        f"結果確認先: {case.official_url}\n"
+                        _lottery_result_confirmation(case.retailer_id, case.official_url) + "\n"
                         f"確認元ページ: {case.source_url}\n内部ID: {case.case_id}"
                     )
                     result_hash = _calendar_payload_hash(
@@ -1312,8 +1345,10 @@ def main(argv: list[str] | None = None) -> int:
             discord.send(
                 f"【{config.games[record['game_id']].short_name}抽選結果確認】"
                 f"{record.get('retailer_name', '')}／{record.get('product_name', '')}",
-                f"本日結果発表予定。応募先で当落を確認: "
-                f"{record.get('official_url') or record.get('source_url') or ''}",
+                "本日結果発表予定。\n" + _lottery_result_confirmation(
+                    str(record.get("retailer_id") or ""),
+                    str(record.get("official_url") or record.get("source_url") or ""),
+                ),
             )
             state.mark_delivered(key)
         release_calendar_results: list[dict[str, str]] = []
