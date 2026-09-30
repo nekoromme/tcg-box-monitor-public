@@ -4,9 +4,9 @@ from pathlib import Path
 def test_monitor_workflow_has_expected_automatic_runs_and_ocr_support() -> None:
     workflow = Path(".github/workflows/monitor.yml").read_text(encoding="utf-8")
 
-    # cronはUTC。日本時間では06:04、11:04、16:04、18:04、20:04、22:04。
+    # cronはUTC。日本時間の偶数時（00:04〜22:04）に2時間ごと。
     assert "  schedule:" in workflow
-    assert "    - cron: '4 2,7,9,11,13,21 * * *'" in workflow
+    assert "    - cron: '4 1-23/2 * * *'" in workflow
     assert "  push:" in workflow
     assert "workflow_dispatch:" in workflow
     assert "timeout-minutes: 60" in workflow

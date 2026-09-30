@@ -10,8 +10,8 @@ on:
       - 'EXPEDITION_MODE.txt'
       - '.github/workflows/monitor.yml'
   schedule:
-    # UTC指定。日本時間では06:04、11:04、16:04、18:04、20:04、22:04。
-    - cron: '4 2,7,9,11,13,21 * * *'
+    # UTC指定。日本時間の偶数時（00:04〜22:04）に2時間ごと、1日12回。
+    - cron: '4 1-23/2 * * *'
   workflow_dispatch:
     inputs:
       mode:
