@@ -2,6 +2,18 @@ schema_version: 2
 timezone: Asia/Tokyo
 
 system:
+  purchase_review:
+    enabled: true
+    # 実際の全公開日を保証する値ではなく、初期運用での通知目安。
+    # 21日前から毎日確認し、全種類の公開が確認できれば前倒し。
+    content_check_window_days: 21
+    early_lead_days:
+      yu_gi_oh: 7
+      pokemon_card: 7
+      one_piece_card: 14
+      dragon_ball_fusion_world: 14
+      gundam_card: 14
+      lorcana: 14
   # 公式Xの検索語の反映遅延を、同じ公式アカウントの全投稿検索で補完する。
   social_account_fallback: true
   # 抽選の補完元はこの3運営元だけ。店ごとの個人・ブログ追加を防ぐ。
