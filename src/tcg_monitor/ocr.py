@@ -50,6 +50,7 @@ def read_image_text(urls: list[str]) -> str:
 
     output: list[str] = []
     failures: list[str] = []
+    read_images = 0
     with (
         tempfile.TemporaryDirectory(prefix="tcg-ocr-") as directory,
         httpx.Client(follow_redirects=True, timeout=30) as client,
@@ -95,9 +96,10 @@ def read_image_text(urls: list[str]) -> str:
                 except subprocess.TimeoutExpired:
                     failures.append("Tesseract処理が45秒でタイムアウト")
                     continue
-                if completed.returncode == 0 and completed.stdout.strip():
+                if completed.returncode == 0:
+                    read_images += 1
                     recognized = completed.stdout.strip()
-                    if recognized not in output:
+                    if recognized and recognized not in output:
                         output.append(recognized)
                 else:
                     failures.append(
@@ -105,6 +107,10 @@ def read_image_text(urls: list[str]) -> str:
                         f"{completed.stderr.strip()[:120]}"
                     )
     if not output:
+        # 写真などの「読取成功・文字なし」と、取得／処理の失敗を区別する。
+        # 抽選の本文がある場合は呼び出し側が引き続き読取不足として扱う。
+        if read_images and not failures:
+            return ""
         detail = " / ".join(failures[-2:])
         suffix = f"（{detail}）" if detail else ""
         raise RuntimeError(f"添付画像から文字を取得できませんでした{suffix}")

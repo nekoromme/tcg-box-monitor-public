@@ -1471,6 +1471,20 @@ def _record_ocr_pending(
     return attempts
 
 
+def _lottery_application_signal(text: str, base_date: date) -> bool:
+    """本文と画像で同じ受付判定を使い、発売日や結果だけを募集にしない。"""
+    compact = re.sub(r"\s+", "", text)
+    has_action = any(word in compact for word in _ACTION_WORDS) or bool(
+        re.search(r"抽選で.{0,100}(?:購入|買える).{0,30}(?:権利|チャンス)", compact)
+    )
+    has_action = has_action or bool(
+        _application_start(text, base_date, include_sales_period=False)
+    )
+    return "抽選" in compact and (
+        has_action or any(word in compact for word in _POSTPONEMENT_WORDS)
+    )
+
+
 def parse_yahoo_realtime(
     html: str,
     url: str,
@@ -1537,18 +1551,10 @@ def parse_yahoo_realtime(
             (word for word in _POSTPONEMENT_WORDS if word in compact_text),
             None,
         )
-        has_action = any(word in compact_text for word in _ACTION_WORDS) or bool(
-            re.search(
-                r"抽選で.{0,100}(?:購入|買える).{0,30}(?:権利|チャンス)",
-                compact_text,
-            )
-        )
         # 「抽選！ 応募期間：9/29 23時～10/1まで」のような短い告知も
         # 受付の証拠になる。「販売期間」は当選者向けの購入期間なので
         # ここでは使わず、結果発表だけの投稿を受付と取り違えない。
-        has_action = has_action or bool(
-            _application_start(post_text, detected, include_sales_period=False)
-        )
+        body_announced = _lottery_application_signal(post_text, detected)
         amazon_invitation = (
             bool(source.parser_options.get("amazon_invitation"))
             and "招待リクエスト" in compact_text
@@ -1574,13 +1580,22 @@ def parse_yahoo_realtime(
             )
             and not any(marker in compact_text for marker in ("大会", "イベント", "トーナメント"))
         )
-        if (
-            not amazon_invitation
-            and not official_lorcana_sale
-            and ("抽選" not in compact_text or not (has_action or postponement))
-        ):
+        posted_on = _post_date(status_id, config.timezone)
+        images = _tweet_image_urls(container)
+        # 本文が「お知らせ」「画像をご確認ください」だけでも、今日・昨日の
+        # 公式投稿なら画像を確認する。まとめアカウントや古い写真まで広げない。
+        image_only_candidate = (
+            not (body_announced or amazon_invitation or official_lorcana_sale)
+            and source.source_tier in {SourceTier.OFFICIAL, SourceTier.OFFICIAL_INDIRECT}
+            and bool(images)
+            and 0 <= (detected - posted_on).days <= 1
+        )
+        if not (body_announced or amazon_invitation or official_lorcana_sale
+                or image_only_candidate):
             count("not_application_announcement")
             continue
+        if image_only_candidate:
+            count("image_only_candidate")
         if any(word in compact_text for word in ("大会", "参加抽選", "当選発表のみ")):
             count("tournament_or_result")
             continue
@@ -1602,7 +1617,6 @@ def parse_yahoo_realtime(
             if ocr_pending is not None:
                 ocr_pending.pop(status_url, None)
             continue
-        posted_on = _post_date(status_id, config.timezone)
         if (detected - posted_on).days > int(config.system.get("implausible_past_days", 45)):
             count("old_post")
             continue
@@ -1670,7 +1684,6 @@ def parse_yahoo_realtime(
         if official_lorcana_sale:
             extraction_method = "yahoo_realtime_official_sale_period"
             confidence = "high"
-        images = _tweet_image_urls(container)
         ocr_text = ""
         ocr_error = ""
         product = _product_from_tweet(container, post_text, game_id) if game_id else None
@@ -1678,22 +1691,57 @@ def parse_yahoo_realtime(
         # 店舗Xは本文に商品名だけを書き、ゲーム名・BOX分類・応募期間を
         # 添付画像へ寄せることがある。ゲーム判定より先に必要時OCRを実行し、
         # 本文に「ポケカ」「ワンピ」がないという理由で静かに捨てない。
-        if images and (not game_id or not product or not start_at):
+        if images and (image_only_candidate or not game_id or not product or not start_at):
+            cached_meta = ocr_cache_meta.get(status_url) if ocr_cache_meta is not None else None
+            metadata = cached_meta if isinstance(cached_meta, dict) else {}
+            image_changed = bool(
+                metadata.get("image_urls") and metadata["image_urls"] != images
+            )
+            if image_changed:
+                if ocr_cache is not None:
+                    ocr_cache.pop(status_url, None)
+                metadata = {}
+            # 写真など、正常に確認できたが文字がない画像も結果を保存する。
+            # 通信失敗や読取失敗はこの扱いにせず、従来の再試行へ回す。
+            if image_only_candidate and metadata.get("image_only_no_text"):
+                count("image_only_ocr_cache_hit")
+                count("not_application_announcement")
+                if ocr_pending is not None:
+                    ocr_pending.pop(status_url, None)
+                continue
             if ocr_cache is not None:
                 ocr_text = ocr_cache.get(status_url, "")
                 if ocr_text and ocr_cache_meta is not None:
-                    ocr_cache_meta[status_url] = {"updated_at": datetime.now(UTC).isoformat()}
+                    ocr_cache_meta[status_url] = {
+                        "updated_at": datetime.now(UTC).isoformat(), "image_urls": images,
+                    }
+                if ocr_text and image_only_candidate:
+                    count("image_only_ocr_cache_hit")
             if not ocr_text and ocr_reader:
+                if image_only_candidate:
+                    count("image_only_ocr_read")
                 try:
                     ocr_text = ocr_reader(images).strip()[:12_000]
                 except Exception as exc:
                     ocr_error = f"添付画像OCRに失敗: {type(exc).__name__}: {str(exc)[:160]}"
                 if not ocr_text and not ocr_error:
+                    if image_only_candidate:
+                        if ocr_cache_meta is not None:
+                            ocr_cache_meta[status_url] = {
+                                "updated_at": datetime.now(UTC).isoformat(),
+                                "image_urls": images, "image_only_no_text": True,
+                            }
+                        if ocr_pending is not None:
+                            ocr_pending.pop(status_url, None)
+                        count("not_application_announcement")
+                        continue
                     ocr_error = "添付画像OCRから文字を取得できません"
                 if ocr_text and ocr_cache is not None:
                     ocr_cache[status_url] = ocr_text
                     if ocr_cache_meta is not None:
-                        ocr_cache_meta[status_url] = {"updated_at": datetime.now(UTC).isoformat()}
+                        ocr_cache_meta[status_url] = {
+                            "updated_at": datetime.now(UTC).isoformat(), "image_urls": images,
+                        }
             # A non-empty cached or newly read OCR result means the OCR step
             # itself recovered. Clear its pending failure before later
             # product filters can intentionally exclude the post.
@@ -1715,10 +1763,35 @@ def parse_yahoo_realtime(
         )
         ocr_text = re.sub(r"(?<=日)\s*\([+@]\)(?=\s*\d{1,2}:)", " ", ocr_text)
         combined_text = f"{post_text}\n{ocr_text}" if ocr_text else post_text
+        if image_only_candidate:
+            if ocr_error:
+                count("image_only_ocr_pending")
+                attempts = _record_ocr_pending(
+                    ocr_pending, status_url, source, retailer_name, ocr_error, ocr_attempt_token,
+                )
+                threshold = int(config.system.get("ocr_failure_alert_threshold", 2))
+                if attempts >= max(2, threshold):
+                    alerts.append(_alert(
+                        source, status_url, retailer_name, "yahoo_image_ocr_repeated_failure",
+                        f"{ocr_error}（連続{attempts}回。画像の告知内容を手動確認してください）",
+                    ))
+                continue
+            if not ocr_text:
+                count("image_only_unread")
+                continue
+            if not _lottery_application_signal(combined_text, posted_on):
+                count("not_application_announcement")
+                continue
+            count("image_only_application_announcement")
         if _requires_disallowed_application(combined_text):
             count("disallowed_application")
             continue
         combined_compact = re.sub(r"\s+", "", combined_text)
+        if image_only_candidate and any(
+            word in combined_compact for word in ("大会参加", "参加抽選", "当選発表のみ")
+        ):
+            count("tournament_or_result")
+            continue
         application_end = _status_datetime_option(
             source,
             "confirmed_application_ends",
@@ -1776,6 +1849,17 @@ def parse_yahoo_realtime(
             additional_game(combined_text, source, config) or game_id
             or _game_id(combined_text)
         )
+        image_postponement = next(
+            (word for word in _POSTPONEMENT_WORDS if word in combined_compact), None,
+        ) if image_only_candidate else None
+        if image_postponement:
+            if game_id and source.supports(game_id):
+                alerts.append(_alert(
+                    source, status_url, retailer_name, "lottery_postponed_or_cancelled",
+                    f"画像で「{image_postponement}」を検出。新たな日程は公式で確認してください",
+                    game_id,
+                ))
+            continue
         known_release = known_release or _known_release_for_text(
             combined_text, source, known_releases,
         )

@@ -105,3 +105,23 @@ def test_ocr_allows_furuichi_official_news_images(
 
     assert result.startswith("抽選受付期間")
     assert client.calls == [official]
+
+
+@pytest.mark.parametrize("status,returncode,expected_empty", [(200, 0, True),
+                                                           (404, 0, False),
+                                                           (200, 1, False)])
+def test_textless_image_is_success_only_when_fetch_and_ocr_succeed(
+    monkeypatch, status, returncode, expected_empty,
+):
+    image = "https://pbs.twimg.com/media/photo.jpg"
+    client = _ImageClient({image: _ImageResponse(image, status, b"photo-bytes")})
+    monkeypatch.setattr(ocr.shutil, "which", lambda _: "/usr/bin/tesseract")
+    monkeypatch.setattr(ocr.httpx, "Client", lambda **_: client)
+    monkeypatch.setattr(ocr.subprocess, "run", lambda *_, **__: SimpleNamespace(
+        returncode=returncode, stdout="", stderr="",
+    ))
+    if expected_empty:
+        assert ocr.read_image_text([image]) == ""
+    else:
+        with pytest.raises(RuntimeError):
+            ocr.read_image_text([image])
