@@ -856,6 +856,7 @@ def run_pipeline(
         required_supplemental_urls = set(always_fetch_roots)
         supplemental_urls = set(repair_urls) | required_supplemental_urls
         visited_urls: set[str] = set()
+        retailer_lottery_listed_urls: set[str] = set()
         completed_page = False
         last_failure_alert: Alert | None = None
         yahoo_primary_parsed_item = False
@@ -1135,6 +1136,8 @@ def run_pipeline(
                     discovered = discover_retailer_lottery_urls(
                         html, url, source, config
                     )
+                    if source.id == "rakuten_books":
+                        retailer_lottery_listed_urls.update(discovered)
                     route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
@@ -1458,7 +1461,8 @@ def run_pipeline(
                     retailer_diagnostics: dict[str, int] = {}
                     route["diagnostics"] = retailer_diagnostics
                     parsed_cases, parsed_releases, parsed_alerts = parse_retailer_lottery_detail(
-                        html, url, source, config, diagnostics=retailer_diagnostics
+                        html, url, source, config, diagnostics=retailer_diagnostics,
+                        lottery_listed=url in retailer_lottery_listed_urls,
                     )
                 elif parser is parse_generic:
                     generic_diagnostics: dict[str, int] = {}

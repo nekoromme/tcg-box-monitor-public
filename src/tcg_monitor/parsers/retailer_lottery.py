@@ -470,7 +470,7 @@ def _application_start(
     return None
 
 
-def _hobbylink_application_url(soup: BeautifulSoup, article_url: str) -> str:
+def _hobbylink_application_url(soup: BeautifulSoup | Tag, article_url: str) -> str:
     for anchor in soup.find_all("a", href=True):
         if not isinstance(anchor, Tag):
             continue
@@ -587,7 +587,7 @@ def _parse_hobbylink_detail(
 
 
 def _tokyo_otaku_mode_products(
-    soup: BeautifulSoup,
+    soup: BeautifulSoup | Tag,
     source: SourceConfig,
     config: Config,
 ) -> list[tuple[str, str, str, str]]:
@@ -637,7 +637,7 @@ def _tokyo_otaku_mode_products(
 
 
 def _article_published_at(
-    soup: BeautifulSoup,
+    soup: BeautifulSoup | Tag,
 ) -> datetime | date | None:
     """Read the article date without falling through to an application deadline."""
 
@@ -657,20 +657,63 @@ def _article_published_at(
     return None
 
 
+def _tokyo_otaku_mode_application_end(
+    text: str, source: SourceConfig, base_date: date | None,
+) -> datetime | date | None:
+    compact = re.sub(r"\s+", "", text)
+    for label in source.start_labels:
+        match = re.search(rf"{re.escape(label)}[：:]?(.{{0,180}})", compact)
+        if not match:
+            continue
+        period = re.split(r"当選発表|お届け時期|注意事項", match.group(1), maxsplit=1)[0]
+        parts = re.split(r"[〜～~]", period, maxsplit=1)
+        # A leading range separator means only the deadline was published.
+        # Never take the publication, opening or result date as the deadline.
+        if len(parts) == 2:
+            return parse_first_datetime(parts[1], base_date).value
+        if "まで" in period:
+            return parse_first_datetime(period, base_date).value
+    return None
+
+
 def _parse_tokyo_otaku_mode_detail(
     html: str,
     url: str,
     source: SourceConfig,
     config: Config,
+    diagnostics: dict[str, int] | None,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     soup = BeautifulSoup(html, "lxml")
-    page_title = title(html) or source.name
-    text = visible_text(html)
+    # Shopify includes related articles inside the article content, and catalog
+    # data in scripts. Neither is evidence about this article's product/period.
+    for node in soup.select(
+        "script, style, noscript, nav, footer, aside, "
+        ".related-articles-section, .related-articles-grid"
+    ):
+        node.decompose()
+    article = soup.select_one("article.article-template") or soup.find("article") or soup
+    heading = article.find("h1")
+    page_title = heading.get_text(" ", strip=True) if heading else title(html) or source.name
+    if any(marker in page_title for marker in ("受付終了", "応募終了", "抽選終了", "募集終了")):
+        if diagnostics is not None:
+            diagnostics["application_ended"] = 1
+        return [], [], []
+    content = article.select_one(".article-template__content") or article
+    text = content.get_text(" ", strip=True)
     combined = f"{page_title} {text}"
     if "抽選" not in combined:
         return [], [], []
 
-    products = _tokyo_otaku_mode_products(soup, source, config)
+    published_at = _article_published_at(article)
+    base_date = published_at.date() if isinstance(published_at, datetime) else published_at
+    end_at = _tokyo_otaku_mode_application_end(text, source, base_date)
+    now = datetime.now(ZoneInfo(config.timezone))
+    if end_at and (end_at < now if isinstance(end_at, datetime) else end_at < now.date()):
+        if diagnostics is not None:
+            diagnostics["application_ended"] = 1
+        return [], [], []
+
+    products = _tokyo_otaku_mode_products(content, source, config)
     if not products:
         game_id = additional_game(combined, source, config) or _game_id(combined, source)
         has_box_category = bool(
@@ -691,9 +734,11 @@ def _parse_tokyo_otaku_mode_detail(
                     )
                 ],
             )
+        if diagnostics is not None:
+            diagnostics["excluded_product"] = 1
         return [], [], []
 
-    explicit_start = _application_start(text, source)
+    explicit_start = _application_start(text, source, base_date)
     article_open = any(
         wording in combined
         for wording in (
@@ -702,7 +747,7 @@ def _parse_tokyo_otaku_mode_detail(
             "抽選受付を開始",
         )
     )
-    start_at = explicit_start or (_article_published_at(soup) if article_open else None)
+    start_at = explicit_start or (published_at if article_open else None)
     if not start_at:
         return (
             [],
@@ -723,7 +768,7 @@ def _parse_tokyo_otaku_mode_detail(
     if retailer is None:
         raise ValueError(f"retailer parser profile is missing: {source.id}")
     retailer_id, retailer_name = retailer
-    application_url = _hobbylink_application_url(soup, url)
+    application_url = _hobbylink_application_url(content, url)
     extraction_method = (
         "retailer_detail_application_period"
         if explicit_start
@@ -744,6 +789,7 @@ def _parse_tokyo_otaku_mode_detail(
             source.source_tier,
             extraction_method,
             confidence,
+            end_at=end_at,
         ).with_id()
         for game_id, product_name, product_category, canonical_product_key in products
     ]
@@ -828,7 +874,7 @@ def _alert(
 
 def _parse_rakuten_detail(
     html: str, url: str, source: SourceConfig, config: Config,
-    diagnostics: dict[str, int] | None,
+    diagnostics: dict[str, int] | None, lottery_listed: bool,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     """Pair the product heading with its labelled period, never a footer campaign.
 
@@ -836,8 +882,14 @@ def _parse_rakuten_detail(
     period, separate from release and winner-purchase dates and sitewide copy.
     """
     soup = BeautifulSoup(html, "lxml")
-    text = soup.get_text(" ", strip=True)
-    headings = [node.get_text(" ", strip=True) for node in soup.find_all("h1")]
+    for node in soup.select(
+        "script, style, noscript, header, footer, nav, aside, "
+        "#itemReview, #productReview, [itemprop='review']"
+    ):
+        node.decompose()
+    product_scope = soup.select_one("#main") or soup.find("main") or soup
+    text = product_scope.get_text(" ", strip=True)
+    headings = [node.get_text(" ", strip=True) for node in product_scope.find_all("h1")]
     headings.append(title(html))
     product = next((name for name in headings if _game_id(name, source)), "")
     game_id = _game_id(product, source)
@@ -850,11 +902,24 @@ def _parse_rakuten_detail(
         return [], [], []
     if diagnostics is not None:
         diagnostics["validated_product"] = 1
+    # A monitored /rb/ URL can become an ordinary product page after a draw.
+    # Require evidence from the product itself or the official lottery index;
+    # keep warning when a listed draw loses its application field.
+    if not lottery_listed and not re.search(
+        r"抽選(?:受付|応募|販売)|当選者販売期間|応募受付期間", text
+    ):
+        if diagnostics is not None:
+            diagnostics["lottery_recruitment_unconfirmed"] = 1
+        return [], [], []
+    if diagnostics is not None:
+        diagnostics["lottery_announced"] = 1
     # Scope to the explicit application field. Never consume purchase/result dates.
     match = re.search(r"抽選受付期間\s*[：:]\s*(.{1,160}?)(?=当選者販売期間|発送予定日|$)", text)
     if not match:
-        return [], [], [_alert(source, url, product, "retailer_application_period_missing",
-                              "楽天公式BOX商品ページで抽選受付期間を確認できません", game_id)]
+        return [], [], [_alert(
+            source, url, product, "retailer_application_period_missing",
+            "楽天公式のBOX抽選募集は確認できるが受付期間を解析できません", game_id,
+        )]
     parts = re.split(r"\s*[〜～~]\s*", match.group(1), maxsplit=1)
     if len(parts) != 2:
         return [], [], [_alert(source, url, product, "retailer_application_period_missing",
@@ -893,16 +958,17 @@ def parse_retailer_lottery_detail(
     source: SourceConfig,
     config: Config,
     diagnostics: dict[str, int] | None = None,
+    lottery_listed: bool = False,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     source = source_with_runtime_parser_profile(source)
     if source.id == "rakuten_books":
-        return _parse_rakuten_detail(html, url, source, config, diagnostics)
+        return _parse_rakuten_detail(html, url, source, config, diagnostics, lottery_listed)
     if source.id == "hobbylink_japan_lottery":
         if is_hobbylink_articles_api(url):
             return _parse_hobbylink_api(html, url, source, config)
         return _parse_hobbylink_detail(html, url, source, config)
     if source.id == "tokyo_otaku_mode_lottery":
-        return _parse_tokyo_otaku_mode_detail(html, url, source, config)
+        return _parse_tokyo_otaku_mode_detail(html, url, source, config, diagnostics)
 
     page_title = title(html) or source.name
     text = visible_text(html)

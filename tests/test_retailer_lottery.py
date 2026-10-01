@@ -6,6 +6,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import pytest
+from freezegun import freeze_time
 
 from tcg_monitor.config import load_config
 from tcg_monitor.models import (
@@ -646,6 +647,7 @@ def test_tokyo_otaku_mode_index_follows_supported_box_articles() -> None:
     ) == ["https://ja.otakumode.com/blogs/news/pokemontcg-storm-emeralda-raffle"]
 
 
+@freeze_time("2026-07-29 19:00:00+09:00")
 def test_tokyo_otaku_mode_uses_article_date_not_deadline_for_all_games() -> None:
     samples = [
         (
@@ -703,11 +705,13 @@ def test_tokyo_otaku_mode_uses_article_date_not_deadline_for_all_games() -> None
         assert cases[0].game_id == expected_game
         assert cases[0].retailer_id == "tokyo_otaku_mode"
         assert cases[0].start_at.isoformat() == "2026-07-29"
+        assert cases[0].end_at.isoformat() == "2026-08-03T12:00:00+09:00"
         assert cases[0].official_url.endswith(f"/{form_id}/viewform")
         assert cases[0].extraction_method == "retailer_article_published_open"
         assert cases[0].confidence == "medium"
 
 
+@freeze_time("2026-07-29 19:00:00+09:00")
 def test_tokyo_otaku_mode_prefers_an_explicit_application_start() -> None:
     html = """
     <article>

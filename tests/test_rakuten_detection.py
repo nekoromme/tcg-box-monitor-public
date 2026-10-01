@@ -4,6 +4,7 @@ from dataclasses import replace
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+import pytest
 from freezegun import freeze_time
 
 from tcg_monitor.config import load_config
@@ -75,6 +76,7 @@ def test_rakuten_expired_lottery_is_verified_but_not_emitted():
     assert not alerts
     assert diagnostics == {
         "validated_product": 1,
+        "lottery_announced": 1,
         "validated_application_period": 1,
         "application_ended": 1,
     }
@@ -96,3 +98,72 @@ def test_rakuten_purchase_date_is_not_used_when_application_date_missing():
     cases, _, alerts = parse_retailer_lottery_detail(html, DETAIL, SOURCE, CONFIG)
     assert not cases
     assert [alert.reason_code for alert in alerts] == ["retailer_application_period_missing"]
+
+
+NORMAL_PRODUCT = """<h1>楽天ブックス</h1><div id="main">
+<div id="productTitle"><h1 itemprop="name">
+ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION</h1></div>
+<p>発売日：2026年09月16日</p>
+<div id="productDetailedDescription">20パック入り</div></div>"""
+
+
+@pytest.mark.parametrize("unrelated", [
+    f"<footer>{HTML}</footer>",
+    f"<nav>{HTML}</nav>",
+    f"<script>{HTML}</script>",
+    f'<div id="itemReview">{HTML}</div>',
+    f'<div itemprop="review">{HTML}</div>',
+])
+def test_rakuten_normal_product_does_not_borrow_unrelated_lottery(unrelated):
+    diagnostics = {}
+    html = NORMAL_PRODUCT.replace("</div></div>", f"</div>{unrelated}</div>")
+    cases, releases, alerts = parse_retailer_lottery_detail(
+        html, DETAIL, SOURCE, CONFIG, diagnostics=diagnostics,
+    )
+    assert not cases and not releases and not alerts
+    assert diagnostics == {
+        "validated_product": 1,
+        "lottery_recruitment_unconfirmed": 1,
+    }
+
+
+def test_rakuten_announced_draw_without_dates_still_warns():
+    html = NORMAL_PRODUCT.replace("20パック入り", "20パック入り 抽選販売の受付期間は未定")
+    diagnostics = {}
+    cases, _, alerts = parse_retailer_lottery_detail(
+        html, DETAIL, SOURCE, CONFIG, diagnostics=diagnostics,
+    )
+    assert not cases
+    assert diagnostics == {"validated_product": 1, "lottery_announced": 1}
+    assert [alert.reason_code for alert in alerts] == ["retailer_application_period_missing"]
+
+
+def test_rakuten_listed_draw_losing_application_field_still_warns(tmp_path):
+    pages = {
+        INDEX: f'<h1>ポケモンカードゲーム 抽選商品</h1><li><a href="{DETAIL}">'
+        'ポケモンカードゲーム 拡張パック 30th CELEBRATION</a></li>',
+        DETAIL: NORMAL_PRODUCT,
+    }
+
+    class Fetcher:
+        def fetch(self, url, etag=None, last_modified=None):
+            return FetchResult(url, 200, pages[url], {})
+
+    config = replace(CONFIG, sources=[SOURCE], system={
+        **CONFIG.system, "minimum_host_interval_seconds": 0, "max_parallel_hosts": 1,
+    })
+    state = MonitorState.load(tmp_path / "state.json")
+    cases, _, alerts = run_pipeline(config, monitor_state=state, http_fetcher=Fetcher())
+    assert not cases
+    assert [alert.reason_code for alert in alerts] == ["retailer_application_period_missing"]
+    diagnostics = state.data["monitors"][SOURCE.id]["routes"][DETAIL]["diagnostics"]
+    assert diagnostics == {"validated_product": 1, "lottery_announced": 1}
+
+
+@freeze_time("2026-08-27 12:00:00+09:00")
+def test_rakuten_unlisted_product_can_start_a_new_draw():
+    html = NORMAL_PRODUCT.replace("20パック入り", HTML.split("<div>")[1].split("</div>")[0])
+    cases, _, alerts = parse_retailer_lottery_detail(html, DETAIL, SOURCE, CONFIG)
+    assert not alerts
+    assert len(cases) == 1
+    assert cases[0].start_at == datetime(2026, 8, 27, 10, tzinfo=ZoneInfo("Asia/Tokyo"))
