@@ -10,7 +10,7 @@ from tcg_monitor.identity import (
     lottery_dedupe_key,
     release_dedupe_key,
 )
-from tcg_monitor.models import Alert, LotteryCase, Release, stable_url_identity
+from tcg_monitor.models import Alert, LotteryCase, OpportunityKind, Release, stable_url_identity
 from tcg_monitor.release_sources import is_trusted_retailer_release
 
 ORDER = {"official": 0, "official_indirect": 1, "secondary": 2}
@@ -42,7 +42,11 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
         grouped[lottery_dedupe_key(item)].append(item)
     merged = []
     for values in grouped.values():
-        ordered = sorted(values, key=lambda item: ORDER[item.source_tier.value])
+        ordered = sorted(values, key=lambda item: (
+            ORDER[item.source_tier.value],
+            int(item.retailer_id == "lorcana_official"
+                and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
+        ))
         first = ordered[0]
         # 公式側が発表日を載せない場合、同じ抽選回の投稿にある日付を補う。
         if first.result_at is None:

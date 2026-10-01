@@ -20,6 +20,21 @@ system:
   secondary_provider_allowlist: [onepiecenyuka, nyuka_now, snkrdunk]
   runtime:
     confirmed_false_positive_cases:
+      # 予約開始の9/24を発売日10/16と誤読した旧予定。新しい発売日予定は維持する。
+      8d41ca9c86b19fc3fc4df355c8a37badd3c51c99b137062da02972e49a34ac3f:
+        retailer_id: lorcana_official
+        retailer_name: ディズニーロルカナ公式
+        product_name: ハイぺリアシティ
+        start_at: '2026-10-16'
+        source_url: https://x.com/DisneyLOR_JP/status/2102737947799736768
+        event_id: tcge5ef0ea4a38fe122e6f014627839414e109001d478a14272283e5e7fc8cae
+      aed1585df2f777339d7ed5cb6e9846f0d54fd06493636b9f44af8e1ec874ebde:
+        retailer_id: lorcana_official
+        retailer_name: ディズニーロルカナ公式
+        product_name: お知らせ💌
+        start_at: '2026-10-16'
+        source_url: https://x.com/DisneyLOR_JP/status/2102774999895670970
+        event_id: tcge8cba5b425c5b55f2eb327a89c4fcb4b3a47e98b42bf62edaacae9bc4ab43
       82db0c39e776b9374d92fc5d3f959221b5e0b87952614090ec26393ab90bbf28:
         retailer_id: tsutaya_chomeigaoka
         retailer_name: TSUTAYA BOOKSTORE仙台長命ヶ丘
@@ -946,8 +961,8 @@ sources:
   purposes:
   - lottery_discovery
   - official_sale_discovery
-  classification: browser_fallback_without_challenge_bypass
-  enabled: true
+  classification: official_social_alternative
+  enabled: false
   discovery_urls:
   - https://takaratomymall.jp/shop/goods/search.aspx?all=0&category=Lorcana&ismodesmartphone=on&optionalcategory=trading&release=0&search=true&sort=spd
   - https://takaratomymall.jp/shop/c/cLorcana/
@@ -967,7 +982,7 @@ sources:
   expected_elements:
   - box_sale_product_link
   - product_specific_sale_period_or_availability
-  notes: 取得できる公式商品検索を主経路、カテゴリページを予備経路にして「BOX販売」またはDP-BOXの未開封BOXだけを追う。HTTPの読取タイムアウト時だけ公開ページをブラウザーで1回取得する。アクセス制限は迂回せず、ロルカナ公式Xの予約開始告知で補完する。カートン・単品パック・構築済み・関連サプライを除外し、共通の購入特典キャンペーン日をBOX販売開始と誤認しない。
+  notes: 本番でHTTP読取タイムアウト後のブラウザー失敗が継続し、記録上の直接取得成功がないため巡回を停止。既存のロルカナ公式Xと公式商品情報を維持し、新商品予約の告知を補完する。メーカー全体の予約告知をモールの在庫確認済みとは扱わない。モール名・商品URLを明記した公式投稿だけモール案件として扱う。無告知の再入荷は補完できない。設定・履歴・直接取得パーサーは復旧確認用に保持する。
 - id: yahoo_realtime_lorcana_official
   name: ディズニーロルカナ公式X Yahooリアルタイム検索
   operator: 株式会社タカラトミー
@@ -989,7 +1004,7 @@ sources:
   - official_x_status
   - target_booster
   - reservation_start
-  notes: タカラトミーモール本体が取得できない場合のメーカー公式補完経路。発売を伴う対象ブースターの予約開始告知だけを抽出し、大会・イベント予約は除外する。
+  notes: 既存のメーカー公式補完経路。対象ブースターの予約・販売開始告知を抽出し、公式商品情報でBOX名を確認する。発売日を予約日に転用せず、メーカーの予告・開始・再告知は同商品につき1件に統合する。モール名・商品URLが明記された投稿だけモール案件へ振り分け、メーカー全体の告知でモール在庫の確認済み扱いにしない。大会・イベント予約を除外する。
   parser_kind: yahoo_realtime
   parser_options:
     account: DisneyLOR_JP

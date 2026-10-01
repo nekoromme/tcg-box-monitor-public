@@ -145,6 +145,11 @@ def is_pokemon_30th_cardset(game_id: str, product_key: str) -> bool:
 
 
 def lottery_dedupe_key(case: LotteryCase) -> str:
+    if (case.game_id == "lorcana" and case.retailer_id == "lorcana_official"
+            and case.opportunity_kind != OpportunityKind.LOTTERY
+            and not case.extraction_method.startswith("yahoo_realtime_official_restock_")):
+        # メーカーの同じ新商品について、開始日の有無や再投稿で通知を増やさない。
+        return f"lorcana|lorcana_official|{case.canonical_product_key}|manufacturer_reservation"
     return lottery_dedupe_key_values(
         case.game_id, case.retailer_id, case.product_name,
         case.canonical_product_key, case.start_at, case.opportunity_kind,

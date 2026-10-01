@@ -5,6 +5,8 @@ from datetime import date, datetime, timedelta
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from zoneinfo import ZoneInfo
 
+from tcg_monitor.fetching import PageKind, classify_page
+
 
 def identified_browser_user_agent(
     chromium_version: str,
@@ -68,6 +70,11 @@ def fetch_rendered_html(
             )
             page = browser.new_page(user_agent=user_agent, locale="ja-JP")
             page.goto(url, wait_until="domcontentloaded", timeout=timeout_ms)
+            html = str(page.content())
+            # 待合室・認証画面には商品リンクがない。リンクを待ってタイムアウト
+            # する前に、その画面を返して共通処理で正しい停止理由を記録する。
+            if classify_page(html) in {PageKind.CHALLENGE, PageKind.LOGIN}:
+                return html
             if wait_selector:
                 page.wait_for_selector(wait_selector, timeout=timeout_ms)
             return str(page.content())

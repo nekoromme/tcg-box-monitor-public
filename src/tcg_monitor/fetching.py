@@ -50,6 +50,8 @@ class FetchProblem(RuntimeError):
         blocked: bool = False,
         cause_code: str | None = None,
         attempts: int | None = None,
+        prior_cause_code: str | None = None,
+        prior_attempts: int | None = None,
     ) -> None:
         super().__init__(reason)
         self.url = url
@@ -59,6 +61,9 @@ class FetchProblem(RuntimeError):
         self.blocked = blocked
         self.cause_code = cause_code
         self.attempts = attempts
+        # ブラウザーへの切替前の通信失敗も残す。最後のErrorだけにしない。
+        self.prior_cause_code = prior_cause_code
+        self.prior_attempts = prior_attempts
         self.duration_ms = 0
 
 
@@ -339,12 +344,19 @@ class PageFetcher:
         except CircuitOpenError:
             raise
         except Exception as exc:
+            # URLや認証情報を含む生の例外文は保存せず、通信エラーの種類だけ読む。
+            network_error = re.search(r"net::(ERR_[A-Z0-9_]+)", str(exc))
+            cause = (
+                network_error.group(1) if network_error else
+                "BrowserTimeout" if type(exc).__name__ == "TimeoutError" else
+                type(exc).__name__
+            )
             raise FetchProblem(
                 url,
-                f"browser_fetch_failed:{type(exc).__name__}",
+                f"browser_fetch_failed:{cause}",
                 status_code=status_code,
                 fetch_method="playwright",
-                cause_code=type(exc).__name__,
+                cause_code=cause,
             ) from exc
 
         kind = classify_page(html)
@@ -451,7 +463,12 @@ class PageFetcher:
                 # of a security challenge. The explicitly configured browser
                 # path may render the same public page once. 403/429, login,
                 # challenge, and connection failures remain forbidden here.
-                return self._browser(browser_url or url, source)
+                try:
+                    return self._browser(browser_url or url, source)
+                except FetchProblem as problem:
+                    problem.prior_cause_code = type(exc.last_error).__name__
+                    problem.prior_attempts = exc.attempts
+                    raise
             opened = (
                 self.circuit_breaker.record_blocked(
                     url,

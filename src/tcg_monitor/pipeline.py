@@ -144,6 +144,8 @@ class SourceMetrics:
     last_error: str | None = None
     failure_cause: str | None = None
     failure_attempts: int | None = None
+    prior_failure_cause: str | None = None
+    prior_failure_attempts: int | None = None
     fetch_duration_ms: int = 0
     # URLごとに取得と解析を分ける。HTTP 200だけでは検知実証とはしない。
     routes: dict[str, dict[str, object]] = field(default_factory=dict)
@@ -174,6 +176,8 @@ class SourceMetrics:
             self.last_error = problem.reason
             self.failure_cause = problem.cause_code
             self.failure_attempts = problem.attempts
+            self.prior_failure_cause = problem.prior_cause_code
+            self.prior_failure_attempts = problem.prior_attempts
 
     def as_state(self) -> dict[str, object]:
         return {
@@ -187,6 +191,8 @@ class SourceMetrics:
             "last_error": self.last_error,
             "failure_cause": self.failure_cause,
             "failure_attempts": self.failure_attempts,
+            "prior_failure_cause": self.prior_failure_cause,
+            "prior_failure_attempts": self.prior_failure_attempts,
             "fetch_duration_ms": self.fetch_duration_ms,
             "routes": self.routes,
             "retailer_ids": sorted(self.retailer_ids),
@@ -935,6 +941,9 @@ def run_pipeline(
                 route.update(
                     status="fetch_failed", error=problem.reason,
                     http_status=problem.status_code,
+                    failure_cause=problem.cause_code, failure_attempts=problem.attempts,
+                    prior_failure_cause=problem.prior_cause_code,
+                    prior_failure_attempts=problem.prior_attempts,
                 )
                 metrics.failed(problem)
                 source_failed_hosts.setdefault(source.id, set()).add(

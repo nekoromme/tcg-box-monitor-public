@@ -725,8 +725,10 @@ def _official_sale_start(
     """
 
     normalized = unicodedata.normalize("NFKC", text)
+    # 検索の強調タグで「予約 開始」のように空白が挟まっても読む。
+    normalized = re.sub(r"予約\s*(?:受付\s*)?", "予約", normalized)
     for match in re.finditer(
-        r"予約(?:受付)?(?:を)?(?:開始|スタート)",
+        r"(?:予約|販売|再販)(?:を)?(?:開始|スタート)",
         normalized,
     ):
         prefix = normalized[: match.start()]
@@ -740,10 +742,32 @@ def _official_sale_start(
         )
         if cue_start >= scope_start:
             scope_start = cue_start
+        # Yahooは改行を空白にする。「10/16発売予定 ... 9/24から予約開始」
+        # を1文として受けても、発売日より後の予約日だけを候補にする。
+        release_end = prefix.rfind("発売")
+        if release_end >= scope_start:
+            scope_start = release_end + len("発売")
         if parsed := parse_period_start(prefix[scope_start:], base_date).value:
             return parsed
         if re.search(r"本日(?:から|より)?$", prefix[scope_start:].strip()):
             return base_date
+    return None
+
+
+def _lorcana_sale_product(
+    text: str, known_release: Release | None,
+) -> tuple[str, str] | None:
+    """メーカーの予約告知からBOX名を読む。告知の見出しを商品名にしない。"""
+    if known_release and known_release.game_id == "lorcana":
+        return known_release.product_name, known_release.product_category
+    # 「お知らせ💌」等の【見出し】は候補にせず、商品に使われる「」を読む。
+    compact = re.sub(r"\s+", "", text)
+    if not any(word in compact for word in ("ブースターパック", "BOX", "ボックス")):
+        return None
+    for value in re.findall(r"[「『]([^」』]{2,100})[」』]", text):
+        name = value.strip()
+        if not is_provisional_product_name(name):
+            return f"ブースターパック「{name}」", "ブースターパック"
     return None
 
 
@@ -1151,12 +1175,24 @@ def _known_release_for_text(
         "",
         unicodedata.normalize("NFKC", text),
     ).casefold()
+    def matching_token(value: str, game_id: str) -> str:
+        token = release_title_token(value)
+        if game_id == "lorcana":
+            # 公式投稿の「ハイぺリア」と商品ページの「ハイペリア」は同じ商品。
+            token = "".join(chr(ord(c) + 0x60) if "ぁ" <= c <= "ゖ" else c for c in token)
+        return token
+
+    lorcana_folded = "".join(
+        chr(ord(c) + 0x60) if "ぁ" <= c <= "ゖ" else c for c in folded
+    )
     matches = [
         release
         for release in known_releases
         if source.supports(release.game_id)
         and len(release_title_token(release.product_name)) >= 3
-        and release_title_token(release.product_name) in folded
+        and matching_token(release.product_name, release.game_id) in (
+            lorcana_folded if release.game_id == "lorcana" else folded
+        )
     ]
     return max(matches, key=lambda item: len(release_title_token(item.product_name)), default=None)
 
@@ -1300,6 +1336,10 @@ def _application_url(container: Tag, status_url: str) -> str:
             return f"https://www.amazon.co.jp/dp/{match.group(1).upper()}"
         if match := _FURUICHI_ARTICLE_URL.search(candidate_text):
             return "https://www.furu1.net/news/news_information/" + match.group(1)
+        if match := re.search(
+            r"https://takaratomymall\.jp/shop/g/g[A-Za-z0-9_-]+/?", candidate_text,
+        ):
+            return match.group(0)
         if match := re.search(
             r"https://(?:t\.)?livepocket\.jp/e/[A-Za-z0-9_-]+", candidate_text,
         ):
@@ -1571,10 +1611,9 @@ def parse_yahoo_realtime(
         )
         official_lorcana_sale = (
             bool(source.parser_options.get("official_sale"))
-            and "発売" in compact_text
             and bool(
                 re.search(
-                    r"予約(?:受付)?(?:を)?(?:開始|スタート)",
+                    r"(?:予約(?:受付)?|販売|再販)(?:を)?(?:開始|スタート)",
                     compact_text,
                 )
             )
@@ -1667,9 +1706,11 @@ def parse_yahoo_realtime(
         )
         uses_first_detection = source.lottery_start_policy == LotteryStartPolicy.FIRST_DETECTION
         uses_detection_policy = uses_detection_next_day or uses_first_detection
-        start_at = None if uses_detection_policy else _application_start(post_text, posted_on)
-        if official_lorcana_sale and not start_at:
-            start_at = _official_sale_start(post_text, posted_on)
+        start_at = (
+            None if uses_detection_policy else
+            _official_sale_start(post_text, posted_on) if official_lorcana_sale else
+            _application_start(post_text, posted_on)
+        )
         deadline_without_start = (
             False if uses_detection_policy else _deadline_only_application_period(post_text)
         )
@@ -1686,7 +1727,10 @@ def parse_yahoo_realtime(
             confidence = "high"
         ocr_text = ""
         ocr_error = ""
-        product = _product_from_tweet(container, post_text, game_id) if game_id else None
+        product = (
+            _lorcana_sale_product(post_text, known_release) if official_lorcana_sale else
+            _product_from_tweet(container, post_text, game_id) if game_id else None
+        )
 
         # 店舗Xは本文に商品名だけを書き、ゲーム名・BOX分類・応募期間を
         # 添付画像へ寄せることがある。ゲーム判定より先に必要時OCRを実行し、
@@ -1820,6 +1864,9 @@ def parse_yahoo_realtime(
             ocr_start = ocr_application_start or _application_start(
                 ocr_text, posted_on,
             )
+            if official_lorcana_sale:
+                # 画像の商品発売日を、予約開始日の代わりに使わない。
+                ocr_start = _official_sale_start(ocr_text, posted_on)
         ocr_has_current_or_future_open_period = False
         if ocr_application_start:
             ocr_start_date = (
@@ -1925,6 +1972,15 @@ def parse_yahoo_realtime(
             continue
 
         game = config.games[game_id]
+        if official_lorcana_sale and any(
+            word in combined_compact
+            for word in ("スリーブ", "プレイマット", "バインダー", "構築済み", "スタートデッキ")
+        ) and not any(
+            word in combined_compact for word in ("ブースターパック", "BOX", "ボックス")
+        ):
+            # 同じ弾名のスリーブもある。カタログとの弾名一致だけでBOXへ置き換えない。
+            count("excluded_product")
+            continue
         selected_products = additional_tuples(game, combined_text)
         selected_product = selected_products[0][:2] if selected_products else None
         confirmed_product = selected_product or _status_product_option(source, status_id)
@@ -1948,8 +2004,11 @@ def parse_yahoo_realtime(
             count("excluded_product")
             continue
 
-        product = confirmed_product or _product_from_tweet(
-            container, combined_text, game_id, game.product_exclude_keywords,
+        product = confirmed_product or (
+            _lorcana_sale_product(combined_text, known_release) if official_lorcana_sale else
+            _product_from_tweet(
+                container, combined_text, game_id, game.product_exclude_keywords,
+            )
         )
         if (
             not confirmed_product
@@ -2140,10 +2199,28 @@ def parse_yahoo_realtime(
             if configured_confirmation_url
             else _application_url(container, status_url)
         )
+        # メーカー全体の予約告知を「モールの在庫確認済み」と偽らない。
+        # モール名・商品URLが投稿に明記された時だけ、モールの案件にする。
+        case_retailer_id, case_retailer_name = retailer_id, retailer_name
+        if source.parser_options.get("official_sale") and game_id == "lorcana":
+            if "タカラトミーモール" in combined_compact or (
+                urlsplit(application_url).netloc.casefold() == "takaratomymall.jp"
+            ):
+                case_retailer_id, case_retailer_name = "takaratomy_mall", "タカラトミーモール"
+            elif known_release and official_lorcana_sale:
+                application_url = known_release.official_url
+        if official_lorcana_sale and not re.search(r"予約", combined_compact):
+            # 新商品の予約予告と、後日の販売・再販開始は別の購入機会。
+            # 新商品予約の重複抑制で、後の再販まで通知済みにしない。
+            extraction_method = (
+                "yahoo_realtime_official_restock_seen"
+                if opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN
+                else "yahoo_realtime_official_restock_period"
+            )
         case = LotteryCase(
             game_id,
-            retailer_id,
-            retailer_name,
+            case_retailer_id,
+            case_retailer_name,
             product_name,
             product_category,
             canonical_product_key(game, product_name),
@@ -2186,7 +2263,14 @@ def parse_yahoo_realtime(
                                         canonical_product_key=key, case_id="").with_id()
                 cases[selected_case.case_id] = selected_case
         else:
-            cases[case.case_id] = case
+            previous = cases.get(case.case_id)
+            # 日付なしの再告知で、同じ商品の確定予約日を上書きしない。
+            if not (
+                official_lorcana_sale and previous
+                and previous.opportunity_kind == OpportunityKind.DIRECT_SALE
+                and case.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN
+            ):
+                cases[case.case_id] = case
         if ocr_pending is not None:
             ocr_pending.pop(status_url, None)
     return list(cases.values()), [], alerts

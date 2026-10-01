@@ -260,6 +260,16 @@ class LotteryCase:
     result_at: datetime | date | None = None
 
     def with_id(self) -> LotteryCase:
+        if (self.game_id == "lorcana" and self.retailer_id == "lorcana_official"
+                and self.opportunity_kind != OpportunityKind.LOTTERY
+                and not self.extraction_method.startswith("yahoo_realtime_official_restock_")):
+            # メーカーの新商品予約は、予告・開始・再告知をまとめて1回通知。
+            # 店舗の再入荷や抽選には適用せず、別商品は商品キーで区別する。
+            raw = "|".join((
+                self.game_id, self.retailer_id, self.canonical_product_key,
+                "manufacturer_reservation",
+            ))
+            return self.__class__(**{**self.__dict__, "case_id": sha256(raw.encode()).hexdigest()})
         durable_retailer_url = ""
         official_parts = urlsplit(self.official_url)
         official_host = official_parts.netloc.casefold().removeprefix("www.")

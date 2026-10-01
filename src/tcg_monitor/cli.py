@@ -745,7 +745,17 @@ def _lottery_date_in_delivery_window(
 
 
 def _lottery_discord_description(case: LotteryCase) -> str:
-    if case.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN:
+    manufacturer_reservation = (
+        case.game_id == "lorcana" and case.retailer_id == "lorcana_official"
+        and case.opportunity_kind != OpportunityKind.LOTTERY
+    )
+    if manufacturer_reservation:
+        date_label = (
+            "予約・販売の告知日（開始日時不明）"
+            if case.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN
+            else "メーカー告知の予約・販売開始"
+        )
+    elif case.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN:
         date_label = "販売を確認した日（開始日時不明）"
     elif case.opportunity_kind == OpportunityKind.DIRECT_SALE:
         date_label = "販売開始"
@@ -756,6 +766,8 @@ def _lottery_discord_description(case: LotteryCase) -> str:
     else:
         date_label = "受付開始"
     application_label = _lottery_application_label(case)
+    if manufacturer_reservation:
+        application_label = "公式商品情報・告知ページ"
     lines = [
         f"店舗: {case.retailer_name}",
         f"商品: {case.product_name}",
@@ -763,6 +775,10 @@ def _lottery_discord_description(case: LotteryCase) -> str:
         *_lottery_application_guidance(case),
         f"{application_label}: {_lottery_application_url(case)}",
     ]
+    if manufacturer_reservation:
+        lines.append("メーカー全体の予約告知です。タカラトミーモールなど各店の在庫・受付状況は未確認。")
+        if case.source_url != case.official_url:
+            lines.append(f"予約告知: {case.source_url}")
     if case.end_at:
         lines.append(f"応募締切: {_format_user_datetime(case.end_at)}")
     if case.result_at:

@@ -291,6 +291,8 @@ class MonitorState:
             "last_error": values.get("last_error"),
             "failure_cause": values.get("failure_cause"),
             "failure_attempts": values.get("failure_attempts"),
+            "prior_failure_cause": values.get("prior_failure_cause"),
+            "prior_failure_attempts": values.get("prior_failure_attempts"),
         }
         # 過去に実際に候補を生成したURLのみ、実証済み履歴として引き継ぐ。
         evidence = dict(_mapping(previous.get("route_evidence")))
