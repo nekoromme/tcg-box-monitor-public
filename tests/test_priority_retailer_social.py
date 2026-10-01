@@ -97,7 +97,7 @@ def _source(source_id: str) -> SourceConfig:
         ),
         ("yahoo_realtime_dmm_tsuhan", "DMM_tsuhan", "dmm_tsuhan"),
         ("yahoo_realtime_dmm_myca", "DMM_Myca", "dmm_myca"),
-        ("yahoo_realtime_edion", "edion_PR", "edion_online"),
+        ("yahoo_realtime_edion", "Trecapi_namba", "edion_online"),
         ("yahoo_realtime_famima", "famima_now", "famima_online"),
     ],
 )
@@ -106,12 +106,17 @@ def test_priority_retailer_accounts_accept_entry_period_wording(
     account: str,
     retailer_id: str,
 ) -> None:
+    application_link = (
+        '<a href="https://t.co/campaign">edion-cp.com/poke072401</a>'
+        if source_id == "yahoo_realtime_edion" else ""
+    )
     html = f"""
     <div class="Tweet_TweetContainer__random">
       <p class="Tweet_body__random">ポケモンカードゲーム
       拡張パック「ストームエメラルダ」BOX 抽選販売
       エントリー受付期間：2026年7月20日(月)10:00～
       2026年7月24日(金)23:59</p>
+      {application_link}
       <time><a href="https://x.com/{account}/status/2077954547092521074">
       7月20日</a></time>
     </div>

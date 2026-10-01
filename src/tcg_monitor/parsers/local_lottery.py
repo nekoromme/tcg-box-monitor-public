@@ -551,7 +551,10 @@ def _application_start(
     text: str, base_date: date | None = None, *, include_sales_period: bool = True,
 ) -> datetime | date | None:
     compact = _compact_application_text(text)
-    for match in _APPLICATION_LABEL.finditer(compact):
+    first_day: date | None = None
+    # OCRは元画像と強調画像の結果を連結する。180文字の期間範囲が
+    # 次のラベルを含んでも、そのラベルから読み直せるよう重なりを許す。
+    for match in re.finditer(rf"(?={_APPLICATION_LABEL.pattern})", compact):
         label = compact[match.start():match.start(1)].rstrip(":：")
         if not include_sales_period and label == "販売期間":
             # 当選者向けの購入期間は、新規の応募受付を証明しない。
@@ -561,8 +564,16 @@ def _application_start(
             base_date,
             label_is_start=_period_label_is_start(compact, match),
         )
-        if parsed.value:
-            return parsed.value
+        value = parsed.value
+        if isinstance(value, datetime):
+            if first_day is None or value.date() == first_day:
+                return value
+        elif value and first_day is None:
+            first_day = value
+    # 元画像のOCRで時刻が欠けても、色を強調した画像の結果に同じ日の
+    # 正確な時刻があれば採用する。別日の販売期間には置き換えない。
+    if first_day is not None:
+        return first_day
 
     # Official social posts sometimes put the opening date before the action,
     # for example ``8/22より午前10時より ... 抽選申し込みを開始``.  The
@@ -1318,7 +1329,7 @@ def _product_from_tweet(
     return product_name, category or "BOX（投稿記載から推定）"
 
 
-def _application_url(container: Tag, status_url: str) -> str:
+def _application_url(container: Tag, status_url: str, ocr_text: str = "") -> str:
     # Yahoo often leaves the real destination in an anchor label/title while
     # keeping t.co in href.  Recover durable official URLs before falling back
     # to the short link so Amazon ASINs and Furuichi articles deduplicate across
@@ -1332,6 +1343,11 @@ def _application_url(container: Tag, status_url: str) -> str:
             str(anchor.get("data-expanded-url") or ""),
         ]
         candidate_text = " ".join(values)
+        if match := re.search(
+            r"(?<![A-Za-z0-9_.-])(?:https?://)?edion-cp\.com/[A-Za-z0-9_-]+/?",
+            candidate_text,
+        ):
+            return "https://" + match.group(0).removeprefix("https://").removeprefix("http://")
         if match := _AMAZON_PRODUCT_URL.search(candidate_text):
             return f"https://www.amazon.co.jp/dp/{match.group(1).upper()}"
         if match := _FURUICHI_ARTICLE_URL.search(candidate_text):
@@ -1345,6 +1361,9 @@ def _application_url(container: Tag, status_url: str) -> str:
         ):
             # 応募先として通知するだけで、LivePocketの取得は行わない。
             return match.group(0)
+    # ポスターだけに書かれた公式応募URLも、認識した文字から保存する。
+    if match := re.search(r"https://edion-cp\.com/[A-Za-z0-9_-]+/?", ocr_text):
+        return match.group(0)
     for anchor in container.find_all("a", href=True):
         href = str(anchor.get("href"))
         label = anchor.get_text(" ", strip=True)
@@ -2197,8 +2216,15 @@ def parse_yahoo_realtime(
         application_url = (
             str(configured_confirmation_url)
             if configured_confirmation_url
-            else _application_url(container, status_url)
+            else _application_url(container, status_url, ocr_text)
         )
+        required_application_pattern = source.parser_options.get("required_application_url_pattern")
+        if required_application_pattern and not re.fullmatch(
+            str(required_application_pattern), application_url,
+        ):
+            # 全国共通の応募URLがない、その店限定の抽選は全国枠に入れない。
+            count("application_url_outside_scope")
+            continue
         # メーカー全体の予約告知を「モールの在庫確認済み」と偽らない。
         # モール名・商品URLが投稿に明記された時だけ、モールの案件にする。
         case_retailer_id, case_retailer_name = retailer_id, retailer_name

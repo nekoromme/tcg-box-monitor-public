@@ -3564,7 +3564,7 @@ sources:
     retailer_id: dmm_myca
     retailer_name: DMMマイカ
 - id: yahoo_realtime_edion
-  name: エディオン公式X Yahooリアルタイム検索
+  name: エディオン・トレカキャピタル公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
   source_tier: official_indirect
   supported_games:
@@ -3578,19 +3578,20 @@ sources:
   - lottery_discovery
   enabled: true
   discovery_urls:
-  - https://search.yahoo.co.jp/realtime/search?p=id%3Aedion_PR%20%E6%8A%BD%E9%81%B8&ei=UTF-8
-  - https://search.yahoo.co.jp/realtime/search?p=id%3Aedion_PR&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ATrecapi_namba%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3ATrecapi_namba&ei=UTF-8
   render_mode: http
   poll_minutes: 120
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: ネットショップ・アプリ抽選の公式告知を監視する。
+  notes: 家電全般の広報ではなく、公式サイトからリンクされたトレカ部門の告知を読む。全国共通のedion-cp.com/poke・pokeca・yugioh応募URLがある抽選のみ対象にし、個別店限定の抽選は除外する。通販トップにリンクが出ない抽選もこの既存経路で補完する。
   parser_kind: yahoo_realtime
   parser_options:
-    account: edion_PR
+    account: Trecapi_namba
     retailer_id: edion_online
-    retailer_name: エディオンネットショップ
+    retailer_name: エディオン・トレカキャピタル
+    required_application_url_pattern: 'https://edion-cp\.com/(?:poke(?:ca)?|yugioh)[0-9]{6}/?'
 - id: yahoo_realtime_famima
   name: ファミリーマート公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
