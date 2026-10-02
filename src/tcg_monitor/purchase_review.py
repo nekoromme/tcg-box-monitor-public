@@ -13,6 +13,7 @@ from tcg_monitor.identity import release_dedupe_key
 from tcg_monitor.logging_config import log_event
 from tcg_monitor.models import Config, Release, SourceTier
 from tcg_monitor.release_sources import is_accepted_release
+from tcg_monitor.review_content import CONTENT_VERSION, usable_content
 from tcg_monitor.review_modes import (
     PurchaseReviewModes,
     ReviewModeError,
@@ -104,8 +105,15 @@ def early_message(
         f"収録確認ページ: {evidence.card_list_url or evidence.url}",
         f"ページ種別: {evidence.card_list_label}",
     ]
+    if evidence.list_status:
+        lines.append(f"一覧の状態: {evidence.list_status}")
+    if evidence.preview_images:
+        lines.append(f"商品紹介のカード画像: {evidence.preview_images}点（カード種類数とは別）")
+    if evidence.highlights:
+        lines.append("公開済みの収録内容・注目点:")
+        lines.extend(f"・{item}" for item in evidence.highlights)
     if evidence.card_index_url:
-        lines.append(f"公式カード一覧（商品名で絞込み）: {evidence.card_index_url}")
+        lines.append(f"公式カード検索（対象弾の有無は上記の状態を参照）: {evidence.card_index_url}")
     lines.extend(f"□ {label}: {value}" for label, value in evidence.features.items())
     if not evidence.features:
         lines.append("□ 初回限定・シリアル・特殊レア: 不明（取得できず）")
@@ -256,29 +264,63 @@ def run_purchase_reviews(
         if not 1 <= days <= int(settings.get("content_check_window_days", 21)):
             continue  # Never send a pre-release signal after the release date.
         record = records.setdefault(key, {})
+        saved_content = ContentEvidence(**record.get("content", {}))
+        # An old notification with only unknown checkboxes did not accomplish
+        # the content phase. Repair it once without resetting other sent history.
+        repair_pending = bool(
+            modes.early_content
+            and record.get("early_sent")
+            and not record.get("early_repair_sent")
+            and (record.get("early_repair_required") or not usable_content(saved_content))
+        )
+        if repair_pending:
+            # Keep this pending after refreshing the cache: failed or dry-run
+            # delivery must retry even when the newly stored content is usable.
+            record["early_repair_required"] = True
         early_pending = modes.early_content and not record.get("early_sent")
         price_pending = modes.pre_release_price and not record.get("price_sent") and days <= 2
-        if not early_pending and not price_pending:
+        if not early_pending and not repair_pending and not price_pending:
             continue
         record["release_date"] = release.release_date.isoformat()
         lead = int(leads.get(release.game_id, 7))
-        content = ContentEvidence(**record.get("content", {}))
-        if (early_pending or price_pending) and (
-            record.get("content_checked_on") != now.date().isoformat() or content.error
+        content = saved_content
+        if (early_pending or repair_pending or price_pending) and (
+            record.get("content_checked_on") != now.date().isoformat()
+            or content.error
+            or not usable_content(content)
+            or content.version < CONTENT_VERSION
+            or record.get("last_content_error")
         ):
             refreshed = source.content(release)
-            if not refreshed.error or not content.url:
+            # Keep useful earlier evidence on a transient failure, but retain
+            # the failure separately so it is retried instead of cached as success.
+            record["last_content_error"] = refreshed.error
+            record["last_content_attempt"] = now.isoformat()
+            if not refreshed.error or not usable_content(content):
                 content = refreshed
             record["content"] = asdict(content)
             record["content_checked_on"] = now.date().isoformat()
+            log_event(
+                phase="purchase_review",
+                status="ok" if usable_content(refreshed) else "pending",
+                reason_code="content_extracted" if usable_content(refreshed) else "content_retry",
+                product=key,
+                source_url=refreshed.url,
+                card_count=refreshed.card_count,
+                preview_images=refreshed.preview_images,
+                list_status=refreshed.list_status,
+                content_error=refreshed.error,
+            )
         if (
-            early_pending
+            (early_pending or repair_pending)
             and (days <= lead or content.complete)
-            and (not content.error or days < lead or now.hour >= 20)
+            and usable_content(content)
         ):
             try:
                 result = discord.send(
-                    f"【{config.games[release.game_id].short_name}早期・中身チェック】{release.product_name}",
+                    f"【{config.games[release.game_id].short_name}"
+                    f"{'中身チェック補足' if repair_pending else '早期・中身チェック'}】"
+                    f"{release.product_name}",
                     early_message(
                         release,
                         content,
@@ -288,10 +330,18 @@ def run_purchase_reviews(
                     ),
                 )
                 if result.get("status") == "sent":
-                    record["early_sent"] = now.isoformat()
+                    record["early_repair_sent" if repair_pending else "early_sent"] = (
+                        now.isoformat()
+                    )
+                    if repair_pending:
+                        record["early_repair_required"] = False
                     state.save()
                     results.append(
-                        {"product": release.product_name, "phase": "early", "status": "sent"}
+                        {
+                            "product": release.product_name,
+                            "phase": "early_repair" if repair_pending else "early",
+                            "status": "sent",
+                        }
                     )
             except Exception as exc:
                 log_event(

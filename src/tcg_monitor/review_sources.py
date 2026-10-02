@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import re
 import unicodedata
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 from urllib.parse import urlencode, urljoin, urlsplit
 
@@ -14,6 +14,20 @@ from bs4 import BeautifulSoup
 from tcg_monitor.http_client import HttpFetcher
 from tcg_monitor.identity import release_title_token
 from tcg_monitor.models import Release
+from tcg_monitor.parsers.pokemon_official_products import (
+    _api_data,
+    discover_pokemon_product_api_pages,
+)
+from tcg_monitor.review_content import (
+    ContentEvidence as ContentEvidence,
+)
+from tcg_monitor.review_content import (
+    card_list_count,
+    normalized,
+    parse_content,
+    product_root,
+    usable_content,
+)
 
 SNKR = "https://snkrdunk.com"
 GAME_MARKERS = {
@@ -32,21 +46,35 @@ CARD_INDEXES = {
     "gundam_card": "https://www.gundam-gcg.com/jp/cards/",
     "lorcana": "https://www.takaratomy.co.jp/products/disneylorcana/cardlist/",
 }
+PRODUCT_INDEXES = {
+    "pokemon_card": "https://www.pokemon-card.com/products/",
+    "one_piece_card": "https://www.onepiece-cardgame.com/products/",
+    "dragon_ball_fusion_world": "https://www.dbs-cardgame.com/fw/jp/products/",
+    "yu_gi_oh": "https://www.yugioh-card.com/japan/products/",
+    "gundam_card": "https://www.gundam-gcg.com/jp/products/",
+    "lorcana": "https://www.takaratomy.co.jp/products/disneylorcana/product/",
+}
 
 
-@dataclass
-class ContentEvidence:
-    url: str = ""
-    card_list_url: str = ""
-    card_list_label: str = "商品別の収録紹介（全公開かは未確認）"
-    card_index_url: str = ""
-    complete: bool = False
-    card_count: int | None = None
-    total_cards: int | None = None
-    msrp: int | None = None
-    features: dict[str, str] = field(default_factory=dict)
-    rarity_details: list[str] = field(default_factory=list)
-    error: str = ""
+def _official(url: str, game: str) -> bool:
+    domain = (
+        (urlsplit(CARD_INDEXES.get(game, "")).hostname or "")
+        .removeprefix("www.")
+        .removeprefix("db.")
+    )
+    host = urlsplit(url).hostname or ""
+    return bool(domain and (host == domain or host.endswith("." + domain)))
+
+
+def _product_heading(soup: BeautifulSoup, release: Release) -> bool:
+    # Product logos are often images and the textual title may be h2 or h4.
+    title = soup.title.get_text(" ", strip=True) if soup.title else ""
+    nodes = product_root(soup).select("h1, h2, h4, .product-name")
+    names = [node.get_text(" ", strip=True) for node in nodes]
+    names.append(title)
+    names += [str(img.get("alt", "")) for node in nodes for img in node.select("img")]
+    token = _product_token(release.product_name)
+    return bool(token) and any(token in _product_token(name) for name in names)
 
 
 @dataclass
@@ -71,85 +99,6 @@ def _amount(value: object) -> int | None:
         return value if value > 0 else None
     match = re.fullmatch(r"[¥￥]?\s*([\d,]+)\s*(?:円)?", str(value))
     return int(match[1].replace(",", "")) if match else None
-
-
-def parse_content(html: str, url: str) -> ContentEvidence:
-    soup = BeautifulSoup(html, "lxml")
-    root = soup.select_one("main, article, #main") or soup
-    # Related goods often advertise a different set's limited bonus/rarity.
-    for other in root.select("aside, nav, footer, #recommend, .related-products"):
-        other.decompose()
-    text = _text(root.get_text(" ", strip=True))
-    result = ContentEvidence(url=url, card_list_url=url)
-    info = root.select_one("#information, .product-information, .product-spec") or root
-    specification = _text(info.get_text(" ", strip=True))
-    if match := re.search(r"(?:カード種類\s*[:：]?|収録カード)\s*全\s*(\d+)\s*種", specification):
-        result.total_cards = int(match[1])
-    # Never mistake the per-pack price for the BOX price or invent pack counts.
-    box = re.search(
-        r"1\s*(?:BOX|ボックス|ボックスセット|セット)\s*[:：]?\s*([\d,]+)\s*円", specification, re.I
-    )
-    pack = re.search(r"1\s*パック\s*[:：]?\s*([\d,]+)\s*円", specification)
-    packs = re.search(r"1\s*(?:BOX|ボックス)\s*[:：]?\s*(\d+)\s*パック", specification, re.I)
-    if box:
-        result.msrp = int(box[1].replace(",", ""))
-    elif pack and packs:
-        result.msrp = int(pack[1].replace(",", "")) * int(packs[1])
-    checks = {
-        "初回生産限定・初回BOX特典": r"初回(?:生産|限定|製造)|初版限定",
-        "シリアル入り・枚数限定": r"シリアル(?:No\.?|ナンバー|番号)?|世界(?:で)?\d+枚限定",
-        "グランドマスターレア": r"グランドマスターレア|GRANDMASTER RARE",
-        "特殊イラスト・特殊仕様": (
-            r"オーバーフレーム|新規(?:描き下ろし)?イラスト|アートワーク|パラレル"
-        ),
-    }
-    for label, pattern in checks.items():
-        match = re.search(pattern, text, re.I)
-        # Absence of a keyword is not proof that a feature does not exist.
-        value = "不明（公式記載を確認できず）"
-        if re.search(
-            r"(?:" + pattern + r")(?:は|の)?(?:ありません|なし|収録されません)", text, re.I
-        ):
-            value = "なし（公式明記）"
-        elif match:
-            value = "あり: " + text[max(0, match.start() - 15) : match.end() + 70]
-        result.features[label] = value
-    result.rarity_details = [
-        line.strip()
-        for line in re.findall(
-            r"[^。]{0,60}(?:レア[^。]{0,30}\d+種|\d+枚限定|001[^。]{0,20}100)[^。]{0,50}",
-            specification,
-        )[:5]
-    ]
-    if serial := re.search(r"(?:001\s*[～~〜-]\s*100|(?:各|限定)\s*\d+\s*枚)", text):
-        result.rarity_details.append(text[max(0, serial.start() - 35) : serial.end() + 40])
-    for anchor in root.select("a[href]"):
-        href = urljoin(url, str(anchor.get("href", "")))
-        label = anchor.get_text(" ", strip=True)
-        # A global card search is not a set-specific list.
-        if (
-            re.search(r"card[_-]?(?:list|search)|/cardlist/", href, re.I)
-            and ("収録" in label or "カード" in label or "card" in label.lower())
-            and (
-                re.search(r"[?&](?:pid|series|product|expansion|category)=", href)
-                or re.search(r"cardlist/.+", urlsplit(href).path)
-            )
-        ):
-            result.card_list_url = href
-            result.card_list_label = "商品ページからリンクされた収録カード一覧"
-            break
-    return result
-
-
-def card_list_count(html: str) -> int:
-    soup = BeautifulSoup(html, "lxml")
-    root = soup.select_one("#card_list, #cardlist, .card_list, .cardlist, main") or soup
-    ids = {
-        match.group(0)
-        for anchor in root.select("a[href]")
-        if (match := re.search(r"(?:[?&]cid=|/card/)(\d+)", str(anchor.get("href"))))
-    }
-    return len(ids)
 
 
 def _json_objects(html: str) -> list[dict[str, Any]]:
@@ -287,22 +236,171 @@ class ReviewSource:
     def __init__(self, fetcher: HttpFetcher) -> None:
         self.fetcher = fetcher
 
+    def _product_url(self, release: Release, url: str) -> str:
+        """Resolve retailer-only releases through the official catalog, never its text."""
+        index = PRODUCT_INDEXES.get(release.game_id, "")
+        catalog_path = urlsplit(index).path.rstrip("/")
+        is_catalog = urlsplit(url).path.rstrip("/") in {
+            catalog_path,
+            catalog_path + "/index.html",
+            catalog_path + "/index.php",
+            catalog_path + "/list.php",
+        }
+        if _official(url, release.game_id) and not is_catalog:
+            return url
+        if not index:
+            return ""
+        token = _product_token(release.product_name)
+        if release.game_id == "pokemon_card":
+            # The public catalog HTML is just a JavaScript shell. Reuse the
+            # same validated official product data as the release-date parser.
+            api_url = index + "resultAPI.php?productType=expansion"
+            for _ in range(3):  # Only recent products can enter the pre-release window.
+                response = self.fetcher.fetch(api_url)
+                if response.status_code != 200:
+                    return ""
+                data = _api_data(response.text)
+                for item in data["products"]:
+                    title = BeautifulSoup(str(item.get("productTitle", "")), "lxml").get_text()
+                    candidate = urljoin(index, str(item.get("link_detailPage") or ""))
+                    if (
+                        token
+                        and token in _product_token(title)
+                        and candidate.rstrip("/") != index.rstrip("/")
+                        and _official(candidate, release.game_id)
+                    ):
+                        return candidate
+                pages = discover_pokemon_product_api_pages(response.text, api_url)
+                if not pages:
+                    break
+                api_url = pages[0]
+            return ""
+        response = self.fetcher.fetch(index)
+        if response.status_code != 200:
+            return ""
+        root = product_root(BeautifulSoup(response.text, "lxml"))
+        for anchor in root.select("a[href]"):
+            name = (
+                anchor.get_text(" ", strip=True)
+                + " "
+                + " ".join(str(img.get("alt", "")) for img in anchor.select("img"))
+            )
+            href = urljoin(index, str(anchor.get("href", ""))).split("#")[0]
+            if token and token in _product_token(name) and _official(href, release.game_id):
+                return href
+        return ""
+
+    def _card_list(self, release: Release, result: ContentEvidence, product_html: str) -> None:
+        index = result.card_index_url
+        if result.card_list_url != result.url:
+            if not _official(result.card_list_url, release.game_id):
+                result.list_status = "収録一覧リンクが公式ドメイン外のため確認保留"
+                return
+            cards = self.fetcher.fetch(result.card_list_url)
+            if cards.status_code != 200:
+                result.list_status = f"収録一覧の取得失敗（HTTP {cards.status_code}）・再確認対象"
+                return
+            result.card_count = card_list_count(cards.text)
+        elif release.game_id in {"one_piece_card", "dragon_ball_fusion_world", "gundam_card"}:
+            response = self.fetcher.fetch(index)
+            if response.status_code != 200:
+                result.list_status = f"公式カード検索の取得失敗（HTTP {response.status_code}）"
+                return
+            soup = BeautifulSoup(response.text, "lxml")
+            code = re.search(r"(?:OP|EB|PRB)-\d{2}|(?:FB|SB|GD)\d{2}", release.product_name, re.I)
+            if not code:
+                result.list_status = "対象弾の検索条件を照合できず"
+                return
+            selected = next(
+                (
+                    node
+                    for node in soup.select("option[value], a[data-val]")
+                    if re.search(
+                        r"(?<![A-Z0-9])" + re.escape(code[0]) + r"(?![A-Z0-9])",
+                        normalized(node.get_text(" ", strip=True)),
+                        re.I,
+                    )
+                ),
+                None,
+            )
+            if selected is None:
+                result.list_status = "公式カード検索に対象弾の選択肢なし（商品紹介と一覧公開は別）"
+                return
+            value = str(selected.get("value") or selected.get("data-val") or "")
+            if not value.isdigit():
+                result.list_status = "対象弾の検索条件が不明"
+                return
+            parameter = {
+                "one_piece_card": "series",
+                "dragon_ball_fusion_world": "category[]",
+                "gundam_card": "package",
+            }[release.game_id]
+            target = index + "?" + urlencode({"search": "true", parameter: value})
+            cards = self.fetcher.fetch(target)
+            if cards.status_code != 200:
+                result.list_status = f"収録一覧の取得失敗（HTTP {cards.status_code}）"
+                return
+            filtered = BeautifulSoup(cards.text, "lxml")
+            # A provider can ignore a stale query and render its newest set.
+            # Confirm the selected option before counting unrelated cards.
+            active = filtered.select(
+                "option[selected], a.is-active[data-val], a.is-current[data-val]"
+            )
+            if not any(str(node.get("value") or node.get("data-val")) == value for node in active):
+                result.list_status = "対象弾の絞込み結果を照合できず・再確認対象"
+                return
+            result.card_list_url = target
+            result.card_list_label = "公式カード検索を対象弾で絞った収録一覧"
+            result.card_count = card_list_count(cards.text)
+        elif release.game_id == "lorcana":
+            # The list is JavaScript-rendered. Read its published set choices;
+            # an empty HTML shell is neither 0 cards nor proof of nonpublication.
+            script = urljoin(index, "../common/components/js/env.js")
+            response = self.fetcher.fetch(script)
+            if response.status_code != 200 or "formDefault" not in response.text:
+                result.list_status = "公式検索の収録弾設定を取得できず・再確認対象"
+                return
+            block = re.search(r"sets:\s*\{\s*sets:\s*\[([\s\S]*?)\]", response.text)
+            if not block:
+                result.list_status = "公式検索の収録弾設定を解析できず・再確認対象"
+                return
+            token = _product_token(release.product_name)
+            names = re.findall(r"'([^']+)'", block[1])
+            name = next((name for name in names if token in _product_token(name)), "")
+            if name:
+                result.card_index_url = index + "?" + urlencode({"sets[]": name})
+                result.list_status = "対象弾の検索条件を確認（動的な検索結果の全公開は未確認）"
+            else:
+                result.list_status = "公式カード検索に対象弾の選択肢なし（商品紹介は公開済み）"
+            return
+        else:
+            result.card_count = card_list_count(product_html)
+        result.complete = bool(
+            result.total_cards and result.card_count and result.card_count == result.total_cards
+        )
+        if not result.card_count:
+            result.card_count = None
+            result.list_status = (
+                "一覧のカード本体を確認できず（動的表示・未公開・形式変更を未確定）"
+            )
+            return
+        result.list_status = (
+            "基本カードの種類数と一覧の重複除去件数が一致・特殊仕様の全公開は未確認"
+            if result.complete
+            else "商品別の一覧件数を確認・全公開は未確認"
+        )
+
     def content(self, release: Release) -> ContentEvidence:
         url = release.official_url or release.source_url
         index = CARD_INDEXES.get(release.game_id, "")
-        allowed_host = urlsplit(index).hostname or ""
-        host = urlsplit(url).hostname or ""
-        official_domain = allowed_host.removeprefix("www.").removeprefix("db.")
-        if not official_domain or not (
-            host == official_domain or host.endswith("." + official_domain)
-        ):
-            return ContentEvidence(
-                url=url,
-                card_index_url=index,
-                card_list_label="公式の商品別収録ページは未確認",
-                error="公式の商品別ページが未確認",
-            )
         try:
+            url = self._product_url(release, url)
+            if not url:
+                return ContentEvidence(
+                    url=release.official_url or release.source_url,
+                    card_index_url=index,
+                    error="公式の商品別ページが未確認（公式カタログも照合済み）",
+                )
             response = self.fetcher.fetch(url)
             if response.status_code != 200:
                 return ContentEvidence(
@@ -312,8 +410,7 @@ class ReviewSource:
                     error=f"HTTP {response.status_code}",
                 )
             soup = BeautifulSoup(response.text, "lxml")
-            headings = " ".join(node.get_text(" ", strip=True) for node in soup.select("title, h1"))
-            if _product_token(release.product_name) not in _product_token(headings):
+            if not _product_heading(soup, release):
                 return ContentEvidence(
                     url=url,
                     card_index_url=index,
@@ -322,17 +419,15 @@ class ReviewSource:
                 )
             result = parse_content(response.text, url)
             result.card_index_url = index
-            # Also support product pages embedding their full card list.
-            if result.card_list_url == url and result.total_cards:
-                result.card_count = card_list_count(response.text)
-                result.complete = result.card_count >= result.total_cards
-            if result.card_list_url != url:
-                cards = self.fetcher.fetch(result.card_list_url)
-                if cards.status_code == 200:
-                    result.card_count = card_list_count(cards.text)
-                    result.complete = bool(
-                        result.total_cards and result.card_count >= result.total_cards
-                    )
+            try:
+                self._card_list(release, result, response.text)
+            except Exception as exc:
+                # A failed list fetch must not discard successfully read content/BOX price.
+                result.list_status = f"収録一覧の取得失敗（{type(exc).__name__}）・再確認対象"
+            if not usable_content(result):
+                result.error = (
+                    "商品ページ取得済み・判断に必要な収録内容を抽出できず（未発表とは未確定）"
+                )
             return result
         except Exception as exc:
             return ContentEvidence(
