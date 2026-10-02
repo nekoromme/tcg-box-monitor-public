@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 from dataclasses import replace
 from pathlib import Path
@@ -311,18 +312,29 @@ def _additional_products(raw: object) -> tuple[AdditionalProduct, ...]:
         if not isinstance(enabled, bool):
             raise ConfigError("additional product enabled must be true/false")
         fields = {}
-        for key in ("aliases", "variants", "selected_variants"):
+        for key in ("aliases", "variants", "selected_variants", "name_patterns"):
             values = item.get(key, [])
             if not isinstance(values, list) or not all(
                 isinstance(value, str) and value.strip() for value in values
             ):
                 raise ConfigError(f"additional product {key} must be a string list")
             fields[key] = tuple(values)
+        for pattern in fields["name_patterns"]:
+            try:
+                compiled = re.compile(pattern, re.I)
+            except re.error as exc:
+                raise ConfigError(f"invalid additional product pattern: {exc}") from exc
+            if "name" not in compiled.groupindex:
+                raise ConfigError("additional product pattern requires a named name group")
+        require_identity = item.get("require_game_identity", False)
+        if not isinstance(require_identity, bool):
+            raise ConfigError("require_game_identity must be true/false")
         if not set(fields["selected_variants"]) <= set(fields["variants"]):
             raise ConfigError("selected_variants contains an unknown variant")
         result.append(AdditionalProduct(
             item["id"], item["name"], item["category"], fields["aliases"],
             fields["variants"], fields["selected_variants"], enabled,
+            fields["name_patterns"], require_identity,
         ))
     return tuple(result)
 

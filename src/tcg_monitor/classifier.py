@@ -8,7 +8,7 @@ from tcg_monitor.models import ClassifiedProduct, GameConfig
 
 
 def canonical_product_key(game: GameConfig, name: str, url: str | None = None) -> str:
-    selected = additional_matches(game, name)
+    selected = additional_matches(game, name, identified_game=True)
     if len(selected) == 1:
         return selected[0].canonical_product_key
     for pat in game.product_code_patterns:
@@ -24,7 +24,7 @@ def canonical_product_key(game: GameConfig, name: str, url: str | None = None) -
 def classify_product(
     game: GameConfig, name: str, text: str, url: str | None = None
 ) -> ClassifiedProduct:
-    selected = additional_matches(game, name)
+    selected = additional_matches(game, name, identified_game=True)
     if len(selected) == 1:
         return selected[0]
     block = f"{name}\n{text}"

@@ -8,6 +8,11 @@ from urllib.parse import urljoin
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.japanese_datetime import parse_first_datetime
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
+from tcg_monitor.parsers.yugioh_event_lottery import (
+    EVENT_INDEX,
+    is_yugioh_event_url,
+    parse_yugioh_event_lottery,
+)
 
 _PRODUCT_OBJECT = re.compile(r"p\[\d+\]\s*=\s*\{(?P<body>.*?)\}\s*;", re.DOTALL)
 _CATALOG_ROOT = "https://www.yugioh-card.com/japan/products/"
@@ -63,6 +68,11 @@ def parse_yugioh_official_products(
     today: date | None = None,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     """Parse the official OCG catalog embedded as JavaScript product records."""
+
+    if is_yugioh_event_url(url):
+        return parse_yugioh_event_lottery(html, url, source, config, today)
+    if url == EVENT_INDEX:
+        return [], [], []  # 開催ページの発見は同じ監視の取得処理で行う。
 
     game = config.games["yu_gi_oh"]
     current = today or datetime.now().astimezone().date()

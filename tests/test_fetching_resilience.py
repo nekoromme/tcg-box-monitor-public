@@ -356,7 +356,7 @@ def test_quiet_official_account_remains_healthy_when_optional_mirror_is_blocked(
          "2105067964882198698", "excluded_product"),
         ("yahoo_realtime_magi_sendai", "スタートデッキ100 バトルコレクション 抽選販売受付開始",
          "2105067964882198698", "excluded_product"),
-        ("yahoo_realtime_konami_style", "遊戯王 デュエルセット WCS2026 抽選受付開始",
+        ("yahoo_realtime_konami_style", "遊戯王 ストラクチャーデッキ 精霊術の使い手 抽選受付開始",
          "2105067964882198698", "excluded_product"),
         ("yahoo_realtime_batoloco_morioka", "ポケカ 抽選販売の受け取りは本日締め切りです！",
          "2105067964882198698", "closed_or_result_notice"),
