@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, replace
 from datetime import date, datetime
 from pathlib import Path
@@ -101,6 +102,23 @@ def test_bandai_specs_and_konami_bonus_pack_are_not_lost_or_confused() -> None:
     assert yugioh.msrp == 5940
 
 
+def test_pokemon_special_rarity_image_links_and_related_goods_scope() -> None:
+    # Observed markup patterns from the official 30th CELEBRATION product page.
+    content = parse_content(
+        "<main><p>FUR（フューチャリスティックレア）のミュウexが登場！"
+        "このカードはアーティストの描き下ろし！</p>"
+        "<img src='/images/m6a/cards/m6a_135.png' alt='ミュウex'>"
+        "<a href='https://www.pokemon-card.com/card-search/?se_ta=100'>"
+        "<img alt='カードリスト'></a>"
+        "<section class='Others_others__062i2'>別の商品：初回生産限定特典</section></main>",
+        "https://www.30th.pokemon-card.com/product/m6a",
+    )
+    assert content.features["作品固有の特殊レア"].startswith("あり")
+    assert content.features["初回生産限定・初回BOX特典"].startswith("不明")
+    assert content.preview_images == 1
+    assert "se_ta=100" in content.card_list_url
+
+
 def test_h2_product_title_and_official_catalog_resolution() -> None:
     release = replace(
         product(),
@@ -129,6 +147,38 @@ def test_h2_product_title_and_official_catalog_resolution() -> None:
     assert result.url == "https://www.onepiece-cardgame.com/products/eb05.html"
     assert result.total_cards == 75 and usable_content(result)
     assert "選択肢なし" in result.list_status
+
+
+def test_pokemon_dynamic_catalog_resolves_official_subdomain_and_rejects_unrelated_url() -> None:
+    release = replace(
+        product(),
+        game_id="pokemon_card",
+        product_name="拡張パック「30th CELEBRATION」",
+        official_url="https://www.pokemon-card.com/products/index.html?productType=expansion",
+    )
+    payload = {
+        "result": 1,
+        "errMsg": "",
+        "hitCnt": 1,
+        "thisPage": 1,
+        "maxPage": 1,
+        "products": [
+            {
+                "productTitle": "拡張パック「30th CELEBRATION」",
+                "link_detailPage": "https://www.30th.pokemon-card.com/product/m6a",
+            }
+        ],
+    }
+    fetcher = Mock()
+    fetcher.fetch.return_value = FetchResult("api", 200, json.dumps(payload), {})
+    source = ReviewSource(fetcher)
+    assert (
+        source._product_url(release, release.official_url)
+        == payload["products"][0]["link_detailPage"]
+    )
+    payload["products"][0]["link_detailPage"] = "https://shop.example.com/card"
+    fetcher.fetch.return_value = FetchResult("api", 200, json.dumps(payload), {})
+    assert source._product_url(release, release.official_url) == ""
 
 
 def test_unknown_only_is_pending_then_recovery_sends_once(tmp_path: Path) -> None:

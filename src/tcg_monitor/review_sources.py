@@ -14,6 +14,10 @@ from bs4 import BeautifulSoup
 from tcg_monitor.http_client import HttpFetcher
 from tcg_monitor.identity import release_title_token
 from tcg_monitor.models import Release
+from tcg_monitor.parsers.pokemon_official_products import (
+    _api_data,
+    discover_pokemon_product_api_pages,
+)
 from tcg_monitor.review_content import (
     ContentEvidence as ContentEvidence,
 )
@@ -235,15 +239,46 @@ class ReviewSource:
     def _product_url(self, release: Release, url: str) -> str:
         """Resolve retailer-only releases through the official catalog, never its text."""
         index = PRODUCT_INDEXES.get(release.game_id, "")
-        if _official(url, release.game_id) and url.rstrip("/") != index.rstrip("/"):
+        catalog_path = urlsplit(index).path.rstrip("/")
+        is_catalog = urlsplit(url).path.rstrip("/") in {
+            catalog_path,
+            catalog_path + "/index.html",
+            catalog_path + "/index.php",
+            catalog_path + "/list.php",
+        }
+        if _official(url, release.game_id) and not is_catalog:
             return url
         if not index:
+            return ""
+        token = _product_token(release.product_name)
+        if release.game_id == "pokemon_card":
+            # The public catalog HTML is just a JavaScript shell. Reuse the
+            # same validated official product data as the release-date parser.
+            api_url = index + "resultAPI.php?productType=expansion"
+            for _ in range(3):  # Only recent products can enter the pre-release window.
+                response = self.fetcher.fetch(api_url)
+                if response.status_code != 200:
+                    return ""
+                data = _api_data(response.text)
+                for item in data["products"]:
+                    title = BeautifulSoup(str(item.get("productTitle", "")), "lxml").get_text()
+                    candidate = urljoin(index, str(item.get("link_detailPage") or ""))
+                    if (
+                        token
+                        and token in _product_token(title)
+                        and candidate.rstrip("/") != index.rstrip("/")
+                        and _official(candidate, release.game_id)
+                    ):
+                        return candidate
+                pages = discover_pokemon_product_api_pages(response.text, api_url)
+                if not pages:
+                    break
+                api_url = pages[0]
             return ""
         response = self.fetcher.fetch(index)
         if response.status_code != 200:
             return ""
         root = product_root(BeautifulSoup(response.text, "lxml"))
-        token = _product_token(release.product_name)
         for anchor in root.select("a[href]"):
             name = (
                 anchor.get_text(" ", strip=True)
@@ -343,6 +378,12 @@ class ReviewSource:
         result.complete = bool(
             result.total_cards and result.card_count and result.card_count == result.total_cards
         )
+        if not result.card_count:
+            result.card_count = None
+            result.list_status = (
+                "一覧のカード本体を確認できず（動的表示・未公開・形式変更を未確定）"
+            )
+            return
         result.list_status = (
             "基本カードの種類数と一覧の重複除去件数が一致・特殊仕様の全公開は未確認"
             if result.complete

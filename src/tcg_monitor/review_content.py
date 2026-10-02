@@ -43,7 +43,8 @@ def product_root(soup: BeautifulSoup) -> Tag:
     # price and pictures must never become evidence for the current product.
     for other in root.select(
         "aside, nav, footer, script, style, #recommend, .related-products, "
-        ".relatedCol, .wtModalCol, .wtModalPointCol, .c-breadcrumb"
+        ".relatedCol, .wtModalCol, .wtModalPointCol, .c-breadcrumb, "
+        "[class*='Others_others__']"
     ):
         other.decompose()
     return root
@@ -111,10 +112,12 @@ def parse_content(html: str, url: str) -> ContentEvidence:
         "グランドマスターレア": r"グランドマスターレア|GRANDMASTER RARE",
         "特殊イラスト・特殊仕様": (
             r"オーバーフレーム|新規(?:描き下ろし)?イラスト|アートワーク|パラレル"
+            r"|描き下ろし|特別仕様"
         ),
         "作品固有の特殊レア": (
             r"アイコニック|エンチャンテッド|エピック|キュレーターズ[・･]ライブラリー"
             r"|スーパーパラレル|スペシャルカード|プリズマティックシークレット"
+            r"|フューチャリスティックレア|スペシャルアートレア|アートレア"
         ),
     }
     for label, pattern in checks.items():
@@ -134,7 +137,8 @@ def parse_content(html: str, url: str) -> ContentEvidence:
             12 <= len(line) <= 450
             and re.search(
                 r"アイコニック|エンチャンテッド|キュレーターズ|特典|新要素|初登場"
-                r"|新カード|参戦|新テーマ|新規イラスト|描き下ろし|ヒロイン|レアリティ|種類数",
+                r"|新カード|参戦|新テーマ|新規イラスト|描き下ろし|ヒロイン|レアリティ|種類数"
+                r"|特性|ワザ|キラカード|特別仕様",
                 line,
             )
             and line not in result.highlights
@@ -154,17 +158,19 @@ def parse_content(html: str, url: str) -> ContentEvidence:
     previews = set()
     for img in root.select("img"):
         src = str(img.get("data-src") or img.get("src") or "")
-        if re.search(r"(?:pic_card\d|/card/|/cardlist/card/|/cards/card/)", src):
+        if re.search(r"(?:pic_card\d|/cards?/|/cardlist/card/|/cards/card/)", src):
             previews.add(urljoin(url, src).split("?")[0])
     result.preview_images = len(previews)
     for anchor in root.select("a[href]"):
         href = urljoin(url, str(anchor.get("href", "")))
-        label = anchor.get_text(" ", strip=True)
+        label = anchor.get_text(" ", strip=True) + " ".join(
+            str(img.get("alt", "")) for img in anchor.select("img")
+        )
         if (
             re.search(r"card[_-]?(?:list|search)|/cardlist/", href, re.I)
             and ("収録" in label or "カード" in label or "card" in label.lower())
             and (
-                re.search(r"[?&](?:pid|series|product|expansion|category)=", href)
+                re.search(r"[?&](?:pid|series|product|expansion|category|se_ta)=", href)
                 or re.search(r"cardlist/.+", urlsplit(href).path)
             )
         ):
