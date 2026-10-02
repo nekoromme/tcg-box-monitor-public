@@ -9,12 +9,14 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 
 from tcg_monitor.additional_products import (
+    additional_matches,
     additional_tuples,
     without_additional_contents,
 )
 from tcg_monitor.classifier import canonical_product_key
 from tcg_monitor.japanese_datetime import parse_period_start
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
+from tcg_monitor.non_box_sales import additional_sale_cases, additional_sale_signal
 from tcg_monitor.parsers.common import title, visible_text
 from tcg_monitor.parsers.local_lottery import _application_deadline
 
@@ -60,7 +62,7 @@ def _is_detail_url(source_id: str, candidate: str) -> bool:
 
 
 def discover_pokemon_center_news_urls(
-    html: str, url: str, source: SourceConfig, limit: int = 12
+    html: str, url: str, source: SourceConfig, limit: int = 12, *, config: Config | None = None
 ) -> list[str]:
     """Follow only official Pokémon Card lottery articles from each news index."""
     soup = BeautifulSoup(html, "lxml")
@@ -69,9 +71,12 @@ def discover_pokemon_center_news_urls(
         if not isinstance(anchor, Tag):
             continue
         label = anchor.get_text(" ", strip=True)
-        if "抽選" not in label or not any(
+        selected_sale = bool(config and additional_sale_signal(label) and additional_matches(
+            config.games["pokemon_card"], label,
+        ))
+        if not selected_sale and ("抽選" not in label or not any(
             word in label for word in ("ポケモンカード", "カードゲーム")
-        ):
+        )):
             continue
         candidate = urljoin(url, str(anchor.get("href")))
         if _is_detail_url(source.id, candidate) and candidate not in found:
@@ -149,6 +154,13 @@ def parse_pokemon_center_lottery(
     """Parse online/store lotteries without ever treating result dates as starts."""
     page_title = title(html) or source.name
     text = visible_text(html)
+    if additional_sale_signal(text):
+        is_store = source.id == _STORE_SOURCE
+        return additional_sale_cases(
+            text, url, source, config,
+            "pokemon_center_store" if is_store else "pokemon_center_online",
+            "ポケモンセンター（店頭）" if is_store else "ポケモンセンターオンライン",
+        ), [], []
     if "抽選" not in text or not any(word in text for word in ("ポケモンカード", "カードゲーム")):
         return [], [], []
 

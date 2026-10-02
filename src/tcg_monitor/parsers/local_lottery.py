@@ -35,6 +35,11 @@ from tcg_monitor.models import (
     SourceConfig,
     SourceTier,
 )
+from tcg_monitor.non_box_sales import (
+    additional_sale_cases,
+    additional_sale_signal,
+    period_has_ended,
+)
 from tcg_monitor.parsers.common import title, visible_text
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
 
@@ -170,8 +175,8 @@ _DISALLOWED_REMOTE_APPLICATION_PATTERNS = (
         r"(?!不要|は不要|しなく|必要なし)", re.IGNORECASE,
     ),
     re.compile(r"リ[ポボ]スト(?:で|して|が必要|必須)", re.IGNORECASE),
-    re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,40}掲示.{0,30}QRコード", re.IGNORECASE),
-    re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,30}QRコード(?:から|より)", re.IGNORECASE),
+    re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,40}掲示.{0,30}QR(?:コード)?", re.IGNORECASE),
+    re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,30}QR(?:コード)?(?:から|より)", re.IGNORECASE),
     re.compile(r"当選(?:者|された方).{0,80}店頭.{0,30}予約(?:を|が|手続)", re.IGNORECASE),
     re.compile(r"予約手付金", re.IGNORECASE),
 )
@@ -1638,17 +1643,20 @@ def parse_yahoo_realtime(
             )
             and not any(marker in compact_text for marker in ("大会", "イベント", "トーナメント"))
         )
+        selected_sale = additional_sale_signal(post_text) and bool(
+            additional_game(post_text, source, config)
+        )
         posted_on = _post_date(status_id, config.timezone)
         images = _tweet_image_urls(container)
         # 本文が「お知らせ」「画像をご確認ください」だけでも、今日・昨日の
         # 公式投稿なら画像を確認する。まとめアカウントや古い写真まで広げない。
         image_only_candidate = (
-            not (body_announced or amazon_invitation or official_lorcana_sale)
+            not (body_announced or amazon_invitation or official_lorcana_sale or selected_sale)
             and source.source_tier in {SourceTier.OFFICIAL, SourceTier.OFFICIAL_INDIRECT}
             and bool(images)
             and 0 <= (detected - posted_on).days <= 1
         )
-        if not (body_announced or amazon_invitation or official_lorcana_sale
+        if not (body_announced or amazon_invitation or official_lorcana_sale or selected_sale
                 or image_only_candidate):
             count("not_application_announcement")
             continue
@@ -1842,7 +1850,10 @@ def parse_yahoo_realtime(
             if not ocr_text:
                 count("image_only_unread")
                 continue
-            if not _lottery_application_signal(combined_text, posted_on):
+            if not (_lottery_application_signal(combined_text, posted_on) or (
+                additional_sale_signal(combined_text)
+                and additional_game(combined_text, source, config)
+            )):
                 count("not_application_announcement")
                 continue
             count("image_only_application_announcement")
@@ -1855,12 +1866,36 @@ def parse_yahoo_realtime(
         ):
             count("tournament_or_result")
             continue
+        if additional_sale_signal(combined_text) and (
+            selected_sale or additional_game(combined_text, source, config)
+        ):
+            sale_url = _application_url(container, status_url, ocr_text)
+            required_pattern = source.parser_options.get("required_application_url_pattern")
+            if required_pattern and not re.fullmatch(str(required_pattern), sale_url):
+                count("application_url_outside_scope")
+                continue
+            sale_cases = additional_sale_cases(
+                combined_text, sale_url, source, config,
+                retailer_id, retailer_name, source_url=status_url,
+                announced_on=posted_on, detected_on=detected,
+            )
+            for sale_case in sale_cases:
+                cases[sale_case.case_id] = sale_case
+            count("additional_sale_accepted" if sale_cases else "additional_sale_excluded")
+            if ocr_pending is not None and not ocr_error:
+                ocr_pending.pop(status_url, None)
+            continue
         application_end = _status_datetime_option(
             source,
             "confirmed_application_ends",
             status_id,
         ) or _application_deadline(combined_text, posted_on)
         if application_end is not None:
+            if additional_game(combined_text, source, config) and period_has_ended(
+                application_end, config, detected,
+            ):
+                count("application_ended")
+                continue
             application_end_date = (
                 application_end.date()
                 if isinstance(application_end, datetime)

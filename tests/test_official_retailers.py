@@ -66,7 +66,8 @@ def test_added_official_store_indexes_follow_only_target_box_pages() -> None:
             "premium_bandai_dragonball",
             "https://p-bandai.jp/brand/b0062/",
             "premium_bandai_dragonball.html",
-            ["https://p-bandai.jp/item/item-1000255641/"],
+            ["https://p-bandai.jp/item/item-1000255641/",
+             "https://p-bandai.jp/item/item-1000244759/"],
         ),
     )
     for source_id, url, fixture, expected in cases:
@@ -232,6 +233,7 @@ def test_premium_bandai_card_shop_lists_october_relotteries() -> None:
     expected = [
         "https://p-bandai.jp/item/item-1000257871/",
         "https://p-bandai.jp/item/item-1000257866/",
+        "https://p-bandai.jp/item/item-1000244759/",
     ]
     for index_url in source.discovery_urls:
         assert discover_official_retailer_urls(listing, index_url, source, config) == expected
@@ -254,7 +256,9 @@ def test_premium_bandai_recent_news_can_warn_when_detail_is_blocked() -> None:
     """
     url = "https://p-bandai.jp/carddas/news-list-0/"
     cases = premium_bandai_recent_news_cases(html, url, source, config, date(2026, 9, 18))
-    assert {case.canonical_product_key for case in cases} == {"ST01", "FB09"}
+    assert {case.canonical_product_key for case in cases} == {
+        "ST01", "FB09", "dragonball_fw_2nd_anniversary",
+    }
     assert all(case.start_at == date(2026, 9, 18) for case in cases)
     assert all(case.end_at is None for case in cases)
     assert all(

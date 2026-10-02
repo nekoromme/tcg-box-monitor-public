@@ -23,6 +23,11 @@ from tcg_monitor.models import (
     Release,
     SourceConfig,
 )
+from tcg_monitor.non_box_sales import (
+    additional_sale_cases,
+    additional_sale_signal,
+    period_has_ended,
+)
 from tcg_monitor.parsers.common import title, visible_text
 
 KONAMI_STYLE_SOURCE = "konami_style_yugioh"
@@ -173,7 +178,7 @@ def _onepiece_candidate(candidate: str, context: str) -> bool:
     )
 
 
-def _premium_bandai_candidate(candidate: str, context: str) -> bool:
+def _premium_bandai_candidate(candidate: str, context: str, config: Config) -> bool:
     parts = urlsplit(candidate)
     compact = re.sub(r"\s+", "", context)
     has_game = any(
@@ -193,7 +198,7 @@ def _premium_bandai_candidate(candidate: str, context: str) -> bool:
         parts.netloc.casefold() == "p-bandai.jp"
         and bool(_P_BANDAI_ITEM.fullmatch(parts.path))
         and has_game
-        and has_box
+        and (has_box or bool(additional_matches(config.games["dragon_ball_fusion_world"], context)))
     )
 
 
@@ -233,7 +238,7 @@ def discover_official_retailer_urls(
         elif source.id == ONEPIECE_SHOP_SOURCE:
             allowed = _onepiece_candidate(candidate, context)
         elif source.id == PREMIUM_BANDAI_DB_SOURCE:
-            allowed = _premium_bandai_candidate(candidate, context)
+            allowed = _premium_bandai_candidate(candidate, context, config)
         if allowed and candidate not in found:
             found.append(candidate)
         if len(found) >= source_limit:
@@ -275,7 +280,7 @@ def premium_bandai_recent_news_cases(
         product_name = headline.split("【抽選販売】", 1)[1]
         product_name = re.split(r"[」｣]が抽選販売開始", product_name, maxsplit=1)[0]
         product_name = product_name.strip("｢「」｣ \t")
-        if not _premium_bandai_candidate(item_url, product_name):
+        if not _premium_bandai_candidate(item_url, product_name, config):
             continue
         classified = classify_product(game, product_name, "ブースターパック 1BOX", item_url)
         if not classified.is_target:
@@ -497,6 +502,12 @@ def parse_konami_style(
     config: Config,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     _, product_name, product_text = _product_page(html, source.name)
+    if additional_sale_signal(product_text) and additional_matches(
+        config.games["yu_gi_oh"], product_text,
+    ):
+        return additional_sale_cases(
+            product_text, url, source, config, "konami_style", "KONAMI STYLE",
+        ), [], []
     product_name = re.sub(r"^【[^】]*(?:お届け|抽選販売分)[^】]*】\s*", "", product_name)
     classification_text = product_text.replace("ボックス", "BOX")
     classified = classify_product(
@@ -519,6 +530,8 @@ def parse_konami_style(
         return [], [], []
 
     start_at, end_at = _labelled_period(product_text, source.start_labels)
+    if classified.explicitly_selected and period_has_ended(end_at, config):
+        return [], [], []
     if not start_at:
         return [], [], [
             _missing_start_alert(
@@ -635,6 +648,10 @@ def parse_premium_bandai_dragonball(
     config: Config,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     _, product_name, product_text = _product_page(html, source.name)
+    if additional_sale_signal(product_text):
+        return additional_sale_cases(
+            product_text, url, source, config, "premium_bandai", "プレミアムバンダイ",
+        ), [], []
     product_name = re.sub(r"^【抽選販売】\s*", "", product_name)
     classified = classify_product(
         config.games["dragon_ball_fusion_world"],
@@ -646,6 +663,8 @@ def parse_premium_bandai_dragonball(
         return [], [], []
 
     start_at, end_at = _labelled_period(product_text, source.start_labels)
+    if classified.explicitly_selected and period_has_ended(end_at, config):
+        return [], [], []
     if not start_at:
         return [], [], [
             _missing_start_alert(

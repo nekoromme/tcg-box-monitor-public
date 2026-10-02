@@ -312,7 +312,8 @@ def _additional_products(raw: object) -> tuple[AdditionalProduct, ...]:
         if not isinstance(enabled, bool):
             raise ConfigError("additional product enabled must be true/false")
         fields = {}
-        for key in ("aliases", "variants", "selected_variants", "name_patterns"):
+        for key in ("aliases", "variants", "selected_variants", "required_keywords",
+                    "exclude_keywords", "name_patterns"):
             values = item.get(key, [])
             if not isinstance(values, list) or not all(
                 isinstance(value, str) and value.strip() for value in values
@@ -331,10 +332,18 @@ def _additional_products(raw: object) -> tuple[AdditionalProduct, ...]:
             raise ConfigError("require_game_identity must be true/false")
         if not set(fields["selected_variants"]) <= set(fields["variants"]):
             raise ConfigError("selected_variants contains an unknown variant")
+        monitor_sales = item.get("monitor_sales", True)
+        if not isinstance(monitor_sales, bool):
+            raise ConfigError("additional product monitor_sales must be true/false")
+        note = item.get("note", "")
+        if not isinstance(note, str):
+            raise ConfigError("additional product note must be a string")
         result.append(AdditionalProduct(
             item["id"], item["name"], item["category"], fields["aliases"],
             fields["variants"], fields["selected_variants"], enabled,
-            fields["name_patterns"], require_identity,
+            name_patterns=fields["name_patterns"], require_game_identity=require_identity,
+            required_keywords=fields["required_keywords"],
+            exclude_keywords=fields["exclude_keywords"], monitor_sales=monitor_sales, note=note,
         ))
     return tuple(result)
 

@@ -232,7 +232,9 @@ games:
       - 周辺用品
       - キャンペーン
       - 大会
-    # BOX以外で抽選を拾う商品。falseで停止、selected_variants: []は全種類。
+    # 指定商品だけ抽選・予約・受注・販売開始を拾う。falseで停止。
+    # required_keywordsはどれか1つ必須、exclude_keywordsは1つでもあれば除外。
+    # selected_variants: []は全種類。根拠・見送り理由はdocs/non-box-opportunities-2026-10-02.md。
     additional_products:
       - id: pokemon_30th_cardset
         enabled: true
@@ -254,6 +256,7 @@ games:
           - モクロー・ニャビー・アシマリ
           - サルノリ・ヒバニー・メッソン
           - ニャオハ・ホゲータ・クワッス
+        note: 追加販売・受注で供給が増える可能性あり。各発送回の相場と送料を確認。
       # デッキセット全般は除外したまま、この商品だけ抽選監視へ追加する。
       - id: pokemon_30th_premium_deck
         enabled: true
@@ -268,8 +271,33 @@ games:
           - 30周年プレミアムデッキセット
         selected_variants: []
         variants: []
+        note: 追加販売・受注で供給が増える可能性あり。各発送回の相場と送料を確認。
+      - id: pokemon_30th_futuristic_box
+        name: 30th CELEBRATION FUTURISTIC BOX
+        category: 特別セット
+        aliases: [FUTURISTIC BOX, フューチャリスティックBOX]
+        note: 定価27,500円。ピカチュウFUR入り。後日の店頭販売の可能性が公式に明記されている。
+      - id: pokemon_special_box_tohoku
+        name: スペシャルBOX ポケモンセンタートウホク
+        category: 地域限定プロモセット
+        aliases: [ポケモンセンタートウホク, ポケセントウホク, トウホクのスペシャルBOX]
+        required_keywords: [スペシャルBOX, スペシャルボックス]
+        note: 定価2,090円。公式が追加生産・追加販売を発表済み。未開封状態と発送時の相場を確認。
+      - id: pokemon_special_box_hiroshima
+        name: スペシャルBOX ポケモンセンターヒロシマ
+        category: 地域限定プロモセット
+        aliases: [ポケモンセンターヒロシマ, ポケセンヒロシマ, ヒロシマのスペシャルBOX]
+        required_keywords: [スペシャルBOX, スペシャルボックス]
+        note: 定価2,090円。公式が追加生産・追加販売を発表済み。未開封状態と発送時の相場を確認。
+      - id: pokemon_special_box_fukuoka
+        name: スペシャルBOX ポケモンセンターフクオカ
+        category: 地域限定プロモセット
+        aliases: [ポケモンセンターフクオカ, ポケセンフクオカ, フクオカのスペシャルBOX]
+        required_keywords: [スペシャルBOX, スペシャルボックス]
+        note: 定価2,090円。公式が追加生産・追加販売を発表済み。未開封状態と発送時の相場を確認。
       # 商品名が変わっても同じ系列を拾う。利益確定ではなく抽選の検討候補。
       - id: pokemon_center_set
+        monitor_sales: false
         name: ポケモンセンターセット
         category: ポケモンセンターセット
         name_patterns:
@@ -277,11 +305,13 @@ games:
           - '(?P<name>[\w・－ー]{2,60}\s+ポケモンセンターセット)'
           - '(?P<name>ポケモンセンターセット\s*[「『][^」』\n]{2,70}[」』])'
       - id: pokemon_center_special_box
+        monitor_sales: false
         name: ポケモンセンター記念スペシャルBOX
         category: スペシャルBOX
         name_patterns:
           - '(?P<name>スペシャル\s*(?:BOX|ボックス)\s*[「『]?ポケモンセンター[ァ-ヶーA-Za-z0-9]+[」』]?)'
       - id: pokemon_anniversary_set
+        monitor_sales: false
         name: 周年限定カード・デッキセット
         category: カードセット
         name_patterns:
@@ -331,7 +361,44 @@ games:
       - キャンペーン
       - 大会
     additional_products:
+      - id: onepiece_pcc_day24
+        name: プレミアムカードコレクション -ONE PIECE DAY'24-
+        category: 限定カードコレクション
+        aliases: [プレミアムカードコレクション ONE PIECE DAY24, プレミアムカードコレクション ワンピースデイ24]
+        note: 定価990円。受注・再販の発送時には供給が増える。来場特典カードとは別商品。
+      - id: onepiece_pcc_day25
+        name: プレミアムカードコレクション -ONE PIECE DAY'25-
+        category: 限定カードコレクション
+        aliases: [プレミアムカードコレクション ONE PIECE DAY25, プレミアムカードコレクション ワンピースデイ25]
+        note: 定価990円。受注・再販の発送時には供給が増える。来場特典カードとは別商品。
+      - id: onepiece_pcc_25th
+        name: プレミアムカードコレクション 25周年エディション
+        category: 限定カードコレクション
+        aliases: [プレミアムカードコレクション 25thエディション]
+        exclude_keywords: [英語版, English version, 海外版]
+        note: 定価2,200円。新規の購入受付・再販のみ監視。買取は版と未開封条件を確認。
+      - id: onepiece_pcc_film_red
+        name: プレミアムカードコレクション -ONE PIECE FILM RED-
+        category: 限定カードコレクション
+        aliases: [プレミアムカードコレクション FILM RED, プレミアムカードコレクション フィルムレッド]
+        exclude_keywords: [英語版, English version, 海外版]
+        note: 定価2,640円。映画入場特典フィナーレセットとは別商品。発送時の未開封買取を確認。
+      - id: onepiece_2nd_anniversary
+        name: ONE PIECEカードゲーム 2nd ANNIVERSARY SET
+        category: 周年プロモセット
+        aliases: [2nd ANNIVERSARY SET, 2周年アニバーサリーセット]
+        required_keywords: [ONE PIECE, ワンピース, ワンピカード]
+        exclude_keywords: [English, China, 英語, 中国, 海外版, アジア版]
+        note: 日本通常版・定価17,600円。別イラスト版とは価格が異なる。輸送箱の未開封条件を確認。
+      - id: onepiece_3rd_anniversary
+        name: ONE PIECEカードゲーム 3rd ANNIVERSARY SET
+        category: 周年プロモセット
+        aliases: [3rd ANNIVERSARY SET, 3周年アニバーサリーセット]
+        required_keywords: [ONE PIECE, ワンピース, ワンピカード]
+        exclude_keywords: [English, China, 英語, 中国, 海外版, アジア版]
+        note: 日本通常版・定価19,800円。買取店間の価格差が大きいため出口を確認。追加受注で供給増の可能性。
       - id: onepiece_premium_card_collection
+        monitor_sales: false
         name: プレミアムカードコレクション
         category: プレミアムカードコレクション
         name_patterns:
@@ -339,6 +406,7 @@ games:
           - '(?P<name>プレミアムカードコレクション\s*[-－][^-－\n]{2,70}[-－])'
           - '(?P<name>プレミアムカードコレクション\s*[「『]?[^\s」』、。]{2,60}[」』]?)'
       - id: onepiece_anniversary_set
+        monitor_sales: false
         name: 周年記念カードセット
         category: アニバーサリーセット
         require_game_identity: true
@@ -390,7 +458,16 @@ games:
       - 大会
       - イベント
     additional_products:
+      - id: dragonball_fw_2nd_anniversary
+        name: フュージョンワールド 2nd ANNIVERSARY SET
+        category: 周年プロモセット
+        aliases: [2nd ANNIVERSARY SET, 2ndアニバーサリーセット, 2周年アニバーサリーセット]
+        required_keywords: [フュージョンワールド, DBFW, ドラゴンボールスーパーカードゲーム, ドラゴンボールSCGFW]
+        exclude_keywords: [デジタル, DIGITAL, ジェム, ONE PIECE, ワンピース]
+        note: 実物版のみ・定価9,900円。デジタル版は除外。受注回の発送時に供給増、買取は再確認。
       - id: dragonball_anniversary_set
+        monitor_sales: false
+        exclude_keywords: [デジタル, DIGITAL, ジェム]
         name: 周年記念カードセット
         category: アニバーサリーセット
         require_game_identity: true
@@ -455,7 +532,13 @@ games:
       - キャンペーン
       - 大会
     additional_products:
+      - id: yugioh_duel_set_wcs2026
+        name: デュエルセット WCS2026
+        category: 限定デュエルセット
+        aliases: [WCS2026 デュエルセット, WCS 2026 DUEL SET, デュエルセット WCS 2026]
+        note: 定価8,800円。発送は2026年11月21日以降。9月の抽選は終了済み、次の購入機会のみ監視。
       - id: yugioh_duel_set
+        monitor_sales: false
         name: デュエルセット
         category: デュエルセット
         name_patterns:
@@ -534,6 +617,13 @@ games:
       - キャンペーン
       - 大会
       - イベント
+    additional_products:
+      - id: gundam_limited_box_beta
+        name: ガンダムカードゲーム リミテッドBOX Ver.β
+        category: 先行限定セット
+        aliases: [リミテッドBOX Ver.β, リミテッドボックス Ver.β, リミテッドBOX Ver.ベータ, リミテッドBOX Ver.Beta]
+        exclude_keywords: [PB03, 1st ANNIVERSARY]
+        note: 定価7,700円。初期のVer.β限定商品。PB03周年セットは別商品で、この買取実績を流用しない。
     official_release_source: gundam_official_products
 
 common_terms:
@@ -1103,6 +1193,7 @@ sources:
     dragon_ball_fusion_world: verified
   purposes:
   - lottery_discovery
+  - official_sale_discovery
   classification: browser_fallback_without_challenge_bypass
   enabled: true
   discovery_urls:
@@ -1115,11 +1206,13 @@ sources:
   - 応募期間
   render_mode: http_then_browser_once_no_challenge_bypass
   poll_minutes: 120
+  fallback_source_ids:
+  - yahoo_realtime_premium_bandai_onepiece
   expected_elements:
   - booster_item_link
   - lottery_label
   - labelled_application_period
-  notes: カードショップ公式の公開商品一覧・新着一覧から対象BOXの個別ページを発見する。周年セット、カードセット、サプライ、通常販売は除外。商品ページがアクセス制限された場合は監視異常として記録し、CAPTCHA等の迂回は行わない。
+  notes: 公式商品一覧・新着一覧からBOXと指定例外商品の個別ページを発見。非BOXの予約・受注はadditional_products指定品だけ。アクセス制限時は既存のプレバン公式Xで補完する。
 - id: dragonball_official_store
   name: フュージョンワールド オフィシャルストア
   operator: 株式会社バンダイナムコアミューズメント
@@ -2810,8 +2903,11 @@ sources:
   coverage_scope: specialized
   supported_games:
     one_piece_card: verified
+    dragon_ball_fusion_world: verified
+    gundam_card: prospective
   purposes:
   - lottery_discovery
+  - official_sale_discovery
   enabled: true
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3Ap_bandai%20ONE%20PIECE%20%E6%8A%BD%E9%81%B8&ei=UTF-8
@@ -2821,7 +2917,7 @@ sources:
   poll_minutes: 120
   expected_elements:
   - official_x_status
-  notes: 新弾だけでなくOP/EB/PRBの過去弾再抽選告知も対象にする。
+  notes: プレバン公式Xを共用。OP/EB/PRBの過去弾再抽選と、各ゲームの指定例外商品の抽選・予約・受注開始を監視。
   parser_kind: yahoo_realtime
   parser_options:
     account: p_bandai

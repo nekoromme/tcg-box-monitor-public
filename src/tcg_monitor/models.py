@@ -183,6 +183,10 @@ class AdditionalProduct:
     # 個別商品名だけでなく、限定商品の系列を拾う。nameで商品名を捕捉する。
     name_patterns: tuple[str, ...] = ()
     require_game_identity: bool = False
+    required_keywords: tuple[str, ...] = ()
+    exclude_keywords: tuple[str, ...] = ()
+    monitor_sales: bool = True
+    note: str = ""
 
 
 @dataclass(frozen=True)
@@ -328,6 +332,14 @@ class LotteryCase:
         if self.application_round:
             # 同じ通販URLで行われる1次・2次の抽選を別の応募機会として保存する。
             identity_parts.append(self.application_round)
+        if (self.extraction_method.startswith("additional_product_")
+                and not has_article_status_id
+                and self.opportunity_kind == OpportunityKind.DIRECT_SALE):
+            # Maker stores reuse a product page for later preorder windows.
+            start_day = (
+                self.start_at.date() if isinstance(self.start_at, datetime) else self.start_at
+            )
+            identity_parts.append("sale_window:" + start_day.isoformat())
         if not has_article_status_id and is_shared_retailer_application_url(
             self.retailer_id, self.official_url,
         ):
@@ -341,7 +353,13 @@ class LotteryCase:
         # official-store sales need a kind suffix so a sale and a lottery for the
         # same product page cannot suppress one another.
         if self.opportunity_kind != OpportunityKind.LOTTERY:
-            identity_parts.append(self.opportunity_kind.value)
+            # A later OCR/page recovery may reveal an initially unknown start.
+            # Keep the new exception sale's delivery identity through that upgrade.
+            identity_parts.append(
+                OpportunityKind.DIRECT_SALE.value
+                if self.extraction_method.startswith("additional_product_")
+                else self.opportunity_kind.value
+            )
         raw = "|".join(identity_parts)
         return self.__class__(**{**self.__dict__, "case_id": sha256(raw.encode()).hexdigest()})
 

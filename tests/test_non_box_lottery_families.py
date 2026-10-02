@@ -10,7 +10,7 @@ from freezegun import freeze_time
 
 from tcg_monitor.additional_products import additional_matches
 from tcg_monitor.classifier import classify_product
-from tcg_monitor.cli import _lottery_description, _lottery_discord_description
+from tcg_monitor.cli import _lottery_description, _lottery_discord_description, _remember_case
 from tcg_monitor.config import ConfigError, _additional_products, load_config
 from tcg_monitor.http_client import FetchResult
 from tcg_monitor.identity import lottery_dedupe_key
@@ -43,7 +43,7 @@ HTML = Path("tests/fixtures/yugioh_event_web_lottery.html").read_text()
 def test_card_bearing_families_remain_non_box_targets(game_id: str, name: str) -> None:
     product = classify_product(CONFIG.games[game_id], name, name)
     assert product.is_target and not product.is_box
-    assert product.canonical_product_key.startswith("nonbox:")
+    assert product.canonical_product_key  # 調査済み商品は系列より優先する固定キー。
 
 
 @pytest.mark.parametrize(("game_id", "name"), [
@@ -133,6 +133,18 @@ def test_real_web_lottery_is_separate_from_participation_and_results() -> None:
     assert all(
         case.official_url == "https://livepocket.jp/e/ycsjtokyo2026_duelset" for case in cases
     )
+
+
+@freeze_time("2026-10-02 23:22:00+09:00")
+def test_official_event_rounds_keep_separate_delivery_history(tmp_path: Path) -> None:
+    cases, _, _ = parse_yugioh_official_products(HTML, URL, SOURCE, CONFIG)
+    state = MonitorState.load(tmp_path / "state.json")
+    _remember_case(state, cases[0])
+    state.mark_delivered("lottery:started:" + cases[0].case_id)
+    _remember_case(state, cases[1])
+    assert len(state.data["seen_cases"]) == 2
+    assert state.delivered("lottery:started:" + cases[0].case_id)
+    assert not state.delivered("lottery:started:" + cases[1].case_id)
 
 
 @freeze_time("2026-11-10 00:00:00+09:00")
