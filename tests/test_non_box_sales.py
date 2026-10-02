@@ -29,6 +29,7 @@ from tcg_monitor.parsers.pokemon_center import (
     discover_pokemon_center_news_urls,
     parse_pokemon_center_lottery,
 )
+from tcg_monitor.parsers.premium_bandai import parse_nyuka_now_premium_bandai
 from tcg_monitor.source_priority import merge_lotteries
 from tcg_monitor.state import MonitorState
 
@@ -37,6 +38,84 @@ DAY25 = "プレミアムカードコレクション -ONE PIECE DAY'25-"
 DB = "フュージョンワールド 2nd ANNIVERSARY SET"
 FUT = "30th CELEBRATION FUTURISTIC BOX"
 JST = ZoneInfo("Asia/Tokyo")
+
+
+def premium_summary_block(name: str, method: str, item_id: int = 1000000001) -> str:
+    return (
+        '<h3>プレミアムバンダイ</h3><table>'
+        f'<tr><th>対象商品</th><td>ONE PIECEカードゲーム {name}</td></tr>'
+        f'<tr><th>販売形式</th><td>{method}</td></tr>'
+        '<tr><th>開始日</th><td>10月3日(土)13:00</td></tr>'
+        '<tr><th>終了日</th><td>10月30日(金)23:00</td></tr>'
+        '<tr><th>特記事項</th><td>2027年4月発送予定</td></tr>'
+        f'<tr><th>販売ページ</th><td><a href="https://p-bandai.jp/item/item-{item_id}/">'
+        '販売ページ</a></td></tr></table>'
+    )
+
+
+@freeze_time("2026-10-02 03:00:00Z")
+@pytest.mark.parametrize("method", ["オンライン先着販売", "受注販売", "予約販売"])
+def test_summary_selected_non_lottery_window_keeps_sale_type(method: str) -> None:
+    html = '<h2>抽選・予約応募受付中のストア</h2>' + premium_summary_block(DAY25, method)
+    cases, _, alerts = parse_nyuka_now_premium_bandai(
+        html, "https://nyuka-now.com/archives/97393",
+        source("nyuka_now_fullcomp_livepocket"), CONFIG,
+    )
+    assert not alerts and len(cases) == 1
+    assert cases[0].opportunity_kind == OpportunityKind.DIRECT_SALE
+    assert cases[0].start_at == datetime(2026, 10, 3, 13, tzinfo=JST)
+    assert cases[0].end_at == datetime(2026, 10, 30, 23, tzinfo=JST)
+    assert cases[0].official_url == "https://p-bandai.jp/item/item-1000000001/"
+    assert cases[0].source_url == "https://nyuka-now.com/archives/97393"
+
+
+@freeze_time("2026-10-02 03:00:00Z")
+@pytest.mark.parametrize("name", [
+    "LUFFY’s -ドン!!カード-",
+    "プレミアムカードコレクション -ONE PIECE DAY'26-",
+    "ブースターパック 世界最強の戦士【OP-17】",
+])
+def test_summary_unselected_sales_are_neither_lotteries_nor_structure_alerts(name: str) -> None:
+    cases, _, alerts = parse_nyuka_now_premium_bandai(
+        premium_summary_block(name, "オンライン先着販売"),
+        "https://nyuka-now.com/archives/97393",
+        source("nyuka_now_fullcomp_livepocket"), CONFIG,
+    )
+    assert not cases and not alerts
+
+
+@freeze_time("2026-10-02 03:00:00Z")
+def test_summary_all_current_blocks_survive_unselected_first_sale_and_ignore_history() -> None:
+    html = (
+        '<h2>抽選・予約応募受付中のストア</h2>'
+        + premium_summary_block("LUFFY’s -ドン!!カード-", "オンライン先着販売")
+        + premium_summary_block(DAY25, "受注販売", 1000000002)
+        + premium_summary_block("ブースターパック 世界最強の戦士【OP-17】", "WEB抽選受付",
+                                1000000003)
+        + '<h2>応募受付終了（過去の抽選・予約一覧）</h2>'
+        + premium_summary_block(DAY25, "WEB抽選受付", 1000000004)
+    )
+    cases, _, alerts = parse_nyuka_now_premium_bandai(
+        html, "https://nyuka-now.com/archives/97393",
+        source("nyuka_now_fullcomp_livepocket"), CONFIG,
+    )
+    assert not alerts and len(cases) == 2
+    assert {case.opportunity_kind for case in cases} == {
+        OpportunityKind.DIRECT_SALE, OpportunityKind.LOTTERY,
+    }
+    assert {case.official_url for case in cases} == {
+        "https://p-bandai.jp/item/item-1000000002/",
+        "https://p-bandai.jp/item/item-1000000003/",
+    }
+
+
+def test_summary_with_only_ended_premium_bandai_sections_has_no_structure_alert() -> None:
+    html = '<h2>応募受付終了</h2>' + premium_summary_block(DAY25, "WEB抽選受付")
+    cases, _, alerts = parse_nyuka_now_premium_bandai(
+        html, "https://nyuka-now.com/archives/97393",
+        source("nyuka_now_fullcomp_livepocket"), CONFIG,
+    )
+    assert not cases and not alerts
 
 
 def source(source_id: str):

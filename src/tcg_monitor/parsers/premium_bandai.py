@@ -12,14 +12,22 @@ from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
+from tcg_monitor.non_box_sales import additional_sale_cases
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
 
 _HEADINGS = {"h2", "h3", "h4", "h5", "h6"}
 
 
-def _premium_bandai_section(soup: BeautifulSoup) -> tuple[str, list[Tag], list[str]] | None:
+def _premium_bandai_sections(soup: BeautifulSoup) -> list[tuple[str, list[Tag], list[str]]]:
+    sections: list[tuple[str, list[Tag], list[str]]] = []
     for heading in soup.find_all(list(_HEADINGS)):
         if "プレミアムバンダイ" not in heading.get_text(" ", strip=True):
+            continue
+        scope = heading.find_previous("h2")
+        if isinstance(scope, Tag) and not any(
+            marker in scope.get_text(" ", strip=True)
+            for marker in _CURRENT_LOTTERY_SCOPE_MARKERS
+        ):
             continue
         level = int(heading.name[1])
         text_parts: list[str] = []
@@ -37,8 +45,8 @@ def _premium_bandai_section(soup: BeautifulSoup) -> tuple[str, list[Tag], list[s
                     links.append(str(node.get("href")))
             elif isinstance(node, NavigableString) and node.strip():
                 text_parts.append(str(node).strip())
-        return " ".join(text_parts), tags, links
-    return None
+        sections.append((" ".join(text_parts), tags, links))
+    return sections
 
 
 def _products(
@@ -100,8 +108,12 @@ def parse_nyuka_now_premium_bandai(
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     """Read the Premium Bandai block that also lists lotteries of older BOXes."""
     soup = BeautifulSoup(html, "lxml")
-    section = _premium_bandai_section(soup)
-    if not section:
+    sections = _premium_bandai_sections(soup)
+    if not sections:
+        if any("プレミアムバンダイ" in heading.get_text(" ", strip=True)
+               for heading in soup.find_all(list(_HEADINGS))):
+            # A page with only completed windows is a normal empty result.
+            return [], [], []
         alert = Alert(
             "one_piece_card",
             source.id,
@@ -115,7 +127,34 @@ def parse_nyuka_now_premium_bandai(
         ).with_fingerprint()
         return [], [], [alert]
 
+    cases_by_id: dict[str, LotteryCase] = {}
+    alerts: list[Alert] = []
+    for section in sections:
+        cases, section_alerts = _parse_premium_bandai_block(section, url, source, config)
+        for case in cases:
+            cases_by_id[case.case_id] = case
+        alerts.extend(section_alerts)
+    return list(cases_by_id.values()), [], alerts
+
+
+def _parse_premium_bandai_block(
+    section: tuple[str, list[Tag], list[str]], url: str, source: SourceConfig, config: Config,
+) -> tuple[list[LotteryCase], list[Alert]]:
     section_text, tags, links = section
+    official_url = next(
+        (urljoin(url, link) for link in links if "p-bandai.jp/" in link), url,
+    )
+    if re.search(
+        r"販売(?:形式|方法|方式)\s*[:：]?\s*(?:オンライン)?(?:先着|受注|予約)販売",
+        section_text,
+    ):
+        # Explicit sales never become lottery candidates or BOX structure alerts.
+        sale_text = re.sub(r"開始日\s*[:：]?\s*", "販売開始：", section_text)
+        sale_text = re.sub(r"終了日\s*[:：]?\s*", "受付締切：", sale_text)
+        return additional_sale_cases(
+            sale_text, official_url, source, config, "premium_bandai", "プレミアムバンダイ",
+            source_url=url,
+        ), []
     start_match = re.search(r"開始日\s*[：:]?\s*(.{0,100})", section_text)
     parsed = parse_first_datetime(start_match.group(1)) if start_match else None
     start_at: date | datetime | None = parsed.value if parsed else None
@@ -150,12 +189,7 @@ def parse_nyuka_now_premium_bandai(
             ).with_fingerprint()
         )
     if not start_at or not products:
-        return [], [], alerts
-
-    official_url = next(
-        (urljoin(url, link) for link in links if "p-bandai.jp/" in link),
-        url,
-    )
+        return [], alerts
     cases = [
         LotteryCase(
             "one_piece_card",
@@ -173,7 +207,7 @@ def parse_nyuka_now_premium_bandai(
         ).with_id()
         for product_name, product_category, product_key in products
     ]
-    return cases, [], alerts
+    return cases, alerts
 
 
 def _fullcomp_sections(
@@ -613,7 +647,7 @@ def parse_nyuka_now_lottery_summary(
     if (
         url.rstrip("/") == "https://nyuka-now.com/archives/97393"
         and source.supports("one_piece_card")
-        and _premium_bandai_section(BeautifulSoup(html, "lxml")) is not None
+        and _premium_bandai_sections(BeautifulSoup(html, "lxml"))
     ):
         premium_cases, _, premium_alerts = parse_nyuka_now_premium_bandai(
             html, url, source, config,

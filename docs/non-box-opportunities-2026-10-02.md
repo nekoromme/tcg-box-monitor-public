@@ -47,6 +47,8 @@ PSA10価格、イベント来場特典の価格は、セットの買取価格と
 | ポケカ 通常スターター・スタートデッキ100・サプライ | 安価でも定価割れ／諸費用後の余地不足がある。高額カードを引く前提では採用しない |
 | ワンピ DAY'26 | 定価990円だが、4次は2027年6月発送。旧版DAY'25の実績を新品の利益へ流用しない。公開の確かな買取と大量供給後の出口が未確認のため今回は未追加 |
 | ワンピ 4th ANNIVERSARY SET | 定価18,700円。3rdの高い買取だけで、カード内容と供給が異なる新受注品を明らかな利益商品にしない |
+| ワンピ Nikeコラボエディション全員応募受注 | 負担金5,500円にWJ定期購読費用が必要。34枚セット（ルフィ4枚・ドン各10枚）、2027年5月中旬から順次発送、表示上は8月下旬予定。9/7の店舗告知では先行配布版ルフィ1枚の未開封買取60,000円があるが、単品の包装条件を未確認の34枚受注セットへ掛け算しない。同じ絵柄・加工でも、海外・別形態の供給、再募集の可能性、長い発送待ちを踏まえ、今回は利益が明確な受注例外へ未追加 |
+| ワンピ LUFFY’s -ドン!!カード- | 定価1,650円のフィギュアと特別デザインのドンカードのセット。10/2予約開始、2027年4月発送。別のLUFFY’sやNikeプロモの価格を流用できず、この商品の買取根拠は未確認。先着販売を抽選と誤認しない |
 | ワンピ その他のカード集・ガールズ・熊本・通常デッキ | 高額買取の例はあるが、雑誌応募、地域限定物販、アジア版など購入条件・版が異なる。今回の通販商品指定へ一括追加しない。正確な新規受付と版を確認した商品から個別追加可能 |
 | DBFW GAMES BATTLE HOUR／ゲンキダマツリの配布プロモ | セットの買取例はあってもイベント入場・来場特典。商品を通常注文する機会とは分け、イベント応募を購入受付と誤認しない |
 | 遊戯王 COMPLETE FILE 罪宝／白の物語、一般デュエルセット | 罪宝は受注生産22,000円。比較対象の白の物語はもえたく20,000円（9/30）で、高値だけを見ると判断を誤る。内容差・供給・費用を考え今回は見送り |
@@ -62,6 +64,7 @@ PSA10価格、イベント来場特典の価格は、セットの買取価格と
 - [ポケセン地域スペシャルBOXの定価・内容](https://www.pokemon-card.com/info/005053.html)、[追加生産・追加販売](https://www.pokemon-card.com/info/005069.html)
 - [ワンピ DAY'24 公式予約発表](https://p-bandai.jp/press/2024/09/1000015491/)、[DAY'25 公式予約発表](https://p-bandai.jp/press/2025/09/1000016346/)
 - [ワンピ25周年・FILM RED公式販売案内](https://www.onepiece-cardgame.com/topics/053.php)、[2nd周年公式](https://www.onepiece-cardgame.com/products/other/anniversaryset2nd.php)、[現行プレバン公式商品一覧](https://p-bandai.jp/carddas/a0008/b0003/onepiececard/)
+- [Nike全員応募受注の公式条件・内容・発送](https://jumpcs.shueisha.co.jp/shop/g/g4530430588220/)、[LUFFY’sドンカードセット公式](https://tamashiiweb.com/item/16177/)
 - [DBFW 2nd周年実物商品](https://dragon-ball-official.com/news/01_3981.html)、[デジタル版](https://www.dbs-cardgame.com/fw/jp/news/01_445.html)
 - [遊戯王WCS2026公式商品](https://www.konamistyle.jp/products/detail.php?product_id=113602)、[COMPLETE FILE罪宝](https://yu-gi-oh.jp/news/tbohs26ga/)
 - [ガンダムVer.β公式](https://www.gundam-gcg.com/jp/news/001.html)、[PB03公式](https://www.gundam-gcg.com/jp/products/pb03.html)
@@ -72,6 +75,7 @@ PSA10価格、イベント来場特典の価格は、セットの買取価格と
 - [ルデヤFUTURISTIC](https://kaitori-rudeya.com/search/index/4521329463872/)、[ワンピDAY'25](https://kaitori-rudeya.com/product/item/6537)
 - [ルデヤトウホク](https://kaitori-rudeya.com/search/index/4521329431277/)、[フクオカ](https://kaitori-rudeya.com/search/index/4521329431536/)、[ヒロシマ](https://kaitori-rudeya.com/search/index/4521329427669/)
 - [カードラッシュのカード集買取告知](https://x.com/cardrush_op/status/2075904972072587486)、[トレカアビス店舗アカウント](https://x.com/toreabi2)
+- [Nike先行配布ルフィ単品の9/7買取告知](https://x.com/shinkaiyum/status/2096868237011296766)（検索に露出した店舗告知。直接ページは403、受注34枚セットの買取価格ではない）
 - [もえたくワンピ3rd](https://www.netoff.co.jp/moetaku/detail/225366)、[駿河屋ワンピ3rd](https://www.suruga-ya.jp/kaitori/kaitori_detail/620027914)
 - [トレカラインDBFW公式店舗告知の公開検索](https://search.yahoo.co.jp/realtime/search?p=%E3%83%95%E3%83%A5%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E3%83%AF%E3%83%BC%E3%83%AB%E3%83%89%202nd&ei=UTF-8)
 - [メルカードWCS買取告知](https://x.com/mercard_akiba/status/2093532218882973795)、[メルカードガンダム買取表](https://akihabara-cardshop.com/gundam-kaitori/)
@@ -89,6 +93,7 @@ SNSの買取告知には過去日のものが含まれる。調査根拠とし�
 締切後、完売、結果発表だけ、単なる追加生産の発表は新規受付として通知しない。
 
 既存のプレバン公式X取得をワンピ・DBFW・ガンダムで共用する。
+入荷Nowのプレバン欄は複数の現行受付をそれぞれ読み、先着・受注は個別指定商品だけを販売種別として扱う。未採用の先着商品でBOX抽選の構造警告を出さず、終了済みの欄も読み直さない。
 ポケセンの記事発見、ゲオ記事、汎用ページ、KONAMI／プレバンの個別商品解析、
 公式X本文・画像OCRに指定商品を適用する。通常BOX予約の範囲は広げない。
 未確認開始から日時確定へ更新しても配信履歴を移行し、同じ商品ページの次の
