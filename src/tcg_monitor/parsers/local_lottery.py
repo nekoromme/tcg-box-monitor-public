@@ -1362,12 +1362,29 @@ def _application_url(container: Tag, status_url: str, ocr_text: str = "") -> str
         ):
             return match.group(0)
         if match := re.search(
+            r"(?<![A-Za-z0-9_.-])(?:https?://)?p-bandai\.jp/item/item-\d+/?",
+            candidate_text,
+        ):
+            return "https://" + match.group(0).removeprefix("https://").removeprefix("http://")
+        if match := re.search(
+            r"(?:https?://)?(?:www\.)?konamistyle\.jp/products/detail\.php\?product_id=\d+",
+            candidate_text,
+        ):
+            return "https://www.konamistyle.jp/" + match.group(0).split("konamistyle.jp/", 1)[1]
+        if match := re.search(
+            r"(?:https?://)?(?:www\.)?pokemoncenter-online\.com/\d{13}\.html",
+            candidate_text,
+        ):
+            return "https://www.pokemoncenter-online.com/" + match.group(0).rsplit("/", 1)[1]
+        if match := re.search(
             r"https://(?:t\.)?livepocket\.jp/e/[A-Za-z0-9_-]+", candidate_text,
         ):
             # 応募先として通知するだけで、LivePocketの取得は行わない。
             return match.group(0)
     # ポスターだけに書かれた公式応募URLも、認識した文字から保存する。
     if match := re.search(r"https://edion-cp\.com/[A-Za-z0-9_-]+/?", ocr_text):
+        return match.group(0)
+    if match := re.search(r"https://p-bandai\.jp/item/item-\d+/?", ocr_text):
         return match.group(0)
     for anchor in container.find_all("a", href=True):
         href = str(anchor.get("href"))

@@ -318,6 +318,21 @@ def test_sale_exception_keeps_required_application_url_scope() -> None:
     text = DAY25 + " 予約受付期間10/2～10/30"
     assert not parse_yahoo_realtime(notice(text), src.discovery_urls[-1], src, CONFIG,
                                     date(2026, 10, 2), known_releases=[])[0]
+    html = notice(text).replace("<p>", '<a href="https://t.co/test" '
+                               'title="https://p-bandai.jp/item/item-1000237023/">商品</a><p>')
+    cases = parse_yahoo_realtime(html, src.discovery_urls[-1], src, CONFIG,
+                                date(2026, 10, 2), known_releases=[])[0]
+    assert len(cases) == 1
+    assert cases[0].official_url == "https://p-bandai.jp/item/item-1000237023/"
+
+
+@freeze_time("2026-10-02 03:00:00Z")
+def test_english_spelling_of_japanese_card_collection_still_gets_sale_rule() -> None:
+    cases = additional_sale_cases("PREMIUM CARD COLLECTION -FILM RED- 予約受付期間10/2～10/30",
+                                  "https://p-bandai.jp/item/item-1/",
+                                  source("yahoo_realtime_premium_bandai_onepiece"), CONFIG,
+                                  "premium_bandai", "プレミアムバンダイ")
+    assert len(cases) == 1 and cases[0].canonical_product_key == "onepiece_pcc_film_red"
 
 
 @freeze_time("2026-10-02 03:00:00Z")
