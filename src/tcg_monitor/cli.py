@@ -672,6 +672,9 @@ def _lottery_description(case: LotteryCase, detected_at: datetime) -> str:
             f"{_lottery_application_label(case)}: {_lottery_application_url(case)}",
             f"確認元ページ: {case.source_url}",
             f"商品分類: {case.product_category}",
+            *([f"応募回: {case.application_round}"] if case.application_round else []),
+            *(["検知理由: 限定セット系列の抽選候補（相場・利益は未確認）"]
+              if case.canonical_product_key.startswith("nonbox:") else []),
             *([
                 "受付開始日: 不明",
                 "仮の開始日: 初回検知の翌日（実際の受付開始日ではありません）",
@@ -771,6 +774,9 @@ def _lottery_discord_description(case: LotteryCase) -> str:
     lines = [
         f"店舗: {case.retailer_name}",
         f"商品: {case.product_name}",
+        *([f"応募回: {case.application_round}"] if case.application_round else []),
+        *(["限定セット系列の抽選候補（相場・利益は未確認）"]
+          if case.canonical_product_key.startswith("nonbox:") else []),
         f"{date_label}: {_format_user_datetime(case.start_at)}",
         *_lottery_application_guidance(case),
         f"{application_label}: {_lottery_application_url(case)}",

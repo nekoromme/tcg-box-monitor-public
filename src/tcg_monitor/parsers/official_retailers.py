@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
+from tcg_monitor.additional_products import additional_matches
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.japanese_datetime import (
     normalize_text,
@@ -124,6 +125,7 @@ def _konami_candidate(candidate: str, context: str, config: Config) -> bool:
     parts = urlsplit(candidate)
     product_id = parse_qs(parts.query).get("product_id", [])
     game = config.games["yu_gi_oh"]
+    selected = bool(additional_matches(game, context, identified_game=True))
     has_box_shape = any(word in context for word in game.box_product_keywords) or bool(
         re.search(r"(?i)(?:\b1?BOX\b|\b\d+\s*Pack\b|\(\d+Pack\))", context)
     )
@@ -132,11 +134,11 @@ def _konami_candidate(candidate: str, context: str, config: Config) -> bool:
         and parts.path == "/products/detail.php"
         and bool(product_id and product_id[0].isdigit())
         and any(word in context for word in ("遊戯王OCG", "遊☆戯☆王", "遊戯王"))
-        and has_box_shape
-        and not any(
+        and (has_box_shape or selected)
+        and (selected or not any(
             word in context
             for word in game.product_exclude_keywords
-        )
+        ))
     )
 
 

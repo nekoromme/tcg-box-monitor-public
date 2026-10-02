@@ -84,8 +84,9 @@ def _products(
                 saw_unexplained_non_box = True
             continue
         products[classified.canonical_product_key] = (
-            value[:180],
-            next((word for word in game.box_product_keywords if word in value), "BOX"),
+            classified.product_name if classified.explicitly_selected else value[:180],
+            (classified.product_category if classified.explicitly_selected else
+             next((word for word in game.box_product_keywords if word in value), "BOX")),
             classified.canonical_product_key,
         )
     only_explicitly_excluded = (

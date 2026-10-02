@@ -1051,8 +1051,8 @@ def test_nyuka_now_premium_bandai_includes_older_resale_boxes() -> None:
     )
 
 
-def test_nyuka_now_premium_bandai_skips_explicitly_excluded_card_collection() -> None:
-    """A valid non-BOX listing must not be reported as a parser failure."""
+def test_nyuka_now_premium_bandai_detects_premium_card_collection() -> None:
+    """A card collection lottery is retained as a non-BOX candidate."""
     html = """
     <article>
       <h2>近日受付開始予定のストア</h2>
@@ -1076,7 +1076,9 @@ def test_nyuka_now_premium_bandai_skips_explicitly_excluded_card_collection() ->
         _source("nyuka_now_premium_bandai_onepiece"),
         load_config("sites.yaml"),
     )
-    assert not cases
+    assert len(cases) == 1
+    assert cases[0].product_category == "プレミアムカードコレクション"
+    assert cases[0].product_name == "プレミアムカードコレクション -ONE PIECE DAY'26-"
     assert not releases
     assert not alerts
 

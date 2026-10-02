@@ -1,9 +1,10 @@
-"""指定した商品だけを抽選監視へ追加する共通処理。発売日監視は変更しない。"""
+"""指定商品と限定セット系列を抽選へ追加する共通処理。発売日監視は変更しない。"""
 
 from __future__ import annotations
 
 import re
 import unicodedata
+from hashlib import sha256
 
 from tcg_monitor.models import ClassifiedProduct, Config, GameConfig, SourceConfig
 
@@ -13,10 +14,65 @@ def compact(value: str) -> str:
     return re.sub(r"[^0-9a-zぁ-んァ-ヶ一-龠ー]", "", unicodedata.normalize("NFKC", value).lower())
 
 
-def additional_matches(game: GameConfig, text: str) -> list[ClassifiedProduct]:
+def _family_name(game: GameConfig, value: str) -> str:
+    """商品名の表記差を消すが、絵柄・周年・開催地などの識別部分は残す。"""
+    value = re.sub(r'[「」『』【】"“”]', " ", value)
+    value = re.sub(r"\s+", " ", value).strip(" 　・")
+    for prefix in sorted((*game.include_keywords, game.name), key=len, reverse=True):
+        if value.startswith(prefix):
+            value = value[len(prefix):].lstrip()
+    value = re.sub(r"^(?:MEGA|スカーレット[&＆]バイオレット)\s*", "", value)
+    value = re.sub(r"^(?:強化拡張パック|ハイクラスパック|拡張パック)\s*", "", value)
+    return value.strip(" 　・「」『』【】\"“”")
+
+
+def additional_matches(
+    game: GameConfig, text: str, *, identified_game: bool = False,
+) -> list[ClassifiedProduct]:
     folded = compact(text)
-    found = []
+    found: list[ClassifiedProduct] = []
+    # 従来の個別指定・OFF・種類選択を系列ルールで上書きしない。
+    reserved = [alias for item in game.additional_products if not item.name_patterns
+                for alias in (item.name, *item.aliases) if compact(alias) in folded]
     for item in game.additional_products:
+        if item.name_patterns:
+            if not item.enabled:
+                continue
+            normalized = unicodedata.normalize("NFKC", text)
+            matched_spans: list[tuple[int, int]] = []
+            for pattern in item.name_patterns:
+                for match in re.finditer(pattern, normalized, re.I):
+                    if any(match.start() < end and match.end() > start
+                           for start, end in matched_spans):
+                        continue  # 同じ系列の長い正式名を短い別表記で二重検出しない。
+                    if item.require_game_identity and not identified_game:
+                        nearby = compact(normalized[max(0, match.start() - 140):match.end() + 60])
+                        if not any(compact(word) in nearby for word in game.include_keywords):
+                            continue  # 共通の周年名を別作品へ割り当てない。
+                    if re.match(
+                        r"\s*(?:の|用)?(?:プレイマット|スリーブ|カードケース|デッキケース|単品|単体)",
+                        normalized[match.end():match.end() + 32],
+                    ):
+                        continue  # 系列名を使った用品単品をセットと誤認しない。
+                    name = _family_name(game, match.group("name"))
+                    if not name or any(
+                        compact(alias) in compact(name) or compact(name) in compact(alias)
+                        for alias in reserved
+                    ):
+                        continue
+                    if name in {item.name, "開催記念デュエルセット", "記念デュエルセット"}:
+                        continue  # 商品名のない見出しを独立商品にしない。
+                    key = f"nonbox:{item.id}:{compact(name)}"
+                    if len(key) > 80:
+                        key = f"nonbox:{item.id}:" + sha256(compact(name).encode()).hexdigest()
+                    if any(product.canonical_product_key == key for product in found):
+                        continue
+                    matched_spans.append(match.span())
+                    found.append(ClassifiedProduct(
+                        game.id.value, name, item.category, False, key,
+                        ["additional_products:" + item.id, "non_box_family_candidate"], [], True,
+                    ))
+            continue
         if not item.enabled or not any(
             compact(alias) in folded for alias in (item.name, *item.aliases)
         ):
@@ -70,7 +126,9 @@ def without_additional_contents(game: GameConfig, text: str) -> str:
     """
     # パックを同梱するカードセットだけが対象。デッキセットと並べて
     # 告知された通常の拡張パックを、同梱物と誤認して消さない。
-    if not any(m.product_category == "カードセット" for m in additional_matches(game, text)):
+    if not any(m.product_category in {
+        "カードセット", "スペシャルBOX", "ポケモンセンターセット", "アニバーサリーセット",
+    } for m in additional_matches(game, text)):
         return text
     categories = "|".join(map(re.escape, game.box_product_keywords))
     if not categories:
@@ -78,6 +136,9 @@ def without_additional_contents(game: GameConfig, text: str) -> str:
     pattern = re.compile(rf"(?:{categories})\s*[「『【\"“][^」』】\"”]+[」』】\"”]")
 
     def mask(match: re.Match[str]) -> str:
+        before = text[max(0, match.start() - 60):match.start()]
+        if re.search(r"内容物|セット内容|同梱", before):
+            return " " * len(match.group(0))
         after = text[match.end() : match.end() + 60]
         # 内容物の2パックなどより前にBOX数があれば独立したBOX商品とみなす。
         box = re.search(r"(?i)\b\d*BOX\b|ボックス", after)

@@ -268,6 +268,24 @@ games:
           - 30周年プレミアムデッキセット
         selected_variants: []
         variants: []
+      # 商品名が変わっても同じ系列を拾う。利益確定ではなく抽選の検討候補。
+      - id: pokemon_center_set
+        name: ポケモンセンターセット
+        category: ポケモンセンターセット
+        name_patterns:
+          - '(?P<name>(?:拡張パック|強化拡張パック|ハイクラスパック)?\s*[「『][^」』\n]{2,70}[」』]\s*ポケモンセンターセット)'
+          - '(?P<name>[\w・－ー]{2,60}\s+ポケモンセンターセット)'
+          - '(?P<name>ポケモンセンターセット\s*[「『][^」』\n]{2,70}[」』])'
+      - id: pokemon_center_special_box
+        name: ポケモンセンター記念スペシャルBOX
+        category: スペシャルBOX
+        name_patterns:
+          - '(?P<name>スペシャル\s*(?:BOX|ボックス)\s*[「『]?ポケモンセンター[ァ-ヶーA-Za-z0-9]+[」』]?)'
+      - id: pokemon_anniversary_set
+        name: 周年限定カード・デッキセット
+        category: カードセット
+        name_patterns:
+          - '(?P<name>(?:\d+(?:st|nd|rd|th)\s*(?:CELEBRATION|ANNIVERSARY)|\d+周年(?:記念)?)\s*(?:プレミアム)?(?:デッキセット|カードセット)(?:\s+[ァ-ヶー・]+)?)'
     official_release_source: pokemon_official_products
     secondary_discovery_source: snkrdunk_pokemon
 
@@ -312,6 +330,21 @@ games:
       - 周辺用品
       - キャンペーン
       - 大会
+    additional_products:
+      - id: onepiece_premium_card_collection
+        name: プレミアムカードコレクション
+        category: プレミアムカードコレクション
+        name_patterns:
+          - '(?P<name>PREMIUM\s+CARD\s+COLLECTION\s*[-－][^-－\n]{2,70}[-－])'
+          - '(?P<name>プレミアムカードコレクション\s*[-－][^-－\n]{2,70}[-－])'
+          - '(?P<name>プレミアムカードコレクション\s*[「『]?[^\s」』、。]{2,60}[」』]?)'
+      - id: onepiece_anniversary_set
+        name: 周年記念カードセット
+        category: アニバーサリーセット
+        require_game_identity: true
+        name_patterns:
+          - '(?P<name>\d+(?:st|nd|rd|th)\s+ANNIVERSARY\s+SET)'
+          - '(?P<name>\d+周年(?:記念)?(?:プレミアム)?カードセット)'
     official_release_source: onepiece_official_products
     secondary_discovery_source: snkrdunk_onepiece
 
@@ -356,6 +389,14 @@ games:
       - キャンペーン
       - 大会
       - イベント
+    additional_products:
+      - id: dragonball_anniversary_set
+        name: 周年記念カードセット
+        category: アニバーサリーセット
+        require_game_identity: true
+        name_patterns:
+          - '(?P<name>\d+(?:st|nd|rd|th)\s+ANNIVERSARY\s+SET)'
+          - '(?P<name>\d+周年(?:記念)?(?:プレミアム)?カードセット)'
     official_release_source: dragonball_official_products
 
   yu_gi_oh:
@@ -413,6 +454,14 @@ games:
       - 周辺用品
       - キャンペーン
       - 大会
+    additional_products:
+      - id: yugioh_duel_set
+        name: デュエルセット
+        category: デュエルセット
+        name_patterns:
+          - '(?P<name>デュエルセット\s+(?:WCS|YCSJ)\s*\d{4})'
+          - '(?P<name>ORIGINAL\s+ARTWORK\s+DUEL\s+SET\s*[-－][^-－\n]{2,60}[-－])'
+          - '(?:^|[「『【\s])(?P<name>[\w・－ー＆&：:！？!\-]{2,80}\s*デュエルセット)(?=$|[」』】\s、。])'
     official_release_source: yugioh_official_products
 
   lorcana:
@@ -831,10 +880,14 @@ sources:
     yu_gi_oh: verified
   purposes:
   - release_discovery
+  - lottery_discovery
   classification: stable
   enabled: true
   discovery_urls:
   - https://www.yugioh-card.com/japan/products/
+  parser_options:
+    supplemental_discovery_urls:
+    - https://www.yugioh-card.com/japan/event/
   start_labels: []
   render_mode: http
   poll_minutes: 120
@@ -842,7 +895,7 @@ sources:
   - embedded_product_catalog
   - product_class
   - release_date
-  notes: 基本・コンセプト・スペシャルパックを読み、低相場寄りの指定シリーズ、構築済みデッキ、ラッシュデュエル、周辺商品を除外する。
+  notes: 商品一覧のBOX発売日と、公式イベント一覧から発見する特典カード付きデュエルセットのWEB通販抽選を同じ監視内で取得。大会参加抽選・会場限定物販・用品単品は対象外。
 - id: lorcana_official_products
   name: ディズニー・ロルカナ公式 商品情報
   operator: 株式会社タカラトミー

@@ -9,6 +9,7 @@ from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlsplit
+from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
 
@@ -125,6 +126,7 @@ from tcg_monitor.parsers.tsutaya_line import (
     parse_tsutaya_line_form,
     tsutaya_line_form_urls,
 )
+from tcg_monitor.parsers.yugioh_event_lottery import EVENT_INDEX, discover_yugioh_event_urls
 from tcg_monitor.parsers.yugioh_official import parse_yugioh_official_products
 from tcg_monitor.social_discovery import social_discovery_urls
 from tcg_monitor.source_priority import merge_lotteries, merge_releases
@@ -994,6 +996,15 @@ def run_pipeline(
             html = result.html
 
             try:
+                if source.id == "yugioh_official_products" and url == EVENT_INDEX:
+                    discovered = discover_yugioh_event_urls(
+                        html, url, datetime.now(ZoneInfo(config.timezone)).date(),
+                    )
+                    discovery_urls.extend(
+                        (item, False) for item in discovered if item not in visited_urls
+                    )
+                    route.update(status="discovery", discovered_urls=discovered)
+                    continue
                 if source.id == "hobbylink_japan_lottery" and is_hobbylink_articles_api(url):
                     discovery_urls.extend(
                         (item, False)

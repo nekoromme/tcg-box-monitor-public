@@ -180,6 +180,9 @@ class AdditionalProduct:
     variants: tuple[str, ...] = ()
     selected_variants: tuple[str, ...] = ()
     enabled: bool = True
+    # 個別商品名だけでなく、限定商品の系列を拾う。nameで商品名を捕捉する。
+    name_patterns: tuple[str, ...] = ()
+    require_game_identity: bool = False
 
 
 @dataclass(frozen=True)
@@ -258,6 +261,7 @@ class LotteryCase:
     opportunity_kind: OpportunityKind = OpportunityKind.LOTTERY
     end_at: datetime | date | None = None
     result_at: datetime | date | None = None
+    application_round: str = ""
 
     def with_id(self) -> LotteryCase:
         if (self.game_id == "lorcana" and self.retailer_id == "lorcana_official"
@@ -321,6 +325,9 @@ class LotteryCase:
             self.canonical_product_key,
             article_identity,
         ]
+        if self.application_round:
+            # 同じ通販URLで行われる1次・2次の抽選を別の応募機会として保存する。
+            identity_parts.append(self.application_round)
         if not has_article_status_id and is_shared_retailer_application_url(
             self.retailer_id, self.official_url,
         ):
