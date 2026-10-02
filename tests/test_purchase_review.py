@@ -203,7 +203,12 @@ def monitor(tmp_path: Path):  # type: ignore[no-untyped-def]
     discord = Mock()
     discord.send.return_value = {"status": "sent"}
     source = Mock(spec=ReviewSource)
-    source.content.return_value = ContentEvidence(url=product().official_url, msrp=10000)
+    source.content.return_value = ContentEvidence(
+        url=product().official_url,
+        msrp=10000,
+        version=2,
+        highlights=["原作イラストの収録を公式の商品ページで確認"],
+    )
     source.price.return_value = PriceEvidence(
         "found", price=13001, msrp=10000, url="https://snkrdunk.com/apparels/886014"
     )
