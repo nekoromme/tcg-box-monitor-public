@@ -15,6 +15,7 @@ from tcg_monitor.additional_products import (
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.japanese_datetime import parse_first_datetime, parse_period_start
 from tcg_monitor.models import Alert, ClassifiedProduct, Config, LotteryCase, Release, SourceConfig
+from tcg_monitor.non_box_sales import additional_sale_cases, additional_sale_signal
 from tcg_monitor.parsers.common import title, visible_text
 from tcg_monitor.parsers.local_lottery import _application_deadline, _box_products
 from tcg_monitor.result_date import published_result_date
@@ -81,7 +82,10 @@ def discover_geo_news_urls(
             keyword in anchor_text
             for keyword in config.common_terms.get("lottery_keywords", [])
         )
-        if not (has_game and has_box and has_lottery):
+        selected_sale = additional_sale_signal(anchor_text) and any(
+            additional_matches(game, anchor_text) for game in supported_games
+        )
+        if not (has_game and has_box and (has_lottery or selected_sale)):
             continue
         seen.add(candidate)
         found.append(candidate)
@@ -185,6 +189,16 @@ def parse_onepiece_topics(
         if not isinstance(anchor, Tag):
             continue
         entry = anchor.get_text(" ", strip=True)
+        if additional_sale_signal(entry) and additional_matches(game, entry):
+            official_url = urljoin(url, str(anchor.get("href")))
+            announced = parse_first_datetime(entry).value
+            announced_day = announced.date() if isinstance(announced, datetime) else announced
+            for sale_case in additional_sale_cases(
+                entry, official_url, source, config, "premium_bandai", "プレミアムバンダイ",
+                source_url=url, announced_on=announced_day,
+            ):
+                cases_by_id[sale_case.case_id] = sale_case
+            continue
         if "抽選販売" not in entry or not any(
             marker in entry for marker in _ONEPIECE_LOTTERY_START_MARKERS
         ):
@@ -238,6 +252,8 @@ def parse_geo_news_detail(
     product_scope = re.sub(r"\s+", " ", product_scope).strip()
     product_scope = product_scope.replace("ARTWORKCOLLECTION", "ARTWORK COLLECTION")
     text = visible_text(html)
+    if additional_sale_signal(text):
+        return additional_sale_cases(text, url, source, config, "geo", "ゲオ"), [], []
     start = _lottery_start(text, source, config)
     end = _application_deadline(text, datetime.now(ZoneInfo(config.timezone)).date())
     cases: list[LotteryCase] = []
@@ -328,6 +344,15 @@ def parse_generic(
         for block, classified in candidates:
             if not classified.is_target:
                 continue
+            if additional_sale_signal(block):
+                if classified.explicitly_selected:
+                    cases.extend(additional_sale_cases(
+                        block, url, source, config, source.id,
+                        RETAILERS.get(source.id, source.name),
+                    ))
+                # Normal BOX preorders retain the existing scope; only named exceptions
+                # enter this newly added path. Do not mislabel 「予約受付」 as a lottery.
+                continue
             end_at = None
             if classified.explicitly_selected:
                 if any(word in page_title for word in ("受付終了", "当選発表", "抽選結果")):
@@ -411,4 +436,4 @@ def parse_generic(
         for game_id, alert in pending_missing_start
         if game_id not in successful_lottery_games
     )
-    return cases, releases, alerts
+    return list({case.case_id: case for case in cases}.values()), releases, alerts

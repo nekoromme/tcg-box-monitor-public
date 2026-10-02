@@ -11,7 +11,8 @@ from tcg_monitor.models import ClassifiedProduct, Config, GameConfig, SourceConf
 
 def compact(value: str) -> str:
     # 全角・空白・中点の差（画像の文字認識を含む）を吸収する。
-    return re.sub(r"[^0-9a-zぁ-んァ-ヶ一-龠ー]", "", unicodedata.normalize("NFKC", value).lower())
+    return re.sub(r"[^0-9a-zα-ωぁ-んァ-ヶ一-龠ー]", "",
+                  unicodedata.normalize("NFKC", value).lower())
 
 
 def _family_name(game: GameConfig, value: str) -> str:
@@ -35,6 +36,12 @@ def additional_matches(
     reserved = [alias for item in game.additional_products if not item.name_patterns
                 for alias in (item.name, *item.aliases) if compact(alias) in folded]
     for item in game.additional_products:
+        if item.required_keywords and not any(
+            compact(word) in folded for word in item.required_keywords
+        ):
+            continue
+        if any(compact(word) in folded for word in item.exclude_keywords):
+            continue
         if item.name_patterns:
             if not item.enabled:
                 continue
@@ -77,6 +84,11 @@ def additional_matches(
             compact(alias) in folded for alias in (item.name, *item.aliases)
         ):
             continue
+        if any(re.search(
+            re.escape(compact(alias)) + r"(?:(?:の|用)(?:スリーブ|プレイマット|カードケース)|"
+            r"(?:スリーブ|プレイマット|カードケース|サプライ)(?:単品|単体|のみ))", folded,
+        ) for alias in (item.name, *item.aliases)):
+            continue
         # 種類名が書かれていれば個別に特定。書かれていない場合は商品群のまま通知。
         variants = [v for v in item.variants if compact(v) in folded]
         if item.selected_variants:
@@ -100,6 +112,15 @@ def additional_matches(
                 )
             )
     return found
+
+
+def additional_note(game: GameConfig, product_key: str) -> str:
+    parts = product_key.split(":")
+    item_id = parts[1] if parts[0] == "nonbox" and len(parts) > 1 else parts[0]
+    return next(
+        (item.note for item in game.additional_products
+         if item.id == item_id and item.enabled), "",
+    )
 
 
 def additional_game(text: str, source: SourceConfig, config: Config) -> str | None:
@@ -127,7 +148,8 @@ def without_additional_contents(game: GameConfig, text: str) -> str:
     # パックを同梱するカードセットだけが対象。デッキセットと並べて
     # 告知された通常の拡張パックを、同梱物と誤認して消さない。
     if not any(m.product_category in {
-        "カードセット", "スペシャルBOX", "ポケモンセンターセット", "アニバーサリーセット",
+        "特別セット", "先行限定セット", "カードセット", "スペシャルBOX",
+        "ポケモンセンターセット", "アニバーサリーセット",
     } for m in additional_matches(game, text)):
         return text
     categories = "|".join(map(re.escape, game.box_product_keywords))

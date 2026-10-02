@@ -152,7 +152,9 @@ def lottery_dedupe_key(case: LotteryCase) -> str:
         return f"lorcana|lorcana_official|{case.canonical_product_key}|manufacturer_reservation"
     return lottery_dedupe_key_values(
         case.game_id, case.retailer_id, case.product_name,
-        case.canonical_product_key, case.start_at, case.opportunity_kind,
+        case.canonical_product_key, case.start_at,
+        OpportunityKind.DIRECT_SALE if case.extraction_method.startswith("additional_product_")
+        else case.opportunity_kind,
     )
 
 

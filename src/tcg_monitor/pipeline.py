@@ -1302,7 +1302,7 @@ def run_pipeline(
 
                 if is_pokemon_center_news_index(source.id, url):
                     discovered = discover_pokemon_center_news_urls(
-                        html, url, source
+                        html, url, source, config=config
                     )
                     route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(

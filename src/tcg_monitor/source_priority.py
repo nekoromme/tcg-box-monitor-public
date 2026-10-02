@@ -43,6 +43,8 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
     merged = []
     for values in grouped.values():
         ordered = sorted(values, key=lambda item: (
+            int(item.extraction_method.startswith("additional_product_")
+                and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
             ORDER[item.source_tier.value],
             int(item.retailer_id == "lorcana_official"
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),

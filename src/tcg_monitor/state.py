@@ -20,6 +20,7 @@ from tcg_monitor.identity import (
 )
 from tcg_monitor.models import (
     LotteryCase,
+    OpportunityKind,
     Release,
     is_shared_retailer_application_url,
     stable_url_identity,
@@ -363,12 +364,31 @@ class MonitorState:
             ):
                 # 既知案件の仮商品名は上の専用処理で、予定の履歴を確認済み。
                 continue
+            additional_sale = (
+                case.extraction_method.startswith("additional_product_")
+                and str(raw_record.get("extraction_method") or "").startswith("additional_product_")
+            )
+            old_kind = str(raw_record.get("opportunity_kind") or "lottery")
+            compatible_sale_kind = additional_sale and old_kind in {
+                OpportunityKind.DIRECT_SALE.value, OpportunityKind.DIRECT_SALE_SEEN.value,
+            } and case.opportunity_kind != OpportunityKind.LOTTERY
             if (
                 raw_record.get("game_id") != case.game_id
                 or raw_record.get("retailer_id") != case.retailer_id
-                or str(raw_record.get("opportunity_kind") or "lottery")
-                != case.opportunity_kind.value
+                or (old_kind != case.opportunity_kind.value and not compatible_sale_kind)
             ):
+                continue
+            if (case.application_round and raw_record.get("application_round")
+                    and raw_record["application_round"] != case.application_round):
+                continue
+            same_sale_end = case.end_at is not None and (
+                str(raw_record.get("end_at") or "")[:10] == case.end_at.isoformat()[:10]
+            )
+            if (additional_sale and old_kind == OpportunityKind.DIRECT_SALE.value
+                    and case.opportunity_kind == OpportunityKind.DIRECT_SALE
+                    and str(raw_record.get("start_at") or "")[:10]
+                    != case.start_at.isoformat()[:10] and not same_sale_end):
+                # A new dated order window on a reused item URL is a new opportunity.
                 continue
             if (
                 is_shared_retailer_application_url(case.retailer_id, case.official_url)
@@ -389,7 +409,8 @@ class MonitorState:
                     case.game_id, case.retailer_id,
                     str(raw_record.get("product_name") or ""),
                     str(raw_record.get("canonical_product_key") or ""),
-                    old_start, case.opportunity_kind,
+                    old_start,
+                    OpportunityKind.DIRECT_SALE if additional_sale else case.opportunity_kind,
                 )
                 if old_campaign_key == campaign_key:
                     same_campaign.append((old_id, raw_record))

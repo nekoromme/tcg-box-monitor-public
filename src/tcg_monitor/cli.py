@@ -658,11 +658,30 @@ def _lottery_result_confirmation(retailer_id: str, official_url: str) -> str:
     return f"結果確認先: {official_url}"
 
 
-def _lottery_description(case: LotteryCase, detected_at: datetime) -> str:
+def _additional_product_notice(case: LotteryCase, config: Config | None) -> list[str]:
+    if config is None:
+        return []
+    from tcg_monitor.additional_products import additional_note
+
+    note = additional_note(config.games[case.game_id], case.canonical_product_key)
+    return [f"商品メモ: {note}"] if note else []
+
+
+def _sale_label(case: LotteryCase) -> str:
+    if case.extraction_method.startswith("additional_product_made_to_order_"):
+        return "受注販売"
+    if case.extraction_method.startswith("additional_product_preorder_"):
+        return "予約"
+    return "販売"
+
+
+def _lottery_description(
+    case: LotteryCase, detected_at: datetime, config: Config | None = None,
+) -> str:
     opportunity_label = (
         "Amazon招待"
         if _is_amazon_invitation(case)
-        else ("公式販売" if case.opportunity_kind != OpportunityKind.LOTTERY else "抽選")
+        else (_sale_label(case) if case.opportunity_kind != OpportunityKind.LOTTERY else "抽選")
     )
     return "\n".join(
         [
@@ -672,6 +691,7 @@ def _lottery_description(case: LotteryCase, detected_at: datetime) -> str:
             f"{_lottery_application_label(case)}: {_lottery_application_url(case)}",
             f"確認元ページ: {case.source_url}",
             f"商品分類: {case.product_category}",
+            *_additional_product_notice(case, config),
             *([f"応募回: {case.application_round}"] if case.application_round else []),
             *(["検知理由: 限定セット系列の抽選候補（相場・利益は未確認）"]
               if case.canonical_product_key.startswith("nonbox:") else []),
@@ -679,7 +699,8 @@ def _lottery_description(case: LotteryCase, detected_at: datetime) -> str:
                 "受付開始日: 不明",
                 "仮の開始日: 初回検知の翌日（実際の受付開始日ではありません）",
             ] if case.extraction_method == "yahoo_realtime_detected_next_day" else []),
-            *([f"応募締切: {_format_user_datetime(case.end_at)}"] if case.end_at else []),
+            *([f"{'応募締切' if case.opportunity_kind == OpportunityKind.LOTTERY else '受付締切'}: "
+               f"{_format_user_datetime(case.end_at)}"] if case.end_at else []),
             *([f"結果発表: {_format_user_datetime(case.result_at)}"] if case.result_at else []),
             f"検出日時: {detected_at.isoformat()}",
             f"抽出方法: {case.extraction_method}",
@@ -747,7 +768,7 @@ def _lottery_date_in_delivery_window(
     return first_day <= case_date <= last_day
 
 
-def _lottery_discord_description(case: LotteryCase) -> str:
+def _lottery_discord_description(case: LotteryCase, config: Config | None = None) -> str:
     manufacturer_reservation = (
         case.game_id == "lorcana" and case.retailer_id == "lorcana_official"
         and case.opportunity_kind != OpportunityKind.LOTTERY
@@ -757,6 +778,12 @@ def _lottery_discord_description(case: LotteryCase) -> str:
             "予約・販売の告知日（開始日時不明）"
             if case.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN
             else "メーカー告知の予約・販売開始"
+        )
+    elif case.extraction_method.startswith("additional_product_"):
+        date_label = (
+            f"{_sale_label(case)}の告知日（開始日時不明）"
+            if case.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN
+            else f"{_sale_label(case)}開始"
         )
     elif case.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN:
         date_label = "販売を確認した日（開始日時不明）"
@@ -780,13 +807,17 @@ def _lottery_discord_description(case: LotteryCase) -> str:
         f"{date_label}: {_format_user_datetime(case.start_at)}",
         *_lottery_application_guidance(case),
         f"{application_label}: {_lottery_application_url(case)}",
+        *_additional_product_notice(case, config),
     ]
     if manufacturer_reservation:
         lines.append("メーカー全体の予約告知です。タカラトミーモールなど各店の在庫・受付状況は未確認。")
         if case.source_url != case.official_url:
             lines.append(f"予約告知: {case.source_url}")
     if case.end_at:
-        lines.append(f"応募締切: {_format_user_datetime(case.end_at)}")
+        deadline_label = (
+            "応募締切" if case.opportunity_kind == OpportunityKind.LOTTERY else "受付締切"
+        )
+        lines.append(f"{deadline_label}: {_format_user_datetime(case.end_at)}")
     if case.result_at:
         lines.append(f"結果発表: {_format_user_datetime(case.result_at)}")
     if case.extraction_method == "yahoo_realtime_detected_next_day":
@@ -805,7 +836,11 @@ def _opportunity_title_prefix(case: LotteryCase, config: Config) -> str:
         if case.extraction_method == "yahoo_realtime_detected_next_day":
             return f"【{config.games[case.game_id].short_name}抽選・開始日不明】"
         return config.games[case.game_id].lottery_start_prefix
-    return f"【{config.games[case.game_id].short_name}公式販売】"
+    sale_label = (
+        _sale_label(case)
+        if case.extraction_method.startswith("additional_product_") else "公式販売"
+    )
+    return f"【{config.games[case.game_id].short_name}{sale_label}】"
 
 
 def _opportunity_uses_calendar(case: LotteryCase) -> bool:
@@ -1290,7 +1325,7 @@ def main(argv: list[str] | None = None) -> int:
             )
             title_prefix = _opportunity_title_prefix(case, config)
             calendar_summary = title_prefix + case.retailer_name + "／" + case.product_name
-            calendar_description = _lottery_description(case, detected_at)
+            calendar_description = _lottery_description(case, detected_at, config)
             payload_hash = _calendar_payload_hash(
                 calendar_summary,
                 case.start_at,
@@ -1321,7 +1356,7 @@ def main(argv: list[str] | None = None) -> int:
             ):
                 discord.send(
                     title_prefix + case.retailer_name + "／" + case.product_name,
-                    _lottery_discord_description(case),
+                    _lottery_discord_description(case, config),
                 )
                 state.mark_delivered(key)
             # 発表予定日は応募開始とは別の予定。同期記録が消えても同じIDで更新する。
