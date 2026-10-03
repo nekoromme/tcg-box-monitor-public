@@ -165,17 +165,23 @@ def _cleanup_confirmed_false_positive_cases(
         )
     for case_id, expected in confirmed_cases.items():
         sync_key = f"lottery:{case_id}"
+        result_sync_key = f"lottery_result:{case_id}"
         journal_keys = (
             f"lottery:started:{case_id}",
             f"lottery:scheduled:{case_id}",
+            f"lottery:result:{case_id}",
         )
         case_record = seen_cases.get(case_id)
         sync_record = calendar_sync.get(sync_key)
+        result_sync_record = calendar_sync.get(result_sync_key)
         has_history = any(key in journal for key in journal_keys)
-        if case_record is None and sync_record is None and not has_history:
+        if (case_record is None and sync_record is None
+                and result_sync_record is None and not has_history):
             continue
         if not isinstance(case_record, dict) or (
             sync_record is not None and not isinstance(sync_record, dict)
+        ) or (
+            result_sync_record is not None and not isinstance(result_sync_record, dict)
         ):
             raise RuntimeError(
                 f"誤検知清掃対象の監視状態が不完全です: retailer={expected['retailer_name']}"
@@ -198,6 +204,16 @@ def _cleanup_confirmed_false_positive_cases(
             if isinstance(sync_record, dict)
             else ""
         )
+        result_event_id = (
+            str(result_sync_record.get("event_id") or "")
+            if isinstance(result_sync_record, dict) else ""
+        )
+        if result_sync_record is not None and (
+            not result_event_id
+            or (expected.get("result_event_id")
+                and result_event_id != expected["result_event_id"])
+        ):
+            mismatched.append("result_event_id")
         if mismatched or (sync_record is not None and event_id != expected["event_id"]):
             detail = ",".join(mismatched) if mismatched else "event_id"
             raise RuntimeError(
@@ -218,8 +234,21 @@ def _cleanup_confirmed_false_positive_cases(
                     f"retailer={expected['retailer_name']} result={result}"
                 )
 
+        if result_sync_record is not None:
+            # 応募予定だけ消すと、誤商品の結果発表予定が残る。両方の所有IDを
+            # 確認し、削除が片方で失敗した場合は履歴を残して次回に再試行する。
+            result = calendar.delete_owned_event(
+                result_event_id, kind="lottery_result",
+                internal_id=state.calendar_case_identity(case_id),
+            )
+            if result.get("status") not in {"deleted", "not_found"}:
+                raise RuntimeError(
+                    "Google Calendar誤結果予定の削除が完了しませんでした: "
+                    f"retailer={expected['retailer_name']} result={result}"
+                )
         seen_cases.pop(case_id, None)
         calendar_sync.pop(sync_key, None)
+        calendar_sync.pop(result_sync_key, None)
         migrations.pop(case_id, None)
         for key in journal_keys:
             journal.pop(key, None)

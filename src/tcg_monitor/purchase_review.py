@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import asdict
 from datetime import date, datetime
 from typing import Any
@@ -74,6 +75,46 @@ def family_assessment(release: Release) -> tuple[str, str, str]:
     )
 
 
+def _brief_highlights(evidence: ContentEvidence) -> list[str]:
+    """保存する情報は削らず、通知だけを重要な二点に絞る。"""
+    sentences = [
+        part.strip(" ■・\n")
+        for line in evidence.highlights
+        for part in re.split(r"(?<=[。!！])\s*", line)
+        if part.strip(" ■・\n")
+    ]
+    # コレクター向け仕様と特典を優先。宣伝文や同じ特殊レアの説明を連続で並べない。
+    priorities = (
+        ("数量限定", r"シリアル|\d+枚限定|001.{0,6}100"),
+        ("初回限定", r"初回(?:生産|限定|製造)|初版限定"),
+        ("特殊レア", r"グランドマスター|アイコニック|エンチャンテッド|キュレーターズ"
+         r"|スーパーパラレル|スペシャルアート|フューチャリスティック|プリズマティック"),
+        ("特典", r"特典|同梱"),
+        ("イラスト", r"描き下ろし|新規イラスト|アートワーク|特別仕様"),
+        ("収録", r"初登場|新カード|新テーマ|参戦|特性|ワザ"),
+    )
+    fallback = [*evidence.rarity_details, *(
+        value.removeprefix("あり: ") for value in evidence.features.values()
+        if value.startswith("あり")
+    )]
+    selected: list[str] = []
+    used: list[str] = []
+    for label, pattern in priorities:
+        value = next((line for line in [*sentences, *fallback]
+                      if re.search(pattern, line, re.I)
+                      and not any(line in old or old in line for old in used)), None)
+        if value:
+            used.append(value)
+            compact = re.sub(r"\s+", " ", value).strip()
+            # 通知から全文へはリンクで進める。長い仕様を読み切らせない。
+            selected.append(f"・{label}: {compact[:87] + '…' if len(compact) > 90 else compact}")
+        if len(selected) == 2:
+            break
+    if not selected and sentences:
+        selected.append("・注目: " + sentences[0][:90])
+    return selected
+
+
 def early_message(
     release: Release,
     evidence: ContentEvidence,
@@ -82,56 +123,25 @@ def early_message(
     *,
     price_enabled: bool = True,
 ) -> str:
-    family, rank, reason = family_assessment(release)
+    _, rank, _ = family_assessment(release)
     lines = [
-        f"商品: {release.product_name}",
-        f"発売日: {release.release_date}",
-        "フェーズ1/2: 中身を見て応募・購入を判断",
-        f"種別: {family}",
-        f"種別期待度（暫定ルール）: {rank} — {reason}",
-        "※過去相場を集計した利益確率・開封期待値ではありません。",
+        f"期待度: {rank}（商品種別の目安）",
+        f"{release.release_date:%m/%d}発売" if release.release_date else "発売日未定",
     ]
-    if evidence.complete:
-        lines.append(
-            f"収録公開: {evidence.card_count}/{evidence.total_cards}種確認・目安より前倒し可"
-        )
-    else:
-        lines.append(f"収録公開: 全公開か未確認（このゲームの確認目安は発売{lead}日前）")
-        if evidence.card_count is not None:
-            lines.append(
-                f"一覧の確認数: {evidence.card_count} / 総種類 {evidence.total_cards or '不明'}"
-            )
-    lines += [
-        f"収録確認ページ: {evidence.card_list_url or evidence.url}",
-        f"ページ種別: {evidence.card_list_label}",
-    ]
-    if evidence.list_status:
-        lines.append(f"一覧の状態: {evidence.list_status}")
-    if evidence.preview_images:
-        lines.append(f"商品紹介のカード画像: {evidence.preview_images}点（カード種類数とは別）")
-    if evidence.highlights:
-        lines.append("公開済みの収録内容・注目点:")
-        lines.extend(f"・{item}" for item in evidence.highlights)
-    if evidence.card_index_url:
-        lines.append(f"公式カード検索（対象弾の有無は上記の状態を参照）: {evidence.card_index_url}")
-    lines.extend(f"□ {label}: {value}" for label, value in evidence.features.items())
-    if not evidence.features:
-        lines.append("□ 初回限定・シリアル・特殊レア: 不明（取得できず）")
-    if evidence.rarity_details:
-        lines.append("公式の数量・レア仕様: " + " / ".join(evidence.rarity_details))
     if evidence.msrp:
-        lines.append(f"定価: {evidence.msrp:,}円（BOX／セット単位）")
+        lines[-1] += f"｜定価 {evidence.msrp:,}円／BOX・セット"
+    lines.extend(_brief_highlights(evidence))
+    if evidence.complete:
+        count = (f"（{evidence.card_count}/{evidence.total_cards}種）"
+                 if evidence.card_count and evidence.total_cards else "")
+        lines.append(f"収録: 全公開を確認{count}")
+    else:
+        lines.append("収録: 全公開は未確認")
     if evidence.error:
-        lines.append(f"情報取得: 未確認（{evidence.error}）")
-    lines += [
-        f"公式／情報元: {evidence.url}",
-        (
-            "次回: 発売2日前のスニダン価格判定。未掲載・取得不能なら前日に再確認。"
-            if price_enabled
-            else "直前価格通知: OFF（早期チェックのみ試運転）"
-        ),
-        f"確認時刻: {now:%Y-%m-%d %H:%M} JST",
-    ]
+        lines.append("情報取得: 一部未確認")
+    details = evidence.url or evidence.card_list_url
+    if details:
+        lines.append(f"[公式の詳細]({details})")
     return "\n".join(lines)
 
 

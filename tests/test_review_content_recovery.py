@@ -57,9 +57,12 @@ def test_observed_lorcana_has_published_content_not_unknown_checkboxes() -> None
     assert content.features["BOX同梱・購入特典（初回限定とは別）"].startswith("あり")
     assert content.features["初回生産限定・初回BOX特典"].startswith("不明")
     text = early_message(product(), content, NOW, 14)
-    assert all(name in text for name in ("ミッキーマウス", "シンデレラ", "モアナ", "ミニーマウス"))
-    assert "35点" in text and "35種" not in text
-    assert len(text) < 4000  # Discord must not truncate the key evidence and source URL.
+    assert all(name in text for name in ("ミッキーマウス", "シンデレラ", "ミニーマウス"))
+    assert text.count("\n・") == 2  # 特殊レアと特典だけ。広告文や全チェック項目は並べない。
+    assert "35種" not in text and "全公開は未確認" in text
+    assert "種別の目安" in text and "5,280円" in text
+    assert "不明（公式記載" not in text and text.count("https://") == 1
+    assert len(text) < 500 and len(text.splitlines()) <= 6
 
 
 def test_official_lorcana_search_without_this_set_is_separate_from_product_preview() -> None:

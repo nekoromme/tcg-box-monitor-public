@@ -14,6 +14,7 @@ from tcg_monitor.japanese_datetime import parse_first_datetime
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
 from tcg_monitor.non_box_sales import additional_sale_cases
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
+from tcg_monitor.store_scope import outside_store_scope
 
 _HEADINGS = {"h2", "h3", "h4", "h5", "h6"}
 
@@ -309,6 +310,8 @@ def parse_nyuka_now_fullcomp(
     cases: list[LotteryCase] = []
     alerts: list[Alert] = []
     for section_text, tags, links in _fullcomp_sections(soup):
+        if outside_store_scope(config, "fullcomp", section_text, source.id, url):
+            continue
         official_url = next(
             (
                 urljoin(url, link)
