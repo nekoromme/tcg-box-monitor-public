@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791039309077,
+  "generatedAt": 1791039362905,
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791039293198,
+  "lastTick": 1791039338895,
   "load": {
     "activePages": 7,
     "waitingPages": 0,
@@ -10,11 +10,24 @@
     "discoverySeconds": 47780
   },
   "error": "",
+  "deliveries": {
+    "sent": 2,
+    "pending": 0,
+    "failed": 0,
+    "cancelled": 4,
+    "screen": 0
+  },
   "automatic": {
     "enabled": true,
-    "lastSync": 1791039308629,
-    "nextSync": 1791046508629,
+    "lastSync": 1791039362699,
+    "nextSync": 1791046562699,
     "error": "",
+    "lastFailure": {
+      "at": 1791038445790,
+      "stage": "fetch",
+      "name": "TypeError",
+      "reason": "Invalid redirect value, must be one of \"follow\" or \"manual\" (\"error\" won't be implemented since it does not make sense at the edge; use \"manual\" and check the response status code)"
+    },
     "products": [
       {
         "id": "gundam-gd01",
@@ -429,6 +442,12 @@
       },
       {
         "at": 1791039308629,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791039362699,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -2137,13 +2156,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 8,
+          "negatives": 9,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791039308655,
+      "nextAt": 1791039531506,
       "failures": 0,
-      "lastChecked": 1791039116655,
+      "lastChecked": 1791039339506,
       "lastGood": {
         "title": "【新品】[TCG] (BOX)(再販) ガンダムカードゲーム ブースターパック Newtype Rising(ニュータイプ ライジング)【GD01】 バンダイ(24パック)(20260926)",
         "price": 6480,
@@ -2167,11 +2186,11 @@
           "price": 6480,
           "comparable": true,
           "at": 1791037621127,
-          "lastAt": 1791039116655,
-          "samples": 8
+          "lastAt": 1791039339506,
+          "samples": 9
         }
       ],
-      "lastGoodAt": 1791039116655,
+      "lastGoodAt": 1791039339506,
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -2187,13 +2206,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 7,
+          "negatives": 8,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791039309399,
+      "nextAt": 1791039532584,
       "failures": 0,
-      "lastChecked": 1791039117399,
+      "lastChecked": 1791039340584,
       "lastGood": {
         "title": "【BOX】ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 9500,
@@ -2217,11 +2236,11 @@
           "price": 9500,
           "comparable": true,
           "at": 1791037622977,
-          "lastAt": 1791039117399,
-          "samples": 7
+          "lastAt": 1791039340584,
+          "samples": 8
         }
       ],
-      "lastGoodAt": 1791039117399,
+      "lastGoodAt": 1791039340584,
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -2503,13 +2522,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 8,
+          "negatives": 9,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791039318024,
+      "nextAt": 1791039440951,
       "failures": 0,
-      "lastChecked": 1791039217024,
+      "lastChecked": 1791039339951,
       "lastGood": {
         "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
         "price": 5808,
@@ -2549,11 +2568,11 @@
           "price": 5808,
           "comparable": true,
           "at": 1791039084525,
-          "lastAt": 1791039217024,
-          "samples": 2
+          "lastAt": 1791039339951,
+          "samples": 3
         }
       ],
-      "lastGoodAt": 1791039217024,
+      "lastGoodAt": 1791039339951,
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -3827,6 +3846,23 @@
         "storeId": "advantage2",
         "result": {
           "at": 1791039293198,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
+    },
+    {
+      "at": 1791039338895,
+      "checked": 3,
+      "discovered": {
+        "ruleId": "885eb3d0-c312-4526-a65e-2d9d7c0cc66d",
+        "storeId": "cardmax",
+        "result": {
+          "at": 1791039338895,
           "status": "no_hit",
           "matched": 0,
           "registered": 0
