@@ -25,6 +25,7 @@ for(let n=0;n<12;n++) {
 }
 if(!deployed)throw new Error('在庫監視v0.10.1のデプロイ完了を確認できません');
 let state=await api();
+const previousCatalogFailure=state.automatic?.lastFailure;
 const initial=!state.automatic || state.rules.length===0;
 const root=process.env.INVENTORY_LOG_DIR||'.monitor-state';
 const source=JSON.parse(await readFile(join(root,'monitor_state.json'),'utf8'));
@@ -33,7 +34,7 @@ const releases=Object.fromEntries(Object.entries(source.seen_releases||{}).filte
 await writeFile(join(root,'inventory_releases.json'),JSON.stringify({seen_releases:releases,recordedAt:source.last_run_summary?.recorded_at})+'\n');
 state=await api({action:'settings',webhook});
 state=await api({action:'automatic',releases});
-if(state.automatic?.error)throw new Error(state.automatic.error);
+// 失敗時も下で状態を保存する。例外でログ保存より先に終了しない。
 
 // 最低限の3商品は初回に数店舗から商品URLを渡し、全店検索の順番待ちを短くする。
 // 在庫値は信頼せず、Workerが商品詳細を再確認してから通知する。
@@ -52,14 +53,15 @@ if(initial || state.targets.length===0) {
   }
 }
 // 初回だけ、画面を閉じた状態での定期起動・実通知結果を待つ。
-if(initial)for(let n=0;n<12;n++) {
+if(initial || !state.events.some(e=>e.delivery==='sent'))for(let n=0;n<12;n++) {
   state=await api();
   if(state.lastTick && state.targets.some(t=>t.lastGoodAt) && state.events.some(e=>e.delivery==='sent'))break;
   await delay(15000);
 }
 state=await api();
 await mkdir(join(root,'inventory-logs'),{recursive:true});
-const report={generatedAt:Date.now(),enabled:state.enabled,notificationConfigured:state.notificationConfigured,lastTick:state.lastTick,load:state.load,error:state.error,automatic:{enabled:state.automatic.enabled,lastSync:state.automatic.lastSync,nextSync:state.automatic.nextSync,error:state.automatic.error,products:state.automatic.products,log:state.automatic.log},rules:state.rules,targets:state.targets,events:state.events,runs:state.runs||[],seedLog};
+const deliveries=Object.fromEntries(['sent','pending','failed','cancelled','screen'].map(status=>[status,state.events.filter(e=>e.delivery===status).length]));
+const report={generatedAt:Date.now(),enabled:state.enabled,notificationConfigured:state.notificationConfigured,lastTick:state.lastTick,load:state.load,error:state.error,deliveries,automatic:{enabled:state.automatic.enabled,lastSync:state.automatic.lastSync,nextSync:state.automatic.nextSync,error:state.automatic.error,lastFailure:state.automatic.lastFailure||previousCatalogFailure,products:state.automatic.products,log:state.automatic.log},rules:state.rules,targets:state.targets,events:state.events,runs:state.runs||[],seedLog};
 await writeFile(join(root,'inventory_status.json'),JSON.stringify(report,null,2)+'\n');
 const day=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Tokyo'}),logPath=join(root,'inventory-logs',`${day}.jsonl`);
 let old=[];try{old=(await readFile(logPath,'utf8')).trim().split('\n').filter(Boolean).map(x=>JSON.parse(x));}catch{}
@@ -72,5 +74,8 @@ const lines=['# カード在庫監視の稼働状況','',`ログ保存：${time(
 await writeFile(join(root,'inventory_status.md'),lines.join('\n')+'\n');
 if(process.env.GITHUB_STEP_SUMMARY)await writeFile(process.env.GITHUB_STEP_SUMMARY,lines.join('\n')+'\n');
 console.log(JSON.stringify({event:'inventory_sync',products:state.automatic.products.length,targets:state.targets.length,lastTick:state.lastTick,checked:state.targets.filter(t=>t.lastGoodAt).length,sent:state.events.filter(e=>e.delivery==='sent').length,notificationConfigured:state.notificationConfigured}));
+console.log(JSON.stringify({event:'inventory_delivery_health',deliveries,errors:state.events.filter(e=>['failed','pending'].includes(e.delivery)&&e.error).map(e=>({id:e.id,kind:e.kind||'stock',error:e.error,attempts:e.attempts})),catalogFailure:report.automatic.lastFailure}));
 if(!state.notificationConfigured || !state.automatic.products.some(p=>p.id==='gundam-gd01') || !state.automatic.products.some(p=>p.id==='gundam-gd05') || !state.automatic.products.some(p=>p.id==='pokemon-m6a'))throw new Error('必須監視対象または通知設定を確認できません');
+if(state.automatic.error)throw new Error(state.automatic.error);
+if(!deliveries.sent && state.events.some(e=>['failed','pending'].includes(e.delivery)&&e.error))throw new Error('Discord通知をまだ一件も送信できていません。保存した通知結果を確認してください');
 if(state.enabled && state.lastTick && Date.now()-state.lastTick>15*60000)throw new Error('15分以上巡回が止まっています');
