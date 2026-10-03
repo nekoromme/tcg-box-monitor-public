@@ -2,10 +2,14 @@ name: inventory-sync
 on:
   push:
     branches: [main]
-    paths: ['scripts/sync_inventory_monitor.mjs', '.github/workflows/inventory-sync.yml']
+    paths: ['scripts/sync_inventory_monitor.mjs', 'scripts/inventory_health.mjs', '.github/workflows/inventory-sync.yml']
   schedule:
     - cron: '37 * * * *'
   workflow_dispatch:
+  workflow_run:
+    workflows: ['monitor']
+    branches: [main]
+    types: [completed]
 permissions:
   contents: write
 # 抽選監視と同じ保存ブランチに追記するため、競合せず順番に保存する。
@@ -14,11 +18,13 @@ concurrency:
   cancel-in-progress: false
 jobs:
   sync:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
+          ref: main
           persist-credentials: false
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
@@ -33,10 +39,12 @@ jobs:
         if: always()
         working-directory: .monitor-state
         run: |
-          if [ ! -f inventory_status.json ]; then exit 0; fi
+          if [ ! -f inventory_health.json ]; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add inventory_status.json inventory_status.md inventory_releases.json inventory-logs
+          for file in inventory_status.json inventory_status.md inventory_releases.json inventory-logs inventory_health.json inventory_incident.json; do
+            if [ -e "$file" ]; then git add -- "$file"; fi
+          done
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'chore: save inventory monitoring logs [skip ci]'
           git push origin HEAD:monitor-state
