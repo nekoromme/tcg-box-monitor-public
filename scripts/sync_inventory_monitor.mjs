@@ -20,14 +20,19 @@ let deployed=false;
 for(let n=0;n<12;n++) {
   const r=await fetch(base+'/api/health',{signal:AbortSignal.timeout(15000)});
   const health=await r.json();
-  if(health.version && health.version!=='0.9.0' && health.version!=='0.9.1'){deployed=true;break;}
+  if(health.version && !['0.9.0','0.9.1','0.10.0'].includes(health.version)){deployed=true;break;}
   if(n<11)await delay(15000);
 }
-if(!deployed)throw new Error('在庫監視v0.10.0のデプロイ完了を確認できません');
+if(!deployed)throw new Error('在庫監視v0.10.1のデプロイ完了を確認できません');
 let state=await api();
-const initial=!state.automatic;
+const initial=!state.automatic || state.rules.length===0;
+const root=process.env.INVENTORY_LOG_DIR||'.monitor-state';
+const source=JSON.parse(await readFile(join(root,'monitor_state.json'),'utf8'));
+// 公式商品の直近80記録だけ。抽選・通知・画像履歴の6MB全体をWorkerへ送らない。
+const releases=Object.fromEntries(Object.entries(source.seen_releases||{}).filter(([,r])=>r.source_tier==='official').sort((a,b)=>String(b[1].release_date||b[1].release_month||'').localeCompare(String(a[1].release_date||a[1].release_month||''))).slice(0,80));
+await writeFile(join(root,'inventory_releases.json'),JSON.stringify({seen_releases:releases,recordedAt:source.last_run_summary?.recorded_at})+'\n');
 state=await api({action:'settings',webhook});
-state=await api({action:'automatic'});
+state=await api({action:'automatic',releases});
 if(state.automatic?.error)throw new Error(state.automatic.error);
 
 // 最低限の3商品は初回に数店舗から商品URLを渡し、全店検索の順番待ちを短くする。
@@ -53,7 +58,6 @@ if(initial)for(let n=0;n<12;n++) {
   await delay(15000);
 }
 state=await api();
-const root=process.env.INVENTORY_LOG_DIR||'.monitor-state';
 await mkdir(join(root,'inventory-logs'),{recursive:true});
 const report={generatedAt:Date.now(),enabled:state.enabled,notificationConfigured:state.notificationConfigured,lastTick:state.lastTick,load:state.load,error:state.error,automatic:{enabled:state.automatic.enabled,lastSync:state.automatic.lastSync,nextSync:state.automatic.nextSync,error:state.automatic.error,products:state.automatic.products,log:state.automatic.log},rules:state.rules,targets:state.targets,events:state.events,runs:state.runs||[],seedLog};
 await writeFile(join(root,'inventory_status.json'),JSON.stringify(report,null,2)+'\n');
