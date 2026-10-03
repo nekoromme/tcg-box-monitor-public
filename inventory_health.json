@@ -1,0 +1,19 @@
+{
+  "checkedAt": 1791070348200,
+  "status": "degraded",
+  "issues": [
+    {
+      "code": "storage_quota",
+      "message": "監視との接続・確認に失敗（HTTP 503）",
+      "stage": "read-state",
+      "httpStatus": 503
+    }
+  ],
+  "deployment": {
+    "version": "0.10.4",
+    "commit": "425b11999b8c01ca7bd685acc468e82e877a453a",
+    "expectedCommit": "425b11999b8c01ca7bd685acc468e82e877a453a",
+    "deployedAt": "2026-10-03T23:24:37.683967Z"
+  },
+  "lastCompletedAt": null
+}
