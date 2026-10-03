@@ -1417,7 +1417,7 @@ def run_pipeline(
                                 "excluded_retailer", "not_application_announcement",
                                 "tournament_or_result", "old_post", "application_ended",
                                 "closed_or_result_notice", "excluded_product",
-                                "unsupported_game",
+                                "unsupported_game", "store_outside_scope",
                             )
                         )
                         if excluded_posts == diagnostics["account_posts"]:

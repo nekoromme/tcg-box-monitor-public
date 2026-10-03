@@ -18,8 +18,27 @@ system:
   social_account_fallback: true
   # 2026-10-03のユーザー指定でPokeGetInfoMainを追加。店別の個人・ブログは増やさない。
   secondary_provider_allowlist: [onepiecenyuka, nyuka_now, snkrdunk, PokeGetInfoMain]
+  # 仙台を含まないと明示された募集だけ除外。店舗不明の募集は見逃し防止で残す。
+  lottery_store_filters:
+    fullcomp: [仙台]
   runtime:
     confirmed_false_positive_cases:
+      # 引用先のまとめ画像を混ぜた誤商品と、仙台を含まないことを公式確認した募集。
+      35ccaaf5b6d6ddf271b6d5c2704e0681c52f84fc7cbcb367ac2722f5074f05bc:
+        retailer_id: kojima
+        retailer_name: コジマ
+        product_name: 30th CELEBRATION FUTURISTIC BOX
+        start_at: '2026-10-02'
+        source_url: https://x.com/PokeGetInfoMain/status/2105992441174302989
+        event_id: tcg5ddabbc25785e410c79bf4ae07ecc66fb0f733b652aa8c34f9b7030180e6f
+        result_event_id: tcg4c83048672496f725246927ea6ff7832cae119a00e8c9fb0b18a913fd428a
+      c6a1d994d220f4be48f1cf711a81229a5ddd3c900c0f9274c85184c74411f202:
+        retailer_id: fullcomp
+        retailer_name: フルコンプ
+        product_name: 30th CELEBRATION カードセット
+        start_at: '2026-10-03 10:06:00+09:00'
+        source_url: https://nyuka-now.com/archives/2459
+        event_id: tcg1ff6b1a8ceea41496ff8fb1f458ff10dcc87a763efc04a38a19c8ee0b8991
       # 予約開始の9/24を発売日10/16と誤読した旧予定。新しい発売日予定は維持する。
       8d41ca9c86b19fc3fc4df355c8a37badd3c51c99b137062da02972e49a34ac3f:
         retailer_id: lorcana_official

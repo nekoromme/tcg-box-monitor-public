@@ -158,6 +158,14 @@ def _validated_system(raw_system: Any) -> dict[str, Any]:
         or len(set(approved_providers)) != len(approved_providers)
     ):
         raise ConfigError("secondary_provider_allowlist must contain one to four unique providers")
+    store_filters = system.get("lottery_store_filters", {})
+    if not isinstance(store_filters, dict) or any(
+        not isinstance(retailer, str) or not retailer
+        or not isinstance(stores, list) or not stores
+        or not all(isinstance(store, str) and store.strip() for store in stores)
+        for retailer, stores in store_filters.items()
+    ):
+        raise ConfigError("lottery_store_filters must map retailers to nonempty store lists")
     runtime = system.get("runtime", {})
     if not isinstance(runtime, dict):
         raise ConfigError("runtime must be a mapping")

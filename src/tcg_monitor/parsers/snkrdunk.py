@@ -13,6 +13,7 @@ from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime, parse_period_start
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
 from tcg_monitor.result_date import published_result_date
+from tcg_monitor.store_scope import outside_store_scope
 
 _HEADINGS = {"h2", "h3", "h4", "h5", "h6"}
 _START_LABEL = re.compile(
@@ -470,6 +471,8 @@ def parse_snkrdunk(
         if not retailer:
             continue
         retailer_id, retailer_name = retailer
+        if outside_store_scope(config, retailer_id, block_text, source.id, url):
+            continue
         if _start_is_intentionally_unpublished(retailer_id, block_text):
             continue
         starts = _starts(block_text, release_date)

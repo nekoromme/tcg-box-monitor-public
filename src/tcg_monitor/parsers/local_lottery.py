@@ -42,6 +42,7 @@ from tcg_monitor.non_box_sales import (
 )
 from tcg_monitor.parsers.common import title, visible_text
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
+from tcg_monitor.store_scope import outside_store_scope
 
 
 def _livepocket_profile(source: SourceConfig | str) -> tuple[str, str] | None:
@@ -863,6 +864,8 @@ def parse_livepocket_event(
     if profile is None:
         raise ValueError(f"livepocket parser profile is missing: {source.id}")
     retailer_id, retailer_name = profile
+    if outside_store_scope(config, retailer_id, text, source.id, url):
+        return [], [], []
     cases = [
         LotteryCase(
             game_id,
@@ -1091,7 +1094,19 @@ def parse_hobby_station_source(
     return parse_livepocket_event(html, url, source, config)
 
 
+def _inside_quoted_tweet(node: Tag) -> bool:
+    # 引用先は別の投稿。本文、添付画像、応募リンクを外側の募集へ混ぜない。
+    # Yahooのクラス末尾は変動するので、安定した部品名だけを判定する。
+    return any(
+        isinstance(parent, Tag)
+        and "QuotedTweet_" in str(parent.get("class") or "")
+        for parent in (node, *node.parents)
+    )
+
+
 def _tweet_container(status_anchor: Tag) -> Tag | None:
+    if _inside_quoted_tweet(status_anchor):
+        return None
     fallback: Tag | None = None
     for parent in status_anchor.parents:
         if not isinstance(parent, Tag):
@@ -1136,7 +1151,14 @@ def _tweet_body(container: Tag) -> str:
         "p",
         class_=is_body_class,
     )
-    return (body or container).get_text(" ", strip=True)
+    if body is not None:
+        return body.get_text(" ", strip=True)
+    # 本文のクラス名が変わった場合も、引用先の店舗名や商品を本文に足さない。
+    # 元のDOMは画像・リンク取得でも使うので、削除はコピー内だけで行う。
+    own = BeautifulSoup(str(container), "lxml")
+    for quoted in own.select('[class*="QuotedTweet_QuotedTweet"]'):
+        quoted.decompose()
+    return own.get_text(" ", strip=True)
 
 
 def _status_parts(href: str, expected_account: str) -> tuple[str, str] | None:
@@ -1307,6 +1329,8 @@ def _product_from_tweet(
                 break
     if not product_name:
         for anchor in container.find_all("a"):
+            if _inside_quoted_tweet(anchor):
+                continue
             href = str(anchor.get("href") or "")
             if not href.startswith("/realtime/search?p=%23"):
                 continue
@@ -1340,6 +1364,8 @@ def _application_url(container: Tag, status_url: str, ocr_text: str = "") -> str
     # to the short link so Amazon ASINs and Furuichi articles deduplicate across
     # independent social and official discovery paths.
     for anchor in container.find_all("a", href=True):
+        if _inside_quoted_tweet(anchor):
+            continue
         values = [
             str(anchor.get("href") or ""),
             anchor.get_text(" ", strip=True),
@@ -1387,6 +1413,8 @@ def _application_url(container: Tag, status_url: str, ocr_text: str = "") -> str
     if match := re.search(r"https://p-bandai\.jp/item/item-\d+/?", ocr_text):
         return match.group(0)
     for anchor in container.find_all("a", href=True):
+        if _inside_quoted_tweet(anchor):
+            continue
         href = str(anchor.get("href"))
         label = anchor.get_text(" ", strip=True)
         if href.startswith("https://t.co/") and not label.startswith("pic.x.com"):
@@ -1398,6 +1426,12 @@ def _tweet_image_urls(container: Tag) -> list[str]:
     urls: list[str] = []
     for image in container.find_all("img", src=True):
         src = str(image.get("src") or "")
+        if _inside_quoted_tweet(image) or "/profile_images/" in src or any(
+            isinstance(parent, Tag)
+            and "Tweet_icon" in str(parent.get("class") or "")
+            for parent in (image, *image.parents)
+        ):
+            continue  # 投稿者アイコンも応募案内の画像ではない。
         parts = urlsplit(src)
         if (
             parts.scheme == "https"
@@ -1851,6 +1885,9 @@ def parse_yahoo_realtime(
         )
         ocr_text = re.sub(r"(?<=日)\s*\([+@]\)(?=\s*\d{1,2}:)", " ", ocr_text)
         combined_text = f"{post_text}\n{ocr_text}" if ocr_text else post_text
+        if outside_store_scope(config, retailer_id, combined_text, source.id, status_url):
+            count("store_outside_scope")
+            continue
         if image_only_candidate:
             if ocr_error:
                 count("image_only_ocr_pending")

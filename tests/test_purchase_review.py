@@ -436,7 +436,7 @@ def test_early_only_never_fetches_snkr_or_promises_price_notification(monitor) -
     run(monitor, 8, modes=modes)
     run(monitor, 9, modes=modes)
     assert discord.send.call_count == 1
-    assert "直前価格通知: OFF" in discord.send.call_args.args[1]
+    assert "次回" not in discord.send.call_args.args[1]
     source.price.assert_not_called()
     assert source.content.call_count == 1
     assert not state.data["purchase_reviews"][release_dedupe_key(product())].get("price_sent")
