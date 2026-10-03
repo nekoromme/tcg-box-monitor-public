@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1791039297874,
+  "generatedAt": 1791039309077,
   "enabled": true,
   "notificationConfigured": true,
   "lastTick": 1791039293198,
@@ -10,24 +10,11 @@
     "discoverySeconds": 47780
   },
   "error": "",
-  "deliveries": {
-    "sent": 2,
-    "pending": 0,
-    "failed": 0,
-    "cancelled": 4,
-    "screen": 0
-  },
   "automatic": {
     "enabled": true,
-    "lastSync": 1791039229960,
-    "nextSync": 1791046429960,
+    "lastSync": 1791039308629,
+    "nextSync": 1791046508629,
     "error": "",
-    "lastFailure": {
-      "at": 1791038445790,
-      "stage": "fetch",
-      "name": "TypeError",
-      "reason": "Invalid redirect value, must be one of \"follow\" or \"manual\" (\"error\" won't be implemented since it does not make sense at the edge; use \"manual\" and check the response status code)"
-    },
     "products": [
       {
         "id": "gundam-gd01",
@@ -436,6 +423,12 @@
       },
       {
         "at": 1791039229960,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791039308629,
         "kind": "catalog",
         "count": 38,
         "added": []
