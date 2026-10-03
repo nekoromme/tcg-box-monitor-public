@@ -26,7 +26,8 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
         let data;try{data=await response.json();}catch{}
         if(response.ok&&data)return data;
         const backend=data?.failure?.code;
-        last=Object.assign(new Error(`監視への接続失敗 HTTP ${response.status}`),{status:response.status,backend:['storage_quota','storage_data','runtime_limit','monitor_unavailable'].includes(backend)?backend:null});
+        const limitTerms=(Array.isArray(data?.failure?.limitTerms)?data.failure.limitTerms:[]).filter(x=>['daily','rows','written','writes','reads','duration','requests','CPU','storage','database','quota','limit'].includes(x));
+        last=Object.assign(new Error(`監視への接続失敗 HTTP ${response.status}`),{status:response.status,backend:['storage_quota','storage_data','runtime_limit','monitor_unavailable'].includes(backend)?backend:null,limitTerms});
         if(response.status<500&&response.status!==429)break;
       }catch{last=new Error('監視への通信に失敗');}
       if(n<2)await pause(5000*(n+1));
@@ -92,7 +93,7 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
     // 接続前に失敗しても、古いログを最新正常に見せない。秘密を含む例外本文は出さない。
     const code=error?.backend||error?.code||(stage==='deployment'?'deployment_check_failed':'monitor_connection_failed');
     const known=new Set(['storage_quota','storage_data','runtime_limit','monitor_unavailable','deployment_mismatch','deployment_check_failed','monitor_connection_failed']);
-    issues=[{code:known.has(code)?code:'monitor_connection_failed',message:stage==='deployment'?'本番の修正版・変更番号を確認できない':`監視との接続・確認に失敗${error?.status?`（HTTP ${error.status}）`:''}`,stage,...(error?.status?{httpStatus:error.status}:{})}];
+    issues=[{code:known.has(code)?code:'monitor_connection_failed',message:stage==='deployment'?'本番の修正版・変更番号を確認できない':`監視との接続・確認に失敗${error?.status?`（HTTP ${error.status}）`:''}`,stage,...(error?.status?{httpStatus:error.status}:{}),...(error?.limitTerms?.length?{limitTerms:error.limitTerms}:{})}];
   }
   const health={checkedAt:now(),status:issues.length?'degraded':state?.enabled===false?'paused':'ok',issues,deployment,lastCompletedAt:state?.lastCompletedAt||null};
   await writeFile(join(root,'inventory_health.json'),JSON.stringify(health,null,2)+'\n');
