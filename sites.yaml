@@ -16,8 +16,8 @@ system:
       lorcana: 14
   # 公式Xの検索語の反映遅延を、同じ公式アカウントの全投稿検索で補完する。
   social_account_fallback: true
-  # 抽選の補完元はこの3運営元だけ。店ごとの個人・ブログ追加を防ぐ。
-  secondary_provider_allowlist: [onepiecenyuka, nyuka_now, snkrdunk]
+  # 2026-10-03のユーザー指定でPokeGetInfoMainを追加。店別の個人・ブログは増やさない。
+  secondary_provider_allowlist: [onepiecenyuka, nyuka_now, snkrdunk, PokeGetInfoMain]
   runtime:
     confirmed_false_positive_cases:
       # 予約開始の9/24を発売日10/16と誤読した旧予定。新しい発売日予定は維持する。
@@ -1658,14 +1658,17 @@ sources:
   purposes:
   - lottery_discovery
   classification: fallback_required
-  enabled: false
+  enabled: true
   discovery_urls:
-  - https://limited.yodobashi.com/
+  - https://limited.yodobashi.com/entry/shared/
   fallback_source_ids:
   - yahoo_realtime_yodobashi
+  - secondary_pokeget_news
+  - nyuka_now_fullcomp_livepocket
   - snkrdunk_pokemon
   - snkrdunk_onepiece
   page_url_patterns:
+  - ^https://limited\.yodobashi\.com/entry/shared/?$
   - ^https://limited\.yodobashi\.com/?$
   - ^https://limited\.yodobashi\.com/a/[A-Za-z0-9_-]+/?$
   include_keywords:
@@ -1720,7 +1723,7 @@ sources:
   calendar_policy: timed_or_all_day_when_date_explicit
   poll_minutes: 120
   robots_url: https://limited.yodobashi.com/robots.txt
-  notes: 取得制限のある元ページの巡回を停止。次の既存経路で監視する：yahoo_realtime_yodobashi, snkrdunk_pokemon, snkrdunk_onepiece。履歴と設定は保持し、毎回のHTTP取得対象から外す。
+  notes: ルートURLで続いた403に対し、現行の公式抽選予告URLへ更新。共通の応募期間と別ブロックの対象商品を一緒に解析する。公式X・ポケゲト・入荷Now・スニダンで補完し、同じ抽選回の通知履歴を共有する。
 - id: yahoo_realtime_yodobashi
   name: ヨドバシカメラ公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -1742,7 +1745,7 @@ sources:
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: ヨドバシ抽選ページが取得制限された場合の公式補完経路。公式XのBOX抽選告知だけを抽出する。
+  notes: ヨドバシ抽選ページが取得制限された場合の公式補完経路。BOXと承認済みの限定セットを共通の商品判定で抽出する。
   parser_kind: yahoo_realtime
   parser_options:
     account: Yodobashi_X
@@ -2728,6 +2731,13 @@ sources:
   parser_options:
     information_provider: nyuka_now
     priority_retailers:
+    - heading_marker: ヨドバシ・ドット・コム
+      retailer_id: yodobashi
+      retailer_name: ヨドバシカメラ
+      fallback_url: https://limited.yodobashi.com/entry/shared/
+      official_host: limited.yodobashi.com
+      game_id: pokemon_card
+      summary_url: https://nyuka-now.com/archives/2459
     - &id002
       heading_marker: シーガル
       retailer_id: seagull_common
@@ -5290,6 +5300,86 @@ sources:
     retailer_id: batoloco_shibuya_center
     retailer_name: TCバトロコ渋谷センター街店
 
+- id: secondary_pokeget_news
+  name: ポケゲトちゃんねる ポケカ店舗横断補完
+  source_type: secondary_social_search
+  source_tier: secondary
+  coverage_scope: specialized
+  supported_games:
+    pokemon_card: verified
+  purposes:
+  - secondary_lottery_discovery
+  enabled: true
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APokeGetInfoMain%20%E6%8A%BD%E9%81%B8&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3APokeGetInfoMain&ei=UTF-8
+  render_mode: http
+  poll_minutes: 120
+  fallback_on_empty_result: true
+  expected_elements:
+  - approved_account_post
+  - named_single_retailer
+  - supported_tcg_product
+  - application_period_or_image_ocr
+  notes: ユーザー指定のポケゲトを店舗横断で取得。店名を検索語に加えると今回のヨドバシ告知が欠落したため、抽選検索とアカウント検索を使う。既存の全国・通販監視対象に限定し、BOXと承認済み限定セットを補完。複数店まとめ・店頭応募・プレゼントは除外し、締切や投稿日時から開始日を作らない。
+  parser_kind: yahoo_realtime
+  parser_options:
+    information_provider: PokeGetInfoMain
+    account: PokeGetInfoMain
+    retailer_profiles:
+    - retailer_id: yodobashi
+      retailer_name: ヨドバシカメラ
+      required_retailer_mentions: [ヨドバシ]
+      official_confirmation_url: https://limited.yodobashi.com/entry/shared/
+    - retailer_id: yamada_denki
+      retailer_name: ヤマダデンキ
+      required_retailer_mentions: [ヤマダデンキ, ヤマダ電機, YAMADA]
+      official_confirmation_url: https://www.yamada-denki.jp/service/pointservice/digital-kaiin.html
+    - retailer_id: kojima
+      retailer_name: コジマ
+      required_retailer_mentions: [コジマ]
+      official_confirmation_url: https://www.kojima.net/shop/app/kojima_appli.html
+    - retailer_id: geo
+      retailer_name: ゲオ
+      required_retailer_mentions: [ゲオ, GEO]
+    - retailer_id: kids_republic
+      retailer_name: キッズリパブリック
+      required_retailer_mentions: [キッズリパブリック]
+      official_confirmation_url: https://www.kidsrepublic.jp/campaign
+    - retailer_id: aeon_style_online
+      retailer_name: イオンスタイルオンライン
+      required_retailer_mentions: [イオンスタイルオンライン]
+    - retailer_id: donki
+      retailer_name: ドン・キホーテ
+      required_retailer_mentions: [ドン・キホーテ, ドンキホーテ, ドンキ]
+      official_confirmation_url: https://www.majica-net.com/app/
+    - retailer_id: edion_online
+      retailer_name: エディオン
+      required_retailer_mentions: [エディオン, トレカキャピタル]
+    - retailer_id: rakuten_books
+      retailer_name: 楽天ブックス
+      required_retailer_mentions: [楽天ブックス]
+    - retailer_id: seven_net
+      retailer_name: セブンネットショッピング
+      required_retailer_mentions: [セブンネット]
+    - retailer_id: hobby_search
+      retailer_name: ホビーサーチ
+      required_retailer_mentions: [ホビーサーチ]
+    - retailer_id: hmv
+      retailer_name: HMV
+      required_retailer_mentions: [HMV]
+    - retailer_id: dmm_tsuhan
+      retailer_name: DMM通販
+      required_retailer_mentions: [DMM通販]
+    - retailer_id: famima_online
+      retailer_name: ファミマオンライン
+      required_retailer_mentions: [ファミマオンライン, ファミリーマートオンライン]
+    - retailer_id: ministop_online
+      retailer_name: ミニストップオンライン
+      required_retailer_mentions: [ミニストップオンライン]
+    - retailer_id: furuichi
+      retailer_name: ふるいち
+      required_retailer_mentions: [ふるいち, 古本市場]
 - id: secondary_onepiece_news
   name: ワンピースカードゲーム速報 店舗横断補完
   source_type: secondary_social_search
