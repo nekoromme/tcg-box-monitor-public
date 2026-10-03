@@ -1,19 +1,19 @@
 {
-  "generatedAt": 1791037808475,
+  "generatedAt": 1791038773504,
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791037795547,
+  "lastTick": 1791038744994,
   "load": {
-    "activePages": 6,
+    "activePages": 7,
     "waitingPages": 0,
-    "intervalSeconds": 288,
+    "intervalSeconds": 192,
     "discoverySeconds": 47780
   },
   "error": "",
   "automatic": {
     "enabled": true,
-    "lastSync": 1791037563811,
-    "nextSync": 1791044763811,
+    "lastSync": 1791038772930,
+    "nextSync": 1791045972930,
     "error": "",
     "products": [
       {
@@ -409,6 +409,17 @@
           "REVOLUTION BOOSTER - 方界・マリンセス・ゴーストリック -",
           "IMMORTAL PHOENIX"
         ]
+      },
+      {
+        "at": 1791038445790,
+        "kind": "error",
+        "message": "公式発売情報の更新失敗。前回の監視対象を維持し30分後に再試行"
+      },
+      {
+        "at": 1791038772930,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
       }
     ]
   },
@@ -455,7 +466,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "gundam-gd01"
+      "automaticProductId": "gundam-gd01",
+      "autoRetired": false
     },
     {
       "id": "0cffc351-4771-4c54-9159-44f554d95760",
@@ -500,7 +512,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "gundam-gd05"
+      "automaticProductId": "gundam-gd05",
+      "autoRetired": false
     },
     {
       "id": "28c5e09d-cea2-41c9-8c9a-c402fb07374b",
@@ -544,7 +557,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "pokemon-m6a"
+      "automaticProductId": "pokemon-m6a",
+      "autoRetired": false
     },
     {
       "id": "885eb3d0-c312-4526-a65e-2d9d7c0cc66d",
@@ -586,7 +600,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "pokemon-m6"
+      "automaticProductId": "pokemon-m6",
+      "autoRetired": false
     },
     {
       "id": "a3cfb1ea-b702-4e16-9d24-7875c3911d37",
@@ -628,7 +643,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "pokemon-m5"
+      "automaticProductId": "pokemon-m5",
+      "autoRetired": false
     },
     {
       "id": "f0bdc2bc-c189-4692-9e25-472dc03911ed",
@@ -670,7 +686,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "pokemon-m4"
+      "automaticProductId": "pokemon-m4",
+      "autoRetired": false
     },
     {
       "id": "47c20f77-b1a8-4a3f-9f66-58a45a8a6d14",
@@ -712,7 +729,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "pokemon-m3"
+      "automaticProductId": "pokemon-m3",
+      "autoRetired": false
     },
     {
       "id": "0758b3b5-7592-4003-b9aa-6c07f31afb8d",
@@ -755,7 +773,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "onepiece-op-17"
+      "automaticProductId": "onepiece-op-17",
+      "autoRetired": false
     },
     {
       "id": "5c351ab5-8245-48c8-8270-3fb3d6bbcb03",
@@ -798,7 +817,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "onepiece-op-16"
+      "automaticProductId": "onepiece-op-16",
+      "autoRetired": false
     },
     {
       "id": "062f25fc-334e-4638-9f20-a3d05f2ae746",
@@ -841,7 +861,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "onepiece-op-15"
+      "automaticProductId": "onepiece-op-15",
+      "autoRetired": false
     },
     {
       "id": "0d4cd221-6a96-4c6c-9dda-6b60629c1b07",
@@ -884,7 +905,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "onepiece-eb-04"
+      "automaticProductId": "onepiece-eb-04",
+      "autoRetired": false
     },
     {
       "id": "34f4a787-caf8-4888-804b-34ede069d8d0",
@@ -927,7 +949,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "onepiece-op-14"
+      "automaticProductId": "onepiece-op-14",
+      "autoRetired": false
     },
     {
       "id": "b76fc915-313c-4fa5-baa1-176ecdaf25ec",
@@ -971,7 +994,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "onepiece-op-18"
+      "automaticProductId": "onepiece-op-18",
+      "autoRetired": false
     },
     {
       "id": "fa2b6ad8-672a-46cb-a699-8aad2e19eca4",
@@ -1015,7 +1039,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "onepiece-eb-05"
+      "automaticProductId": "onepiece-eb-05",
+      "autoRetired": false
     },
     {
       "id": "d0db9f48-e57d-43d1-be21-c40a6b6f440c",
@@ -1059,7 +1084,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "gundam-eb01"
+      "automaticProductId": "gundam-eb01",
+      "autoRetired": false
     },
     {
       "id": "73efc848-d9ef-4858-b1a6-110289f8f7b4",
@@ -1103,7 +1129,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "gundam-gd04"
+      "automaticProductId": "gundam-gd04",
+      "autoRetired": false
     },
     {
       "id": "8d529977-c39a-4240-9078-88f84d0a2f8b",
@@ -1147,7 +1174,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "gundam-gd03"
+      "automaticProductId": "gundam-gd03",
+      "autoRetired": false
     },
     {
       "id": "2f526e7b-8dc5-42da-bd7f-1663a9cc6e48",
@@ -1191,7 +1219,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "gundam-gd02"
+      "automaticProductId": "gundam-gd02",
+      "autoRetired": false
     },
     {
       "id": "51eedfe0-b4ef-4789-99ac-45667087da0e",
@@ -1235,7 +1264,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "gundam-gd07"
+      "automaticProductId": "gundam-gd07",
+      "autoRetired": false
     },
     {
       "id": "df0626b4-5639-4881-ad98-ecb75e0c4c73",
@@ -1279,7 +1309,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "gundam-gd06"
+      "automaticProductId": "gundam-gd06",
+      "autoRetired": false
     },
     {
       "id": "59a82109-ad43-4241-9486-e1b63cb2228c",
@@ -1321,7 +1352,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "dragonball-fb11"
+      "automaticProductId": "dragonball-fb11",
+      "autoRetired": false
     },
     {
       "id": "3f32d2ea-1573-4c22-9587-c77cfefd130b",
@@ -1364,7 +1396,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "dragonball-st01"
+      "automaticProductId": "dragonball-st01",
+      "autoRetired": false
     },
     {
       "id": "dcd3de9d-3112-4605-93f3-ddac1c62e32a",
@@ -1406,7 +1439,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "dragonball-fb10"
+      "automaticProductId": "dragonball-fb10",
+      "autoRetired": false
     },
     {
       "id": "c582cc9d-f015-46cc-99dd-490aab5bb6f0",
@@ -1448,7 +1482,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "dragonball-fb09"
+      "automaticProductId": "dragonball-fb09",
+      "autoRetired": false
     },
     {
       "id": "5f7500ae-a789-4c6d-a652-17eb9f631e45",
@@ -1491,7 +1526,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "dragonball-fb08"
+      "automaticProductId": "dragonball-fb08",
+      "autoRetired": false
     },
     {
       "id": "7c07540f-817a-4ce6-a67c-d38898607805",
@@ -1534,7 +1570,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "dragonball-fb12"
+      "automaticProductId": "dragonball-fb12",
+      "autoRetired": false
     },
     {
       "id": "58e6fef9-6a37-42ff-9ed2-ed0c877b520f",
@@ -1579,7 +1616,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "lorcana-attack-of-the-vine"
+      "automaticProductId": "lorcana-attack-of-the-vine",
+      "autoRetired": false
     },
     {
       "id": "7e95a72d-18bd-4a12-8d37-26d36df4497b",
@@ -1624,7 +1662,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "lorcana-wilds-unknown"
+      "automaticProductId": "lorcana-wilds-unknown",
+      "autoRetired": false
     },
     {
       "id": "dc88575b-6de8-47e3-b2e2-ff31e556ccc4",
@@ -1668,7 +1707,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "lorcana-reign-of-jafar"
+      "automaticProductId": "lorcana-reign-of-jafar",
+      "autoRetired": false
     },
     {
       "id": "af0db529-4587-4b60-a855-6d8fb5359de4",
@@ -1713,7 +1753,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "lorcana-archazias-island"
+      "automaticProductId": "lorcana-archazias-island",
+      "autoRetired": false
     },
     {
       "id": "56e443a9-f1a1-4682-885e-49639eba16cb",
@@ -1757,7 +1798,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "lorcana-azurite-sea"
+      "automaticProductId": "lorcana-azurite-sea",
+      "autoRetired": false
     },
     {
       "id": "572f8064-fc81-4ac3-a3dd-8224b48c64fd",
@@ -1802,7 +1844,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "lorcana-hyperia-city"
+      "automaticProductId": "lorcana-hyperia-city",
+      "autoRetired": false
     },
     {
       "id": "627a9651-0c28-4e7e-ac3a-a0e294a62657",
@@ -1845,7 +1888,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "yugioh-/japan/products/yac1/"
+      "automaticProductId": "yugioh-/japan/products/yac1/",
+      "autoRetired": false
     },
     {
       "id": "3f1f7e53-a741-49ca-9853-280ffc63ff4c",
@@ -1888,7 +1932,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "yugioh-/japan/products/26lp/"
+      "automaticProductId": "yugioh-/japan/products/26lp/",
+      "autoRetired": false
     },
     {
       "id": "e89427a9-5554-42dd-8605-995c8f2ca753",
@@ -1931,7 +1976,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "yugioh-/japan/products/ut01/"
+      "automaticProductId": "yugioh-/japan/products/ut01/",
+      "autoRetired": false
     },
     {
       "id": "52507116-f0d8-4469-a0f8-8295614616bf",
@@ -1974,7 +2020,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "yugioh-/japan/products/betb/"
+      "automaticProductId": "yugioh-/japan/products/betb/",
+      "autoRetired": false
     },
     {
       "id": "3136236d-de6f-43fa-b0c7-181e327b298b",
@@ -2017,7 +2064,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "yugioh-/japan/products/rv02/"
+      "automaticProductId": "yugioh-/japan/products/rv02/",
+      "autoRetired": false
     },
     {
       "id": "9f5f4558-ad74-446c-9908-c497cdec71e2",
@@ -2060,7 +2108,8 @@
       },
       "enabled": true,
       "createdAt": 1791037563811,
-      "automaticProductId": "yugioh-/japan/products/imph/"
+      "automaticProductId": "yugioh-/japan/products/imph/",
+      "autoRetired": false
     }
   ],
   "targets": [
@@ -2076,13 +2125,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 1,
+          "negatives": 6,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791037813127,
+      "nextAt": 1791038902977,
       "failures": 0,
-      "lastChecked": 1791037621127,
+      "lastChecked": 1791038710977,
       "lastGood": {
         "title": "【新品】[TCG] (BOX)(再販) ガンダムカードゲーム ブースターパック Newtype Rising(ニュータイプ ライジング)【GD01】 バンダイ(24パック)(20260926)",
         "price": 6480,
@@ -2106,11 +2155,11 @@
           "price": 6480,
           "comparable": true,
           "at": 1791037621127,
-          "lastAt": 1791037621127,
-          "samples": 1
+          "lastAt": 1791038710977,
+          "samples": 6
         }
       ],
-      "lastGoodAt": 1791037621127,
+      "lastGoodAt": 1791038710977,
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -2126,13 +2175,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 1,
+          "negatives": 5,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791037910977,
+      "nextAt": 1791038870336,
       "failures": 0,
-      "lastChecked": 1791037622977,
+      "lastChecked": 1791038678336,
       "lastGood": {
         "title": "【BOX】ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 9500,
@@ -2156,11 +2205,11 @@
           "price": 9500,
           "comparable": true,
           "at": 1791037622977,
-          "lastAt": 1791037622977,
-          "samples": 1
+          "lastAt": 1791038678336,
+          "samples": 5
         }
       ],
-      "lastGoodAt": 1791037622977,
+      "lastGoodAt": 1791038678336,
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -2180,9 +2229,9 @@
           "lastEvent": 1791037659943
         }
       },
-      "nextAt": 1791037851943,
+      "nextAt": 1791038474811,
       "failures": 0,
-      "lastChecked": 1791037659943,
+      "lastChecked": 1791038282811,
       "lastGood": {
         "title": "【新品】【お取り寄せ】[TCG] ポケモンカードゲーム ロングカードボックス 30th CELEBRATION ポケモン(20260916)",
         "price": 710,
@@ -2206,13 +2255,21 @@
           "price": 710,
           "comparable": true,
           "at": 1791037659943,
-          "lastAt": 1791037659943,
+          "lastAt": 1791038282811,
+          "samples": 4
+        },
+        {
+          "kind": "pause",
+          "reason": "通常の日本語版BOXではないため対象外",
+          "at": 1791038393105,
+          "lastAt": 1791038393105,
           "samples": 1
         }
       ],
-      "lastGoodAt": 1791037659943,
-      "monitorStatus": "監視中",
-      "monitorActive": true
+      "lastGoodAt": 1791038282811,
+      "enabled": false,
+      "monitorStatus": "このページをOFF",
+      "monitorActive": false
     },
     {
       "id": "a45b6168-dfe0-4fd9-ac7d-ca5218375332",
@@ -2227,12 +2284,12 @@
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": true,
           "negatives": 0,
-          "lastEvent": 1791037660081
+          "lastEvent": 1791038350832
         }
       },
-      "nextAt": 1791037948081,
+      "nextAt": 1791038768601,
       "failures": 0,
-      "lastChecked": 1791037660081,
+      "lastChecked": 1791038576601,
       "lastGood": {
         "title": "【BOX】 ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX ｜ シュリンク付き 未開封 ポケカ トレカ トレーディングカード",
         "price": 33500,
@@ -2256,11 +2313,11 @@
           "price": 33500,
           "comparable": true,
           "at": 1791037660081,
-          "lastAt": 1791037660081,
-          "samples": 1
+          "lastAt": 1791038576601,
+          "samples": 4
         }
       ],
-      "lastGoodAt": 1791037660081,
+      "lastGoodAt": 1791038576601,
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -2276,13 +2333,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 1,
+          "negatives": 2,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791037982361,
+      "nextAt": 1791038359291,
       "failures": 0,
-      "lastChecked": 1791037694361,
+      "lastChecked": 1791038071291,
       "lastGood": {
         "title": "ポケモンカードゲーム ロングカードボックス 30th CELEBRATION ｜ 未開封 ポケカ トレカ サプライ 30周年",
         "price": 1260,
@@ -2306,13 +2363,21 @@
           "price": 1260,
           "comparable": true,
           "at": 1791037694361,
-          "lastAt": 1791037694361,
+          "lastAt": 1791038071291,
+          "samples": 2
+        },
+        {
+          "kind": "pause",
+          "reason": "通常の日本語版BOXではないため対象外",
+          "at": 1791038393105,
+          "lastAt": 1791038393105,
           "samples": 1
         }
       ],
-      "lastGoodAt": 1791037694361,
-      "monitorStatus": "監視中",
-      "monitorActive": true
+      "lastGoodAt": 1791038071291,
+      "enabled": false,
+      "monitorStatus": "このページをOFF",
+      "monitorActive": false
     },
     {
       "id": "778eb907-e3b9-42c1-afaf-bd56e42fa94e",
@@ -2326,13 +2391,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 1,
+          "negatives": 9,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791037859031,
+      "nextAt": 1791038812584,
       "failures": 0,
-      "lastChecked": 1791037763031,
+      "lastChecked": 1791038711584,
       "lastGood": {
         "title": "ブースターパック　Newtype Rising　BOX【ガンダムカードゲーム】",
         "price": 5808,
@@ -2356,16 +2421,196 @@
           "price": 5808,
           "comparable": true,
           "at": 1791037763031,
-          "lastAt": 1791037763031,
-          "samples": 1
+          "lastAt": 1791038711584,
+          "samples": 9
         }
       ],
-      "lastGoodAt": 1791037763031,
+      "lastGoodAt": 1791038711584,
+      "monitorStatus": "監視中",
+      "monitorActive": true
+    },
+    {
+      "id": "6aed96af-d1c2-4bf0-9fdd-01e4e05f3b94",
+      "key": "masters_gundam:https://www.masters-square.com/product/80550",
+      "storeId": "masters_gundam",
+      "url": "https://www.masters-square.com/product/80550",
+      "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
+      "ruleIds": [
+        "956d1cf9-469b-48ef-904c-22dcc1743cc5"
+      ],
+      "episodes": {
+        "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
+          "active": false,
+          "negatives": 7,
+          "lastEvent": 0
+        }
+      },
+      "nextAt": 1791038812571,
+      "failures": 0,
+      "lastChecked": 1791038711571,
+      "lastGood": {
+        "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
+        "price": 5808,
+        "stock": "out_of_stock",
+        "priceState": "",
+        "detailChecked": true
+      },
+      "error": "",
+      "releaseDate": "2025-07-26",
+      "latest": {
+        "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
+        "price": 5808,
+        "stock": "out_of_stock",
+        "priceState": "",
+        "detailChecked": true
+      },
+      "history": [
+        {
+          "kind": "observation",
+          "stock": "out_of_stock",
+          "price": 5808,
+          "comparable": true,
+          "at": 1791037909471,
+          "lastAt": 1791038711571,
+          "samples": 7
+        }
+      ],
+      "lastGoodAt": 1791038711571,
+      "monitorStatus": "監視中",
+      "monitorActive": true
+    },
+    {
+      "id": "d611cca7-40d2-49b1-be1c-5da09ca3a5bf",
+      "key": "torecolo:https://www.torecolo.jp/shop/g/g4582769825262/",
+      "storeId": "torecolo",
+      "url": "https://www.torecolo.jp/shop/g/g4582769825262/",
+      "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
+      "ruleIds": [
+        "956d1cf9-469b-48ef-904c-22dcc1743cc5"
+      ],
+      "episodes": {
+        "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
+          "active": false,
+          "negatives": 5,
+          "lastEvent": 0
+        }
+      },
+      "nextAt": 1791038778591,
+      "failures": 0,
+      "lastChecked": 1791038677591,
+      "lastGood": {
+        "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
+        "price": 5808,
+        "stock": "out_of_stock",
+        "priceState": "",
+        "detailChecked": true
+      },
+      "error": "",
+      "releaseDate": "2025-07-26",
+      "latest": {
+        "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
+        "price": 5808,
+        "stock": "out_of_stock",
+        "priceState": "",
+        "detailChecked": true
+      },
+      "history": [
+        {
+          "kind": "observation",
+          "stock": "out_of_stock",
+          "price": 5808,
+          "comparable": true,
+          "at": 1791038144148,
+          "lastAt": 1791038677591,
+          "samples": 5
+        }
+      ],
+      "lastGoodAt": 1791038677591,
+      "monitorStatus": "監視中",
+      "monitorActive": true
+    },
+    {
+      "id": "e0bb4ad2-08c3-4f47-a3e6-865969414095",
+      "key": "mediaworld:https://mediaworld.co.jp/products/13921635000",
+      "storeId": "mediaworld",
+      "url": "https://mediaworld.co.jp/products/13921635000",
+      "title": "【新品】[TCG] (BOX)(再販) ガンダムカードゲーム ブースターパック Freedom Ascension(フリーダム アセンション)【GD05】 バンダイ(24パック)(20260829)",
+      "ruleIds": [
+        "0cffc351-4771-4c54-9159-44f554d95760"
+      ],
+      "episodes": {
+        "0cffc351-4771-4c54-9159-44f554d95760": {
+          "active": true,
+          "negatives": 0,
+          "lastEvent": 1791038542441
+        }
+      },
+      "nextAt": 1791038937695,
+      "failures": 0,
+      "lastChecked": 1791038745695,
+      "lastGood": {
+        "title": "【新品】[TCG] (BOX)(再販) ガンダムカードゲーム ブースターパック Freedom Ascension(フリーダム アセンション)【GD05】 バンダイ(24パック)(20260829)",
+        "price": 10980,
+        "stock": "in_stock",
+        "priceState": "",
+        "detailChecked": true
+      },
+      "error": "",
+      "releaseDate": "2026-07-25",
+      "latest": {
+        "title": "【新品】[TCG] (BOX)(再販) ガンダムカードゲーム ブースターパック Freedom Ascension(フリーダム アセンション)【GD05】 バンダイ(24パック)(20260829)",
+        "price": 10980,
+        "stock": "in_stock",
+        "priceState": "",
+        "detailChecked": true
+      },
+      "history": [
+        {
+          "kind": "observation",
+          "stock": "in_stock",
+          "price": 10980,
+          "comparable": true,
+          "at": 1791038542441,
+          "lastAt": 1791038745695,
+          "samples": 2
+        }
+      ],
+      "lastGoodAt": 1791038745695,
       "monitorStatus": "監視中",
       "monitorActive": true
     }
   ],
   "events": [
+    {
+      "id": "a9910dec-aad1-4721-a4a0-05b258827d07",
+      "targetId": "e0bb4ad2-08c3-4f47-a3e6-865969414095",
+      "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+      "at": 1791038542441,
+      "title": "【新品】[TCG] (BOX)(再販) ガンダムカードゲーム ブースターパック Freedom Ascension(フリーダム アセンション)【GD05】 バンダイ(24パック)(20260829)",
+      "storeId": "mediaworld",
+      "url": "https://mediaworld.co.jp/products/13921635000",
+      "price": 10980,
+      "stock": "in_stock",
+      "delivery": "pending",
+      "attempts": 2,
+      "nextAt": 1791038762453,
+      "error": "Discord送信失敗（TypeError）"
+    },
+    {
+      "id": "2e739cf9-8a0b-47ef-b3a0-88de5ed8473f",
+      "targetId": "a45b6168-dfe0-4fd9-ac7d-ca5218375332",
+      "ruleId": "28c5e09d-cea2-41c9-8c9a-c402fb07374b",
+      "at": 1791038350832,
+      "title": "【BOX】 ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX ｜ シュリンク付き 未開封 ポケカ トレカ トレーディングカード",
+      "storeId": "suns",
+      "url": "https://store.shopping.yahoo.co.jp/suns-online-store/pc-30th-box.html",
+      "price": 33500,
+      "stock": "in_stock",
+      "delivery": "pending",
+      "attempts": 2,
+      "nextAt": 1791038695208,
+      "error": "Discord送信失敗（TypeError）"
+    },
     {
       "id": "73511d54-a46a-4900-a92e-298a5fdd52cb",
       "targetId": "a45b6168-dfe0-4fd9-ac7d-ca5218375332",
@@ -2376,9 +2621,9 @@
       "url": "https://store.shopping.yahoo.co.jp/suns-online-store/pc-30th-box.html",
       "price": 33500,
       "stock": "in_stock",
-      "delivery": "pending",
-      "attempts": 2,
-      "nextAt": 1791037881820,
+      "delivery": "cancelled",
+      "attempts": 3,
+      "nextAt": 1791038275308,
       "error": "Discord送信失敗"
     },
     {
@@ -2391,9 +2636,9 @@
       "url": "https://mediaworld.co.jp/products/13921511002",
       "price": 710,
       "stock": "in_stock",
-      "delivery": "pending",
-      "attempts": 2,
-      "nextAt": 1791037881820,
+      "delivery": "cancelled",
+      "attempts": 4,
+      "nextAt": 1791038476422,
       "error": "Discord送信失敗"
     },
     {
@@ -2594,9 +2839,9 @@
         }
       ],
       "delivery": "pending",
-      "attempts": 2,
-      "nextAt": 1791037813040,
-      "error": "Discord送信失敗"
+      "attempts": 3,
+      "nextAt": 1791038849498,
+      "error": "Discord送信失敗（TypeError）"
     }
   ],
   "runs": [
@@ -2848,80 +3093,449 @@
       },
       "targets": 6,
       "errors": 0
+    },
+    {
+      "at": 1791037838343,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "956d1cf9-469b-48ef-904c-22dcc1743cc5",
+        "storeId": "futaki",
+        "result": {
+          "at": 1791037838343,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 6,
+      "errors": 0
+    },
+    {
+      "at": 1791037872484,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "956d1cf9-469b-48ef-904c-22dcc1743cc5",
+        "storeId": "masters_gundam",
+        "result": {
+          "at": 1791037872484,
+          "status": "ok",
+          "matched": 1,
+          "registered": 1
+        },
+        "error": ""
+      },
+      "targets": 7,
+      "errors": 0
+    },
+    {
+      "at": 1791037906927,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "956d1cf9-469b-48ef-904c-22dcc1743cc5",
+        "storeId": "mediaworld",
+        "result": {
+          "at": 1791037906927,
+          "status": "ok",
+          "matched": 1,
+          "registered": 1
+        },
+        "error": ""
+      },
+      "targets": 7,
+      "errors": 0
+    },
+    {
+      "at": 1791037940994,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "956d1cf9-469b-48ef-904c-22dcc1743cc5",
+        "storeId": "papy",
+        "result": {
+          "at": 1791037940994,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 7,
+      "errors": 0
+    },
+    {
+      "at": 1791037975306,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "956d1cf9-469b-48ef-904c-22dcc1743cc5",
+        "storeId": "suns",
+        "result": {
+          "at": 1791037975306,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 7,
+      "errors": 0
+    },
+    {
+      "at": 1791038035308,
+      "checked": 3,
+      "discovered": {
+        "ruleId": "956d1cf9-469b-48ef-904c-22dcc1743cc5",
+        "storeId": "tcgacademy",
+        "result": {
+          "at": 1791038035308,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 7,
+      "errors": 0
+    },
+    {
+      "at": 1791038069883,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "956d1cf9-469b-48ef-904c-22dcc1743cc5",
+        "storeId": "tier1_gundam",
+        "result": {
+          "at": 1791038069883,
+          "status": "ok",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 7,
+      "errors": 0
+    },
+    {
+      "at": 1791038105659,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "956d1cf9-469b-48ef-904c-22dcc1743cc5",
+        "storeId": "torecolo",
+        "result": {
+          "at": 1791038105659,
+          "status": "ok",
+          "matched": 1,
+          "registered": 1
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038142661,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "956d1cf9-469b-48ef-904c-22dcc1743cc5",
+        "storeId": "torezamu",
+        "result": {
+          "at": 1791038142661,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038176422,
+      "checked": 0,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "193",
+        "result": {
+          "at": 1791038176422,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038213461,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "advantage1",
+        "result": {
+          "at": 1791038213461,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038247628,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "advantage2",
+        "result": {
+          "at": 1791038247628,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038282013,
+      "checked": 3,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "cardmax",
+        "result": {
+          "at": 1791038282013,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038317104,
+      "checked": 0,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "cardwiz",
+        "result": {
+          "at": 1791038317104,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038349019,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "dayya",
+        "result": {
+          "at": 1791038349019,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038393105,
+      "checked": 0,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "futaki",
+        "result": {
+          "at": 1791038393105,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038425846,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "masters_gundam",
+        "result": {
+          "at": 1791038425846,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 8,
+      "errors": 0
+    },
+    {
+      "at": 1791038475791,
+      "checked": 3,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "mediaworld",
+        "result": {
+          "at": 1791038475791,
+          "status": "ok",
+          "matched": 1,
+          "registered": 1
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
+    },
+    {
+      "at": 1791038509262,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "papy",
+        "result": {
+          "at": 1791038509262,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
+    },
+    {
+      "at": 1791038541789,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "suns",
+        "result": {
+          "at": 1791038541789,
+          "status": "ok",
+          "matched": 1,
+          "registered": 1
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
+    },
+    {
+      "at": 1791038575208,
+      "checked": 3,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "tcgacademy",
+        "result": {
+          "at": 1791038575208,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
+    },
+    {
+      "at": 1791038609498,
+      "checked": 0,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "tier1_gundam",
+        "result": {
+          "at": 1791038609498,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
+    },
+    {
+      "at": 1791038642453,
+      "checked": 0,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "torecolo",
+        "result": {
+          "at": 1791038642453,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
+    },
+    {
+      "at": 1791038676566,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "torezamu",
+        "result": {
+          "at": 1791038676566,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
+    },
+    {
+      "at": 1791038710302,
+      "checked": 3,
+      "discovered": {
+        "ruleId": "28c5e09d-cea2-41c9-8c9a-c402fb07374b",
+        "storeId": "193",
+        "result": {
+          "at": 1791038710302,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
+    },
+    {
+      "at": 1791038744994,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "28c5e09d-cea2-41c9-8c9a-c402fb07374b",
+        "storeId": "advantage1",
+        "result": {
+          "at": 1791038744994,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 9,
+      "errors": 0
     }
   ],
-  "seedLog": [
-    {
-      "at": 1791037566139,
-      "query": "GD01",
-      "store": "mediaworld",
-      "status": "ok",
-      "found": 3,
-      "error": ""
-    },
-    {
-      "at": 1791037569780,
-      "query": "GD01",
-      "store": "suns",
-      "status": "no_hit",
-      "found": 0,
-      "error": ""
-    },
-    {
-      "at": 1791037573273,
-      "query": "GD01",
-      "store": "cardwiz",
-      "status": "no_hit",
-      "found": 0,
-      "error": ""
-    },
-    {
-      "at": 1791037574038,
-      "query": "GD05",
-      "store": "mediaworld",
-      "status": "blocked",
-      "found": 0,
-      "error": "サイト側が自動取得を拒否しました。回避せず手動確認に切り替えます。"
-    },
-    {
-      "at": 1791037578478,
-      "query": "GD05",
-      "store": "suns",
-      "status": "ok",
-      "found": 1,
-      "error": ""
-    },
-    {
-      "at": 1791037582320,
-      "query": "GD05",
-      "store": "cardwiz",
-      "status": "no_hit",
-      "found": 0,
-      "error": ""
-    },
-    {
-      "at": 1791037585106,
-      "query": "30th CELEBRATION",
-      "store": "mediaworld",
-      "status": "ok",
-      "found": 1,
-      "error": ""
-    },
-    {
-      "at": 1791037589760,
-      "query": "30th CELEBRATION",
-      "store": "suns",
-      "status": "ok",
-      "found": 2,
-      "error": ""
-    },
-    {
-      "at": 1791037591924,
-      "query": "30th CELEBRATION",
-      "store": "cardwiz",
-      "status": "no_hit",
-      "found": 0,
-      "error": ""
-    }
-  ]
+  "seedLog": []
 }
