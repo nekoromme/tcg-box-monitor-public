@@ -153,11 +153,11 @@ def _validated_system(raw_system: Any) -> dict[str, Any]:
     approved_providers = system.get("secondary_provider_allowlist")
     if approved_providers is not None and (
         not isinstance(approved_providers, list)
-        or not 1 <= len(approved_providers) <= 3
+        or not 1 <= len(approved_providers) <= 4
         or not all(isinstance(value, str) and value for value in approved_providers)
         or len(set(approved_providers)) != len(approved_providers)
     ):
-        raise ConfigError("secondary_provider_allowlist must contain one to three unique providers")
+        raise ConfigError("secondary_provider_allowlist must contain one to four unique providers")
     runtime = system.get("runtime", {})
     if not isinstance(runtime, dict):
         raise ConfigError("runtime must be a mapping")

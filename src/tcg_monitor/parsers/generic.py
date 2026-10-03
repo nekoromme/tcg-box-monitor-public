@@ -105,7 +105,7 @@ def _page_blocks(html: str, url: str, source: SourceConfig) -> list[str]:
 
     keep_article_together = (
         source.id == "geo" and bool(_GEO_NEWS_DETAIL.fullmatch(url))
-    ) or source.id == "dragonball_official_store"
+    ) or source.id in {"dragonball_official_store", "yodobashi"}
     if not keep_article_together:
         return _blocks(html)
     soup = BeautifulSoup(html, "lxml")
@@ -116,6 +116,10 @@ def _page_blocks(html: str, url: str, source: SourceConfig) -> list[str]:
         article_text = visible_text(str(node))
         if len(article_text) > 15:
             return [article_text]
+    # ヨドバシの抽選予告は、共通の応募期間と対象商品を別々のdivに置く。
+    # divごとに分割すると双方が別の告知に見えて、正常取得でも検知が0件になる。
+    if source.id == "yodobashi":
+        return [visible_text(html)]
     return _blocks(html)
 
 

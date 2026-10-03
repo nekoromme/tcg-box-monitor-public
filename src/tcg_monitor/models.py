@@ -42,6 +42,8 @@ def is_shared_retailer_application_url(retailer_id: str, value: str) -> bool:
         ("kids_republic", "kidsrepublic.jp", "/campaign"),
         ("hmv", "hmv.co.jp", ""),
         ("ministop_online", "online.ministop.co.jp", ""),
+        ("yodobashi", "limited.yodobashi.com", ""),
+        ("yodobashi", "limited.yodobashi.com", "/entry/shared"),
     }
 
 

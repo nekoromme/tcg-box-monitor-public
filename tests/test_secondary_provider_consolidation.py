@@ -36,12 +36,12 @@ def parse(html: str, **kwargs):
     )
 
 
-def test_only_three_approved_information_providers_are_live() -> None:
+def test_only_user_approved_information_providers_are_live() -> None:
     enabled = [s for s in CONFIG.sources if s.enabled and s.source_tier == SourceTier.SECONDARY]
     assert {s.parser_options["information_provider"] for s in enabled} == {
-        "onepiecenyuka", "nyuka_now", "snkrdunk",
+        "onepiecenyuka", "nyuka_now", "snkrdunk", "PokeGetInfoMain",
     }
-    assert len(enabled) == 4  # スニダンだけゲーム別の2経路。他は運営元別の共通経路。
+    assert len(enabled) == 5  # スニダンだけゲーム別の2経路。他は運営元別の共通経路。
     assert all("premier777aa" not in url for s in enabled for url in s.discovery_urls)
 
 
