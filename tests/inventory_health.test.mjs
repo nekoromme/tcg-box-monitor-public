@@ -5,7 +5,8 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {assessInventory,incidentDecision} from '../scripts/inventory_health.mjs';
 import {runInventorySync} from '../scripts/sync_inventory_monitor.mjs';
-const NOW=1791069600000,SHA='a'.repeat(40),WEBHOOK='https://discord.com/api/webhooks/123456789012345/abcdefghijklmnopqrstuvwxyz123456';
+// 数字のWebhook識別子を持たない、実際には送信できないテスト専用URL。
+const NOW=1791069600000,SHA='a'.repeat(40),WEBHOOK='https://discord.com/api/webhooks/test-only/not-a-real-credential';
 function state() {return {enabled:true,notificationConfigured:true,lastTick:NOW,lastCompletedAt:NOW,load:{activePages:3,intervalSeconds:60,discoverySeconds:3600},automatic:{enabled:true,lastSync:NOW,products:['gundam-gd01','gundam-gd05','pokemon-m6a'].map(id=>({id,name:id})),log:[]},rules:[{}],targets:[{}],events:[{delivery:'sent',sentAt:NOW-600000}],runs:[]};}
 test('過去の送信成功が残っていても、新しい失敗・取消・停止を検出する',()=>{
   const s=state();s.events.push({delivery:'cancelled',error:'送信失敗',at:NOW-60000},{delivery:'pending',error:'送信失敗',at:NOW-30000});
@@ -30,7 +31,7 @@ test('監視への接続失敗でも異常ログと外部通知を残し、古�
   const health=await runInventorySync(options);assert.equal(health.status,'degraded');assert.equal(health.issues[0].code,'storage_quota');assert.equal(reads,3);assert.equal(posts,1);
   await runInventorySync(options);assert.equal(posts,1);
   assert.match(await readFile(join(root,'inventory_status.md'),'utf8'),/異常あり/);
-  for(const file of await readdir(root)){const text=await readFile(join(root,file),'utf8');assert(!text.includes(WEBHOOK));assert(!text.includes('abcdefghijklmnopqrstuvwxyz123456'));}
+  for(const file of await readdir(root)){const text=await readFile(join(root,file),'utf8');assert(!text.includes(WEBHOOK));assert(!text.includes('not-a-real-credential'));}
 });
 test('復旧は新しい巡回完了を待ち、商品・送信済み履歴を維持する',async t=>{
   const root=await mkdtemp(join(tmpdir(),'inventory-recovery-'));t.after(()=>rm(root,{recursive:true,force:true}));
