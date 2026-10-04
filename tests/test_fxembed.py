@@ -257,3 +257,24 @@ def test_rp_giveaway_is_not_a_product_lottery_or_parser_failure() -> None:
     )
     assert not cases and not alerts
     assert diagnostics["disallowed_application"] == 1
+
+
+@freeze_time("2026-10-04T12:00:00Z")
+@pytest.mark.parametrize("period,closing_day", [
+    ("10月5日（月）12時〜 一人1点まで申し込み可能。", None),
+    ("10月5日（月）12時〜 お一人様2点まで。", None),
+    ("10月5日（月）12時〜10月9日（金）23時59分まで。一人1点まで。", 9),
+])
+def test_quantity_limit_is_not_the_closing_date_of_a_nonbox_lottery(period, closing_day):
+    source = next(s for s in CONFIG.sources if s.id == "secondary_onepiece_news")
+    raw = post(4, "プレミアムバンダイ ONE PIECEカードゲーム "
+               "プレミアムカードコレクション -ONE PIECE DAY'26- 抽選販売が決定。"
+               f"受付期間 {period} 2027年8月発送予定。 "
+               "https://p-bandai.jp/item/item-1000259109/")
+    raw["author"] = {"screen_name": source.parser_options["account"]}
+    html = post_markup(raw, str(source.parser_options["account"]).lower())
+    assert html is not None
+    cases, _, alerts = parse_yahoo_realtime(html, timeline_url(source), source, CONFIG)
+    assert len(cases) == 1 and not alerts
+    assert cases[0].start_at.day == 5
+    assert (cases[0].end_at.day if cases[0].end_at else None) == closing_day

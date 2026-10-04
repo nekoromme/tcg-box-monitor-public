@@ -701,6 +701,13 @@ def _application_deadline(
         candidates = list(date_token.finditer(scope[:until]))
         if not candidates:
             continue
+        # 「10月5日12時〜 一人1点まで」の個数制限は締切ではない。
+        # 終了日が書かれていない開始告知を、その日の終了扱いにしない。
+        suffix = scope[candidates[-1].end():until]
+        if len(candidates) == 1 and re.search(
+            r"[~〜～]|から|(?:一人|1人|点|個|口|回|BOX|ボックス)", suffix, re.I,
+        ):
+            continue
         parsed = parse_first_datetime(candidates[-1].group(), base_date).value
         if parsed:
             return parsed
