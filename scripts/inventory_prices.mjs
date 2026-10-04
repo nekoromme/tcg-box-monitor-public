@@ -3,7 +3,7 @@
 export const PRICE_HOSTS={pokemon:['www.pokemon-card.com','www.30th.pokemon-card.com'],onepiece:['www.onepiece-cardgame.com'],gundam:['www.gundam-gcg.com'],dragonball:['www.dbs-cardgame.com'],lorcana:['www.takaratomy.co.jp'],yugioh:['www.yugioh-card.com']};
 const DAY=86400000;
 const normalize=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/[\s\-‐－_【】「」『』()（）・:：\[\]]/g,'');
-export const plain=s=>String(s||'').replace(/<(script|style|nav|header|footer)\b[^>]*>[\s\S]*?<\/\1>/gi,' ').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/g,' ').replace(/&amp;/g,'&').replace(/&#(\d+);/g,(_,n)=>String.fromCodePoint(Number(n))).normalize('NFKC').replace(/\s+/g,' ').trim();
+export const plain=s=>String(s||'').replace(/<(script|style|nav|header|footer)\b[^>]*>[\s\S]*?<\/\1>/gi,' ').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/g,' ').replace(/&yen;/g,'¥').replace(/&amp;/g,'&').replace(/&#(\d+);/g,(_,n)=>String.fromCodePoint(Number(n))).normalize('NFKC').replace(/\s+/g,' ').trim();
 export function officialUrl(product,url) {
   try{const u=new URL(url);return u.protocol==='https:'&&!u.username&&!u.password&&PRICE_HOSTS[product.game]?.includes(u.hostname)?u.href:null;}catch{return null;}
 }
@@ -26,9 +26,16 @@ export function parseOfficialPrice(product,html,url,now) {
   const title=plain(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]);
   if(!productIdentity(product,title))return {status:'identity_unconfirmed'};
   let main=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1]||html;
+  // ポケカの同じ紹介ページにスペシャルセット等も載る。該当する商品見出しの範囲だけ使う。
+  if(product.game==='pokemon') {
+    const sections=[...main.matchAll(/<h[234]\b[^>]*>([\s\S]*?)<\/h[234]>([\s\S]*?)(?=<h[234]\b|<\/section>|$)/gi)]
+      .filter(m=>productIdentity(product,plain(m[1]))).map(m=>m[2]);
+    if(sections.length)main=sections.join('\n');
+  }
   // 遊戯王の関連商品一覧にも別商品の価格があるため、主商品の仕様表に限定。
   if(product.game==='yugioh')main=[...main.matchAll(/<dl\b[^>]*>([\s\S]*?)<\/dl>/gi)].map(m=>m[1]).find(s=>/class=["']price["']/.test(s)&&productIdentity(product,plain(s)))||'';
-  const specs=[...main.matchAll(/<(?:dt|th|h5)\b[^>]*>\s*(?:メーカー)?(?:希望小売)?価格\s*<\/(?:dt|th|h5)>\s*(?:<div[^>]*>\s*)?<(?:dd|td|p)\b[^>]*>([\s\S]*?)<\/(?:dd|td|p)>/gi)].map(m=>plain(m[1]));
+  const specs=[...main.matchAll(/<(?:dt|th|h5)\b[^>]*>\s*(?:メーカー)?(?:希望小売)?価格\s*<\/(?:dt|th|h5)>\s*<(dd|td|div|p)\b[^>]*>([\s\S]*?)<\/\1>/gi)].map(m=>plain(m[2]));
+  if(product.game==='pokemon')specs.push(...[...main.matchAll(/<(?:li|p)\b[^>]*>\s*(?:メーカー)?希望小売価格[：:]([\s\S]*?)<\/(?:li|p)>/gi)].map(m=>plain(m[1])));
   if(product.game==='yugioh')specs.push(...[...main.matchAll(/<dd\b[^>]*class=["']price["'][^>]*>([\s\S]*?)<\/dd>/gi)].map(m=>plain(m[1])));
   const pack=[],box=[];
   for(const spec of specs) {
@@ -64,7 +71,12 @@ async function fetchOfficial(product,url,fetcher) {
     const reader=response.body.getReader(),chunks=[];let size=0;
     try{while(true){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>1500000)throw new Error('body_too_large');chunks.push(value);}}finally{await reader.cancel();}
     const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
-    return {html:new TextDecoder().decode(bytes),url};
+    const html=new TextDecoder().decode(bytes);
+    // ワンピース公式の旧商品URLはHTTP転送ではなくmeta refreshで移転する。
+    const meta=[...html.matchAll(/<meta\b[^>]*>/gi)].map(m=>m[0]).find(s=>/http-equiv\s*=\s*["']refresh["']/i.test(s));
+    const redirect=meta?.match(/content\s*=\s*["'][^"']*?url\s*=\s*([^"']+)["']/i)?.[1];
+    if(redirect){url=new URL(redirect.trim(),url).href;continue;}
+    return {html,url};
   }
   throw new Error('redirect_limit');
 }
@@ -75,7 +87,7 @@ export async function collectInventoryPrices(state,previous={}, {fetcher=fetch,n
   let requests=0;const deadline=Date.now()+90000;
   for(const product of [...products].sort((a,b)=>(a.priceStatus==='ready')-(b.priceStatus==='ready')).slice(0,80)) {
     const old=records[product.id],quantity=observedBoxCount(product,state,now);
-    if(old?.nextCheckAt>now&&!(old.status==='quantity_unconfirmed'&&quantity))continue;
+    if(old?.nextCheckAt>now&&(old.status==='confirmed'||old.parserVersion===2)&&!(old.status==='quantity_unconfirmed'&&quantity))continue;
     if(requests>=16||Date.now()>deadline)break;
     requests++;
     let result;
@@ -84,12 +96,12 @@ export async function collectInventoryPrices(state,previous={}, {fetcher=fetch,n
       const page=await fetchOfficial(product,url,fetcher),parsed=parseOfficialPrice(product,page.html,page.url,now);
       const count=parsed.packsPerBox||quantity?.count||null;
       const boxPrice=parsed.boxPrice||(parsed.packPrice&&count?parsed.packPrice*count:null);
-      result={productId:product.id,game:product.game,name:product.name,officialUrl:page.url,checkedAt:now,
+      result={parserVersion:2,productId:product.id,game:product.game,name:product.name,officialUrl:page.url,checkedAt:now,
         status:parsed.status==='parsed'?(boxPrice?'confirmed':'quantity_unconfirmed'):parsed.status,
         packPrice:parsed.packPrice||null,packsPerBox:count,boxPrice:parsed.status==='parsed'?boxPrice:null,
         basis:parsed.boxPrice?'official_box':'official_pack_times_verified_count',
         sources:[parsed.evidence,...(!parsed.packsPerBox&&quantity?quantity.evidence:[])].filter(Boolean)};
-    } catch(error){result={productId:product.id,game:product.game,name:product.name,checkedAt:now,status:'fetch_failed',error:/^(http_\d+|source_rejected|body_too_large|redirect_limit)$/.test(error.message)?error.message:'connection_failed'};}
+    } catch(error){result={parserVersion:2,productId:product.id,game:product.game,name:product.name,checkedAt:now,status:'fetch_failed',error:/^(http_\d+|source_rejected|body_too_large|redirect_limit)$/.test(error.message)?error.message:'connection_failed'};}
     // 一時失敗・掲載終了で確認済みの定価を消さない。失敗時刻と前回の根拠を分けて残す。
     const confirmed=result.status==='confirmed';
     records[product.id]=!confirmed&&old?.status==='confirmed'?{...old,lastAttemptAt:now,lastAttemptStatus:result.status,nextCheckAt:now+6*3600000}:{...result,nextCheckAt:now+(confirmed?7*DAY:6*3600000)};

@@ -7,11 +7,22 @@ const NOW=Date.parse('2026-10-04T13:30:00+09:00');
 test('2026年10月4日の公式仕様欄から税込単価と商品ごとの入数を読み取る',()=>{
   const expected={'onepiece-eb-04':[220,null],'onepiece-op-18':[240,null],'onepiece-eb-05':[240,null],'gundam-gd06':[250,null],'dragonball-fb08':[220,null],'yugioh-/japan/products/yac1/':[396,15],'yugioh-/japan/products/26lp/':[396,10],'yugioh-/japan/products/ut01/':[396,15],'yugioh-/japan/products/betb/':[198,30],'yugioh-/japan/products/rv02/':[264,15],'yugioh-/japan/products/imph/':[198,30]};
   for(const f of fixtures) {
+    const extra={'gundam-gd01':242,'pokemon-m6':200,'pokemon-m5':200,'pokemon-m4':180,'pokemon-m3':180,'dragonball-fb12':240,'dragonball-fb11':240,'dragonball-st01':330,'dragonball-fb10':220,'dragonball-fb09':220};
     const result=parseOfficialPrice(f.product,f.html,f.product.officialUrl,NOW),e=expected[f.product.id];
     if(e){assert.equal(result.packPrice,e[0],f.product.id);assert.equal(result.packsPerBox,e[1],f.product.id);}
+    else if(extra[f.product.id])assert.equal(result.packPrice,extra[f.product.id],f.product.id);
     else if(f.product.game==='lorcana')assert.equal(result.boxPrice,5280,f.product.id);
     else assert.equal(result.status,'price_unpublished',f.product.id);
   }
+});
+test('公式ページのmeta移転を追い、移転先が他サイトなら採用しない',async()=>{
+  const f=fixtures.find(f=>f.product.id==='onepiece-op-18');
+  const state={automatic:{products:[f.product]},rules:[],targets:[]},calls=[];
+  const fetcher=async url=>{calls.push(url);return new Response(calls.length===1?'<meta http-equiv="refresh" content="0; URL=./boosters/op18/">':f.html);};
+  const result=await collectInventoryPrices(state,{}, {fetcher,now:NOW});
+  assert.equal(calls.length,2);assert.equal(result.records[f.product.id].packPrice,240);assert.match(result.records[f.product.id].officialUrl,/boosters\/op18\/$/);
+  const blocked=await collectInventoryPrices(state,{}, {fetcher:async()=>new Response('<meta http-equiv="refresh" content="0; URL=https://example.com/">'),now:NOW});
+  assert.equal(blocked.records[f.product.id].error,'source_rejected');
 });
 test('入数はその商品の新品BOXだけに結びつけ、別ゲーム・カートン・矛盾を除外する',()=>{
   const product={id:'onepiece-eb-04',game:'onepiece',query:'EB-04',name:'EGGHEAD CRISIS'},title='ワンピース EGGHEAD CRISIS EB-04 (1BOX・24パック入)';
