@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-04T08:32:06.163Z",
-  "phase": "preflight_pending",
+  "updatedAt": "2026-10-04T22:57:52.791Z",
+  "phase": "preflight_checking",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
     "title": "カード監視の段階的店舗追加",
@@ -52,9 +52,21 @@
     "snapshotFreshness": "stale_at_setup",
     "healthAccessNote": "直接HTTP取得は実行環境から403、検索経由も取得不可。これだけで本番障害とは断定しない。明日の起動で最新Actionsと保存記録を確認。"
   },
-  "lease": null,
+  "lease": {
+    "runId": "20261005T0757JST-2s5ih7",
+    "acquiredAt": "2026-10-04T22:57:52.791Z",
+    "expiresAt": "2026-10-05T00:27:52.791Z",
+    "owner": "scheduled-shop-expansion"
+  },
   "activeCandidateId": null,
-  "pendingOperation": null,
+  "pendingOperation": {
+    "kind": "preflight_health_check",
+    "status": "started",
+    "startedAt": "2026-10-04T22:57:52.791Z",
+    "notBefore": null,
+    "nextCheck": "最新main・Actions・monitor-state・本番healthを照合",
+    "attempt": 1
+  },
   "stabilityWindow": {
     "status": "needs_current_evidence",
     "from": null,
@@ -244,21 +256,10 @@
     }
   ],
   "lastRun": {
-    "id": "setup-20261004",
-    "status": "setup_complete",
-    "externalChanges": [
-      {
-        "kind": "github_notes",
-        "url": "https://github.com/nekoromme/tcg-box-monitor-public/tree/shop-expansion-state/ops/shop-expansion",
-        "initialCommit": "477df77a918863b5c85d56ad31ff8ac08a019bdc"
-      },
-      {
-        "kind": "automation_created",
-        "id": "6ac20ed34a788191a90d7b2627aa8643",
-        "enabled": true
-      }
-    ],
-    "notes": "店舗追加・通知条件変更は未実施。引き継ぎ台帳と定期タスクの準備のみ。"
+    "id": "20261005T0757JST-2s5ih7",
+    "status": "in_progress",
+    "externalChanges": [],
+    "notes": "最新稼働と24時間安定性を確認中。"
   },
   "nextAction": "起動直後に最新台帳を読みleaseを取得。最新inventory-sync実行とmonitor-stateの鮮度・本番buildを確認し、既存稼働の24時間以上の安定性を判定。満たすまで店舗追加しない。待機/故障時も候補調査は進め、具体的な次回確認先を残す。",
   "completion": {
