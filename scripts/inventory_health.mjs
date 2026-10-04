@@ -1,5 +1,5 @@
 // 「昔一度送れた」と「今も正常」を区別する。外部から監視側の停止も検出する。
-export const MINIMUM_VERSION='0.11.0';
+export const MINIMUM_VERSION='0.12.0';
 export function versionAtLeast(value,minimum=MINIMUM_VERSION) {
   const a=String(value||'').split('.').map(Number),b=minimum.split('.').map(Number);
   if(a.length!==3||a.some(n=>!Number.isInteger(n)))return false;
@@ -20,6 +20,7 @@ export function assessInventory(state,now=Date.now()) {
   if((health.consecutiveFailures||0)>=2||recentFailures.length>=2)add('delivery_failing','直近のDiscord通知が繰り返し失敗している');
   if(events.some(e=>e.delivery==='failed'&&(e.lastFailureAt||e.at)>now-3600000))add('delivery_exhausted','再試行の上限に達した未送信通知がある');
   if(events.some(e=>e.delivery==='pending'&&now-e.at>15*60000))add('delivery_backlog','15分以上待っている未送信通知がある');
+  if(state.automatic?.enabled&&state.discovery?.version!==1)add('discovery_policy_missing','店舗単位の掲載探索が未反映');
   if(state.automatic?.enabled&&state.automatic.pricePolicy?.version!==1)add('price_policy_missing','商品別の通知価格条件が未反映');
   if(state.automatic?.enabled&&(!state.automatic.lastSync||now-state.automatic.lastSync>6*3600000))add('catalog_stale','6時間以上、新弾情報を更新できていない');
   return issues;
