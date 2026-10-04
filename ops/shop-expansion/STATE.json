@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-04T08:29:38.348Z",
+  "phase": "preflight_pending",
+  "automation": {
+    "id": null,
+    "title": "カード監視の段階的店舗追加",
+    "timezone": "Asia/Tokyo",
+    "startLocal": "2026-10-05T08:00:00+09:00",
+    "dailyHoursLocal": [
+      8,
+      14,
+      20
+    ],
+    "timingMode": "flexible_schedule",
+    "modelRequested": "6.1 sol",
+    "reasoningRequested": "極高",
+    "modelConfigured": false,
+    "modelConfigurationNote": "作成APIにモデル/推論強度指定欄なし。ユーザーによる手動設定待ち。",
+    "provisioningStatus": "pending"
+  },
+  "scope": {
+    "maxConcurrentStoreRollouts": 1,
+    "minObservationHours": 24,
+    "finalObservationHours": 48,
+    "maxRunMinutes": 45,
+    "leaseMinutes": 90,
+    "defaultPricePercent": 105,
+    "normal30thPricePercent": 200,
+    "excludeShipping": true,
+    "preservePausedProducts": true,
+    "preserveHistoryAndSentIds": true,
+    "noPaidPlanChanges": true
+  },
+  "baseline": {
+    "checkedAt": "2026-10-04T08:29:38.348Z",
+    "workerMainSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
+    "relayMainSha": "5abf295477083e5ca86839779bf1c0966f3573ec",
+    "inventorySnapshotAt": "2026-10-04T14:00:53+09:00",
+    "lastCompletedAt": "2026-10-04T14:00:52+09:00",
+    "latestSyncRunId": 37178593796,
+    "latestSyncRunConclusion": "success",
+    "latestSyncRunUpdatedAt": "2026-10-04T05:00:58Z",
+    "historicalWorkerVersion": "0.13.0",
+    "registeredProducts": 38,
+    "enabledProducts": 31,
+    "pausedProducts": 7,
+    "liveHealthVerification": "unconfirmed",
+    "snapshotFreshness": "stale_at_setup",
+    "healthAccessNote": "直接HTTP取得は実行環境から403、検索経由も取得不可。これだけで本番障害とは断定しない。明日の起動で最新Actionsと保存記録を確認。"
+  },
+  "lease": null,
+  "activeCandidateId": null,
+  "pendingOperation": null,
+  "stabilityWindow": {
+    "status": "needs_current_evidence",
+    "from": null,
+    "until": null,
+    "evidence": []
+  },
+  "queue": [
+    {
+      "id": "hobby-station-yahoo",
+      "name": "ホビーステーション公式Yahoo!店",
+      "priority": "1",
+      "status": "queued",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "安定稼働条件の確認後、既存対象の新品BOXとYahoo取得互換性を検証",
+      "decisionFinal": false
+    },
+    {
+      "id": "hobby-search",
+      "name": "ホビーサーチ",
+      "priority": "併用",
+      "status": "researching",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "decisionFinal": false
+    },
+    {
+      "id": "bigweb",
+      "name": "BIGWEB／ビッグマジック",
+      "priority": "2",
+      "status": "queued",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "decisionFinal": false
+    },
+    {
+      "id": "dragon-star",
+      "name": "ドラゴンスター",
+      "priority": "3",
+      "status": "blocked_access",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "decisionFinal": false
+    },
+    {
+      "id": "cardshop-serra",
+      "name": "カードショップセラ",
+      "priority": "後方",
+      "status": "deferred_no_target",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "decisionFinal": false
+    },
+    {
+      "id": "ryuunoshippo",
+      "name": "竜のしっぽ",
+      "priority": "後方",
+      "status": "deferred_no_target",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "decisionFinal": false
+    },
+    {
+      "id": "amiami",
+      "name": "あみあみ本店",
+      "priority": "保留",
+      "status": "manual_required",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "decisionFinal": false
+    },
+    {
+      "id": "yellow-submarine-rakuten",
+      "name": "イエローサブマリン楽天市場店",
+      "priority": "見送り",
+      "status": "excluded",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "decisionFinal": true
+    },
+    {
+      "id": "card-labo",
+      "name": "カードラボ",
+      "priority": "見送り",
+      "status": "excluded",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "decisionFinal": true
+    },
+    {
+      "id": "fullcomp",
+      "name": "フルコンプ通販",
+      "priority": "後方",
+      "status": "deferred_no_target",
+      "attempts": 0,
+      "notBefore": null,
+      "lastErrorFingerprint": null,
+      "lastNotifiedFingerprint": null,
+      "implementation": null,
+      "observation": null,
+      "deliveryEvidence": {
+        "status": "not_started",
+        "receiptIds": []
+      },
+      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "decisionFinal": false
+    }
+  ],
+  "lastRun": {
+    "id": "setup-20261004",
+    "status": "setup_pending_schedule",
+    "externalChanges": [],
+    "notes": "店舗追加・通知条件変更は未実施。引き継ぎ台帳と定期タスクの準備のみ。"
+  },
+  "nextAction": "起動直後に最新台帳を読みleaseを取得。最新inventory-sync実行とmonitor-stateの鮮度・本番buildを確認し、既存稼働の24時間以上の安定性を判定。満たすまで店舗追加しない。待機/故障時も候補調査は進め、具体的な次回確認先を残す。",
+  "completion": {
+    "status": "not_started",
+    "disabledAt": null,
+    "remainingManualItems": []
+  }
+}
