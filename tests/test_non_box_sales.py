@@ -3,6 +3,7 @@
 from dataclasses import replace
 from datetime import date, datetime
 from pathlib import Path
+from urllib.parse import unquote
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -16,7 +17,7 @@ from tcg_monitor.cli import (
     _opportunity_uses_calendar,
 )
 from tcg_monitor.config import ConfigError, _additional_products, load_config
-from tcg_monitor.models import OpportunityKind
+from tcg_monitor.models import OpportunityKind, stable_url_identity
 from tcg_monitor.non_box_sales import additional_sale_cases
 from tcg_monitor.parsers.generic import discover_geo_news_urls, parse_generic, parse_onepiece_topics
 from tcg_monitor.parsers.local_lottery import parse_yahoo_realtime
@@ -66,7 +67,10 @@ def test_summary_selected_non_lottery_window_keeps_sale_type(method: str) -> Non
     assert cases[0].start_at == datetime(2026, 10, 3, 13, tzinfo=JST)
     assert cases[0].end_at == datetime(2026, 10, 30, 23, tzinfo=JST)
     assert cases[0].official_url == "https://p-bandai.jp/item/item-1000000001/"
-    assert cases[0].source_url == "https://nyuka-now.com/archives/97393"
+    assert stable_url_identity(cases[0].source_url) == "https://nyuka-now.com/archives/97393"
+    assert "#:~:text=" in cases[0].source_url
+    assert DAY25 in unquote(cases[0].source_url)
+    assert unquote(cases[0].source_url).endswith(",10月3日(土)13:00")
 
 
 @freeze_time("2026-10-02 03:00:00Z")

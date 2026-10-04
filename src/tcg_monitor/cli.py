@@ -472,9 +472,8 @@ def _preserve_preferred_case_source(state: MonitorState, case: LotteryCase) -> L
         official_url=str(previous.get("official_url") or case.official_url),
         extraction_method=str(previous.get("extraction_method") or case.extraction_method),
         confidence=str(previous.get("confidence") or case.confidence),
-        # 日付だけの補助記事によって、公式で確認した開始時刻を消さない。
-        start_at=(previous_start if isinstance(previous_start, datetime)
-                  and not isinstance(case.start_at, datetime) else case.start_at),
+        # 下位の補助記事によって、公式で確認した日時を未確認の日時へ変えない。
+        start_at=previous_start,
     )
 
 

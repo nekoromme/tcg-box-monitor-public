@@ -88,6 +88,10 @@ def test_source_upgrade_keeps_delivery_history_and_original_calendar_id(tmp_path
     assert prepared[0].start_at == START
     assert state.delivered("lottery:started:" + prepared[0].case_id)
     assert state.calendar_case_identity(prepared[0].case_id) == fallback.case_id
+    _remember_case(state, prepared[0])
+    lower = replace(fallback, start_at=START.replace(hour=13))
+    prepared, _ = _prepare_cases(state, [lower])
+    assert prepared[0].start_at == START  # 下位の記事の時刻と公式の確度を混ぜない。
 
 
 @freeze_time("2026-10-05 07:39:00+09:00")

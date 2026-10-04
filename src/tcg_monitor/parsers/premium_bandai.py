@@ -55,6 +55,12 @@ def _section_reference(case: LotteryCase, soup: BeautifulSoup, url: str,
                 if label and value and label.get_text(strip=True) == "開始日":
                     start_text = value.get_text(" ", strip=True)
                     break
+            if start_text:
+                base_date = (case.start_at.date() if isinstance(case.start_at, datetime)
+                             else case.start_at)
+                parsed_start = parse_first_datetime(start_text, base_date).value
+                if parsed_start != case.start_at:
+                    continue  # 同じ商品URLを使った過去の受付欄へ飛ばさない。
             # ブラウザーのテキスト指定リンク。サイトが持たない見出しIDは捏造しない。
             # URLの表示用部分だけを変え、通知済みIDや応募URLを変えない。
             def encode(text: str) -> str:
