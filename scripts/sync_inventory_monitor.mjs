@@ -6,6 +6,7 @@ import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {archiveDiscovery,discoveryReport} from './inventory_discovery.mjs';
 import {assessInventory,incidentDecision,versionAtLeast} from './inventory_health.mjs';
+import {loadInventoryPolicy,enforceInventoryPolicy,inventoryPolicyIssues,inventoryPolicySummary,inventoryPolicyReport} from './inventory_policy.mjs';
 const BASE='https://tcg-cross-search.purplepearl-v.workers.dev';
 const STATUS_URL='https://github.com/nekoromme/tcg-box-monitor-public/blob/monitor-state/inventory_status.md';
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -17,7 +18,7 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
   await mkdir(root,{recursive:true});
   const key=webhook?createHmac('sha256',webhook).update('tcg-cross-search:automatic-inventory:v1').digest('hex'):'';
   if(key)log(`::add-mask::${key}`);
-  let state,deployment={},issues=[],stage='configuration';
+  let state,policy,deployment={},issues=[],stage='configuration';
   // 同期操作は重複しても同じ対象へ収束するため、通信の一時失敗を3回まで再試行する。
   async function api(body) {
     let last;
@@ -37,6 +38,8 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
   }
   try {
     if(!webhook)throw new Error('通知先が未設定');
+    // 読めない停止設定を空リストとして扱わない。既存設定を保持して異常を残す。
+    try{policy=await loadInventoryPolicy();}catch{throw Object.assign(new Error('通知対象設定を確認できない'),{code:'notification_policy_invalid'});}
     stage='deployment';
     const ref=await fetcher('https://api.github.com/repos/nekoromme/tcg-cross-search/git/ref/heads/main',{redirect:'error',headers:{Accept:'application/vnd.github+json','User-Agent':'TCGInventoryHealth/1.0'},signal:AbortSignal.timeout(15000)});
     if(!ref.ok)throw new Error('運用コードの変更番号を確認できない');
@@ -53,6 +56,7 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
     stage='read-state';state=await api();
     const beforeCompleted=state.lastCompletedAt||state.lastTick||0;
     const initial=!state.automatic||state.rules.length===0;
+    stage='notification-policy';state=await enforceInventoryPolicy(state,policy,api,log);
     const source=await readJson(join(root,'monitor_state.json'));
     if(!source)throw new Error('公式発売情報の保存ファイルを確認できない');
     const releases=Object.fromEntries(Object.entries(source.seen_releases||{}).filter(([,r])=>r.source_tier==='official').sort((a,b)=>String(b[1].release_date||b[1].release_month||'').localeCompare(String(a[1].release_date||a[1].release_month||''))).slice(0,80));
@@ -60,6 +64,8 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
     stage='synchronize';
     if(!state.notificationConfigured)state=await api({action:'settings',webhook});
     state=await api({action:'automatic',releases}); // 停止した目覚ましも、既存の有効設定に沿って再設定する。
+    // 新規作成・再登録されたルールにも、商品IDで同じ停止設定を適用する。
+    stage='notification-policy';state=await enforceInventoryPolicy(state,policy,api,log);
     const seedLog=[];
     if(initial||state.targets.length===0)for(const p of state.automatic.products.filter(p=>p.pinned))for(const store of ['mediaworld','suns','cardwiz']) {
       try {
@@ -76,12 +82,13 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
       if((state.lastCompletedAt||0)>beforeCompleted)break;
       if(n<11)await pause(15000);
     }
-    state=await api();issues=assessInventory(state,now());
+    state=await api();issues=[...assessInventory(state,now()),...inventoryPolicyIssues(state,policy)];
+    const notificationPolicy=inventoryPolicySummary(state,policy,now());
     if(state.enabled&&(state.lastCompletedAt||0)<=beforeCompleted)issues.push({code:'tick_not_advanced',message:'再開後の巡回完了を確認できない'});
     const pinned=['gundam-gd01','gundam-gd05','pokemon-m6a'];
     if(!pinned.every(id=>state.automatic.products.some(p=>p.id===id)))issues.push({code:'required_products_missing',message:'指定3商品の監視条件が欠けている'});
     const deliveries=Object.fromEntries(['sent','pending','failed','cancelled','screen'].map(status=>[status,state.events.filter(e=>e.delivery===status).length]));
-    const report={generatedAt:now(),discovery:state.discovery,deployment,enabled:state.enabled,notificationConfigured:state.notificationConfigured,lastTick:state.lastTick,lastCompletedAt:state.lastCompletedAt,load:state.load,error:state.error,lastFailure:state.lastFailure,storage:state.storage,deliveryHealth:state.deliveryHealth,deliveries,automatic:{pricePolicy:state.automatic.pricePolicy,enabled:state.automatic.enabled,lastSync:state.automatic.lastSync,nextSync:state.automatic.nextSync,error:state.automatic.error,lastFailure:state.automatic.lastFailure,products:state.automatic.products,log:state.automatic.log},rules:state.rules,targets:state.targets,events:state.events,runs:state.runs||[],seedLog};
+    const report={generatedAt:now(),notificationPolicy,discovery:state.discovery,deployment,enabled:state.enabled,notificationConfigured:state.notificationConfigured,lastTick:state.lastTick,lastCompletedAt:state.lastCompletedAt,load:state.load,error:state.error,lastFailure:state.lastFailure,storage:state.storage,deliveryHealth:state.deliveryHealth,deliveries,automatic:{pricePolicy:state.automatic.pricePolicy,enabled:state.automatic.enabled,lastSync:state.automatic.lastSync,nextSync:state.automatic.nextSync,error:state.automatic.error,lastFailure:state.automatic.lastFailure,products:notificationPolicy.products,log:state.automatic.log},rules:state.rules,targets:state.targets,events:state.events,runs:state.runs||[],seedLog};
     await writeFile(join(root,'inventory_status.json'),JSON.stringify(report,null,2)+'\n');
     await mkdir(join(root,'inventory-logs'),{recursive:true});
     const day=new Date(now()).toLocaleDateString('sv-SE',{timeZone:'Asia/Tokyo'}),logPath=join(root,'inventory-logs',`${day}.jsonl`);
@@ -89,14 +96,29 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
     const seen=new Set(old.map(x=>x.at)),rows=[...old,...report.runs.filter(x=>!seen.has(x.at))].sort((a,b)=>a.at-b.at);
     await writeFile(logPath,rows.map(x=>JSON.stringify(x)).join('\n')+'\n');
     await archiveDiscovery(root,state.discovery);
-    const lines=['# カード在庫監視の稼働状況','',`ログ保存：${time(report.generatedAt)}（日本時間）`,`最終巡回完了：${time(report.lastCompletedAt)}／Discord通知：${report.notificationConfigured?'設定済み':'未設定'}`,`監視：${state.automatic.products.length}弾・${state.load.activePages}有効商品ページ／保存期間中の送信成功：${deliveries.sent}件`,`直近の通知成功：${time(state.deliveryHealth?.lastSuccessAt)}／連続失敗：${state.deliveryHealth?.consecutiveFailures||0}件`, `稼働版：${deployment.version}／${deployment.commit}`,'',`基本は定価の${state.automatic.pricePolicy?.defaultPercent||105}%以下。商品別の例外は下表。通常の日本語版1BOXの税込商品価格で比較し、送料は含みません。上限外も取得・履歴保存を継続。定価未確認は通知保留。取得失敗は売り切れにしません。`,`商品確認は約${Math.ceil(state.load.intervalSeconds/60)}分以上（指定商品は優先）。${state.discovery?'店舗単位の一覧探索は下表を参照。':`個別の掲載検索は商品・店舗ごと約${Math.ceil(state.load.discoverySeconds/3600)}時間以上。`}通信制限で延びます。`,'','|作品|商品|発売日|定価|通知上限|','|---|---|---|---:|---:|',...state.automatic.products.map(p=>`|${p.game}|${safe(p.name)}${p.pinned?'（固定）':''}|${p.releaseDate}|${p.boxPrice?Number(p.boxPrice).toLocaleString('ja-JP')+'円':'未確認'}|${p.priceStatus==='ready'?Number(p.notificationMaxPrice).toLocaleString('ja-JP')+'円（'+p.pricePercent+'%）':'定価確認まで保留'}|`),'','商品別の価格・在庫・通知結果は [inventory_status.json](inventory_status.json)、稼働判定は [inventory_health.json](inventory_health.json)、巡回履歴は [inventory-logs](inventory-logs) を参照。',`新弾更新：${time(state.automatic.lastSync)}／${safe(state.automatic.error||'正常')}`];
-    lines.push(...discoveryReport(state.discovery));
+    const products=notificationPolicy.products;
+    // 実際の停止設定を価格上限と並べる。登録件数を稼働件数として表示しない。
+    const lines=[
+      '# カード在庫監視の稼働状況','',
+      `ログ保存：${time(report.generatedAt)}（日本時間）`,
+      `最終巡回完了：${time(report.lastCompletedAt)}／Discord通知：${report.notificationConfigured?'設定済み':'未設定'}`,
+      `登録：${products.length}弾／監視有効：${products.filter(p=>p.monitoringEnabled).length}弾（定価未確認の通知保留を含む）・${state.load.activePages}有効商品ページ／保存期間中の送信成功：${deliveries.sent}件`,
+      `直近の通知成功：${time(state.deliveryHealth?.lastSuccessAt)}／連続失敗：${state.deliveryHealth?.consecutiveFailures||0}件`,
+      `稼働版：${deployment.version}／${deployment.commit}`,'',
+      `基本は定価の${state.automatic.pricePolicy?.defaultPercent||105}%以下。商品別の例外は下表。通常の日本語版1BOXの税込商品価格で比較し、送料は含みません。有効な弾は上限外も取得・履歴保存を継続。定価未確認は通知保留。取得失敗は売り切れにしません。`,
+      `商品確認は約${Math.ceil(state.load.intervalSeconds/60)}分以上（指定商品は優先）。${state.discovery?'店舗単位の一覧探索は下表を参照。':`個別の掲載検索は商品・店舗ごと約${Math.ceil(state.load.discoverySeconds/3600)}時間以上。`}通信制限で延びます。`,
+      '', '|作品|商品|通知設定|発売日|定価|通知上限|', '|---|---|---|---|---:|---:|',
+      ...products.map(p=>`|${p.game}|${safe(p.name)}${p.pinned?'（固定）':''}|${safe(p.notificationStatus)}|${p.releaseDate}|${p.boxPrice?Number(p.boxPrice).toLocaleString('ja-JP')+'円':'未確認'}|${p.priceStatus==='ready'?Number(p.notificationMaxPrice).toLocaleString('ja-JP')+'円（'+p.pricePercent+'%）':'定価確認まで保留'}|`),
+      '', '商品別の価格・在庫・通知結果は [inventory_status.json](inventory_status.json)、稼働判定は [inventory_health.json](inventory_health.json)、巡回履歴は [inventory-logs](inventory-logs) を参照。',
+      `新弾更新：${time(state.automatic.lastSync)}／${safe(state.automatic.error||'正常')}`
+    ];
+    lines.push(...inventoryPolicyReport(notificationPolicy),...discoveryReport(state.discovery));
     await writeFile(join(root,'inventory_status.md'),lines.join('\n')+'\n');
   }catch(error) {
     // 接続前に失敗しても、古いログを最新正常に見せない。秘密を含む例外本文は出さない。
     const code=error?.backend||error?.code||(stage==='deployment'?'deployment_check_failed':'monitor_connection_failed');
-    const known=new Set(['storage_quota','storage_data','runtime_limit','monitor_unavailable','deployment_mismatch','deployment_check_failed','monitor_connection_failed']);
-    issues=[{code:known.has(code)?code:'monitor_connection_failed',message:stage==='deployment'?'本番の修正版・変更番号を確認できない':`監視との接続・確認に失敗${error?.status?`（HTTP ${error.status}）`:''}`,stage,...(error?.status?{httpStatus:error.status}:{}),...(error?.limitTerms?.length?{limitTerms:error.limitTerms}:{})}];
+    const known=new Set(['storage_quota','storage_data','runtime_limit','monitor_unavailable','deployment_mismatch','deployment_check_failed','monitor_connection_failed','notification_policy_invalid','notification_policy_not_applied']);
+    issues=[{code:known.has(code)?code:'monitor_connection_failed',message:code==='notification_policy_invalid'?'自動通知の停止設定を読み出せない':code==='notification_policy_not_applied'?'自動通知の停止設定を反映できない':stage==='deployment'?'本番の修正版・変更番号を確認できない':`監視との接続・確認に失敗${error?.status?`（HTTP ${error.status}）`:''}`,stage,...(error?.status?{httpStatus:error.status}:{}),...(error?.limitTerms?.length?{limitTerms:error.limitTerms}:{})}];
   }
   const health={checkedAt:now(),status:issues.length?'degraded':state?.enabled===false?'paused':'ok',issues,deployment,lastCompletedAt:state?.lastCompletedAt||null};
   await writeFile(join(root,'inventory_health.json'),JSON.stringify(health,null,2)+'\n');

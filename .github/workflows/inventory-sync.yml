@@ -2,7 +2,7 @@ name: inventory-sync
 on:
   push:
     branches: [main]
-    paths: ['scripts/sync_inventory_monitor.mjs', 'scripts/inventory_health.mjs', 'scripts/inventory_discovery.mjs', '.github/workflows/inventory-sync.yml']
+    paths: ['scripts/sync_inventory_monitor.mjs', 'scripts/inventory_health.mjs', 'scripts/inventory_discovery.mjs', 'scripts/inventory_policy.mjs', 'config/inventory-notification-policy.json', '.github/workflows/inventory-sync.yml']
   schedule:
     - cron: '37 * * * *'
   workflow_dispatch:
