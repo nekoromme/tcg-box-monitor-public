@@ -169,6 +169,11 @@ _DISALLOWED_REMOTE_APPLICATION_MARKERS = (
     "rtで応募",
     "rtして応募",
     "rtキャンペーン",
+    "rpキャンペーン",
+    "フォロー&rp",
+    "フォロー＆rp",
+    "rpで応募",
+    "rpして応募",
 )
 _DISALLOWED_REMOTE_APPLICATION_PATTERNS = (
     re.compile(

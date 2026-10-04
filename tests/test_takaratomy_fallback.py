@@ -29,6 +29,8 @@ from tcg_monitor.source_priority import merge_lotteries
 from tcg_monitor.state import MonitorState
 
 CONFIG = load_config("sites.yaml")
+# Isolate legacy route fixtures; FxEmbed is exercised in test_fxembed.py.
+CONFIG = replace(CONFIG, system={**CONFIG.system, "fxembed_public": False})
 SOURCE = next(s for s in CONFIG.sources if s.id == "yahoo_realtime_lorcana_official")
 MALL = next(s for s in CONFIG.sources if s.id == "takaratomy_mall_lorcana")
 NAME = "ブースターパック「ハイペリアシティ」"

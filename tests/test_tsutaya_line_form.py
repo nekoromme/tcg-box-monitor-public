@@ -19,10 +19,17 @@ from tcg_monitor.source_priority import merge_lotteries
 from tcg_monitor.state import MonitorState
 
 
+def _legacy_config():
+    # Isolate the explicitly mocked routes; the new provider has integration tests.
+    config = load_config("sites.yaml")
+    return replace(config, system={**config.system, "fxembed_public": False})
+
+
+
 def _source():  # type: ignore[no-untyped-def]
     return next(
         source
-        for source in load_config("sites.yaml").sources
+        for source in _legacy_config().sources
         if source.id == "yahoo_realtime_tsutaya_ichinoseki_store"
     )
 
@@ -87,7 +94,7 @@ def _form_payload(
 
 
 def test_official_line_form_groups_both_target_stores_with_selected_deck() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     api_url = source.parser_options["always_fetch_urls"][0]
 
@@ -117,7 +124,7 @@ def test_official_line_form_groups_both_target_stores_with_selected_deck() -> No
 
 
 def test_official_line_form_emits_one_group_case_when_either_store_is_present() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     api_url = source.parser_options["always_fetch_urls"][0]
 
@@ -155,7 +162,7 @@ def test_official_line_form_emits_one_group_case_when_either_store_is_present() 
 
 
 def test_closed_official_line_form_is_healthy_and_emits_nothing() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     api_url = source.parser_options["always_fetch_urls"][0]
 
@@ -185,7 +192,7 @@ class _Fetcher:
 
 
 def test_existing_store_source_always_fetches_shared_official_form() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     yahoo_url, account_url, api_url, cardset_url = source.discovery_urls
     fetcher = _Fetcher(
@@ -229,7 +236,7 @@ def test_existing_store_source_always_fetches_shared_official_form() -> None:
 
 
 def test_official_form_failure_is_not_hidden_by_healthy_store_x() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     yahoo_url, account_url, api_url, cardset_url = source.discovery_urls
     fetcher = _Fetcher(
@@ -277,7 +284,7 @@ def _cardset_payload() -> str:
 
 
 def test_live_cardset_variant_choices_and_campaign_links() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     form = source.parser_options["tsutaya_line_forms"][0]
     cases, _, _ = parse_tsutaya_line_form(
@@ -301,7 +308,7 @@ def test_live_cardset_variant_choices_and_campaign_links() -> None:
 
 
 def test_confirmed_result_date_does_not_leak_to_a_reused_form() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     form = source.parser_options["tsutaya_line_forms"][0]
     changed = json.loads(_cardset_payload())
@@ -318,7 +325,7 @@ def test_confirmed_result_date_does_not_leak_to_a_reused_form() -> None:
 
 
 def test_cardset_form_keeps_notification_identity_across_daily_scans(tmp_path: Path) -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     form = source.parser_options["tsutaya_line_forms"][0]
 
@@ -355,7 +362,7 @@ def test_cardset_form_keeps_notification_identity_across_daily_scans(tmp_path: P
 
 
 def test_variant_choices_require_opt_in_and_matching_form_title() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     url = source.parser_options["tsutaya_line_forms"][0]["api_url"]
     game = config.games["pokemon_card"]
@@ -378,7 +385,7 @@ def test_variant_choices_require_opt_in_and_matching_form_title() -> None:
 
 
 def test_unknown_api_errors_are_not_treated_as_closed_forms() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = _source()
     url = source.parser_options["always_fetch_urls"][0]
     for payload in ('{"error":{"code":"5000"}}', "{}"):

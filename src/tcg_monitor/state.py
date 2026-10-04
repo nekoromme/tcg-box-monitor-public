@@ -43,6 +43,9 @@ def _default_data() -> dict[str, Any]:
         "purchase_reviews": {},
         "ocr_cache": {},
         "ocr_cache_meta": {},
+        "fxembed_ocr_cache": {},
+        "fxembed_ocr_cache_meta": {},
+        "fxembed_watermarks": {},
         "ocr_pending": {},
         "delivery_journal": {},
         "alerts": {},
@@ -99,6 +102,9 @@ class MonitorState:
             "purchase_reviews",
             "ocr_cache",
             "ocr_cache_meta",
+            "fxembed_ocr_cache",
+            "fxembed_ocr_cache_meta",
+            "fxembed_watermarks",
             "ocr_pending",
             "delivery_journal",
             "alerts",
@@ -175,7 +181,6 @@ class MonitorState:
                 del alerts[fingerprint]
 
         ocr_cache = _mapping(self.data.setdefault("ocr_cache", {}))
-        ocr_meta = _mapping(self.data.setdefault("ocr_cache_meta", {}))
         ocr_pending = _mapping(self.data.setdefault("ocr_pending", {}))
         ocr_cutoff = current - timedelta(days=OCR_RETENTION_DAYS)
         # A cached OCR result and a pending OCR failure are contradictory.
@@ -184,11 +189,17 @@ class MonitorState:
         for cache_key in list(ocr_pending):
             if str(ocr_cache.get(cache_key) or "").strip():
                 del ocr_pending[cache_key]
-        for cache_key, record in list(ocr_meta.items()):
-            updated_at = _timestamp(record.get("updated_at")) if isinstance(record, dict) else None
-            if updated_at and updated_at < ocr_cutoff:
-                ocr_cache.pop(cache_key, None)
-                del ocr_meta[cache_key]
+        for cache_name, meta_name in (("ocr_cache", "ocr_cache_meta"),
+                                      ("fxembed_ocr_cache", "fxembed_ocr_cache_meta")):
+            provider_cache = _mapping(self.data.setdefault(cache_name, {}))
+            provider_meta = _mapping(self.data.setdefault(meta_name, {}))
+            for cache_key, record in list(provider_meta.items()):
+                updated_at = (
+                    _timestamp(record.get("updated_at")) if isinstance(record, dict) else None
+                )
+                if updated_at and updated_at < ocr_cutoff:
+                    provider_cache.pop(cache_key, None)
+                    del provider_meta[cache_key]
         for cache_key, record in list(ocr_pending.items()):
             updated_at = (
                 _timestamp(record.get("last_seen_at"))

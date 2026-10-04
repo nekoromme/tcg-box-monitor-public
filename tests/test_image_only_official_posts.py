@@ -15,6 +15,8 @@ from tcg_monitor.pipeline import run_pipeline
 from tcg_monitor.state import MonitorState
 
 CONFIG = load_config("sites.yaml")
+# Isolate legacy route fixtures; FxEmbed is exercised in test_fxembed.py.
+CONFIG = replace(CONFIG, system={**CONFIG.system, "fxembed_public": False})
 SOURCE = next(s for s in CONFIG.sources if s.id == "yahoo_realtime_tsutaya_ichinoseki_store")
 DETECTED = date(2026, 10, 1)
 IMAGE = "https://pbs.twimg.com/media/official-notice.jpg"
