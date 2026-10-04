@@ -7,6 +7,8 @@ import {fileURLToPath} from 'node:url';
 import {archiveDiscovery,discoveryReport} from './inventory_discovery.mjs';
 import {assessInventory,incidentDecision,versionAtLeast} from './inventory_health.mjs';
 import {loadInventoryPolicy,enforceInventoryPolicy,inventoryPolicyIssues,inventoryPolicySummary,inventoryPolicyReport} from './inventory_policy.mjs';
+import {collectInventoryPrices} from './inventory_prices.mjs';
+import {reviewInventoryMarket,inventoryCadenceSummary} from './inventory_review.mjs';
 const BASE='https://tcg-cross-search.purplepearl-v.workers.dev';
 const STATUS_URL='https://github.com/nekoromme/tcg-box-monitor-public/blob/monitor-state/inventory_status.md';
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -54,7 +56,7 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
     }
     if(!versionAtLeast(deployment.version)||deployment.commit!==expectedCommit)throw Object.assign(new Error('本番の稼働版が最新の修正版と一致しない'),{code:'deployment_mismatch'});
     stage='read-state';state=await api();
-    const beforeCompleted=state.lastCompletedAt||state.lastTick||0;
+    let beforeCompleted=state.lastCompletedAt||state.lastTick||0;
     const initial=!state.automatic||state.rules.length===0;
     stage='notification-policy';state=await enforceInventoryPolicy(state,policy,api,log);
     const source=await readJson(join(root,'monitor_state.json'));
@@ -75,7 +77,17 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
         if(result.results?.length)state=await api({action:'automatic-seeds',seeds:result.results.map(r=>({...r,storeId:store}))});
       }catch{seedLog.push({at:now(),query:p.query,store,error:'初回検索を取得できず。定期検索で再試行'});}
     }
-    // 起動の予約だけで回復としない。各実行で新しい巡回の完了を実際に待つ。
+    stage='official-prices';
+    const prices=await collectInventoryPrices(state,await readJson(join(root,'inventory_prices.json'),{}),{fetcher,now:now()});
+    await writeFile(join(root,'inventory_prices.json'),JSON.stringify(prices,null,2)+'\n');
+    await writeFile(join(root,'inventory_releases.json'),JSON.stringify({seen_releases:releases,prices,recordedAt:source.last_run_summary?.recorded_at})+'\n');
+    const updates=Object.values(prices.records).filter(r=>r.status==='confirmed'&&r.checkedAt>(state.automatic.priceRecords?.[r.productId]?.checkedAt||0));
+    if(updates.length) {
+      state=await api({action:'automatic-prices',prices:{version:1,checkedAt:prices.checkedAt,records:Object.fromEntries(updates.map(r=>[r.productId,r]))}});
+      for(const price of updates)if(state.automatic.products.find(p=>p.id===price.productId)?.boxPrice!==price.boxPrice)throw Object.assign(new Error('公式価格の反映を確認できない'),{code:'official_prices_not_applied'});
+      beforeCompleted=state.lastCompletedAt||beforeCompleted;
+    }
+    // 起動の予約だけで回復としない。価格反映後にも新しい巡回を実際に待つ。
     stage='verify-tick';
     if(state.enabled)for(let n=0;n<12;n++) {
       state=await api();
@@ -88,7 +100,10 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
     const pinned=['gundam-gd01','gundam-gd05','pokemon-m6a'];
     if(!pinned.every(id=>state.automatic.products.some(p=>p.id===id)))issues.push({code:'required_products_missing',message:'指定3商品の監視条件が欠けている'});
     const deliveries=Object.fromEntries(['sent','pending','failed','cancelled','screen'].map(status=>[status,state.events.filter(e=>e.delivery===status).length]));
-    const report={generatedAt:now(),notificationPolicy,discovery:state.discovery,deployment,enabled:state.enabled,notificationConfigured:state.notificationConfigured,lastTick:state.lastTick,lastCompletedAt:state.lastCompletedAt,load:state.load,error:state.error,lastFailure:state.lastFailure,storage:state.storage,deliveryHealth:state.deliveryHealth,deliveries,automatic:{pricePolicy:state.automatic.pricePolicy,enabled:state.automatic.enabled,lastSync:state.automatic.lastSync,nextSync:state.automatic.nextSync,error:state.automatic.error,lastFailure:state.automatic.lastFailure,products:notificationPolicy.products,log:state.automatic.log},rules:state.rules,targets:state.targets,events:state.events,runs:state.runs||[],seedLog};
+    const marketReview=reviewInventoryMarket(state,policy,await readJson(join(root,'inventory_market_review.json'),{}),now());
+    await writeFile(join(root,'inventory_market_review.json'),JSON.stringify(marketReview,null,2)+'\n');
+    const cadence=inventoryCadenceSummary(state,now());
+    const report={generatedAt:now(),prices,marketReview,cadence,notificationPolicy,discovery:state.discovery,deployment,enabled:state.enabled,notificationConfigured:state.notificationConfigured,lastTick:state.lastTick,lastCompletedAt:state.lastCompletedAt,load:state.load,error:state.error,lastFailure:state.lastFailure,storage:state.storage,deliveryHealth:state.deliveryHealth,deliveries,automatic:{pricePolicy:state.automatic.pricePolicy,enabled:state.automatic.enabled,lastSync:state.automatic.lastSync,nextSync:state.automatic.nextSync,error:state.automatic.error,lastFailure:state.automatic.lastFailure,products:notificationPolicy.products,log:state.automatic.log},rules:state.rules,targets:state.targets,events:state.events,runs:state.runs||[],seedLog};
     await writeFile(join(root,'inventory_status.json'),JSON.stringify(report,null,2)+'\n');
     await mkdir(join(root,'inventory-logs'),{recursive:true});
     const day=new Date(now()).toLocaleDateString('sv-SE',{timeZone:'Asia/Tokyo'}),logPath=join(root,'inventory-logs',`${day}.jsonl`);
@@ -106,18 +121,20 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
       `直近の通知成功：${time(state.deliveryHealth?.lastSuccessAt)}／連続失敗：${state.deliveryHealth?.consecutiveFailures||0}件`,
       `稼働版：${deployment.version}／${deployment.commit}`,'',
       `基本は定価の${state.automatic.pricePolicy?.defaultPercent||105}%以下。商品別の例外は下表。通常の日本語版1BOXの税込商品価格で比較し、送料は含みません。有効な弾は上限外も取得・履歴保存を継続。定価未確認は通知保留。取得失敗は売り切れにしません。`,
-      `商品確認は約${Math.ceil(state.load.intervalSeconds/60)}分以上（指定商品は優先）。${state.discovery?'店舗単位の一覧探索は下表を参照。':`個別の掲載検索は商品・店舗ごと約${Math.ceil(state.load.discoverySeconds/3600)}時間以上。`}通信制限で延びます。`,
+      `商品確認の設定間隔は${state.load.intervalMinSeconds?Math.ceil(state.load.intervalMinSeconds/60)+'〜':''}${Math.ceil(state.load.intervalSeconds/60)}分が目安。商品別の間隔は[自動通知の設定画面](${BASE}/automatic.html)で確認できます。店舗単位の一覧探索は下表を参照。通信制限で延びます。`,
       '', '|作品|商品|通知設定|発売日|定価|通知上限|', '|---|---|---|---|---:|---:|',
       ...products.map(p=>`|${p.game}|${safe(p.name)}${p.pinned?'（固定）':''}|${safe(p.notificationStatus)}|${p.releaseDate}|${p.boxPrice?Number(p.boxPrice).toLocaleString('ja-JP')+'円':'未確認'}|${p.priceStatus==='ready'?Number(p.notificationMaxPrice).toLocaleString('ja-JP')+'円（'+p.pricePercent+'%）':'定価確認まで保留'}|`),
       '', '商品別の価格・在庫・通知結果は [inventory_status.json](inventory_status.json)、稼働判定は [inventory_health.json](inventory_health.json)、巡回履歴は [inventory-logs](inventory-logs) を参照。',
       `新弾更新：${time(state.automatic.lastSync)}／${safe(state.automatic.error||'正常')}`
     ];
+    lines.push('',`公式価格：確認済み${Object.values(prices.records).filter(p=>p.status==='confirmed').length}件。未発表・入数未確認は6時間後に再確認。取得失敗時は前回の確認済み価格を維持。出典は[inventory_prices.json](inventory_prices.json)。`,
+      `相場の定期確認：${time(marketReview.reviewedAt)}／次回${time(marketReview.nextReviewAt)}。除外候補${marketReview.products.filter(p=>p.status==='pause_candidate').length}件。[判定理由](inventory_market_review.json)。監視店での継続在庫を元にした候補で、自動停止・再開はしません。`);
     lines.push(...inventoryPolicyReport(notificationPolicy),...discoveryReport(state.discovery));
     await writeFile(join(root,'inventory_status.md'),lines.join('\n')+'\n');
   }catch(error) {
     // 接続前に失敗しても、古いログを最新正常に見せない。秘密を含む例外本文は出さない。
     const code=error?.backend||error?.code||(stage==='deployment'?'deployment_check_failed':'monitor_connection_failed');
-    const known=new Set(['storage_quota','storage_data','runtime_limit','monitor_unavailable','deployment_mismatch','deployment_check_failed','monitor_connection_failed','notification_policy_invalid','notification_policy_not_applied']);
+    const known=new Set(['storage_quota','storage_data','runtime_limit','monitor_unavailable','deployment_mismatch','deployment_check_failed','monitor_connection_failed','notification_policy_invalid','notification_policy_not_applied','official_prices_not_applied']);
     issues=[{code:known.has(code)?code:'monitor_connection_failed',message:code==='notification_policy_invalid'?'自動通知の停止設定を読み出せない':code==='notification_policy_not_applied'?'自動通知の停止設定を反映できない':stage==='deployment'?'本番の修正版・変更番号を確認できない':`監視との接続・確認に失敗${error?.status?`（HTTP ${error.status}）`:''}`,stage,...(error?.status?{httpStatus:error.status}:{}),...(error?.limitTerms?.length?{limitTerms:error.limitTerms}:{})}];
   }
   const health={checkedAt:now(),status:issues.length?'degraded':state?.enabled===false?'paused':'ok',issues,deployment,lastCompletedAt:state?.lastCompletedAt||null};
