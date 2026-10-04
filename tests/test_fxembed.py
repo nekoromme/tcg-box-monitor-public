@@ -278,3 +278,17 @@ def test_quantity_limit_is_not_the_closing_date_of_a_nonbox_lottery(period, clos
     assert len(cases) == 1 and not alerts
     assert cases[0].start_at.day == 5
     assert (cases[0].end_at.day if cases[0].end_at else None) == closing_day
+
+
+@freeze_time("2026-10-04T12:00:00Z")
+def test_one_unmarked_pinned_post_among_reposts_is_not_a_confirmed_boundary() -> None:
+    repost = post(4)
+    repost["author"] = {"screen_name": "another_shop"}
+    fetcher = Responses({ROOT: page([post(1), repost], "next"),
+                         ROOT + "&cursor=next": page([post(4), post(3), post(2)])})
+    reader = FxEmbedReader(PageFetcher(fetcher, lambda *args: ""),
+                           {"pokegetinfomain": str(post(2)["id"])})
+    result = reader.fetch(ROOT, SOURCE)
+    assert len(fetcher.calls) == 2
+    assert str(post(3)["id"]) in result.html
+    assert reader.reports[ROOT]["complete"] is True

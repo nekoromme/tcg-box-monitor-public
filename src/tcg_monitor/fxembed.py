@@ -183,11 +183,11 @@ class FxEmbedReader:
             own_rows = [p for p in rows if isinstance(p, dict)
                         and post_markup(p, account) is not None and not p.get("is_pinned")
                         and not p.get("reposted_by")]
-            old_tail = bool(own_rows) and all(
+            old_tail = len(own_rows) >= 3 and all(
                 ((int(str(p["id"])) >> 22) + X_EPOCH_MS) // 1000 < cutoff
                 for p in own_rows[-3:]
             )
-            reached_boundary = bool(previous_id and own_rows) and all(
+            reached_boundary = bool(previous_id and len(own_rows) >= 3) and all(
                 int(str(p["id"])) <= previous_id for p in own_rows[-3:]
             )
             if reached_boundary or old_tail or not rows or not bottom:
