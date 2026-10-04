@@ -22,6 +22,19 @@ test('同一障害は連投せず、6時間後の再報と復旧を区別する'
   assert.equal(incidentDecision(previous,[],NOW+20*60000).kind,'recovery');
   assert.equal(incidentDecision({},[],NOW),null);
 });
+test('復旧時に旧通知を取り消しても、取消時刻を新たな送信失敗にしない',()=>{
+  const s=state();
+  s.events.push(...[1,2].map(n=>({id:String(n),delivery:'cancelled',error:'Discord送信失敗',at:NOW-6*3600000,cancelledAt:NOW,cancelReason:'stale'})));
+  assert.deepEqual(assessInventory(s,NOW),[]);
+  for(const event of s.events.filter(e=>e.error))event.lastFailureAt=NOW-1000;
+  assert(assessInventory(s,NOW).some(x=>x.code==='delivery_failing')); // 本当に新しく失敗したものは検出
+});
+test('復旧は障害通知直後でも一度だけ送れ、復旧の送信失敗は連投しない',()=>{
+  const previous={kind:'alert',fingerprint:'storage_quota',delivery:'sent',deliveredAt:NOW-1000,lastAttemptAt:NOW-1000};
+  assert.equal(incidentDecision(previous,[],NOW).kind,'recovery');
+  assert.equal(incidentDecision({...previous,fingerprint:''},[],NOW),null);
+  assert.equal(incidentDecision({...previous,kind:'recovery',delivery:'failed'},[],NOW),null);
+});
 test('監視への接続失敗でも異常ログと外部通知を残し、古い正常表示にしない',async t=>{
   const root=await mkdtemp(join(tmpdir(),'inventory-outage-'));t.after(()=>rm(root,{recursive:true,force:true}));
   await writeFile(join(root,'inventory_status.md'),'以前の在庫記録');

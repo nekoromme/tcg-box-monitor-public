@@ -16,7 +16,9 @@ export function assessInventory(state,now=Date.now()) {
   const health=state.deliveryHealth||{},events=state.events||[];
   const success=Math.max(health.lastSuccessAt||0,...events.filter(e=>e.delivery==='sent').map(e=>e.sentAt||0));
   // 期限切れで取り消された送信失敗も拾う。成功2件が残っていても見逃さない。
-  const recentFailures=events.filter(e=>e.error&&e.delivery!=='sent'&&Math.max(e.lastFailureAt||0,e.cancelledAt||0,e.at||0)>Math.max(success,now-3600000));
+  // 旧通知の取消時刻は「送信した時刻」ではない。復旧時の掃除で昔の失敗を
+  // 新しい送信障害に昇格させない。失敗日時がない旧形式は通知発生日時を使う。
+  const recentFailures=events.filter(e=>e.error&&e.delivery!=='sent'&&(e.lastFailureAt||e.at||0)>Math.max(success,now-3600000));
   if((health.consecutiveFailures||0)>=2||recentFailures.length>=2)add('delivery_failing','直近のDiscord通知が繰り返し失敗している');
   if(events.some(e=>e.delivery==='failed'&&(e.lastFailureAt||e.at)>now-3600000))add('delivery_exhausted','再試行の上限に達した未送信通知がある');
   if(events.some(e=>e.delivery==='pending'&&now-e.at>15*60000))add('delivery_backlog','15分以上待っている未送信通知がある');
@@ -27,6 +29,9 @@ export function assessInventory(state,now=Date.now()) {
 }
 export function incidentDecision(previous,issues,now=Date.now()) {
   const fingerprint=issues.map(i=>i.code).sort().join(',');
+  // 新しい正常巡回を確認済みなら、障害通知直後でも復旧を1回だけ知らせる。
+  // 復旧送信自体が失敗したときの再試行には、従来の待機時間を維持する。
+  if(!fingerprint&&previous?.fingerprint&&previous.deliveredAt&&previous.delivery!=='failed')return {kind:'recovery',fingerprint:''};
   if(previous?.lastAttemptAt&&now-previous.lastAttemptAt<15*60000)return null;
   if(fingerprint) {
     if(previous?.fingerprint!==fingerprint||!previous.deliveredAt||now-previous.deliveredAt>=6*3600000)return {kind:'alert',fingerprint};
