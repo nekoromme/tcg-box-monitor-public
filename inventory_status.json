@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1791079099794,
+  "generatedAt": 1791079194462,
   "discovery": {
     "version": 1,
     "startedAt": 1791078090716,
@@ -1555,26 +1555,26 @@
     }
   },
   "deployment": {
-    "version": "0.12.0",
-    "commit": "6aca1ef71b6b9df1f1e1ba86903ddb17af8e2c56",
-    "expectedCommit": "6aca1ef71b6b9df1f1e1ba86903ddb17af8e2c56",
-    "deployedAt": "2026-10-04T01:36:40.571074Z"
+    "version": "0.12.1",
+    "commit": "ab8b3f38683634054a1eec3d8097548c6e9947e3",
+    "expectedCommit": "ab8b3f38683634054a1eec3d8097548c6e9947e3",
+    "deployedAt": "2026-10-04T01:59:04.484607Z"
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791079095329,
-  "lastCompletedAt": 1791079098917,
+  "lastTick": 1791079192156,
+  "lastCompletedAt": 1791079193501,
   "load": {
-    "activePages": 95,
+    "activePages": 91,
     "waitingPages": 0,
-    "intervalSeconds": 9504,
+    "intervalSeconds": 9216,
     "discoverySeconds": 47780
   },
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 636755,
-    "compressedBytes": 65793,
+    "uncompressedBytes": 639727,
+    "compressedBytes": 66237,
     "chunks": 1
   },
   "deliveryHealth": {
@@ -1604,8 +1604,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791079065327,
-    "nextSync": 1791086265327,
+    "lastSync": 1791079162154,
+    "nextSync": 1791086362154,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -2316,6 +2316,12 @@
         "kind": "catalog",
         "count": 38,
         "added": []
+      },
+      {
+        "at": 1791079162154,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
       }
     ]
   },
@@ -2447,7 +2453,9 @@
           "code": "M6a",
           "aliases": [
             "30th CELEBRATION",
-            "30th",
+            "ポケモン 30th",
+            "ポケモンカードゲーム 30th",
+            "ポケカ 30th",
             "30周年 セレブレーション"
           ],
           "releaseDate": "2026-09-16",
@@ -4466,13 +4474,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 160,
+          "negatives": 161,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791079246426,
+      "nextAt": 1791079385472,
       "failures": 0,
-      "lastChecked": 1791078958426,
+      "lastChecked": 1791079193472,
       "lastGood": {
         "title": "ブースターパック　Newtype Rising　BOX【ガンダムカードゲーム】",
         "price": 5808,
@@ -4506,11 +4514,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791078128567,
-          "lastAt": 1791078958426,
-          "samples": 3
+          "lastAt": 1791079193472,
+          "samples": 4
         }
       ],
-      "lastGoodAt": 1791078958426,
+      "lastGoodAt": 1791079193472,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -4520,14 +4528,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791078958426
+          "at": 1791079193472
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078128567,
         "stock": "out_of_stock",
-        "lastAt": 1791078958426,
-        "lastUnavailableAt": 1791078958426
+        "lastAt": 1791079193472,
+        "lastUnavailableAt": 1791079193472
       },
       "monitorStatus": "監視中",
       "monitorActive": true
@@ -4544,13 +4552,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 161,
+          "negatives": 162,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791079152383,
+      "nextAt": 1791079277360,
       "failures": 0,
-      "lastChecked": 1791078993383,
+      "lastChecked": 1791079161360,
       "lastGood": {
         "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 5808,
@@ -4584,11 +4592,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791078092888,
-          "lastAt": 1791078993383,
-          "samples": 5
+          "lastAt": 1791079161360,
+          "samples": 6
         }
       ],
-      "lastGoodAt": 1791078993383,
+      "lastGoodAt": 1791079161360,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -4598,14 +4606,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791078993383
+          "at": 1791079161360
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092888,
         "stock": "out_of_stock",
-        "lastAt": 1791078993383,
-        "lastUnavailableAt": 1791078993383
+        "lastAt": 1791079161360,
+        "lastUnavailableAt": 1791079161360
       },
       "monitorStatus": "監視中",
       "monitorActive": true
@@ -4626,7 +4634,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791079256489,
+      "nextAt": 1791079213489,
       "failures": 0,
       "lastChecked": 1791079097489,
       "lastGood": {
@@ -4879,7 +4887,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791087940686,
+      "nextAt": 1791087652686,
       "failures": 0,
       "lastChecked": 1791078436686,
       "lastGood": {
@@ -5116,7 +5124,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791087841195,
+      "nextAt": 1791087553195,
       "failures": 0,
       "lastChecked": 1791078337195,
       "lastGood": {
@@ -5424,13 +5432,13 @@
       "episodes": {
         "47c20f77-b1a8-4a3f-9f66-58a45a8a6d14": {
           "active": false,
-          "negatives": 6,
+          "negatives": 7,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791063384727,
+      "nextAt": 1791088408901,
       "failures": 0,
-      "lastChecked": 1791055032727,
+      "lastChecked": 1791079192901,
       "lastGood": {
         "title": "【新品】[TCG] (BOX) ポケモンカードゲーム MEGA(メガ) 拡張パック ムニキスゼロ ポケモン(30パック)(20260123)",
         "price": 7380,
@@ -5456,9 +5464,37 @@
           "at": 1791040979398,
           "lastAt": 1791055032727,
           "samples": 6
+        },
+        {
+          "kind": "observation",
+          "stock": "out_of_stock",
+          "price": 7380,
+          "comparable": true,
+          "priceDecision": "通知上限5,670円を超過",
+          "at": 1791079192901,
+          "lastAt": 1791079192901,
+          "samples": 1
         }
       ],
-      "lastGoodAt": 1791055032727,
+      "lastGoodAt": 1791079192901,
+      "priceDecisions": {
+        "47c20f77-b1a8-4a3f-9f66-58a45a8a6d14": {
+          "referencePrice": 5400,
+          "percent": 105,
+          "maxPrice": 5670,
+          "policyReason": "基本条件：定価＋5%以内",
+          "shippingIncluded": false,
+          "status": "over_limit",
+          "reason": "通知上限5,670円を超過",
+          "at": 1791079192901
+        }
+      },
+      "availabilityTiming": {
+        "firstObservedAt": 1791079192901,
+        "stock": "out_of_stock",
+        "lastAt": 1791079192901,
+        "lastUnavailableAt": 1791079192901
+      },
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -5634,7 +5670,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088007228,
+      "nextAt": 1791087719228,
       "failures": 0,
       "lastChecked": 1791078503228,
       "lastGood": {
@@ -5790,7 +5826,7 @@
           "lastEvent": 1791052150478
         }
       },
-      "nextAt": 1791087769799,
+      "nextAt": 1791087481799,
       "failures": 0,
       "lastChecked": 1791078265799,
       "lastGood": {
@@ -5949,7 +5985,7 @@
           "lastEvent": 1791052317327
         }
       },
-      "nextAt": 1791087973753,
+      "nextAt": 1791087685753,
       "failures": 0,
       "lastChecked": 1791078469753,
       "lastGood": {
@@ -6224,6 +6260,13 @@
           "at": 1791079096196,
           "lastAt": 1791079096196,
           "samples": 1
+        },
+        {
+          "kind": "pause",
+          "reason": "通常の日本語版BOXではないため対象外",
+          "at": 1791079159886,
+          "lastAt": 1791079159886,
+          "samples": 1
         }
       ],
       "lastGoodAt": 1791079096196,
@@ -6245,8 +6288,9 @@
         "lastAt": 1791079096196,
         "lastUnavailableAt": 1791079096196
       },
-      "monitorStatus": "監視中",
-      "monitorActive": true
+      "enabled": false,
+      "monitorStatus": "このページをOFF",
+      "monitorActive": false
     },
     {
       "id": "4d600c2f-c26e-4a37-b79f-c1785ab3d163",
@@ -6260,13 +6304,13 @@
       "episodes": {
         "0d4cd221-6a96-4c6c-9dda-6b60629c1b07": {
           "active": false,
-          "negatives": 4,
+          "negatives": 5,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791063311994,
+      "nextAt": 1791088345825,
       "failures": 0,
-      "lastChecked": 1791054959994,
+      "lastChecked": 1791079129825,
       "lastGood": {
         "title": "【新品】[TCG] (BOX)フューチャーカード バディファイト ハンドレッド エクストラブースター第4弾 バディオールスターズ(BF-H-EB04)(15パック)(20151204)",
         "price": 3616,
@@ -6292,9 +6336,37 @@
           "at": 1791043041081,
           "lastAt": 1791054959994,
           "samples": 4
+        },
+        {
+          "kind": "observation",
+          "stock": "out_of_stock",
+          "price": 3616,
+          "comparable": true,
+          "priceDecision": "BOX定価を確認できないため通知保留",
+          "at": 1791079129825,
+          "lastAt": 1791079129825,
+          "samples": 1
         }
       ],
-      "lastGoodAt": 1791054959994,
+      "lastGoodAt": 1791079129825,
+      "priceDecisions": {
+        "0d4cd221-6a96-4c6c-9dda-6b60629c1b07": {
+          "referencePrice": null,
+          "percent": 105,
+          "maxPrice": null,
+          "policyReason": "基本条件：定価＋5%以内",
+          "shippingIncluded": false,
+          "status": "reference_unknown",
+          "reason": "BOX定価を確認できないため通知保留",
+          "at": 1791079129825
+        }
+      },
+      "availabilityTiming": {
+        "firstObservedAt": 1791079129825,
+        "stock": "out_of_stock",
+        "lastAt": 1791079129825,
+        "lastUnavailableAt": 1791079129825
+      },
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -6310,13 +6382,13 @@
       "episodes": {
         "0d4cd221-6a96-4c6c-9dda-6b60629c1b07": {
           "active": false,
-          "negatives": 4,
+          "negatives": 5,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791063351677,
+      "nextAt": 1791088376740,
       "failures": 0,
-      "lastChecked": 1791054999677,
+      "lastChecked": 1791079160740,
       "lastGood": {
         "title": "【新品】[TCG] (BOX)(再販) ONE PIECE(ワンピース) カードゲーム エクストラブースター EGGHEAD CRISIS(エッグヘッド クライシス)【EB-04】 バンダイ(24パック)(20260416)",
         "price": 9580,
@@ -6342,9 +6414,37 @@
           "at": 1791043073431,
           "lastAt": 1791054999677,
           "samples": 4
+        },
+        {
+          "kind": "observation",
+          "stock": "out_of_stock",
+          "price": 9580,
+          "comparable": true,
+          "priceDecision": "BOX定価を確認できないため通知保留",
+          "at": 1791079160740,
+          "lastAt": 1791079160740,
+          "samples": 1
         }
       ],
-      "lastGoodAt": 1791054999677,
+      "lastGoodAt": 1791079160740,
+      "priceDecisions": {
+        "0d4cd221-6a96-4c6c-9dda-6b60629c1b07": {
+          "referencePrice": null,
+          "percent": 105,
+          "maxPrice": null,
+          "policyReason": "基本条件：定価＋5%以内",
+          "shippingIncluded": false,
+          "status": "reference_unknown",
+          "reason": "BOX定価を確認できないため通知保留",
+          "at": 1791079160740
+        }
+      },
+      "availabilityTiming": {
+        "firstObservedAt": 1791079160740,
+        "stock": "out_of_stock",
+        "lastAt": 1791079160740,
+        "lastUnavailableAt": 1791079160740
+      },
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -6520,7 +6620,7 @@
           "lastEvent": 1791052184242
         }
       },
-      "nextAt": 1791087808003,
+      "nextAt": 1791087520003,
       "failures": 0,
       "lastChecked": 1791078304003,
       "lastGood": {
@@ -6601,7 +6701,7 @@
           "lastEvent": 1791052689415
         }
       },
-      "nextAt": 1791088302818,
+      "nextAt": 1791088014818,
       "failures": 0,
       "lastChecked": 1791078798818,
       "lastGood": {
@@ -6922,7 +7022,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088398594,
+      "nextAt": 1791088110594,
       "failures": 0,
       "lastChecked": 1791078894594,
       "lastGood": {
@@ -7396,7 +7496,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088560432,
+      "nextAt": 1791088272432,
       "failures": 0,
       "lastChecked": 1791079056432,
       "lastGood": {
@@ -7711,7 +7811,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791087735721,
+      "nextAt": 1791087447721,
       "failures": 0,
       "lastChecked": 1791078231721,
       "lastGood": {
@@ -8029,7 +8129,7 @@
           "lastEvent": 1791078403217
         }
       },
-      "nextAt": 1791087907217,
+      "nextAt": 1791087619217,
       "failures": 0,
       "lastChecked": 1791078403217,
       "lastGood": {
@@ -8191,7 +8291,7 @@
           "lastEvent": 1791052621435
         }
       },
-      "nextAt": 1791088262727,
+      "nextAt": 1791087974727,
       "failures": 0,
       "lastChecked": 1791078758727,
       "lastGood": {
@@ -8272,7 +8372,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088367107,
+      "nextAt": 1791088079107,
       "failures": 0,
       "lastChecked": 1791078863107,
       "lastGood": {
@@ -8428,7 +8528,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088461969,
+      "nextAt": 1791088173969,
       "failures": 0,
       "lastChecked": 1791078957969,
       "lastGood": {
@@ -8587,7 +8687,7 @@
           "lastEvent": 1791054660722
         }
       },
-      "nextAt": 1791088528207,
+      "nextAt": 1791088240207,
       "failures": 0,
       "lastChecked": 1791079024207,
       "lastGood": {
@@ -9317,7 +9417,7 @@
           "lastEvent": 1791052384027
         }
       },
-      "nextAt": 1791088040971,
+      "nextAt": 1791087752971,
       "failures": 0,
       "lastChecked": 1791078536971,
       "lastGood": {
@@ -9398,7 +9498,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088078008,
+      "nextAt": 1791087790008,
       "failures": 0,
       "lastChecked": 1791078574008,
       "lastGood": {
@@ -9476,7 +9576,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088111684,
+      "nextAt": 1791087823684,
       "failures": 0,
       "lastChecked": 1791078607684,
       "lastGood": {
@@ -9554,7 +9654,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088145711,
+      "nextAt": 1791087857711,
       "failures": 0,
       "lastChecked": 1791078641711,
       "lastGood": {
@@ -9632,7 +9732,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088231854,
+      "nextAt": 1791087943854,
       "failures": 0,
       "lastChecked": 1791078727854,
       "lastGood": {
@@ -9866,7 +9966,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088333726,
+      "nextAt": 1791088045726,
       "failures": 0,
       "lastChecked": 1791078829726,
       "lastGood": {
@@ -10256,7 +10356,7 @@
           "lastEvent": 1791053630643
         }
       },
-      "nextAt": 1791088430615,
+      "nextAt": 1791088142615,
       "failures": 0,
       "lastChecked": 1791078926615,
       "lastGood": {
@@ -10574,7 +10674,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791088496530,
+      "nextAt": 1791088208530,
       "failures": 0,
       "lastChecked": 1791078992530,
       "lastGood": {
@@ -11008,7 +11108,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791079215104,
+      "nextAt": 1791079162154,
       "failures": 0,
       "lastChecked": 1791078927104,
       "lastGood": {
@@ -11133,6 +11233,13 @@
           "at": 1791078162817,
           "lastAt": 1791079024841,
           "samples": 5
+        },
+        {
+          "kind": "pause",
+          "reason": "通常の日本語版BOXではないため対象外",
+          "at": 1791079159886,
+          "lastAt": 1791079159886,
+          "samples": 1
         }
       ],
       "availabilityTiming": {
@@ -11142,8 +11249,9 @@
         "lastUnavailableAt": 1791079024841
       },
       "lastGoodAt": 1791079024841,
-      "monitorStatus": "監視中",
-      "monitorActive": true
+      "enabled": false,
+      "monitorStatus": "このページをOFF",
+      "monitorActive": false
     },
     {
       "id": "582f9692-4777-4ac7-873d-11acdead1c7a",
@@ -11208,6 +11316,13 @@
           "at": 1791078197437,
           "lastAt": 1791079096556,
           "samples": 5
+        },
+        {
+          "kind": "pause",
+          "reason": "通常の日本語版BOXではないため対象外",
+          "at": 1791079159886,
+          "lastAt": 1791079159886,
+          "samples": 1
         }
       ],
       "availabilityTiming": {
@@ -11217,8 +11332,9 @@
         "lastUnavailableAt": 1791079096556
       },
       "lastGoodAt": 1791079096556,
-      "monitorStatus": "監視中",
-      "monitorActive": true
+      "enabled": false,
+      "monitorStatus": "このページをOFF",
+      "monitorActive": false
     },
     {
       "id": "e1dbc2b9-ba55-49d2-a1d1-936c99b2318a",
@@ -11361,6 +11477,13 @@
           "at": 1791078232184,
           "lastAt": 1791078993117,
           "samples": 3
+        },
+        {
+          "kind": "pause",
+          "reason": "通常の日本語版BOXではないため対象外",
+          "at": 1791079159886,
+          "lastAt": 1791079159886,
+          "samples": 1
         }
       ],
       "availabilityTiming": {
@@ -11373,8 +11496,9 @@
         "lastAvailableAt": 1791078993117
       },
       "lastGoodAt": 1791078993117,
-      "monitorStatus": "監視中",
-      "monitorActive": true
+      "enabled": false,
+      "monitorStatus": "このページをOFF",
+      "monitorActive": false
     },
     {
       "id": "c8c7c06f-af69-4ba7-9cfb-8c9bb6218b70",
@@ -11392,7 +11516,7 @@
           "lastEvent": 0
         }
       },
-      "nextAt": 1791082324546,
+      "nextAt": 1791082281546,
       "failures": 0,
       "lastChecked": 1791078695546,
       "lastGood": {
@@ -11576,7 +11700,9 @@
       "attempts": 1,
       "nextAt": 1791078325062,
       "sentAt": 1791078265062,
-      "receiptId": "1556119805789212732"
+      "receiptId": "1556119805789212732",
+      "invalidatedAt": 1791079159886,
+      "invalidReason": "監視対象の商品・仕様と一致しないため対象外"
     },
     {
       "id": "7674d62e-5d0c-4760-aed4-c296ade8c8a0",
@@ -24421,6 +24547,27 @@
         },
         "error": ""
       },
+      "targets": 97,
+      "errors": 0
+    },
+    {
+      "at": 1791079128942,
+      "checked": 1,
+      "discovered": null,
+      "targets": 97,
+      "errors": 0
+    },
+    {
+      "at": 1791079159886,
+      "checked": 2,
+      "discovered": null,
+      "targets": 97,
+      "errors": 0
+    },
+    {
+      "at": 1791079192156,
+      "checked": 2,
+      "discovered": null,
       "targets": 97,
       "errors": 0
     }
