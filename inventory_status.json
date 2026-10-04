@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1791078698105,
+  "generatedAt": 1791078799523,
   "discovery": {
     "version": 1,
     "startedAt": 1791078090716,
@@ -1500,6 +1500,22 @@
         "reason": "通常の観測・記録",
         "nextAt": 1791080440817,
         "at": 1791078640817
+      },
+      {
+        "kind": "available",
+        "storeId": "mediaworld",
+        "targetId": "d5546382-d507-449d-93e7-48de76d83781",
+        "previousAt": null,
+        "firstSeenAt": null,
+        "at": 1791078758727
+      },
+      {
+        "kind": "available",
+        "storeId": "mediaworld",
+        "targetId": "eb084f87-7b16-4d14-a4e1-98a47e595e8a",
+        "previousAt": null,
+        "firstSeenAt": null,
+        "at": 1791078798818
       }
     ],
     "budget": {
@@ -1530,8 +1546,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791078694274,
-  "lastCompletedAt": 1791078697050,
+  "lastTick": 1791078798025,
+  "lastCompletedAt": 1791078798843,
   "load": {
     "activePages": 95,
     "waitingPages": 0,
@@ -1541,8 +1557,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 626975,
-    "compressedBytes": 64978,
+    "uncompressedBytes": 629539,
+    "compressedBytes": 65241,
     "chunks": 1
   },
   "deliveryHealth": {
@@ -1572,8 +1588,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791078664272,
-    "nextSync": 1791085864272,
+    "lastSync": 1791078768024,
+    "nextSync": 1791085968024,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -2269,6 +2285,12 @@
       },
       {
         "at": 1791078664272,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791078768024,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -4578,13 +4600,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 159,
+          "negatives": 160,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791078733938,
+      "nextAt": 1791078918049,
       "failures": 0,
-      "lastChecked": 1791078574938,
+      "lastChecked": 1791078759049,
       "lastGood": {
         "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
         "price": 5808,
@@ -4634,11 +4656,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791078093552,
-          "lastAt": 1791078574938,
-          "samples": 3
+          "lastAt": 1791078759049,
+          "samples": 4
         }
       ],
-      "lastGoodAt": 1791078574938,
+      "lastGoodAt": 1791078759049,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -4648,14 +4670,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791078574938
+          "at": 1791078759049
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093552,
         "stock": "out_of_stock",
-        "lastAt": 1791078574938,
-        "lastUnavailableAt": 1791078574938
+        "lastAt": 1791078759049,
+        "lastUnavailableAt": 1791078759049
       },
       "monitorStatus": "監視中",
       "monitorActive": true
@@ -6525,13 +6547,13 @@
       "episodes": {
         "fa2b6ad8-672a-46cb-a699-8aad2e19eca4": {
           "active": false,
-          "negatives": 0,
+          "negatives": 1,
           "lastEvent": 1791052689415
         }
       },
-      "nextAt": 1791060465415,
+      "nextAt": 1791088302818,
       "failures": 0,
-      "lastChecked": 1791052689415,
+      "lastChecked": 1791078798818,
       "lastGood": {
         "title": "【予約】[TCG] (BOX) ONE PIECE(ワンピース) カードゲーム エクストラブースター ONE PIECE Heroines Edition vol.2(ワンピース ヒロインズエディション)【EB-05】 バンダイ(24パック)(20261031)",
         "price": 13980,
@@ -6557,9 +6579,40 @@
           "at": 1791044554712,
           "lastAt": 1791052689415,
           "samples": 3
+        },
+        {
+          "kind": "observation",
+          "stock": "preorder",
+          "price": 13980,
+          "comparable": true,
+          "priceDecision": "BOX定価を確認できないため通知保留",
+          "at": 1791078798818,
+          "lastAt": 1791078798818,
+          "samples": 1
         }
       ],
-      "lastGoodAt": 1791052689415,
+      "lastGoodAt": 1791078798818,
+      "priceDecisions": {
+        "fa2b6ad8-672a-46cb-a699-8aad2e19eca4": {
+          "referencePrice": null,
+          "percent": 105,
+          "maxPrice": null,
+          "policyReason": "基本条件：定価＋5%以内",
+          "shippingIncluded": false,
+          "status": "reference_unknown",
+          "reason": "BOX定価を確認できないため通知保留",
+          "at": 1791078798818
+        }
+      },
+      "availabilityTiming": {
+        "firstObservedAt": 1791078798818,
+        "availableSince": 1791078798818,
+        "openAfter": null,
+        "firstAvailableAt": 1791078798818,
+        "stock": "preorder",
+        "lastAt": 1791078798818,
+        "lastAvailableAt": 1791078798818
+      },
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -8028,13 +8081,13 @@
       "episodes": {
         "df0626b4-5639-4881-ad98-ecb75e0c4c73": {
           "active": false,
-          "negatives": 0,
+          "negatives": 1,
           "lastEvent": 1791052621435
         }
       },
-      "nextAt": 1791060397435,
+      "nextAt": 1791088262727,
       "failures": 0,
-      "lastChecked": 1791052621435,
+      "lastChecked": 1791078758727,
       "lastGood": {
         "title": "【予約】[TCG] (BOX) ガンダムカードゲーム ブースターパック Stardust Trails(スターダスト トレイルズ)【GD06】 バンダイ(24パック)(20261031)",
         "price": 11480,
@@ -8060,9 +8113,40 @@
           "at": 1791047679266,
           "lastAt": 1791052621435,
           "samples": 2
+        },
+        {
+          "kind": "observation",
+          "stock": "preorder",
+          "price": 11480,
+          "comparable": true,
+          "priceDecision": "BOX定価を確認できないため通知保留",
+          "at": 1791078758727,
+          "lastAt": 1791078758727,
+          "samples": 1
         }
       ],
-      "lastGoodAt": 1791052621435,
+      "lastGoodAt": 1791078758727,
+      "priceDecisions": {
+        "df0626b4-5639-4881-ad98-ecb75e0c4c73": {
+          "referencePrice": null,
+          "percent": 105,
+          "maxPrice": null,
+          "policyReason": "基本条件：定価＋5%以内",
+          "shippingIncluded": false,
+          "status": "reference_unknown",
+          "reason": "BOX定価を確認できないため通知保留",
+          "at": 1791078758727
+        }
+      },
+      "availabilityTiming": {
+        "firstObservedAt": 1791078758727,
+        "availableSince": 1791078758727,
+        "openAfter": null,
+        "firstAvailableAt": 1791078758727,
+        "stock": "preorder",
+        "lastAt": 1791078758727,
+        "lastAvailableAt": 1791078758727
+      },
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -9351,13 +9435,13 @@
       "episodes": {
         "dc88575b-6de8-47e3-b2e2-ff31e556ccc4": {
           "active": false,
-          "negatives": 1,
+          "negatives": 2,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791060365342,
+      "nextAt": 1791088231854,
       "failures": 0,
-      "lastChecked": 1791052589342,
+      "lastChecked": 1791078727854,
       "lastGood": {
         "title": "【新品】[TCG] (BOX) ディズニー・ロルカナ・TCG 日本語版 ブースターパック ジャファーの王権 タカラトミー(16パック)(20260221)",
         "price": 5060,
@@ -9383,9 +9467,37 @@
           "at": 1791052589342,
           "lastAt": 1791052589342,
           "samples": 1
+        },
+        {
+          "kind": "observation",
+          "stock": "out_of_stock",
+          "price": 5060,
+          "comparable": true,
+          "priceDecision": "通知上限5,544円以下",
+          "at": 1791078727854,
+          "lastAt": 1791078727854,
+          "samples": 1
         }
       ],
-      "lastGoodAt": 1791052589342,
+      "lastGoodAt": 1791078727854,
+      "priceDecisions": {
+        "dc88575b-6de8-47e3-b2e2-ff31e556ccc4": {
+          "referencePrice": 5280,
+          "percent": 105,
+          "maxPrice": 5544,
+          "policyReason": "基本条件：定価＋5%以内",
+          "shippingIncluded": false,
+          "status": "within_limit",
+          "reason": "通知上限5,544円以下",
+          "at": 1791078727854
+        }
+      },
+      "availabilityTiming": {
+        "firstObservedAt": 1791078727854,
+        "stock": "out_of_stock",
+        "lastAt": 1791078727854,
+        "lastUnavailableAt": 1791078727854
+      },
       "monitorStatus": "監視中",
       "monitorActive": true
     },
@@ -23915,6 +24027,27 @@
         },
         "error": ""
       },
+      "targets": 97,
+      "errors": 0
+    },
+    {
+      "at": 1791078727067,
+      "checked": 1,
+      "discovered": null,
+      "targets": 97,
+      "errors": 0
+    },
+    {
+      "at": 1791078757897,
+      "checked": 2,
+      "discovered": null,
+      "targets": 97,
+      "errors": 0
+    },
+    {
+      "at": 1791078798025,
+      "checked": 1,
+      "discovered": null,
       "targets": 97,
       "errors": 0
     }
