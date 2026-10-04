@@ -26,7 +26,7 @@ from tcg_monitor.game_modes import (
     load_enabled_game_ids,
 )
 from tcg_monitor.google_calendar import RELEASE_EVENT_COLOR_ID, CalendarAdapter
-from tcg_monitor.identity import release_dedupe_key
+from tcg_monitor.identity import lottery_dedupe_key, lottery_dedupe_key_values, release_dedupe_key
 from tcg_monitor.logging_config import configure_logging, log_event
 from tcg_monitor.models import (
     Alert,
@@ -43,6 +43,7 @@ from tcg_monitor.purchase_review import run_purchase_reviews
 from tcg_monitor.release_sources import is_accepted_release, is_trusted_retailer_release
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS
 from tcg_monitor.source_groups import active_source_filter
+from tcg_monitor.source_priority import lottery_source_priority
 from tcg_monitor.state import MonitorState
 
 
@@ -433,6 +434,49 @@ def _reuse_first_detection_start(state: MonitorState, case: LotteryCase) -> Lott
     return prepared
 
 
+def _preserve_preferred_case_source(state: MonitorState, case: LotteryCase) -> LotteryCase:
+    """別経路が一時的に読めなくても、確認済みの公式・個別告知へ戻れるようにする。"""
+    previous = state.data.get("seen_cases", {}).get(case.case_id, {})
+    if not previous:
+        return case
+    try:
+        tier = SourceTier(previous.get("source_tier", ""))
+        url = str(previous.get("source_url") or "")
+        raw_start = str(previous.get("start_at") or "")
+        previous_start = (datetime.fromisoformat(raw_start) if len(raw_start) > 10
+                          else date.fromisoformat(raw_start))
+        previous_kind = OpportunityKind(previous.get("opportunity_kind") or "lottery")
+    except (ValueError, TypeError):
+        return case
+    if not url or lottery_source_priority(tier, url) >= lottery_source_priority(
+        case.source_tier, case.source_url,
+    ):
+        return case
+    # 同じURLで開催される次回抽選や、別商品・別の販売方式に古い告知を使わない。
+    previous_key = lottery_dedupe_key_values(
+        case.game_id, case.retailer_id, str(previous.get("product_name") or ""),
+        str(previous.get("canonical_product_key") or ""), previous_start, previous_kind,
+    )
+    if previous_key != lottery_dedupe_key(case) or (
+        case.application_round and previous.get("application_round")
+        and case.application_round != previous["application_round"]
+    ):
+        return case
+    log_event(
+        phase="source_priority", outcome="preserved",
+        reason_code="preserve_preferred_lottery_reference", source_url=url,
+        product=case.canonical_product_key,
+    )
+    return replace(
+        case, source_tier=tier, source_url=url,
+        official_url=str(previous.get("official_url") or case.official_url),
+        extraction_method=str(previous.get("extraction_method") or case.extraction_method),
+        confidence=str(previous.get("confidence") or case.confidence),
+        # 下位の補助記事によって、公式で確認した日時を未確認の日時へ変えない。
+        start_at=previous_start,
+    )
+
+
 def _prepare_cases(state: MonitorState, cases: list[LotteryCase]) -> tuple[list[LotteryCase], int]:
     prepared: list[LotteryCase] = []
     new_count = 0
@@ -441,7 +485,9 @@ def _prepare_cases(state: MonitorState, cases: list[LotteryCase]) -> tuple[list[
         migrated_from = state.migrate_case_identity(case)
         if not already_known and migrated_from is None:
             new_count += 1
-        prepared.append(_reuse_first_detection_start(state, case))
+        prepared.append(_preserve_preferred_case_source(
+            state, _reuse_first_detection_start(state, case),
+        ))
     return prepared, new_count
 
 
