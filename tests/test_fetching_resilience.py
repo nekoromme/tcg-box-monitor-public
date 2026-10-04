@@ -31,6 +31,13 @@ from tcg_monitor.parsers.local_lottery import parse_yahoo_realtime
 from tcg_monitor.state import MonitorState
 
 
+def _legacy_config():
+    # Isolate the explicitly mocked routes; the new provider has integration tests.
+    config = load_config("sites.yaml")
+    return replace(config, system={**config.system, "fxembed_public": False})
+
+
+
 class FakeHttpFetcher:
     def __init__(self, responses: dict[str, FetchResult | Exception]) -> None:
         self.responses = responses
@@ -68,7 +75,7 @@ def _source(
 
 
 def _config(*sources: SourceConfig):
-    base = load_config("sites.yaml")
+    base = _legacy_config()
     return replace(
         base,
         system={
@@ -263,7 +270,7 @@ def test_queue_it_waiting_room_is_blocked_before_browser_rendering() -> None:
 
 
 def test_closed_tsutaya_line_http_403_does_not_open_host_circuit() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki_store"
     )
@@ -289,7 +296,7 @@ def test_closed_tsutaya_line_http_403_does_not_open_host_circuit() -> None:
     ],
 )
 def test_tsutaya_line_real_http_403_remains_a_failure(payload: str) -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki_store"
     )
@@ -316,7 +323,7 @@ def test_unregistered_form_cannot_use_closed_tsutaya_403_exception() -> None:
 def test_quiet_official_account_remains_healthy_when_optional_mirror_is_blocked(
     tmp_path: Path,
 ) -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
@@ -370,7 +377,7 @@ def test_quiet_official_account_remains_healthy_when_optional_mirror_is_blocked(
 def test_explicit_social_exclusions_do_not_become_mirror_failures(
     tmp_path: Path, source_id: str, body: str, status_id: str, reason: str,
 ) -> None:
-    configured = next(s for s in load_config("sites.yaml").sources if s.id == source_id)
+    configured = next(s for s in _legacy_config().sources if s.id == source_id)
     source = replace(
         configured, discovery_urls=[configured.discovery_urls[0], f"https://twstalker.com/{configured.parser_options['account']}"],
         fallback_on_empty_result=True,
@@ -397,7 +404,7 @@ def test_explicit_social_exclusions_do_not_become_mirror_failures(
 @freeze_time("2026-09-30 09:00:00")
 def test_catalog_miss_without_explicit_exclusion_remains_unresolved(tmp_path: Path) -> None:
     configured = next(
-        s for s in load_config("sites.yaml").sources if s.id == "yahoo_realtime_dmm_tsuhan"
+        s for s in _legacy_config().sources if s.id == "yahoo_realtime_dmm_tsuhan"
     )
     source = replace(configured, fallback_on_empty_result=True)
     primary, mirror = source.discovery_urls
@@ -418,7 +425,7 @@ def test_catalog_miss_without_explicit_exclusion_remains_unresolved(tmp_path: Pa
 
 
 def test_hobbylink_api_fetches_all_pages_without_loading_blocked_html(tmp_path: Path) -> None:
-    source = next(s for s in load_config("sites.yaml").sources if s.id == "hobbylink_japan_lottery")
+    source = next(s for s in _legacy_config().sources if s.id == "hobbylink_japan_lottery")
     primary, blocked_html = source.discovery_urls
     next_url = primary + "&page=2"
     article = {
@@ -441,7 +448,7 @@ def test_hobbylink_api_fetches_all_pages_without_loading_blocked_html(tmp_path: 
 
 
 def test_empty_search_and_failed_mirror_are_still_unhealthy(tmp_path: Path) -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
@@ -866,7 +873,7 @@ def test_discovery_urls_fall_back_until_one_succeeds(
 
 
 def test_hobby_station_failed_news_does_not_fetch_livepocket() -> None:
-    source = next(item for item in load_config("sites.yaml").sources
+    source = next(item for item in _legacy_config().sources
                   if item.id == "livepocket_hobby_station")
     primary, = source.discovery_urls
     fetcher = FakeHttpFetcher({primary: _response(primary, 202, "")})
@@ -878,7 +885,7 @@ def test_hobby_station_failed_news_does_not_fetch_livepocket() -> None:
 
 
 def test_ichinoseki_empty_search_uses_ordered_fallbacks() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     # 旧ミラー形式もパーサー単体の検証用に保持。本番の巡回先には登録しない。
     source = replace(source, discovery_urls=[*source.discovery_urls,
@@ -924,7 +931,7 @@ def test_tsutaya_ichinoseki_account_query_recovers_30th_lottery(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Recover the current official post without emitting its starter deck."""
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki"
     )
@@ -979,7 +986,7 @@ def test_tsutaya_ichinoseki_account_query_recovers_30th_lottery(
 @freeze_time("2026-09-05 22:45:00+09:00")
 def test_tsutaya_ichinoseki_oembed_recovers_mixed_product_post() -> None:
     """The verified BOX survives when oEmbed has no image and also names a starter."""
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki"
     )
@@ -1031,7 +1038,7 @@ def test_tsutaya_ichinoseki_oembed_recovers_mixed_product_post() -> None:
 
 @freeze_time("2026-08-16 12:00:00+09:00")
 def test_priority_store_yahoo_empty_result_uses_profile_fallback() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_toreca_douraku_sendai"
     )
@@ -1109,7 +1116,7 @@ def test_priority_store_yahoo_empty_result_uses_profile_fallback() -> None:
 @freeze_time("2026-09-05 19:15:00+09:00")
 def test_tsutaya_akebono_account_query_recovers_delayed_keyword_index() -> None:
     """The unfiltered account query must cover a delayed Yahoo keyword index."""
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_tsutaya_akebono"
     )
@@ -1151,7 +1158,7 @@ def test_tsutaya_akebono_account_query_recovers_delayed_keyword_index() -> None:
 @freeze_time("2026-09-05 20:30:00+09:00")
 def test_kojima_account_query_recovers_delayed_keyword_index() -> None:
     """A delayed keyword index must not hide an exact, store-specific lottery."""
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_kojima_secondary"
     )
@@ -1197,7 +1204,7 @@ def test_kojima_account_query_recovers_delayed_keyword_index() -> None:
 
 
 def test_kojima_uses_enabled_store_scoped_summary_fallback() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     by_id = {source.id: source for source in config.sources}
 
     summary = by_id["nyuka_now_fullcomp_livepocket"]
@@ -1225,7 +1232,7 @@ def test_yahoo_ocr_failure_uses_twstalker_and_clears_pending(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
@@ -1281,7 +1288,7 @@ def test_yahoo_ocr_failure_uses_twstalker_and_clears_pending(
 
 
 def test_yahoo_all_primary_queries_succeed_without_twstalker() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_premium_bandai_onepiece"
     )
@@ -1313,7 +1320,7 @@ def test_yahoo_all_primary_queries_succeed_without_twstalker() -> None:
 
 
 def test_yahoo_fetch_failure_uses_twstalker_fallback() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
@@ -1343,7 +1350,7 @@ def test_yahoo_fetch_failure_uses_twstalker_fallback() -> None:
 
 
 def test_yahoo_http_success_with_broken_structure_uses_twstalker() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
@@ -1379,7 +1386,7 @@ def test_yahoo_http_success_with_broken_structure_uses_twstalker() -> None:
 def test_yahoo_parser_failure_uses_twstalker_fallback(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
@@ -1427,7 +1434,7 @@ def test_yahoo_parser_failure_uses_twstalker_fallback(
 def test_yahoo_empty_direct_post_fallback_continues_to_profile_mirror(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(
         item for item in config.sources if item.id == "yahoo_realtime_seagull_common"
     )
@@ -1472,7 +1479,7 @@ def test_yahoo_repair_url_remains_independent_from_twstalker(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(item for item in config.sources if item.id == "yahoo_realtime_tsutaya_ichinoseki")
     source = replace(
         source,
@@ -1691,7 +1698,7 @@ def test_source_can_disable_conditional_get() -> None:
 
 @freeze_time("2026-08-03 12:00:00+09:00")
 def test_yahoo_provisional_case_is_revisited_from_detail_page(tmp_path) -> None:
-    base = load_config("sites.yaml")
+    base = _legacy_config()
     source = next(item for item in base.sources if item.id == "yahoo_realtime_geo_official")
     root_url = source.discovery_urls[0]
     status_id = "2080582562012119398"
@@ -1741,7 +1748,7 @@ def test_yahoo_provisional_case_is_revisited_from_detail_page(tmp_path) -> None:
 
 
 def test_ocr_failure_is_pending_before_repeated_alert() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     source = next(item for item in config.sources if item.id == "yahoo_realtime_yorozuya_morioka")
     status_url = "https://x.com/yorozuya_card/status/2079734608745201729"
     html = f"""
@@ -1805,7 +1812,7 @@ def test_ocr_failure_is_pending_before_repeated_alert() -> None:
 
 
 def test_unsupported_game_is_not_parsed() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     geo = next(source for source in config.sources if source.id == "geo")
     unsupported_geo = replace(
         geo,
@@ -1892,7 +1899,7 @@ def test_prospective_game_is_not_accepted_as_verified_fallback(
 
 
 def test_access_limited_production_sources_declare_healthy_alternatives() -> None:
-    config = load_config("sites.yaml")
+    config = _legacy_config()
     by_id = {source.id: source for source in config.sources}
 
     assert by_id["geo"].fallback_source_ids == ["yahoo_realtime_geo_official"]
@@ -1956,7 +1963,7 @@ sources: []
 
 
 def test_production_config_uses_three_attempts_and_bounded_host_parallelism() -> None:
-    system = load_config("sites.yaml").system
+    system = _legacy_config().system
 
     assert system["request_timeout_seconds"] == 20
     assert system["request_budget_seconds"] == 60

@@ -8,6 +8,7 @@ from contextlib import suppress
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import cast
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
@@ -25,6 +26,7 @@ from tcg_monitor.fetching import (
     PageResult,
     provider_host,
 )
+from tcg_monitor.fxembed import FxEmbedReader, is_fxembed_url, reuse_current_ocr, timeline_url
 from tcg_monitor.http_client import HttpFetcher
 from tcg_monitor.models import (
     Alert,
@@ -724,6 +726,19 @@ def run_pipeline(
         conditional_get=bool(config.system.get("conditional_get", True)),
     )
     http_cache = _state_mapping(monitor_state, "http_cache")
+    fxembed_watermarks = _state_mapping(monitor_state, "fxembed_watermarks")
+    fxembed_reader = FxEmbedReader(
+        page_fetcher,
+        dict(fxembed_watermarks),
+        max_pages=int(config.system.get("fxembed_max_pages", 5)),
+        lookback_days=int(config.system.get("fxembed_lookback_days", 7)),
+    )
+    # Provider image URLs differ; keep their OCR caches separate to avoid
+    # invalidating both caches on every run, while sharing retry/delivery identity.
+    fxembed_ocr_cache = cast(
+        dict[str, str], _state_mapping(monitor_state, "fxembed_ocr_cache"),
+    )
+    fxembed_ocr_meta = _state_mapping(monitor_state, "fxembed_ocr_cache_meta")
     ocr_pending = _state_mapping(monitor_state, "ocr_pending")
     ocr_cache_meta = _state_mapping(monitor_state, "ocr_cache_meta")
     opened_hosts_reported: set[str] = set()
@@ -755,6 +770,8 @@ def run_pipeline(
         ]
 
     def fetch_page(source: SourceConfig, url: str) -> PageResult:
+        if is_fxembed_url(url):
+            return fxembed_reader.fetch(url, source)
         if source.id == "pokemon_official_products" and is_pokemon_products_api(url):
             # The catalog's public API distinguishes a successful zero-result
             # search from a browser shell that failed to load its cards.
@@ -810,6 +827,11 @@ def run_pipeline(
             url for url in source.parser_options.get("supplemental_discovery_urls", [])
             if isinstance(url, str) and url not in always_fetch_roots
         )
+        # Yahooが成功しても一部投稿が検索から漏れるため、常に別経路を併用する。
+        # 発信者・対象作品は既存設定のまま。過去のfixtureは新しい通信を行わない。
+        fx_url = timeline_url(source) if config.system.get("fxembed_public", False) else None
+        if fx_url and not fixture_dir:
+            always_fetch_roots.append(fx_url)
         if monitor_state is not None and is_yahoo_source:
             repair_urls = yahoo_repair_discovery_urls(
                 source,
@@ -939,6 +961,14 @@ def run_pipeline(
                     result = prefetched or fetch_page(source, url)
                 metrics.fetched(result)
                 route.update(status="fetched_unclassified", http_status=result.status_code)
+                if is_fxembed_url(url):
+                    report = fxembed_reader.reports.get(url, {})
+                    route.update(report)
+                    if report.get("incomplete_reason"):
+                        alerts.append(_alert(
+                            source.id, source.name, url, "fxembed_incomplete",
+                            "X補完取得が途中までです: " + str(report["incomplete_reason"]),
+                        ))
             except (CircuitOpenError, FetchProblem) as problem:
                 route.update(
                     status="fetch_failed", error=problem.reason,
@@ -1377,6 +1407,11 @@ def run_pipeline(
                         parse_tsutaya_line_form(html, url, source, config)
                     )
                 elif is_yahoo_realtime_source(source):
+                    if is_fxembed_url(url):
+                        reuse_current_ocr(
+                            html, str(source.parser_options["account"]), run_token,
+                            ocr_cache, ocr_cache_meta, fxembed_ocr_cache, fxembed_ocr_meta,
+                        )
                     diagnostics: dict[str, int] = {}
                     route["diagnostics"] = diagnostics
                     if (
@@ -1394,10 +1429,12 @@ def run_pipeline(
                             source,
                             config,
                             ocr_reader=read_image_text if not fixture_dir else None,
-                            ocr_cache=ocr_cache,
+                            ocr_cache=fxembed_ocr_cache if is_fxembed_url(url) else ocr_cache,
                             known_releases=releases,
                             ocr_pending=ocr_pending,
-                            ocr_cache_meta=ocr_cache_meta,
+                            ocr_cache_meta=(
+                                fxembed_ocr_meta if is_fxembed_url(url) else ocr_cache_meta
+                            ),
                             ocr_attempt_token=run_token,
                             diagnostics=diagnostics,
                         )
@@ -1641,6 +1678,27 @@ def run_pipeline(
         root_prefetcher.source_done(source)
 
     root_prefetcher.close()
+
+    # Commit only ranges parsed successfully by every source using the account.
+    # Shared accounts can serve multiple games; one successful game is not enough.
+    for account, watermark in fxembed_reader.watermarks.items():
+        related = [
+            fx_metrics.routes[root]
+            for source in selected_sources
+            if str(source.parser_options.get("account", "")).lower() == account
+            and (root := timeline_url(source))
+            and (fx_metrics := source_evidence.get(source.id)) is not None
+            and root in fx_metrics.routes
+        ]
+        pending_images = any(
+            str(key).lower().startswith(f"https://x.com/{account}/status/")
+            for key in ocr_pending
+        )
+        if related and not pending_images and all(
+            route.get("complete") and route.get("status") in {"parsed", "parsed_empty"}
+            and not route.get("alerts") for route in related
+        ):
+            fxembed_watermarks[account] = watermark
 
     # 人が公式画面で確認した期限付き案件も、通常と同じ重複抑止・通知処理へ渡す。
     # 取得障害の状態は変更しない。補完しただけで監視が復旧したとは扱わない。

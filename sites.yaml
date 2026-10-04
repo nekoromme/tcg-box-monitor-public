@@ -16,6 +16,10 @@ system:
       lorcana: 14
   # 公式Xの検索語の反映遅延を、同じ公式アカウントの全投稿検索で補完する。
   social_account_fallback: true
+  # 同じアカウントの公開投稿を毎回併読。本文・画像・通知履歴は既存処理で統合。
+  fxembed_public: true
+  fxembed_max_pages: 5
+  fxembed_lookback_days: 7
   # 2026-10-03のユーザー指定でPokeGetInfoMainを追加。店別の個人・ブログは増やさない。
   secondary_provider_allowlist: [onepiecenyuka, nyuka_now, snkrdunk, PokeGetInfoMain]
   # 仙台を含まないと明示された募集だけ除外。店舗不明の募集は見逃し防止で残す。

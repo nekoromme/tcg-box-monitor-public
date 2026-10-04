@@ -150,6 +150,12 @@ def _validated_system(raw_system: Any) -> dict[str, Any]:
     if not isinstance(raw_system, dict):
         raise ConfigError("system must be a mapping")
     system = dict(raw_system)
+    if not isinstance(system.get("fxembed_public", False), bool):
+        raise ConfigError("fxembed_public must be boolean")
+    for name, upper in (("fxembed_max_pages", 10), ("fxembed_lookback_days", 30)):
+        value = system.get(name, 5 if name == "fxembed_max_pages" else 7)
+        if isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= upper:
+            raise ConfigError(f"{name} must be an integer from 1 to {upper}")
     approved_providers = system.get("secondary_provider_allowlist")
     if approved_providers is not None and (
         not isinstance(approved_providers, list)

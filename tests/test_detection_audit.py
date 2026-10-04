@@ -20,6 +20,8 @@ from tcg_monitor.social_discovery import social_discovery_urls
 from tcg_monitor.state import MonitorState
 
 CONFIG = load_config("sites.yaml")
+# Isolate legacy route fixtures; FxEmbed is exercised in test_fxembed.py.
+CONFIG = replace(CONFIG, system={**CONFIG.system, "fxembed_public": False})
 OFFICIAL_SOCIAL = [
     source
     for source in CONFIG.sources
