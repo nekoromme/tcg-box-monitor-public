@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 from datetime import date, datetime
-from urllib.parse import urljoin
+from urllib.parse import quote, urljoin
 
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
@@ -11,12 +12,58 @@ from tcg_monitor.additional_products import additional_game, additional_matches
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime
-from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
+from tcg_monitor.models import (
+    Alert,
+    Config,
+    LotteryCase,
+    Release,
+    SourceConfig,
+    stable_url_identity,
+)
 from tcg_monitor.non_box_sales import additional_sale_cases
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
 from tcg_monitor.store_scope import outside_store_scope
 
 _HEADINGS = {"h2", "h3", "h4", "h5", "h6"}
+
+
+def _section_reference(case: LotteryCase, soup: BeautifulSoup, url: str,
+                       config: Config) -> LotteryCase:
+    """最後の補助経路にも、実際の対象商品と開始日の欄へ飛ぶ参照を付ける。"""
+    for heading in soup.find_all(list(_HEADINGS)):
+        tags: list[Tag] = []
+        links: list[str] = []
+        for node in heading.next_elements:
+            if isinstance(node, Tag) and node.name in _HEADINGS:
+                break
+            if isinstance(node, Tag):
+                if node.name == "tr":
+                    tags.append(node)
+                if node.name == "a" and node.get("href"):
+                    links.append(urljoin(url, str(node.get("href"))))
+        # 同じ商品が過去の欄にも出るので、商品だけでなく応募先も照合する。
+        if not any(stable_url_identity(link) == stable_url_identity(case.official_url)
+                   for link in links):
+            continue
+        for candidate in _fullcomp_product_candidates(tags):
+            product = classify_product(config.games[case.game_id], candidate, candidate + " 1BOX")
+            if product.canonical_product_key != case.canonical_product_key:
+                continue
+            start_text = ""
+            for row in tags:
+                label, value = row.find("th"), row.find("td")
+                if label and value and label.get_text(strip=True) == "開始日":
+                    start_text = value.get_text(" ", strip=True)
+                    break
+            # ブラウザーのテキスト指定リンク。サイトが持たない見出しIDは捏造しない。
+            # URLの表示用部分だけを変え、通知済みIDや応募URLを変えない。
+            def encode(text: str) -> str:
+                return quote(text, safe="").replace("-", "%2D")
+            fragment = encode(candidate)
+            if start_text:
+                fragment += "," + encode(start_text)
+            return replace(case, source_url=url.split("#", 1)[0] + "#:~:text=" + fragment)
+    return case
 
 
 def _premium_bandai_sections(soup: BeautifulSoup) -> list[tuple[str, list[Tag], list[str]]]:
@@ -135,7 +182,8 @@ def parse_nyuka_now_premium_bandai(
         for case in cases:
             cases_by_id[case.case_id] = case
         alerts.extend(section_alerts)
-    return list(cases_by_id.values()), [], alerts
+    return [_section_reference(case, soup, url, config)
+            for case in cases_by_id.values()], [], alerts
 
 
 def _parse_premium_bandai_block(
@@ -655,8 +703,10 @@ def parse_nyuka_now_lottery_summary(
         premium_cases, _, premium_alerts = parse_nyuka_now_premium_bandai(
             html, url, source, config,
         )
+    soup = BeautifulSoup(html, "lxml")
     return (
-        [*fullcomp_cases, *priority_cases, *premium_cases],
+        [_section_reference(case, soup, url, config)
+         for case in [*fullcomp_cases, *priority_cases, *premium_cases]],
         [*fullcomp_releases, *priority_releases],
         [*fullcomp_alerts, *priority_alerts, *premium_alerts],
     )

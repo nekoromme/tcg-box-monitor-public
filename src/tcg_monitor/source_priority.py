@@ -11,10 +11,23 @@ from tcg_monitor.identity import (
     lottery_dedupe_key,
     release_dedupe_key,
 )
-from tcg_monitor.models import Alert, LotteryCase, OpportunityKind, Release, stable_url_identity
+from tcg_monitor.models import (
+    Alert,
+    LotteryCase,
+    OpportunityKind,
+    Release,
+    SourceTier,
+    stable_url_identity,
+)
 from tcg_monitor.release_sources import is_trusted_retailer_release
 
 ORDER = {"official": 0, "official_indirect": 1, "secondary": 2}
+
+
+def lottery_source_priority(tier: SourceTier, url: str) -> tuple[int, int]:
+    """公式を優先し、同じ確度の補助情報なら長い入荷Nowまとめを最後にする。"""
+    host = urlsplit(url).netloc.lower().removeprefix("www.")
+    return ORDER[tier.value], int(host == "nyuka-now.com")
 
 
 def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[Alert]]:
@@ -46,7 +59,7 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
         ordered = sorted(values, key=lambda item: (
             int(item.extraction_method.startswith("additional_product_")
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
-            ORDER[item.source_tier.value],
+            *lottery_source_priority(item.source_tier, item.source_url),
             int(item.retailer_id == "lorcana_official"
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
         ))

@@ -2750,7 +2750,7 @@ sources:
   - product_name
   - application_start
   - official_application_link
-  notes: 同じ入荷Nowのポケカ・ワンピース・遊戯王・ドラゴンボール各種まとめを各1回取得し、キッズリパブリック・HMV・ミニストップを含む店舗別欄を補完する。受付中・受付予定だけを解析し、終了済みの抽選や日付不足は通知しない。LivePocketの応募リンクは保存するが取得しない。
+  notes: 公式ページ・公式X・スニーカーダンク・個別投稿が同じ抽選を取れた場合はそちらを採用。代替情報がない抽選の見落とし防止として、同じ入荷Nowのポケカ・ワンピース・遊戯王・ドラゴンボール各種まとめを各1回取得し、キッズリパブリック・HMV・ミニストップを含む店舗別欄を補完する。受付中・受付予定だけを解析し、終了済みの抽選や日付不足は通知しない。LivePocketの応募リンクは保存するが取得しない。
   parser_options:
     information_provider: nyuka_now
     priority_retailers:
@@ -2963,6 +2963,33 @@ sources:
     - S.H.Figuarts
     - グレートザウルス
     - たまごっちMAO
+- id: yahoo_realtime_onepiece_premium_bandai
+  name: ワンピースカード公式X プレミアムバンダイ販売告知
+  source_type: retailer_official_social_search
+  source_tier: official_indirect
+  coverage_scope: specialized
+  supported_games:
+    one_piece_card: verified
+  purposes:
+  - lottery_discovery
+  - official_sale_discovery
+  enabled: true
+  discovery_urls:
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AONEPIECE_tcg%20%E3%83%97%E3%83%AC%E3%83%90%E3%83%B3&ei=UTF-8
+  - https://search.yahoo.co.jp/realtime/search?p=id%3AONEPIECE_tcg%20%E3%83%97%E3%83%AC%E3%83%9F%E3%82%A2%E3%83%A0%E3%83%90%E3%83%B3%E3%83%80%E3%82%A4&ei=UTF-8
+  render_mode: http
+  poll_minutes: 120
+  expected_elements:
+  - official_x_status
+  notes: メーカー公式のプレバン告知を既存の公開X取得で補完。大会・店舗限定募集は拾わず、同じ店舗・商品・開始日の履歴と予定を引き継ぐ。
+  parser_kind: yahoo_realtime
+  parser_options:
+    account: ONEPIECE_tcg
+    retailer_id: premium_bandai
+    retailer_name: プレミアムバンダイ
+    required_retailer_mentions:
+    - プレミアムバンダイ
+    - プレバン
 - id: nyuka_now_premium_bandai_onepiece
   name: 入荷Now プレミアムバンダイ抽選欄
   source_type: secondary_lottery_summary

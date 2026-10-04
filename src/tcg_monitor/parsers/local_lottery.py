@@ -238,7 +238,7 @@ _ACTION_WORDS = (
     "エントリー開始",
 )
 _LOTTERY_APPLICATION_START = re.compile(
-    r"抽選(?:申込(?:み)?|申し込み|応募|予約)(?:受付)?(?:を|が)?(?:開始|スタート)"
+    r"抽選(?:申込(?:み)?|申し込み|応募|予約|販売)(?:受付)?(?:を|が)?(?:開始|スタート)"
 )
 _CLOSED_OR_RESULT_WORDS = (
     "当選者発表",
@@ -610,7 +610,15 @@ def _application_start(
             (
                 candidate
                 for candidate in reversed(date_matches)
-                if re.match(r"(?:日)?(?:より|から)", prefix[candidate.end() :])
+                # 「10月5日（月）12時より ... 抽選販売を開始」も開始告知。
+                # 日付と「より」の間に曜日・時刻があっても読み落とさない。
+                # 「発売」「結果発表」の日付は、従来どおり対象にしない。
+                if re.match(
+                    r"(?:日)?(?:\([月火水木金土日]\))?"
+                    r"(?:(?:午前|午後|正午|昼)?\d{1,2}"
+                    r"(?:時(?:\d{1,2}分)?|:\d{2}))?(?:より|から)",
+                    prefix[candidate.end() :],
+                )
             ),
             None,
         )
