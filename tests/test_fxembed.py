@@ -292,3 +292,48 @@ def test_one_unmarked_pinned_post_among_reposts_is_not_a_confirmed_boundary() ->
     assert len(fetcher.calls) == 2
     assert str(post(3)["id"]) in result.html
     assert reader.reports[ROOT]["complete"] is True
+
+
+def test_only_current_run_matching_attachment_cache_can_be_shared():
+    from tcg_monitor.fxembed import reuse_current_ocr
+
+    raw = post(4, "お知らせ")
+    raw["media"] = {"photos": [{"url": "https://pbs.twimg.com/media/own.jpg"}]}
+    html = post_markup(raw, "pokegetinfomain")
+    assert html is not None
+    key = f'https://x.com/PokeGetInfoMain/status/{raw["id"]}'
+    cache = {key: "読み取り済みの本人の告知"}
+    run = "2026-10-04T12:00:00+00:00"
+    for checked, images, reuse in [
+        ("2026-10-04T11:59:00+00:00", ["https://rts-pctr.c.yimg.jp/own"], False),
+        (run, [], False),
+        (run, ["https://rts-pctr.c.yimg.jp/own", "https://rts-pctr.c.yimg.jp/quote"], False),
+        (run, ["https://rts-pctr.c.yimg.jp/own"], True),
+    ]:
+        target, meta = {}, {}
+        reuse_current_ocr(html, "PokeGetInfoMain", run, cache,
+                          {key: {"updated_at": checked, "image_urls": images}}, target, meta)
+        assert bool(target) is reuse
+        if reuse:
+            assert meta[key]["image_urls"] == ["https://pbs.twimg.com/media/own.jpg"]
+
+
+def test_full_application_link_enriches_the_same_post_without_changing_identity():
+    from datetime import date
+
+    from tcg_monitor.models import LotteryCase, SourceTier
+    from tcg_monitor.source_priority import merge_lotteries
+
+    case = LotteryCase(
+        "one_piece_card", "premium_bandai", "プレミアムバンダイ", "DAY'26", "カード集",
+        "nonbox:pcc:day26", date(2026, 10, 5), "https://p-bandai.jp/item/item-1000",
+        "https://x.com/onepiecenyuka/status/2106716953377440040", SourceTier.SECONDARY,
+        "yahoo_realtime_secondary_body_application_period", "medium",
+    ).with_id()
+    full = replace(case, official_url="https://p-bandai.jp/item/item-1000259109/")
+    merged, _ = merge_lotteries([case, full])
+    assert len(merged) == 1 and merged[0].case_id == case.case_id
+    assert merged[0].official_url == full.official_url
+    # A different post does not qualify as evidence to rewrite this link.
+    other = replace(full, source_url="https://x.com/another/status/2106716953377440040")
+    assert merge_lotteries([case, other])[0][0].official_url == case.official_url

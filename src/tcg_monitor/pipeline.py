@@ -26,7 +26,7 @@ from tcg_monitor.fetching import (
     PageResult,
     provider_host,
 )
-from tcg_monitor.fxembed import FxEmbedReader, is_fxembed_url, timeline_url
+from tcg_monitor.fxembed import FxEmbedReader, is_fxembed_url, reuse_current_ocr, timeline_url
 from tcg_monitor.http_client import HttpFetcher
 from tcg_monitor.models import (
     Alert,
@@ -1407,6 +1407,11 @@ def run_pipeline(
                         parse_tsutaya_line_form(html, url, source, config)
                     )
                 elif is_yahoo_realtime_source(source):
+                    if is_fxembed_url(url):
+                        reuse_current_ocr(
+                            html, str(source.parser_options["account"]), run_token,
+                            ocr_cache, ocr_cache_meta, fxembed_ocr_cache, fxembed_ocr_meta,
+                        )
                     diagnostics: dict[str, int] = {}
                     route["diagnostics"] = diagnostics
                     if (

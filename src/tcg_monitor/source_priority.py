@@ -4,6 +4,7 @@ import re
 from collections import defaultdict
 from dataclasses import replace
 from hashlib import sha256
+from urllib.parse import urlsplit
 
 from tcg_monitor.identity import (
     is_pokemon_30th_cardset,
@@ -50,6 +51,16 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
         ))
         first = ordered[0]
+        # The search page may expose a shortened display URL. Enrich only the
+        # SAME post/case when another route provides its full same-host URL.
+        # Keep case/delivery identity and source/date priority unchanged.
+        for candidate in ordered[1:]:
+            if (candidate.source_url == first.source_url
+                    and candidate.official_url != first.official_url
+                    and candidate.official_url.startswith(first.official_url)
+                    and urlsplit(candidate.official_url).netloc
+                    == urlsplit(first.official_url).netloc):
+                first = replace(first, official_url=candidate.official_url)
         # 公式側が発表日を載せない場合、同じ抽選回の投稿にある日付を補う。
         if first.result_at is None:
             dated = next((item for item in ordered if item.result_at is not None), None)

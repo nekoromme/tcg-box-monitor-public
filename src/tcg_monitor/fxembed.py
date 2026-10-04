@@ -14,6 +14,8 @@ from html import escape
 from typing import Any
 from urllib.parse import urlencode, urlsplit
 
+from bs4 import BeautifulSoup
+
 from tcg_monitor.fetching import FetchProblem, PageFetcher, PageResult
 from tcg_monitor.models import RenderMode, SourceConfig
 
@@ -90,6 +92,49 @@ def post_markup(post: dict[str, Any], account: str) -> str | None:
     )
     markup += "".join(f'<img src="{escape(link, quote=True)}"/>' for link in images[:4])
     return markup + "</article>"
+
+
+
+def reuse_current_ocr(
+    html: str, account: str, run_token: str,
+    existing_cache: dict[str, str] | None, existing_meta: dict[str, object],
+    target_cache: dict[str, str], target_meta: dict[str, object],
+) -> None:
+    """Reuse only same-post images verified by the existing route in THIS run.
+
+    Old caches, missing image identities, and different attachment counts must
+    be read independently. Quotes/avatars are already removed by both parsers.
+    """
+    if not existing_cache:
+        return
+    started = datetime.fromisoformat(run_token)
+    for article in BeautifulSoup(html, "lxml").find_all("article"):
+        anchor = article.find("a", href=re.compile(r"^https://x\.com/[^/]+/status/\d+$"))
+        if anchor is None:
+            continue
+        status_id = str(anchor.get("href")).rsplit("/", 1)[-1]
+        key = f"https://x.com/{account}/status/{status_id}"
+        if key in target_cache or key in target_meta:
+            continue
+        metadata = existing_meta.get(key)
+        if not isinstance(metadata, dict):
+            continue
+        try:
+            checked = datetime.fromisoformat(str(metadata.get("updated_at", "")))
+            if checked < started:
+                continue
+        except (ValueError, TypeError):
+            continue
+        images = [str(image.get("src")) for image in article.find_all("img", src=True)]
+        old_images = metadata.get("image_urls")
+        if not images or not isinstance(old_images, list) or len(images) != len(old_images):
+            continue
+        text = existing_cache.get(key)
+        if not text and not metadata.get("image_only_no_text"):
+            continue
+        if text:
+            target_cache[key] = text
+        target_meta[key] = {**metadata, "image_urls": images, "reused_current_run": True}
 
 
 @dataclass
