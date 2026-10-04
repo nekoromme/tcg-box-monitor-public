@@ -18,7 +18,7 @@ test('公開設定は7弾だけを停止し、指定3商品・プレ値の弾・
 });
 
 test('停止は商品IDで一致し、再同期・再実行でも履歴と手動停止を維持する',async()=>{
-  const policy=await loadInventoryPolicy();
+  const policy={...await loadInventoryPolicy(),productSettings:{}};
   let state={enabled:true,automatic:{enabled:true,products:[]},rules:[
     {id:'exclude',automaticProductId:'gundam-gd02',enabled:true},
     {id:'manual',config:{query:'GD02'},enabled:true},
@@ -53,7 +53,7 @@ test('実行経路で停止を先に適用し、送信履歴・上限を維持�
   const state={enabled:true,notificationConfigured:true,lastTick:NOW,lastCompletedAt:NOW,
     discovery:{version:1,stores:{},log:[]},load:{activePages:3,intervalSeconds:60,discoverySeconds:3600},
     automatic:{enabled:true,pricePolicy,lastSync:NOW,products:products.map(id=>({id,name:id,priceStatus:'ready',notificationMaxPrice:id==='pokemon-m6a'?14400:6098,pricePercent:id==='pokemon-m6a'?200:105})),log:[]},
-    rules:products.map(id=>({id,automaticProductId:id,enabled:true})),targets:[{id:'history',history:[{price:5280}]}],
+    rules:products.map(id=>({id,automaticProductId:id,enabled:true,config:{priceLimit:id==='pokemon-m6a'?'200':'105',maxPrice:null}})),targets:[{id:'history',history:[{price:5280}]}],
     events:[{id:'old-sent',delivery:'sent',receiptId:'receipt-kept',sentAt:NOW-60000},{id:'pending-gd02',ruleId:'gundam-gd02',delivery:'pending',at:NOW}],runs:[]};
   const commands=[];let reads=0;
   const fetcher=async(input,options={})=>{
