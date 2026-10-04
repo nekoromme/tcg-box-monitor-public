@@ -18,6 +18,12 @@ export function validateInventoryPolicy(policy) {
     for(const source of product.evidence)if(!/^https:\/\//.test(source.url)||!source.kind||!Number.isInteger(source.price)||source.price<=0)throw policyError('notification_policy_invalid');
     ids.add(product.id);
   }
+  for(const [id,setting] of Object.entries(policy.productSettings||{})) {
+    if(!id||!setting||typeof setting!=='object'||Array.isArray(setting))throw policyError('notification_policy_invalid');
+    if(setting.enabled!==undefined&&typeof setting.enabled!=='boolean')throw policyError('notification_policy_invalid');
+    if(setting.percent!==undefined&&(!Number.isInteger(setting.percent)||setting.percent<50||setting.percent>1000))throw policyError('notification_policy_invalid');
+    if(setting.maxPrice!==undefined&&setting.maxPrice!==null&&(!Number.isInteger(setting.maxPrice)||setting.maxPrice<1||setting.maxPrice>99999999))throw policyError('notification_policy_invalid');
+  }
   return policy;
 }
 
@@ -29,28 +35,39 @@ function policyError(code) {return Object.assign(new Error(code),{code});}
 export async function enforceInventoryPolicy(state,policy,api,log=()=>{}) {
   validateInventoryPolicy(policy);
   const excluded=new Set(policy.pausedProducts.map(p=>p.id));
-  const changes=state.rules.filter(r=>excluded.has(r.automaticProductId)&&r.enabled!==false).map(r=>({id:r.id,productId:r.automaticProductId}));
+  const changes=state.rules.filter(r=>r.automaticProductId).map(r=>({id:r.id,productId:r.automaticProductId,current:r.enabled,enabled:policy.productSettings?.[r.automaticProductId]?.enabled??(excluded.has(r.automaticProductId)?false:undefined)})).filter(c=>c.enabled!==undefined&&c.enabled!==c.current);
   for(const change of changes) {
-    state=await api({action:'toggle',id:change.id,enabled:false});
-    if(!state.rules.some(r=>r.id===change.id&&r.enabled===false))throw policyError('notification_policy_not_applied');
-    log(JSON.stringify({event:'inventory_product_paused',productId:change.productId,reviewedAt:policy.reviewedAt}));
+    state=await api({action:'toggle',id:change.id,enabled:change.enabled});
+    if(!state.rules.some(r=>r.id===change.id&&r.enabled===change.enabled))throw policyError('notification_policy_not_applied');
+    log(JSON.stringify({event:'inventory_product_setting',productId:change.productId,enabled:change.enabled,reviewedAt:policy.reviewedAt}));
+  }
+  for(const rule of state.rules.filter(r=>r.automaticProductId)) {
+    const setting=policy.productSettings?.[rule.automaticProductId];if(!setting)continue;
+    const percent=setting.percent??Number(rule.config.priceLimit),maxPrice=setting.maxPrice===undefined?rule.config.maxPrice:setting.maxPrice;
+    if(String(percent)===rule.config.priceLimit&&(maxPrice??null)===(rule.config.maxPrice??null))continue;
+    state=await api({action:'rule-price',id:rule.id,priceLimit:String(percent),maxPrice:maxPrice??null});
+    const saved=state.rules.find(r=>r.id===rule.id)?.config;
+    if(saved?.priceLimit!==String(percent)||(saved?.maxPrice??null)!==(maxPrice??null))throw policyError('notification_policy_not_applied');
   }
   return state;
 }
 
 export function inventoryPolicyIssues(state,policy) {
   const excluded=new Set(policy.pausedProducts.map(p=>p.id));
-  return state.rules.some(r=>excluded.has(r.automaticProductId)&&r.enabled!==false)
+  return state.rules.some(r=>{
+    const s=policy.productSettings?.[r.automaticProductId],enabled=s?.enabled??(excluded.has(r.automaticProductId)?false:undefined);
+    return enabled!==undefined&&r.enabled!==enabled||s?.percent!==undefined&&String(s.percent)!==r.config.priceLimit||s?.maxPrice!==undefined&&s.maxPrice!==(r.config.maxPrice??null);
+  })
     ?[{code:'notification_policy_not_applied',message:'停止対象のBOXが自動監視で有効になっている'}]:[];
 }
 
 export function inventoryPolicySummary(state,policy,now=Date.now()) {
   const excluded=new Map(policy.pausedProducts.map(p=>[p.id,p]));
-  return {version:policy.version,reviewedAt:policy.reviewedAt,verifiedAt:now,sourceUrl:POLICY_URL,pausedProducts:policy.pausedProducts,
+  return {version:policy.version,reviewedAt:policy.reviewedAt,verifiedAt:now,sourceUrl:POLICY_URL,productSettings:policy.productSettings||{},pausedProducts:policy.pausedProducts,
     products:state.automatic.products.map(p=>{
       const rule=state.rules.find(r=>r.automaticProductId===p.id);
       const active=!!(state.enabled&&state.automatic.enabled&&rule?.enabled&&!rule.autoRetired);
-      const stopped=excluded.get(p.id);
+      const stopped=policy.productSettings?.[p.id]?.enabled===true?null:excluded.get(p.id);
       return {...p,monitoringEnabled:active,notificationStatus:stopped&&!active?'相場確認により停止':!active?'設定により停止':p.priceStatus!=='ready'?'定価確認まで通知保留':'価格条件内なら通知',notificationReason:stopped?.reason||''};
     })};
 }
@@ -58,7 +75,7 @@ export function inventoryPolicySummary(state,policy,now=Date.now()) {
 export function inventoryPolicyReport(summary) {
   return ['', '## 自動通知の対象設定', '',
     `相場確認日：${summary.reviewedAt}。停止リストは [inventory-notification-policy.json](${POLICY_URL})。`,
-    'この一覧がDiscord自動通知側の設定です。ブラウザに保存された合言葉の手動監視とは別です。',
+    'この一覧がDiscord自動通知側の設定です。[設定画面](https://tcg-cross-search.purplepearl-v.workers.dev/automatic.html)から所有者本人が変更できます。ブラウザに保存された合言葉の個別監視とは別です。',
     '停止した弾は個別の巡回・在庫通知を止め、登録・価格上限・過去の履歴を残します。新弾同期では再開しません。相場の常時再判定や自動再開は行いません。',
     '', '|停止対象|理由|確認した価格（送料・手数料別）|', '|---|---|---|',
     ...summary.pausedProducts.map(p=>`|${safe(p.name)}|${safe(p.reason)}|${p.evidence.map(e=>`[${safe(e.kind)} ${e.price.toLocaleString('ja-JP')}円](${e.url})`).join('／')}|`), ''];

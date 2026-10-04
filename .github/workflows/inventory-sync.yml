@@ -2,10 +2,11 @@ name: inventory-sync
 on:
   push:
     branches: [main]
-    paths: ['scripts/sync_inventory_monitor.mjs', 'scripts/inventory_health.mjs', 'scripts/inventory_discovery.mjs', 'scripts/inventory_policy.mjs', 'config/inventory-notification-policy.json', '.github/workflows/inventory-sync.yml']
+    paths: ['scripts/sync_inventory_monitor.mjs', 'scripts/inventory_health.mjs', 'scripts/inventory_discovery.mjs', 'scripts/inventory_policy.mjs', 'scripts/inventory_prices.mjs', 'scripts/inventory_review.mjs', 'config/inventory-notification-policy.json', '.github/workflows/inventory-sync.yml']
   schedule:
     - cron: '37 * * * *'
   workflow_dispatch:
+  workflow_call:
   workflow_run:
     workflows: ['monitor']
     branches: [main]
@@ -42,7 +43,7 @@ jobs:
           if [ ! -f inventory_health.json ]; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          for file in inventory_status.json inventory_status.md inventory_releases.json inventory-logs discovery-logs inventory_health.json inventory_incident.json; do
+          for file in inventory_status.json inventory_status.md inventory_releases.json inventory_prices.json inventory_market_review.json inventory-logs discovery-logs inventory_health.json inventory_incident.json; do
             if [ -e "$file" ]; then git add -- "$file"; fi
           done
           if git diff --cached --quiet; then exit 0; fi

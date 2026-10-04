@@ -1,0 +1,55 @@
+name: inventory-settings
+on:
+  issues:
+    types: [opened]
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: inventory-settings
+  cancel-in-progress: false
+jobs:
+  settings:
+    if: github.event.issue.title == '[在庫設定] 通知条件の変更' && github.event.issue.user.login == github.repository_owner
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: main
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: monitor-state
+          path: .monitor-state
+          persist-credentials: false
+      - name: Validate owner's requested settings
+        run: node scripts/apply_inventory_setting.mjs
+      - name: Save settings with history
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add config/inventory-notification-policy.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'chore: apply owner inventory settings'
+          git push origin HEAD:main
+  sync:
+    needs: settings
+    uses: ./.github/workflows/inventory-sync.yml
+    secrets: inherit
+  complete:
+    needs: sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close the settings request after successful verification
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_ISSUE: ${{ github.event.issue.number }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request
+          url = 'https://api.github.com/repos/' + os.environ['GH_REPOSITORY'] + '/issues/' + str(int(os.environ['GH_ISSUE']))
+          request = urllib.request.Request(url, data=json.dumps({'state': 'closed'}).encode(), method='PATCH', headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          with urllib.request.urlopen(request, timeout=20) as response:
+              print('設定の反映確認が完了しました。')
+          PY
