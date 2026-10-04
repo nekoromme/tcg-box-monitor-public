@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "reviewedAt": "2026-10-04T12:08:00+09:00",
+  "basis": "2026年10月4日の確認で、未開封BOXの販売価格が定価以下、または定価付近でプレミアムがほぼない弾を停止。価格は税込商品代金、送料・手数料別。出品価格と成約価格を区別し、売切れ店の旧価格だけで停止しない。発売前・判断材料不足は一律停止しない。自動的な相場再判定・再開は行わない。",
+  "pausedProducts": [
+    {
+      "id": "gundam-gd02", "name": "ガンダム GD02 Dual Impact", "retailPrice": 5808,
+      "reason": "定価以下で在庫あり。マスターズスクウェアで5,280円・在庫6点を直接確認。",
+      "evidence": [{"kind": "店舗販売・在庫あり", "price": 5280, "url": "https://www.masters-square.com/product/87699"}, {"kind": "監視で確認した店舗販売", "price": 5280, "url": "https://mediaworld.co.jp/products/13920474000"}]
+    },
+    {
+      "id": "gundam-gd03", "name": "ガンダム GD03 Steel Requiem", "retailPrice": 5808,
+      "reason": "定価で在庫あり。マスターズスクウェアで5,808円・在庫4点を直接確認。",
+      "evidence": [{"kind": "店舗販売・在庫あり", "price": 5808, "url": "https://www.masters-square.com/product/89113"}, {"kind": "監視で確認した店舗販売", "price": 5808, "url": "https://tier-one.jp/view/item/000000015994"}]
+    },
+    {
+      "id": "gundam-gd04", "name": "ガンダム GD04 Phantom Aria", "retailPrice": 5808,
+      "reason": "二次流通の1BOX出品価格も定価以下。出品価格であり成約価格ではない。",
+      "evidence": [{"kind": "1BOX出品価格", "price": 5700, "url": "https://snkrdunk.com/apparels/795413"}]
+    },
+    {
+      "id": "gundam-eb01", "name": "ガンダム EB01 Eternal Nexus", "retailPrice": 5808,
+      "reason": "複数店で定価割れ。在庫のある未開封BOXを確認。",
+      "evidence": [{"kind": "店舗販売・在庫あり", "price": 3500, "url": "https://tier-one.jp/view/item/000000015992"}, {"kind": "監視で確認した店舗販売", "price": 3600, "url": "https://193tcg.com/products/detail/287907"}]
+    },
+    {
+      "id": "lorcana-azurite-sea", "name": "ロルカナ 大いなるアズライト", "retailPrice": 5280,
+      "reason": "二次流通の1BOX出品価格が定価割れ。出品価格であり成約価格ではない。",
+      "evidence": [{"kind": "1BOX出品価格", "price": 4799, "url": "https://snkrdunk.com/apparels/721854"}]
+    },
+    {
+      "id": "yugioh-/japan/products/ut01/", "name": "遊戯王 UTILITY SELECTION", "retailPrice": 5940,
+      "reason": "1BOX出品3,100円、買取1,000円で定価を下回る。買取表は10月2日現在。",
+      "evidence": [{"kind": "1BOX出品価格", "price": 3100, "url": "https://snkrdunk.com/apparels/860806"}, {"kind": "店舗買取価格", "price": 1000, "url": "https://www.netoff.co.jp/moetaku/detail/250088"}]
+    },
+    {
+      "id": "yugioh-/japan/products/26lp/", "name": "遊戯王 LIMITED PACK WORLD CHAMPIONSHIP 2026", "retailPrice": 3960,
+      "reason": "1BOX出品4,000円は定価比約101%でプレミアムがほぼない。通常の購入上限105%より低く、買取も2,000円。",
+      "evidence": [{"kind": "1BOX出品価格", "price": 4000, "url": "https://snkrdunk.com/apparels/880998"}, {"kind": "店舗買取価格", "price": 2000, "url": "https://www.netoff.co.jp/moetaku/detail/259798"}]
+    }
+  ]
+}
