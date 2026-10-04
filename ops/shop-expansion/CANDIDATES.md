@@ -29,6 +29,7 @@
 - 根拠：株式会社アークライトの運営を確認。新品BOX予約一覧が読め、既存のYahoo!商品取得方式を活用できる可能性がある。他タイトルの新弾予約を補う。
 - 未確認・注意：主力3商品すべての販売を今回確認したわけではない。既存の対象弾に一致する商品だけ採用。シュリンク破れ・個箱のみの損傷、カートン直貼りは返品対象外。稼働前に価格・在庫・商品区分の抽出確認が必要。
 - 次の作業：既存Yahoo!取得処理の再利用可否を調べ、有効な対象弾の新品BOXを1点以上特定する。タイトル・BOX単位・価格・在庫を無通知で確認。対象がなければ保留にしてBIGWEBへ。
+- 2026-10-05実査：公式Yahoo!店内検索のhitCountはGD01、Newtype Rising、GD05、Freedom Ascension、30th、30th CELEBRATIONの全て0件。ゲーム単位ではガンダム11件中ブースターBOXは停止中GD02だけ、ポケモン2件は周辺商品、ロルカナ・遊戯王も現行の監視対象外だった。既存Yahoo!検索形式は利用できるが、現在は追加しても対象商品がないため `deferred_no_target`。2026-10-12 JST以降または新しい対象商品の具体的掲載時に再確認する。
 - 参照：
   - [運営](https://store.shopping.yahoo.co.jp/hbst-store/info.html)
   - [BOX予約一覧](https://store.shopping.yahoo.co.jp/hbst-store/a5aba1bca5.html)
@@ -54,6 +55,7 @@
 - 根拠：ガンダムBOXの販売窓口と、公式楽天店の株式会社ホビーズファクトリーの運営表記を確認。新入荷・新品予約を限定して使う方針。
 - 未確認・注意：本店は今回の単純取得でJavaScript実行を要求。現時点の詳細在庫・価格の自動抽出は未検証。買取未開封BOXは新品流通と区別する。楽天店の返品条件を本店へ流用しない。
 - 次の作業：公開BOXページの表示構造と許可された取得方法を確認。新品予約と買取未開封を分け、現在の対象BOXだけ取り込む。JavaScript表示だけを在庫なしにしない。
+- 2026-10-05実査：公式画面が利用する公開JSON API `https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1` を確認。GD01（商品ID3447424、5,200円）とGD05（3548567、6,019円）の通常24パックBOXが登録されているが、確認時はいずれも `is_sold_out=true`・在庫0。正規の商品リンクは `/ja/products/gundamgcg/cardViewer/{id}`。APIは売切れも返すため `is_sold_out` と `stock_count` の厳格判定が必要。SC01のGD05 8パックセット、カスタムデッキボックス、スタートデッキ、海外30thを除外するfixtureを必須にし、安定性ゲート通過後の実装候補を `ready` とした。
 - 参照：
   - [本店BOX一覧](https://www.bigweb.co.jp/ja/products/gundamgcg/boxes)
   - [公式楽天店の運営](https://www.rakuten.co.jp/auc-big-web/info.html)
