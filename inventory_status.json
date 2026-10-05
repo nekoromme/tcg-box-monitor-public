@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791242603070,
+  "generatedAt": 1791242671011,
   "prices": {
     "version": 1,
-    "checkedAt": 1791242569353,
+    "checkedAt": 1791242639654,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -1859,7 +1859,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791242603070,
+    "checkedAt": 1791242671010,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -2063,7 +2063,7 @@
         "pages": 2,
         "minSeconds": 2722,
         "maxSeconds": 8640,
-        "nextAt": 1791242262336,
+        "nextAt": 1791244763266,
         "errors": 0
       },
       {
@@ -2176,7 +2176,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791242603068,
+    "verifiedAt": 1791242671008,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -36481,9 +36481,9 @@
     "budget": {
       "day": 20732,
       "group": 273,
-      "fallback": 284
+      "fallback": 285
     },
-    "nextFallbackAt": 1791242616980,
+    "nextFallbackAt": 1791242750233,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -36506,8 +36506,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791242598729,
-  "lastCompletedAt": 1791242600218,
+  "lastTick": 1791242669260,
+  "lastCompletedAt": 1791242670272,
   "load": {
     "activePages": 75,
     "waitingPages": 0,
@@ -36518,8 +36518,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1417221,
-    "compressedBytes": 111443,
+    "uncompressedBytes": 1417393,
+    "compressedBytes": 111476,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36549,8 +36549,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791242568728,
-    "nextSync": 1791249768728,
+    "lastSync": 1791242639259,
+    "nextSync": 1791249839259,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38768,6 +38768,12 @@
       },
       {
         "at": 1791242568728,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791242639259,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -41931,13 +41937,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 736,
+          "negatives": 737,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791242626179,
+      "nextAt": 1791242920115,
       "failures": 0,
-      "lastChecked": 1791242338179,
+      "lastChecked": 1791242632115,
       "lastGood": {
         "title": "【BOX】ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 9500,
@@ -41973,11 +41979,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1791078129094,
-          "lastAt": 1791242338179,
-          "samples": 640
+          "lastAt": 1791242632115,
+          "samples": 641
         }
       ],
-      "lastGoodAt": 1791242338179,
+      "lastGoodAt": 1791242632115,
       "priceDecisions": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "referencePrice": 6000,
@@ -41987,14 +41993,14 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1791242338179
+          "at": 1791242632115
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078129094,
         "stock": "out_of_stock",
-        "lastAt": 1791242338179,
-        "lastUnavailableAt": 1791242338179
+        "lastAt": 1791242632115,
+        "lastUnavailableAt": 1791242632115
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -47540,18 +47546,19 @@
       "episodes": {
         "5f7500ae-a789-4c6d-a652-17eb9f631e45": {
           "active": false,
-          "negatives": 17,
+          "negatives": 18,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791242262336,
+      "nextAt": 1791251310250,
       "failures": 0,
-      "lastChecked": 1791233622336,
+      "lastChecked": 1791242670250,
       "lastGood": {
         "title": "【新品】[TCG] (BOX) ドラゴンボールスーパーカードゲーム フュージョンワールド ブースターパック 誇り高き戦闘民族【FB08】 バンダイ(24パック)(20251213)",
         "price": 4180,
         "stock": "out_of_stock",
         "priceState": "",
+        "packsPerBox": 24,
         "detailChecked": true
       },
       "error": "",
@@ -47561,6 +47568,7 @@
         "price": 4180,
         "stock": "out_of_stock",
         "priceState": "",
+        "packsPerBox": 24,
         "detailChecked": true
       },
       "history": [
@@ -47590,11 +47598,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1791099484329,
-          "lastAt": 1791233622336,
-          "samples": 13
+          "lastAt": 1791242670250,
+          "samples": 14
         }
       ],
-      "lastGoodAt": 1791233622336,
+      "lastGoodAt": 1791242670250,
       "priceDecisions": {
         "5f7500ae-a789-4c6d-a652-17eb9f631e45": {
           "referencePrice": 5280,
@@ -47604,14 +47612,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1791233622336
+          "at": 1791242670250
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791079386175,
         "stock": "out_of_stock",
-        "lastAt": 1791233622336,
-        "lastUnavailableAt": 1791233622336
+        "lastAt": 1791242670250,
+        "lastUnavailableAt": 1791242670250
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -51290,13 +51298,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 292,
+          "negatives": 293,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791242626980,
+      "nextAt": 1791242823452,
       "failures": 0,
-      "lastChecked": 1791242434980,
+      "lastChecked": 1791242631452,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Freedom Ascension [GD05] BOX(24パック入)",
         "price": 6019,
@@ -51330,7 +51338,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,300円以下",
-          "at": 1791242434980
+          "at": 1791242631452
         }
       },
       "history": [
@@ -51341,17 +51349,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円以下",
           "at": 1791179122022,
-          "lastAt": 1791242434980,
-          "samples": 292
+          "lastAt": 1791242631452,
+          "samples": 293
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791179122022,
         "stock": "out_of_stock",
-        "lastAt": 1791242434980,
-        "lastUnavailableAt": 1791242434980
+        "lastAt": 1791242631452,
+        "lastUnavailableAt": 1791242631452
       },
-      "lastGoodAt": 1791242434980,
+      "lastGoodAt": 1791242631452,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 192,
@@ -53706,30 +53714,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791209785745,
-      "checked": 1,
-      "discovered": null,
-      "targets": 106,
-      "errors": 1
-    },
-    {
-      "at": 1791209817798,
-      "checked": 0,
-      "discovered": {
-        "ruleId": "58e6fef9-6a37-42ff-9ed2-ed0c877b520f",
-        "storeId": "tcgacademy",
-        "result": {
-          "at": 1791209817798,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 106,
-      "errors": 1
-    },
     {
       "at": 1791209849857,
       "checked": 1,
@@ -68024,6 +68008,30 @@
     {
       "at": 1791242598729,
       "checked": 3,
+      "discovered": null,
+      "targets": 107,
+      "errors": 0
+    },
+    {
+      "at": 1791242630233,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "34f4a787-caf8-4888-804b-34ede069d8d0",
+        "storeId": "mediaworld",
+        "result": {
+          "at": 1791242630233,
+          "status": "ok",
+          "matched": 1,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 0
+    },
+    {
+      "at": 1791242669260,
+      "checked": 1,
       "discovered": null,
       "targets": 107,
       "errors": 0
