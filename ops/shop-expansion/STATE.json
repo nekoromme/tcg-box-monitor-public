@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-04T23:15:51.960Z",
+  "updatedAt": "2026-10-05T04:57:59.571Z",
   "phase": "waiting_stability_window",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -71,7 +71,12 @@
       "delivery": "sent"
     }
   },
-  "lease": null,
+  "lease": {
+    "runId": "20261005T045759Z-k3kipt",
+    "acquiredAt": "2026-10-05T04:57:59.571Z",
+    "expiresAt": "2026-10-05T06:27:59.571Z",
+    "owner": "scheduled-card-store-expansion"
+  },
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "preflight_stability_window",
