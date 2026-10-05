@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791179077885,
+  "generatedAt": 1791179124574,
   "prices": {
     "version": 1,
-    "checkedAt": 1791179044993,
+    "checkedAt": 1791179090975,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -1798,7 +1798,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791179077885,
+    "checkedAt": 1791179124573,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -2115,7 +2115,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791179077883,
+    "verifiedAt": 1791179124571,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -33293,9 +33293,9 @@
     "budget": {
       "day": 20731,
       "group": 743,
-      "fallback": 502
+      "fallback": 503
     },
-    "nextFallbackAt": 1791179057595,
+    "nextFallbackAt": 1791179240412,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -33318,8 +33318,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791179074496,
-  "lastCompletedAt": 1791179077192,
+  "lastTick": 1791179120412,
+  "lastCompletedAt": 1791179123759,
   "load": {
     "activePages": 74,
     "waitingPages": 0,
@@ -33330,8 +33330,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1413514,
-    "compressedBytes": 111088,
+    "uncompressedBytes": 1414289,
+    "compressedBytes": 111174,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -33361,8 +33361,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791179044494,
-    "nextSync": 1791186244494,
+    "lastSync": 1791179090410,
+    "nextSync": 1791186290410,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -35465,6 +35465,12 @@
       },
       {
         "at": 1791179044494,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791179090410,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -47546,11 +47552,24 @@
       "ruleIds": [
         "0cffc351-4771-4c54-9159-44f554d95760"
       ],
-      "episodes": {},
-      "nextAt": 1791179074496,
+      "episodes": {
+        "0cffc351-4771-4c54-9159-44f554d95760": {
+          "active": false,
+          "negatives": 1,
+          "lastEvent": 0
+        }
+      },
+      "nextAt": 1791179314022,
       "failures": 0,
-      "lastChecked": null,
-      "lastGood": null,
+      "lastChecked": 1791179122022,
+      "lastGood": {
+        "title": "ガンダムカードゲーム ブースターパック Freedom Ascension [GD05] BOX(24パック入)",
+        "price": 6019,
+        "stock": "out_of_stock",
+        "priceState": "",
+        "detailChecked": true,
+        "priceComparable": true
+      },
       "error": "",
       "releaseDate": "2026-07-25",
       "discovery": {
@@ -47559,7 +47578,45 @@
         "baseline": true,
         "publicationAt": null
       },
-      "history": [],
+      "latest": {
+        "title": "ガンダムカードゲーム ブースターパック Freedom Ascension [GD05] BOX(24パック入)",
+        "price": 6019,
+        "stock": "out_of_stock",
+        "priceState": "",
+        "detailChecked": true,
+        "priceComparable": true
+      },
+      "priceDecisions": {
+        "0cffc351-4771-4c54-9159-44f554d95760": {
+          "referencePrice": 6000,
+          "percent": 105,
+          "maxPrice": 6300,
+          "policyReason": "基本条件：定価＋5%以内",
+          "shippingIncluded": false,
+          "status": "within_limit",
+          "reason": "通知上限6,300円以下",
+          "at": 1791179122022
+        }
+      },
+      "history": [
+        {
+          "kind": "observation",
+          "stock": "out_of_stock",
+          "price": 6019,
+          "comparable": true,
+          "priceDecision": "通知上限6,300円以下",
+          "at": 1791179122022,
+          "lastAt": 1791179122022,
+          "samples": 1
+        }
+      ],
+      "availabilityTiming": {
+        "firstObservedAt": 1791179122022,
+        "stock": "out_of_stock",
+        "lastAt": 1791179122022,
+        "lastUnavailableAt": 1791179122022
+      },
+      "lastGoodAt": 1791179122022,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 192,
@@ -49784,45 +49841,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791145981389,
-      "checked": 1,
-      "discovered": {
-        "storeId": "torecolo",
-        "mode": "store-listing",
-        "result": {
-          "matched": 0,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://www.torecolo.jp/shop/goods/search.aspx?search=x&ps=50&keyword=BOX",
-              "head": true,
-              "productLinks": 73,
-              "scope": "read",
-              "hasMore": true,
-              "depthLimited": false,
-              "order": "search"
-            },
-            {
-              "url": "https://www.torecolo.jp/shop/goods/search.aspx?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&search=x&p=3&ps=50",
-              "head": false,
-              "productLinks": 67,
-              "scope": "read",
-              "hasMore": true,
-              "depthLimited": false,
-              "order": "alternate"
-            }
-          ],
-          "requests": 2,
-          "status": "ok",
-          "previousAt": 1791144167040
-        },
-        "error": ""
-      },
-      "targets": 103,
-      "errors": 1
-    },
     {
       "at": 1791146018159,
       "checked": 2,
@@ -66284,6 +66302,23 @@
           "requests": 1,
           "status": "ok",
           "previousAt": null
+        },
+        "error": ""
+      },
+      "targets": 106,
+      "errors": 2
+    },
+    {
+      "at": 1791179120412,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
+        "storeId": "masters_gundam",
+        "result": {
+          "at": 1791179120412,
+          "status": "ok",
+          "matched": 1,
+          "registered": 0
         },
         "error": ""
       },
