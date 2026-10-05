@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T05:19:55.377Z",
+  "updatedAt": "2026-10-05T05:22:17.312Z",
   "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -80,7 +80,7 @@
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "implementation_pr",
-    "status": "waiting_deploy",
+    "status": "followup_intent_recorded",
     "candidateId": "bigweb",
     "workerRepo": "nekoromme/tcg-cross-search",
     "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
@@ -114,7 +114,11 @@
     "mergeIntentAt": "2026-10-05T05:19:20.908Z",
     "mergeSha": "8dc61954174f3d4cd86e315808f5709761724983",
     "mergedAt": "2026-10-05T05:19:55.377Z",
-    "expectedProductionSha": "8dc61954174f3d4cd86e315808f5709761724983"
+    "expectedProductionSha": "8dc61954174f3d4cd86e315808f5709761724983",
+    "followupReason": "永続化済みautomatic ruleのstoreIds/jobsへ新店を追加する移行が必要",
+    "followupBranch": "fix/bigweb-automatic-rules",
+    "followupBaseSha": "8dc61954174f3d4cd86e315808f5709761724983",
+    "followupIntentAt": "2026-10-05T05:22:17.312Z"
   },
   "stabilityWindow": {
     "status": "passed",
@@ -199,7 +203,7 @@
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "waiting_deploy",
+        "status": "followup_intent_recorded",
         "sourceType": "public_json_api",
         "api": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
         "productUrlPattern": "https://www.bigweb.co.jp/ja/products/gundamgcg/cardViewer/{id}",
@@ -234,7 +238,11 @@
         "prUrl": "https://github.com/nekoromme/tcg-cross-search/pull/30",
         "ciRunId": 37267180551,
         "ciConclusion": "success",
-        "mergeSha": "8dc61954174f3d4cd86e315808f5709761724983"
+        "mergeSha": "8dc61954174f3d4cd86e315808f5709761724983",
+        "productionVersion": "0.14.0",
+        "productionSha": "8dc61954174f3d4cd86e315808f5709761724983",
+        "deployRunId": 37267277373,
+        "followupReason": "永続化済みautomatic ruleのstoreIds/jobsへ新店を追加する移行が必要"
       },
       "observation": null,
       "deliveryEvidence": {
