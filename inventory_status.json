@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791177975391,
+  "generatedAt": 1791178036785,
   "prices": {
     "version": 1,
-    "checkedAt": 1791177943062,
+    "checkedAt": 1791178001796,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -1798,7 +1798,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791177975390,
+    "checkedAt": 1791178036784,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -1818,7 +1818,7 @@
         "pages": 2,
         "minSeconds": 288,
         "maxSeconds": 288,
-        "nextAt": 1791178007814,
+        "nextAt": 1791178320836,
         "errors": 1
       },
       {
@@ -2115,7 +2115,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791177975389,
+    "verifiedAt": 1791178036783,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -33131,9 +33131,9 @@
     "budget": {
       "day": 20731,
       "group": 738,
-      "fallback": 486
+      "fallback": 488
     },
-    "nextFallbackAt": 1791178029253,
+    "nextFallbackAt": 1791178151270,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -33156,8 +33156,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791177972441,
-  "lastCompletedAt": 1791177974341,
+  "lastTick": 1791178031270,
+  "lastCompletedAt": 1791178035953,
   "load": {
     "activePages": 72,
     "waitingPages": 0,
@@ -33168,8 +33168,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1412682,
-    "compressedBytes": 110377,
+    "uncompressedBytes": 1412896,
+    "compressedBytes": 110383,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -33199,8 +33199,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791177942440,
-    "nextSync": 1791185142440,
+    "lastSync": 1791178001268,
+    "nextSync": 1791185201268,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -35291,6 +35291,12 @@
       },
       {
         "at": 1791177942440,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791178001268,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -38379,13 +38385,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 530,
+          "negatives": 531,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791178007814,
+      "nextAt": 1791178320836,
       "failures": 0,
-      "lastChecked": 1791177719814,
+      "lastChecked": 1791178032836,
       "lastGood": {
         "title": "【BOX】ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 9500,
@@ -38419,11 +38425,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1791078129094,
-          "lastAt": 1791177719814,
-          "samples": 434
+          "lastAt": 1791178032836,
+          "samples": 435
         }
       ],
-      "lastGoodAt": 1791177719814,
+      "lastGoodAt": 1791178032836,
       "priceDecisions": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "referencePrice": 6000,
@@ -38433,14 +38439,14 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1791177719814
+          "at": 1791178032836
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078129094,
         "stock": "out_of_stock",
-        "lastAt": 1791177719814,
-        "lastUnavailableAt": 1791177719814
+        "lastAt": 1791178032836,
+        "lastUnavailableAt": 1791178032836
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -46160,13 +46166,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 453,
+          "negatives": 454,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791177975917,
+      "nextAt": 1791178224812,
       "failures": 0,
-      "lastChecked": 1791177783917,
+      "lastChecked": 1791178032812,
       "lastGood": {
         "title": "拡張パック　30th CELEBRATION　BOX【ポケモンカードゲーム】",
         "price": 7200,
@@ -46200,11 +46206,11 @@
           "comparable": true,
           "priceDecision": "通知上限14,400円以下",
           "at": 1791078092857,
-          "lastAt": 1791177783917,
-          "samples": 449
+          "lastAt": 1791178032812,
+          "samples": 450
         }
       ],
-      "lastGoodAt": 1791177783917,
+      "lastGoodAt": 1791178032812,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -46214,14 +46220,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1791177783917
+          "at": 1791178032812
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092857,
         "stock": "out_of_stock",
-        "lastAt": 1791177783917,
-        "lastUnavailableAt": 1791177783917
+        "lastAt": 1791178032812,
+        "lastUnavailableAt": 1791178032812
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -49539,13 +49545,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791144843173,
-      "checked": 1,
-      "discovered": null,
-      "targets": 103,
-      "errors": 1
-    },
     {
       "at": 1791144874504,
       "checked": 2,
@@ -66321,6 +66320,23 @@
       "at": 1791177972441,
       "checked": 2,
       "discovered": null,
+      "targets": 104,
+      "errors": 1
+    },
+    {
+      "at": 1791178031270,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
+        "storeId": "advantage1",
+        "result": {
+          "at": 1791178031270,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
       "targets": 104,
       "errors": 1
     }
