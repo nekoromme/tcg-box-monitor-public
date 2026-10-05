@@ -18,6 +18,10 @@ _ALLOWED_IMAGE_HOSTS = {
 _MAX_IMAGE_BYTES = 8_000_000
 
 
+class ExpiredImageProxyError(RuntimeError):
+    """Every usable attachment failed through an expired Yahoo image proxy."""
+
+
 def _image_urls(url: str) -> list[str]:
     """Keep the exact attachment, with the default size as a 404 fallback."""
     parts = urlsplit(url)
@@ -65,6 +69,8 @@ def read_image_text(urls: list[str]) -> str:
     output: list[str] = []
     failures: list[str] = []
     read_images = 0
+    expired_proxies = 0
+    other_failures = False
     with (
         tempfile.TemporaryDirectory(prefix="tcg-ocr-") as directory,
         httpx.Client(follow_redirects=True, timeout=30) as client,
@@ -87,13 +93,21 @@ def read_image_text(urls: list[str]) -> str:
                 # the same post remains valid.  One broken image must not abort
                 # OCR for every remaining attachment.
                 failures.append(f"{type(exc).__name__}: {exc}")
+                if (parsed.netloc == "rts-pctr.c.yimg.jp"
+                        and isinstance(exc, httpx.HTTPStatusError)
+                        and exc.response.status_code in {400, 404}):
+                    expired_proxies += 1
+                else:
+                    other_failures = True
                 continue
             content_type = response.headers.get("content-type", "")
             if not content_type.casefold().startswith("image/"):
                 failures.append(f"画像以外の応答: {content_type or 'unknown'}")
+                other_failures = True
                 continue
             if not response.content or len(response.content) > _MAX_IMAGE_BYTES:
                 failures.append("画像が空、または上限サイズ超過")
+                other_failures = True
                 continue
             path = Path(directory) / f"tweet-{index}{_suffix(content_type)}"
             path.write_bytes(response.content)
@@ -112,6 +126,7 @@ def read_image_text(urls: list[str]) -> str:
                     )
                 except subprocess.TimeoutExpired:
                     failures.append("Tesseract処理が45秒でタイムアウト")
+                    other_failures = True
                     continue
                 if completed.returncode == 0:
                     read_images += 1
@@ -119,6 +134,7 @@ def read_image_text(urls: list[str]) -> str:
                     if recognized and recognized not in output:
                         output.append(recognized)
                 else:
+                    other_failures = True
                     failures.append(
                         f"Tesseract終了コード{completed.returncode}: "
                         f"{completed.stderr.strip()[:120]}"
@@ -130,8 +146,10 @@ def read_image_text(urls: list[str]) -> str:
             return ""
         detail = " / ".join(failures[-2:])
         suffix = f"（{detail}）" if detail else ""
+        if not read_images and expired_proxies and not other_failures:
+            raise ExpiredImageProxyError(f"添付画像の検索プロキシが期限切れです{suffix}")
         raise RuntimeError(f"添付画像から文字を取得できませんでした{suffix}")
     return "\n".join(output)[:12_000]
 
 
-__all__ = ["read_image_text"]
+__all__ = ["ExpiredImageProxyError", "read_image_text"]

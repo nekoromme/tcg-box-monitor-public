@@ -147,8 +147,10 @@ class FxEmbedReader:
     request_attempts: int = 3
     snapshots: dict[str, PageResult | FetchProblem] = field(default_factory=dict)
     reports: dict[str, dict[str, object]] = field(default_factory=dict)
+    post_images: dict[tuple[str, str], list[str]] = field(default_factory=dict)
 
-    def _page(self, url: str, source: SourceConfig) -> tuple[PageResult, dict[str, Any]]:
+    def _page(self, url: str, source: SourceConfig,
+              payload_key: str = "results") -> tuple[PageResult, dict[str, Any]]:
         """The public provider also returns temporary 404s for existing timelines.
 
         Retry only this API's transient responses. Challenges, login gates and
@@ -158,9 +160,13 @@ class FxEmbedReader:
             try:
                 response = self.page_fetcher.fetch(url, source, {})
                 payload = json.loads(response.html)
+                if isinstance(payload, dict) and payload.get("code") in {401, 403, 429}:
+                    raise FetchProblem(url, "fxembed_access_limited", blocked=True,
+                                       status_code=int(payload["code"]))
                 if not isinstance(payload, dict) or payload.get("code") != 200:
                     raise ValueError("FxEmbed returned a non-success payload")
-                if not isinstance(payload.get("results"), list) or payload.get("error"):
+                expected_type = list if payload_key == "results" else dict
+                if not isinstance(payload.get(payload_key), expected_type) or payload.get("error"):
                     raise ValueError("FxEmbed results missing or partial error")
                 return response, payload
             except (FetchProblem, ValueError) as exc:
@@ -172,6 +178,35 @@ class FxEmbedReader:
                 if not retryable or attempt + 1 >= max(1, self.request_attempts):
                     raise
         raise AssertionError("unreachable")
+
+    def post_image_urls(self, status_url: str, source: SourceConfig) -> list[str]:
+        """Read own attachments for this exact post, without moving timeline progress."""
+        account = str(source.parser_options.get("account", "")).lower()
+        parts = urlsplit(status_url)
+        match = re.fullmatch(r"/([A-Za-z0-9_]{1,15})/status/(\d+)", parts.path)
+        if (parts.scheme != "https" or parts.netloc not in {"x.com", "twitter.com"}
+                or not match or match[1].lower() != account or parts.query or parts.fragment):
+            raise ValueError("Post URL does not match configured account")
+        status_id = match[2]
+        cache_key = (account, status_id)
+        if cache_key in self.post_images:
+            return self.post_images[cache_key]
+        http_source = replace(source, render_mode=RenderMode.HTTP, parser_options={
+            **source.parser_options, "disable_conditional_get": True,
+        })
+        _, payload = self._page("https://api.fxtwitter.com/status/" + status_id,
+                                http_source, "tweet")
+        post = payload["tweet"]
+        markup = post_markup(post, account)
+        if str(post.get("id")) != status_id or markup is None:
+            raise ValueError("Public post identity does not match requested post")
+        images = [str(image["src"]) for image in BeautifulSoup(markup, "lxml").find_all(
+            "img", src=True,
+        )]
+        if not images:
+            raise ValueError("Public post has no own photo attachments")
+        self.post_images[cache_key] = images
+        return images
 
     def fetch(self, url: str, source: SourceConfig) -> PageResult:
         root = timeline_url(source)

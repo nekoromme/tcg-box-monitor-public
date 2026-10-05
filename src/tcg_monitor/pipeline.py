@@ -810,6 +810,10 @@ def run_pipeline(
     for source in selected_sources:
         started = time.perf_counter()
         metrics = SourceMetrics(source.id)
+
+        def recover_expired_proxy(status_url: str, source_config: SourceConfig = source) -> str:
+            return read_image_text(fxembed_reader.post_image_urls(status_url, source_config))
+
         premium_bandai_news_fallback: list[LotteryCase] = []
         source_evidence[source.id] = metrics
         uses_parallel_discovery_paths = source.id in {
@@ -1437,6 +1441,9 @@ def run_pipeline(
                             ),
                             ocr_attempt_token=run_token,
                             diagnostics=diagnostics,
+                            expired_proxy_reader=(
+                                recover_expired_proxy
+                            ) if not fixture_dir and config.system.get("fxembed_public") else None,
                         )
                     )
                     if url in primary_roots and (
@@ -1450,7 +1457,8 @@ def run_pipeline(
                         excluded_posts = sum(
                             diagnostics.get(reason, 0)
                             for reason in (
-                                "disallowed_application", "retailer_not_matched",
+                                "disallowed_application", "non_application_sale",
+                                "retailer_not_matched",
                                 "excluded_retailer", "not_application_announcement",
                                 "tournament_or_result", "old_post", "application_ended",
                                 "closed_or_result_notice", "excluded_product",
