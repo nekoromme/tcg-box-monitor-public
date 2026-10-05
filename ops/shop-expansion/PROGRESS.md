@@ -42,3 +42,14 @@
 - BIGWEB：公式Angular画面の公開APIを特定。GD01通常BOX（5,200円）とGD05通常BOX（6,019円）が登録済みだが両方売切れ。売切れ、8パックセット、SC01、海外30thを区別できる専用アダプタの設計情報をSTATEへ保存し `ready` とした。
 - 変更：引き継ぎ台帳だけ。店舗設定、通知条件、送信済み履歴、本番コードは変更していない。
 - 次回最初の操作：10:51 JST以後の新しいhealthとinventory-syncを確認。無料枠リセット後も正常なら、最新Worker mainからBIGWEB専用APIアダプタの実装・テストへ進む。
+
+
+## 2026-10-05 20:01 JST BIGWEB本番追加・初回実動作確認
+
+- 実行ID：`20261005T105734776Z-9q4m2c`
+- 実装：Worker [PR #30](https://github.com/nekoromme/tcg-cross-search/pull/30) でBIGWEB公開JSON API用アダプタ、[PR #31](https://github.com/nekoromme/tcg-cross-search/pull/31) で既存automatic ruleへの新店舗移行を追加。全186テスト成功。本番は `0.14.1 / 06426bb5c16c029bb8004a227ae6df9465e50fa7`、`/api/health` とmainが一致。
+- 実巡回：2026-10-05 14:44〜19:48 JSTにBIGWEB一覧を11回、毎回1リクエスト・`status=ok`・対象2件。GD01は5,200円・売切れ（85観測、上限6,098円）、GD05は6,019円・売切れ（86観測、上限6,300円）。用品、8パックセット、スタートデッキ、海外版は対象へ追加していない。
+- 既存状態：登録38弾／有効31／停止7、通常105%、通常30thだけ200%、`monitor-gzip-v1`、送信待ち0・失敗0・連続失敗0を維持。GD02/GD03/GD04/EB01等は停止のまま。過去送信済みIDも保持。
+- 通知：BIGWEBの2商品は価格条件内だが売切れで、実在庫の通知機会なし。新規通知は送らず `awaiting_real_opportunity`。送信障害とは扱わない。
+- 状態保存：定刻inventory-syncの記録が16:39〜20:00 JSTに空いたため、同じ成功run [37278868343](https://github.com/nekoromme/tcg-box-monitor-public/actions/runs/37278868343) をattempt 2で一度だけ再実行し成功。20:00:59 JSTにhealth=`ok`、lastCompletedAt=20:00:57、gzip保存を確認。欠落時間中もCloudflare側のBIGWEB巡回は継続していたため、監視停止ではなくGitHub上の状態保存鮮度の問題として区別した。
+- 観察：BIGWEBの観察開始は2026-10-05 14:44 JST。最短の24時間判定は2026-10-06 14:44 JST以後。それまでは次の店を本番追加しない。次回は定刻inventory-syncの自動復帰を先に確認する。

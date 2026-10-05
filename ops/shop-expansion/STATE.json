@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T11:00:38.047Z",
-  "phase": "implementing",
+  "updatedAt": "2026-10-05T11:11:58.772Z",
+  "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
     "title": "カード監視の段階的店舗追加",
@@ -36,25 +36,25 @@
     "noPaidPlanChanges": true
   },
   "baseline": {
-    "checkedAt": "2026-10-05T05:07:24.031Z",
-    "workerMainSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
-    "relayMainSha": "8e74bf9635037a33119b0c172f4507cda56f6c85",
-    "inventorySnapshotAt": "2026-10-05T13:56:23+09:00",
-    "lastCompletedAt": "2026-10-05T13:56:22+09:00",
-    "latestSyncRunId": 37265455844,
+    "checkedAt": "2026-10-05T11:11:58.772Z",
+    "workerMainSha": "06426bb5c16c029bb8004a227ae6df9465e50fa7",
+    "relayMainSha": "5ffa6e8688d8f74be1d442c2774a33372cd32916",
+    "inventorySnapshotAt": "2026-10-05T20:00:59+09:00",
+    "lastCompletedAt": "2026-10-05T20:00:57+09:00",
+    "latestSyncRunId": 37278868343,
     "latestSyncRunConclusion": "success",
-    "latestSyncRunUpdatedAt": "2026-10-05T04:56:28Z",
-    "historicalWorkerVersion": "0.13.0",
+    "latestSyncRunUpdatedAt": "2026-10-05T11:01:05Z",
+    "historicalWorkerVersion": "0.14.1",
     "registeredProducts": 38,
     "enabledProducts": 31,
     "pausedProducts": 7,
-    "liveHealthVerification": "verified_via_monitor_state_actions_and_job_log",
+    "liveHealthVerification": "verified_via_direct_production_health_monitor_state_actions_and_job_log",
     "snapshotFreshness": "fresh_at_run",
-    "healthAccessNote": "本番buildは保存されたhealthでmain一致。health直取得の経路制限は継続して区別。",
+    "healthAccessNote": "本番/api/health直取得で0.14.1・main SHA一致。Cloudflare監視本体はBIGWEBを含め継続巡回。GitHubの定刻inventory-syncは16:39〜20:00 JSTに記録欠落があり、同じ成功runのattempt 2で状態保存を更新した。",
     "storage": {
       "format": "monitor-gzip-v1",
-      "uncompressedBytes": 1407252,
-      "compressedBytes": 110031,
+      "uncompressedBytes": 1428033,
+      "compressedBytes": 112486,
       "chunks": 2
     },
     "pricePolicy": {
@@ -69,89 +69,38 @@
     "recoveryNotification": {
       "deliveredAt": "2026-10-04T10:51:38+09:00",
       "delivery": "sent"
+    },
+    "latestSyncRunAttempt": 2,
+    "latestRecoveryNotification": {
+      "deliveredAt": "2026-10-05T14:27:17+09:00",
+      "delivery": "sent",
+      "context": "0.14.1デプロイ切替中の一時的deployment_check_failedからの復旧。最新incidentはrecovery/sent。"
     }
   },
-  "lease": {
-    "runId": "20261005T105734776Z-9q4m2c",
-    "acquiredAt": "2026-10-05T10:57:34.776Z",
-    "expiresAt": "2026-10-05T12:27:34.776Z",
-    "owner": "scheduled-card-store-expansion"
-  },
+  "lease": null,
   "activeCandidateId": "bigweb",
   "pendingOperation": {
-    "kind": "implementation_pr",
-    "status": "inventory_sync_freshness_rerun_submitted",
+    "kind": "production_observation",
+    "status": "observing",
     "candidateId": "bigweb",
-    "workerRepo": "nekoromme/tcg-cross-search",
-    "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
-    "branch": "feat/shop-bigweb",
-    "startedAt": "2026-10-05T05:07:24.031Z",
-    "attempt": 1,
-    "expectedHeadSha": "bd5ec706933c884e973867e1e111a38d42961b37",
-    "prNumber": 30,
-    "nextCheck": "同じrunのattempt増加とmonitor-stateでBIGWEBジョブ・巡回結果を確認",
-    "branchCreatedAt": "2026-10-05T05:07:58.005Z",
-    "tests": {
-      "command": "npm test",
-      "passed": 184,
-      "failed": 0
-    },
-    "dryRun": {
-      "at": "2026-10-05T05:17:26.480Z",
-      "query": "GD05",
-      "status": "ok",
-      "requests": 1,
-      "price": 6019,
-      "stock": "out_of_stock",
-      "stockQty": 0
-    },
-    "prTitle": "feat: add BIGWEB inventory monitoring",
-    "prIntentAt": "2026-10-05T05:17:45.763Z",
-    "prUrl": "https://github.com/nekoromme/tcg-cross-search/pull/30",
-    "prCreatedAt": "2026-10-05T05:18:17Z",
-    "ciRunId": 37267180551,
-    "ciConclusion": "success",
-    "mergeIntentAt": "2026-10-05T05:19:20.908Z",
-    "mergeSha": "8dc61954174f3d4cd86e315808f5709761724983",
-    "mergedAt": "2026-10-05T05:19:55.377Z",
-    "expectedProductionSha": "06426bb5c16c029bb8004a227ae6df9465e50fa7",
-    "followupReason": "永続化済みautomatic ruleのstoreIds/jobsへ新店を追加する移行が必要",
-    "followupBranch": "fix/bigweb-automatic-rules",
-    "followupBaseSha": "8dc61954174f3d4cd86e315808f5709761724983",
-    "followupIntentAt": "2026-10-05T05:22:17.312Z",
-    "followupBranchCreatedAt": "2026-10-05T05:23:00.240Z",
-    "followupHeadSha": "49e1f98a7f471679f0b272219d8a596ff8e287a9",
-    "followupTests": {
-      "command": "npm test",
-      "passed": 186,
-      "failed": 0
-    },
-    "followupPrTitle": "fix: migrate automatic rules to new stores",
-    "followupPrIntentAt": "2026-10-05T05:25:36.845Z",
-    "followupPrNumber": 31,
-    "followupPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/31",
-    "followupPrCreatedAt": "2026-10-05T05:25:56Z",
-    "followupCiRunId": 37267765185,
-    "followupCiConclusion": "success",
-    "followupMergeIntentAt": "2026-10-05T05:26:46.628Z",
-    "followupMergeSha": "06426bb5c16c029bb8004a227ae6df9465e50fa7",
-    "followupMergedAt": "2026-10-05T05:27:21.071Z",
     "productionVersion": "0.14.1",
     "productionSha": "06426bb5c16c029bb8004a227ae6df9465e50fa7",
-    "deployRunId": 37267844986,
-    "rerunOriginalRunId": 37265455844,
-    "rerunJobId": 111621574082,
-    "rerunIntentAt": "2026-10-05T05:28:44.351Z",
-    "freshnessIssue": {
+    "implementationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/30",
+    "migrationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/31",
+    "observationStartedAt": "2026-10-05T05:44:34.496Z",
+    "minimumObservationEndsAt": "2026-10-06T05:44:34.496Z",
+    "finalObservationEndsAt": "2026-10-07T05:44:34.496Z",
+    "latestEvidenceAt": "2026-10-05T11:00:59.562Z",
+    "nextCheck": "次回は新しい定刻inventory-syncが自動成功したかを先に確認し、2026-10-06 14:44 JST以後なら24時間観察条件を評価。次店はそれまで本番追加しない。",
+    "syncFreshnessRecovery": {
       "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T07:38:26Z",
-      "latestSuccessfulRunId": 37278868343,
-      "latestSuccessfulJobId": 111661983756,
-      "intentAt": "2026-10-05T10:59:58.369Z",
-      "reason": "hourly schedule record absent for more than 2h15m; verify production state without changing notification data",
-      "submittedAt": "2026-10-05T11:00:38.047Z",
       "runId": 37278868343,
-      "jobId": 111661983756,
-      "expectedAttempt": 2
+      "attempt": 2,
+      "jobId": 111730612380,
+      "submittedAt": "2026-10-05T11:00:14Z",
+      "completedAt": "2026-10-05T11:01:05Z",
+      "conclusion": "success",
+      "note": "GitHub上の状態保存の鮮度回復。Cloudflare側のBIGWEB巡回は欠落時間中も継続していた。次回は定刻起動の自動復帰を確認。"
     }
   },
   "stabilityWindow": {
@@ -231,13 +180,13 @@
       "id": "bigweb",
       "name": "BIGWEB／ビッグマジック",
       "priority": "2",
-      "status": "implementing",
+      "status": "observing",
       "attempts": 1,
-      "notBefore": "2026-10-05T01:51:38Z",
+      "notBefore": "2026-10-06T05:44:34.496Z",
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "inventory_sync_rerun_intent",
+        "status": "deployed_verified",
         "sourceType": "public_json_api",
         "api": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
         "productUrlPattern": "https://www.bigweb.co.jp/ja/products/gundamgcg/cardViewer/{id}",
@@ -281,14 +230,59 @@
         "followupTests": "186 passed",
         "followupPrNumber": 31,
         "followupPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/31",
-        "followupMergeSha": "06426bb5c16c029bb8004a227ae6df9465e50fa7"
+        "followupMergeSha": "06426bb5c16c029bb8004a227ae6df9465e50fa7",
+        "activePages": 2,
+        "automaticRuleMigration": "GD01/GD05 rules include bigweb; disabled products remain disabled"
       },
-      "observation": null,
+      "observation": {
+        "status": "active",
+        "startedAt": "2026-10-05T05:44:34.496Z",
+        "minimumEndsAt": "2026-10-06T05:44:34.496Z",
+        "finalEndsAt": "2026-10-07T05:44:34.496Z",
+        "listingRoundsObserved": 11,
+        "firstListingAt": "2026-10-05T05:44:34.496Z",
+        "latestListingAt": "2026-10-05T10:48:05.329Z",
+        "listingRequestsPerRound": 1,
+        "listingStatus": "ok",
+        "matchedPages": 2,
+        "targets": [
+          {
+            "productId": "gundam-gd01",
+            "storeProductId": 3447424,
+            "price": 5200,
+            "stock": "out_of_stock",
+            "samples": 85,
+            "lastCheckedAt": "2026-10-05T10:57:56.997Z",
+            "priceDecision": "within_limit",
+            "maxPrice": 6098,
+            "failures": 0
+          },
+          {
+            "productId": "gundam-gd05",
+            "storeProductId": 3548567,
+            "price": 6019,
+            "stock": "out_of_stock",
+            "samples": 86,
+            "lastCheckedAt": "2026-10-05T10:59:39.065Z",
+            "priceDecision": "within_limit",
+            "maxPrice": 6300,
+            "failures": 0
+          }
+        ],
+        "existingMonitorImpact": {
+          "health": "ok",
+          "lastCompletedAt": "2026-10-05T20:00:57+09:00",
+          "deliveryConsecutiveFailures": 0,
+          "storageFormat": "monitor-gzip-v1"
+        },
+        "scheduleExportNote": "定刻inventory-syncの記録が一時3時間超空いたため同じ成功runをattempt 2で再実行。20:00 JSTに保存回復。監視本体の巡回は継続。"
+      },
       "deliveryEvidence": {
-        "status": "not_started",
-        "receiptIds": []
+        "status": "awaiting_real_opportunity",
+        "receiptIds": [],
+        "note": "BIGWEBの条件内商品2件は売切れ。実在庫の送信機会なし。架空在庫や過去sent IDは再送していない。"
       },
-      "nextAction": "安定性ゲート通過後、公開JSON API用の専用アダプタとfixtures/testsを実装。is_sold_out/stock_countを必須判定し、SC01の8パックセット・海外30th・スタートデッキを除外。",
+      "nextAction": "2026-10-06 14:44 JST以後に24時間観察を評価。BIGWEB一覧・2商品・既存監視・gzip保存・価格policy・定刻inventory-syncの自動復帰を確認し、正常なら観察継続または完了判定。",
       "decisionFinal": false
     },
     {
@@ -419,19 +413,26 @@
     }
   ],
   "lastRun": {
-    "id": "20261005T0757JST-2s5ih7",
-    "status": "completed_waiting",
+    "id": "20261005T105734776Z-9q4m2c",
+    "status": "completed_observing",
     "externalChanges": [
       {
-        "kind": "github_research_and_state_only",
+        "kind": "workflow_job_rerun",
+        "runId": 37278868343,
+        "attempt": 2,
+        "jobId": 111730612380,
+        "conclusion": "success"
+      },
+      {
+        "kind": "state_and_progress_update",
         "branch": "shop-expansion-state"
       }
     ],
-    "notes": "店舗・通知設定は変更していない。復旧後21時間時点で正常継続を確認。ホビーステーションは対象商品なしで保留。BIGWEBの公開JSON APIとGD01/GD05商品を確認し実装準備完了。"
+    "notes": "BIGWEB本番0.14.1を実運用確認。公開API一覧11巡回、GD01/GD05各85回以上の売切れ・価格判定を保存。条件内在庫の実通知機会はまだない。GitHub状態保存の鮮度を再実行で回復し、次回は定刻自動復帰を確認。"
   },
-  "nextAction": "2026-10-05 10:51 JST以後の新しいinventory_health・Actions・保存状態を確認。UTC日次境界後もgzip保存、価格policy、巡回、通知healthが正常ならBIGWEB専用公開JSONアダプタを最新worker mainから実装開始。",
+  "nextAction": "最新headから開始し、まず新しい定刻inventory-syncとmonitor-state鮮度を確認。2026-10-06 14:44 JSTまではBIGWEB観察を継続し次店を追加しない。24時間後に一覧・2商品・既存監視・価格policy・gzip・配送healthを再評価する。",
   "completion": {
-    "status": "not_started",
+    "status": "in_progress",
     "disabledAt": null,
     "remainingManualItems": []
   }

@@ -56,6 +56,8 @@
 - 未確認・注意：本店は今回の単純取得でJavaScript実行を要求。現時点の詳細在庫・価格の自動抽出は未検証。買取未開封BOXは新品流通と区別する。楽天店の返品条件を本店へ流用しない。
 - 次の作業：公開BOXページの表示構造と許可された取得方法を確認。新品予約と買取未開封を分け、現在の対象BOXだけ取り込む。JavaScript表示だけを在庫なしにしない。
 - 2026-10-05実査：公式画面が利用する公開JSON API `https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1` を確認。GD01（商品ID3447424、5,200円）とGD05（3548567、6,019円）の通常24パックBOXが登録されているが、確認時はいずれも `is_sold_out=true`・在庫0。正規の商品リンクは `/ja/products/gundamgcg/cardViewer/{id}`。APIは売切れも返すため `is_sold_out` と `stock_count` の厳格判定が必要。SC01のGD05 8パックセット、カスタムデッキボックス、スタートデッキ、海外30thを除外するfixtureを必須にし、安定性ゲート通過後の実装候補を `ready` とした。
+
+- 2026-10-05本番反映：Worker [PR #30](https://github.com/nekoromme/tcg-cross-search/pull/30) と移行修正 [PR #31](https://github.com/nekoromme/tcg-cross-search/pull/31) をマージし、本番0.14.1へ反映。14:44〜19:48 JSTに一覧11巡回がすべて成功し、GD01（5,200円・売切れ）とGD05（6,019円・売切れ）を各85回以上観測。価格上限内だが実在庫なしのため通知は送っていない。2026-10-06 14:44 JST以後まで1店だけの24時間観察を継続する。
 - 参照：
   - [本店BOX一覧](https://www.bigweb.co.jp/ja/products/gundamgcg/boxes)
   - [公式楽天店の運営](https://www.rakuten.co.jp/auc-big-web/info.html)
