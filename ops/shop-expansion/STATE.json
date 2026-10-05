@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T05:17:45.763Z",
+  "updatedAt": "2026-10-05T05:18:37.655Z",
   "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -80,7 +80,7 @@
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "implementation_pr",
-    "status": "pr_submit_intent",
+    "status": "waiting_checks",
     "candidateId": "bigweb",
     "workerRepo": "nekoromme/tcg-cross-search",
     "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
@@ -88,7 +88,7 @@
     "startedAt": "2026-10-05T05:07:24.031Z",
     "attempt": 1,
     "expectedHeadSha": "bd5ec706933c884e973867e1e111a38d42961b37",
-    "prNumber": null,
+    "prNumber": 30,
     "nextCheck": "BIGWEB専用公開JSONアダプタを実装し、テスト後にPR作成。",
     "branchCreatedAt": "2026-10-05T05:07:58.005Z",
     "tests": {
@@ -106,7 +106,9 @@
       "stockQty": 0
     },
     "prTitle": "feat: add BIGWEB inventory monitoring",
-    "prIntentAt": "2026-10-05T05:17:45.763Z"
+    "prIntentAt": "2026-10-05T05:17:45.763Z",
+    "prUrl": "https://github.com/nekoromme/tcg-cross-search/pull/30",
+    "prCreatedAt": "2026-10-05T05:18:17Z"
   },
   "stabilityWindow": {
     "status": "passed",
@@ -191,7 +193,7 @@
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "branch_pushed_tests_passed",
+        "status": "waiting_checks",
         "sourceType": "public_json_api",
         "api": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
         "productUrlPattern": "https://www.bigweb.co.jp/ja/products/gundamgcg/cardViewer/{id}",
@@ -221,7 +223,9 @@
         "branchCreatedAt": "2026-10-05T05:07:58.005Z",
         "headSha": "bd5ec706933c884e973867e1e111a38d42961b37",
         "tests": "184 passed",
-        "liveDryRun": "GD05 6,019円・売切れ、1通信、用品除外"
+        "liveDryRun": "GD05 6,019円・売切れ、1通信、用品除外",
+        "prNumber": 30,
+        "prUrl": "https://github.com/nekoromme/tcg-cross-search/pull/30"
       },
       "observation": null,
       "deliveryEvidence": {
