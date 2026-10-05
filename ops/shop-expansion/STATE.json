@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T05:26:15.931Z",
+  "updatedAt": "2026-10-05T05:26:46.628Z",
   "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -80,7 +80,7 @@
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "implementation_pr",
-    "status": "followup_waiting_checks",
+    "status": "followup_merge_intent",
     "candidateId": "bigweb",
     "workerRepo": "nekoromme/tcg-cross-search",
     "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
@@ -130,7 +130,10 @@
     "followupPrIntentAt": "2026-10-05T05:25:36.845Z",
     "followupPrNumber": 31,
     "followupPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/31",
-    "followupPrCreatedAt": "2026-10-05T05:25:56Z"
+    "followupPrCreatedAt": "2026-10-05T05:25:56Z",
+    "followupCiRunId": 37267765185,
+    "followupCiConclusion": "success",
+    "followupMergeIntentAt": "2026-10-05T05:26:46.628Z"
   },
   "stabilityWindow": {
     "status": "passed",
