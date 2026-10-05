@@ -662,6 +662,27 @@ def _application_deadline(
     """Read an application closing date without treating it as a start date."""
 
     compact = _compact_application_text(text)
+    # A reminder's "today" refers to the post date, not the monitoring date.
+    # Do not use it when the same post announces a new application window.
+    if base_date and not any(word in compact for word in _OPEN_APPLICATION_WORDS) and re.search(
+        r"抽選(?:申込|応募|受付).{0,12}(?:本日|今日)(?:で|が|は)?締(?:め)?切", compact,
+    ):
+        return base_date
+    # Grand-opening notices can publish two in-store draw days before the
+    # product names. Validate the event dates before reporting missing products.
+    event = re.search(
+        r"(?P<first>\d{1,2}[月/]\d{1,2}日?)[・、,]"
+        r"(?P<last>\d{1,2}[月/]\d{1,2}日?)(?:の)?[2２二]日間"
+        r".{0,100}店頭抽選販売", compact,
+    )
+    if event:
+        first = parse_first_datetime(event.group("first"), base_date).value
+        first_date = first.date() if isinstance(first, datetime) else first
+        last = parse_first_datetime(event.group("last"), first_date).value
+        if first_date and last:
+            last_date = last.date() if isinstance(last, datetime) else last
+            if 0 <= (last_date - first_date).days <= 1:
+                return last
     for marker in (
         "応募締切",
         "受付締切",

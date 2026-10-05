@@ -18,7 +18,8 @@ system:
   social_account_fallback: true
   # 同じアカウントの公開投稿を毎回併読。本文・画像・通知履歴は既存処理で統合。
   fxembed_public: true
-  fxembed_max_pages: 5
+  # 投稿の多い店は初回7日分が100件を超える。網羅してから既存の進捗へ切り替える。
+  fxembed_max_pages: 50
   fxembed_lookback_days: 7
   # 2026-10-03のユーザー指定でPokeGetInfoMainを追加。店別の個人・ブログは増やさない。
   secondary_provider_allowlist: [onepiecenyuka, nyuka_now, snkrdunk, PokeGetInfoMain]

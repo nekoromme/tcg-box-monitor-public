@@ -453,6 +453,11 @@ def parse_snkrdunk(
             blocks.append((heading_text, section_text, links))
     for row in soup.find_all("tr"):
         row_text = row.get_text(" ", strip=True)
+        label = row.find(["th", "td"])
+        if label is not None and label.get_text(" ", strip=True) == "抽選詳細":
+            # A detail-link row belongs to its retailer heading, not another
+            # campaign with a missing application period.
+            continue
         if _retailer(row_text, source):
             blocks.append(
                 (
