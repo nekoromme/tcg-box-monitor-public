@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T22:59:11.053Z",
+  "updatedAt": "2026-10-05T23:03:24.829Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -36,25 +36,25 @@
     "noPaidPlanChanges": true
   },
   "baseline": {
-    "checkedAt": "2026-10-05T11:11:58.772Z",
+    "checkedAt": "2026-10-05T23:03:24.829Z",
     "workerMainSha": "06426bb5c16c029bb8004a227ae6df9465e50fa7",
     "relayMainSha": "5ffa6e8688d8f74be1d442c2774a33372cd32916",
-    "inventorySnapshotAt": "2026-10-05T20:00:59+09:00",
-    "lastCompletedAt": "2026-10-05T20:00:57+09:00",
-    "latestSyncRunId": 37278868343,
+    "inventorySnapshotAt": "2026-10-06T07:59:51+09:00",
+    "lastCompletedAt": "2026-10-06T07:59:49+09:00",
+    "latestSyncRunId": 37347861347,
     "latestSyncRunConclusion": "success",
-    "latestSyncRunUpdatedAt": "2026-10-05T11:01:05Z",
+    "latestSyncRunUpdatedAt": "2026-10-05T22:59:56Z",
     "historicalWorkerVersion": "0.14.1",
     "registeredProducts": 38,
     "enabledProducts": 31,
     "pausedProducts": 7,
-    "liveHealthVerification": "verified_via_direct_production_health_monitor_state_actions_and_job_log",
-    "snapshotFreshness": "fresh_at_run",
-    "healthAccessNote": "本番/api/health直取得で0.14.1・main SHA一致。Cloudflare監視本体はBIGWEBを含め継続巡回。GitHubの定刻inventory-syncは16:39〜20:00 JSTに記録欠落があり、同じ成功runのattempt 2で状態保存を更新した。",
+    "liveHealthVerification": "verified_via_direct_production_health_monitor_state_actions_job_log_and_saved_state",
+    "snapshotFreshness": "fresh_after_single_rerun",
+    "healthAccessNote": "本番/api/healthは0.14.1・main SHA一致。Cloudflare側はBIGWEBを含め継続巡回。GitHub Actionsの定刻inventory-syncは2:22〜7:59 JSTに記録欠落し、同じrunのattempt 2で最新状態を保存した。",
     "storage": {
       "format": "monitor-gzip-v1",
-      "uncompressedBytes": 1428033,
-      "compressedBytes": 112486,
+      "uncompressedBytes": 1412991,
+      "compressedBytes": 111113,
       "chunks": 2
     },
     "pricePolicy": {
@@ -77,12 +77,7 @@
       "context": "0.14.1デプロイ切替中の一時的deployment_check_failedからの復旧。最新incidentはrecovery/sent。"
     }
   },
-  "lease": {
-    "runId": "20261005T225635812Z-4m7h2x",
-    "acquiredAt": "2026-10-05T22:56:35.812Z",
-    "expiresAt": "2026-10-06T00:26:35.812Z",
-    "owner": "scheduled-card-store-expansion"
-  },
+  "lease": null,
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "production_observation",
@@ -95,8 +90,8 @@
     "observationStartedAt": "2026-10-05T05:44:34.496Z",
     "minimumObservationEndsAt": "2026-10-06T05:44:34.496Z",
     "finalObservationEndsAt": "2026-10-07T05:44:34.496Z",
-    "latestEvidenceAt": "2026-10-05T11:00:59.562Z",
-    "nextCheck": "次回は新しい定刻inventory-syncが自動成功したかを先に確認し、2026-10-06 14:44 JST以後なら24時間観察条件を評価。次店はそれまで本番追加しない。",
+    "latestEvidenceAt": "2026-10-05T22:59:51.420Z",
+    "nextCheck": "2026-10-06 14:44 JST以後に24時間観察を評価。先に新しい定刻inventory-syncが手動介入なしで成功したか確認し、自動保存の再欠落が続くなら次店追加より安定化を優先。",
     "syncFreshnessRecovery": {
       "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T07:38:26Z",
       "runId": 37278868343,
@@ -108,16 +103,20 @@
       "note": "GitHub上の状態保存の鮮度回復。Cloudflare側のBIGWEB巡回は欠落時間中も継続していた。次回は定刻起動の自動復帰を確認。"
     },
     "syncFreshnessCheck": {
-      "status": "submitted",
+      "status": "completed",
       "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T17:21:53Z",
       "latestSuccessfulRunId": 37347861347,
-      "latestSuccessfulJobId": 111890923873,
-      "expectedAttempt": 2,
-      "intentAt": "2026-10-05T22:58:56.249Z",
-      "reason": "定刻自動実行が5時間以上記録されず、Cloudflare巡回と保存状態を区別して確認する",
-      "submittedAt": "2026-10-05T22:59:11.053Z",
+      "originalJobId": 111890923873,
       "runId": 37347861347,
-      "jobId": 111890923873
+      "attempt": 2,
+      "jobId": 112018734635,
+      "intentAt": "2026-10-05T22:58:56.249Z",
+      "submittedAt": "2026-10-05T22:59:11.053Z",
+      "completedAt": "2026-10-05T22:59:56Z",
+      "conclusion": "success",
+      "result": "health ok; lastCompletedAt advanced to 2026-10-06 07:59:49 JST; BIGWEB continued during export gap",
+      "remainingIssue": "schedule event reliability not yet demonstrated; workflow is active, GitHub Status reported operational, and GitHub documents that scheduled jobs can be delayed or dropped under load",
+      "reference": "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule"
     }
   },
   "stabilityWindow": {
@@ -256,9 +255,9 @@
         "startedAt": "2026-10-05T05:44:34.496Z",
         "minimumEndsAt": "2026-10-06T05:44:34.496Z",
         "finalEndsAt": "2026-10-07T05:44:34.496Z",
-        "listingRoundsObserved": 11,
+        "listingRoundsObserved": 35,
         "firstListingAt": "2026-10-05T05:44:34.496Z",
-        "latestListingAt": "2026-10-05T10:48:05.329Z",
+        "latestListingAt": "2026-10-05T22:56:08.078Z",
         "listingRequestsPerRound": 1,
         "listingStatus": "ok",
         "matchedPages": 2,
@@ -268,8 +267,8 @@
             "storeProductId": 3447424,
             "price": 5200,
             "stock": "out_of_stock",
-            "samples": 85,
-            "lastCheckedAt": "2026-10-05T10:57:56.997Z",
+            "samples": 285,
+            "lastCheckedAt": "2026-10-05T22:57:13.157Z",
             "priceDecision": "within_limit",
             "maxPrice": 6098,
             "failures": 0
@@ -279,8 +278,8 @@
             "storeProductId": 3548567,
             "price": 6019,
             "stock": "out_of_stock",
-            "samples": 86,
-            "lastCheckedAt": "2026-10-05T10:59:39.065Z",
+            "samples": 285,
+            "lastCheckedAt": "2026-10-05T22:56:42.465Z",
             "priceDecision": "within_limit",
             "maxPrice": 6300,
             "failures": 0
@@ -288,18 +287,18 @@
         ],
         "existingMonitorImpact": {
           "health": "ok",
-          "lastCompletedAt": "2026-10-05T20:00:57+09:00",
+          "lastCompletedAt": "2026-10-06T07:59:49+09:00",
           "deliveryConsecutiveFailures": 0,
           "storageFormat": "monitor-gzip-v1"
         },
-        "scheduleExportNote": "定刻inventory-syncの記録が一時3時間超空いたため同じ成功runをattempt 2で再実行。20:00 JSTに保存回復。監視本体の巡回は継続。"
+        "scheduleExportNote": "定刻inventory-syncは前回後に2:22 JSTで一度自動成功したが、その後7:59まで記録欠落。workflowはactive、GitHub Statusは正常。attempt 2の一度だけの再実行で保存回復。GitHub公式のschedule遅延・drop仕様と整合するが、自動安定は未確認。"
       },
       "deliveryEvidence": {
         "status": "awaiting_real_opportunity",
         "receiptIds": [],
-        "note": "BIGWEBの条件内商品2件は売切れ。実在庫の送信機会なし。架空在庫や過去sent IDは再送していない。"
+        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。35一覧巡回・各285商品観測で実在庫なし。架空在庫や過去sent IDは再送していない。"
       },
-      "nextAction": "2026-10-06 14:44 JST以後に24時間観察を評価。BIGWEB一覧・2商品・既存監視・gzip保存・価格policy・定刻inventory-syncの自動復帰を確認し、正常なら観察継続または完了判定。",
+      "nextAction": "2026-10-06 14:44 JST以後に24時間観察を評価。UTC日次境界後の巡回、BIGWEB一覧・2商品、既存監視、価格policy、gzip、配送healthに加え、inventory-sync定刻起動の自動復帰を確認。",
       "decisionFinal": false
     },
     {
@@ -430,14 +429,14 @@
     }
   ],
   "lastRun": {
-    "id": "20261005T105734776Z-9q4m2c",
-    "status": "completed_observing",
+    "id": "20261005T225635812Z-4m7h2x",
+    "status": "completed_observing_with_schedule_gap",
     "externalChanges": [
       {
         "kind": "workflow_job_rerun",
-        "runId": 37278868343,
+        "runId": 37347861347,
         "attempt": 2,
-        "jobId": 111730612380,
+        "jobId": 112018734635,
         "conclusion": "success"
       },
       {
@@ -445,9 +444,9 @@
         "branch": "shop-expansion-state"
       }
     ],
-    "notes": "BIGWEB本番0.14.1を実運用確認。公開API一覧11巡回、GD01/GD05各85回以上の売切れ・価格判定を保存。条件内在庫の実通知機会はまだない。GitHub状態保存の鮮度を再実行で回復し、次回は定刻自動復帰を確認。"
+    "notes": "BIGWEBは追加後約17時間、一覧35回すべて成功しGD01/GD05各285回をエラー0で観測。価格条件・停止7商品・履歴を維持。GitHub定刻書き出しは夜間に再欠落したため一度だけ再実行し最新状態を保存。24時間・UTC境界前なので次店追加なし。"
   },
-  "nextAction": "最新headから開始し、まず新しい定刻inventory-syncとmonitor-state鮮度を確認。2026-10-06 14:44 JSTまではBIGWEB観察を継続し次店を追加しない。24時間後に一覧・2商品・既存監視・価格policy・gzip・配送healthを再評価する。",
+  "nextAction": "最新headから開始し、新しい定刻inventory-syncが手動介入なしで成功したか最初に確認。2026-10-06 14:44 JST以後にBIGWEBの24時間観察を評価し、UTC日次境界後も正常か確認。保存起動の欠落が続く間は次店を追加しない。",
   "completion": {
     "status": "in_progress",
     "disabledAt": null,

@@ -53,3 +53,13 @@
 - 通知：BIGWEBの2商品は価格条件内だが売切れで、実在庫の通知機会なし。新規通知は送らず `awaiting_real_opportunity`。送信障害とは扱わない。
 - 状態保存：定刻inventory-syncの記録が16:39〜20:00 JSTに空いたため、同じ成功run [37278868343](https://github.com/nekoromme/tcg-box-monitor-public/actions/runs/37278868343) をattempt 2で一度だけ再実行し成功。20:00:59 JSTにhealth=`ok`、lastCompletedAt=20:00:57、gzip保存を確認。欠落時間中もCloudflare側のBIGWEB巡回は継続していたため、監視停止ではなくGitHub上の状態保存鮮度の問題として区別した。
 - 観察：BIGWEBの観察開始は2026-10-05 14:44 JST。最短の24時間判定は2026-10-06 14:44 JST以後。それまでは次の店を本番追加しない。次回は定刻inventory-syncの自動復帰を先に確認する。
+
+
+## 2026-10-06 08:00 JST BIGWEB夜間観察・保存鮮度確認
+
+- 実行ID：`20261005T225635812Z-4m7h2x`
+- BIGWEB実巡回：追加後約17時間。2026-10-05 14:44〜10-06 07:56 JSTに一覧35回、全て1リクエスト・`status=ok`・対象2件。GD01は5,200円・売切れを285回、GD05は6,019円・売切れを285回確認し、両対象とも取得失敗0。
+- 条件維持：本番 `0.14.1 / 06426bb5c16c029bb8004a227ae6df9465e50fa7`、登録38／有効31／停止7、通常105%、通常30thのみ200%、`monitor-gzip-v1`、通知待ち0・失敗0・連続失敗0。停止商品と過去送信済みIDを保持。
+- 通知：BIGWEBでは条件内の実在庫がまだ現れておらず、新規通知なし。送信障害ではなく `awaiting_real_opportunity` を継続。
+- 保存起動：定刻inventory-syncは前回後に02:22 JSTで一度自動成功したが、以後07:59まで5時間超の記録欠落。workflow自体はactive、確認時のGitHub Statusは正常。GitHub公式にはscheduleが負荷時に遅延・破棄され得るとの説明がある。最新run [37347861347](https://github.com/nekoromme/tcg-box-monitor-public/actions/runs/37347861347) をattempt 2で一度だけ再実行し、07:59:51 JSTにhealth=`ok`・lastCompletedAt=07:59:49・gzip保存を確認した。
+- 判断：Cloudflare側のBIGWEB巡回は欠落時間中も継続しており、監視停止ではない。ただしGitHubへの自動保存安定性は未確認のため、次店追加は保留。24時間到達は2026-10-06 14:44 JST、無料枠の日次境界は09:00 JSTなので、次回は両方を越えた自動巡回・自動保存を確認する。
