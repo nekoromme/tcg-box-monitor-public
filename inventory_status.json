@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791176135399,
+  "generatedAt": 1791176183646,
   "prices": {
     "version": 1,
-    "checkedAt": 1791176100113,
+    "checkedAt": 1791176148335,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -1798,7 +1798,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791176135398,
+    "checkedAt": 1791176183645,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -1810,7 +1810,7 @@
         "pages": 5,
         "minSeconds": 144,
         "maxSeconds": 288,
-        "nextAt": 1791176108397,
+        "nextAt": 1791176221468,
         "errors": 0
       },
       {
@@ -1826,7 +1826,7 @@
         "pages": 3,
         "minSeconds": 192,
         "maxSeconds": 288,
-        "nextAt": 1791176141010,
+        "nextAt": 1791176269220,
         "errors": 0
       },
       {
@@ -2115,7 +2115,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791176135396,
+    "verifiedAt": 1791176183642,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -4167,9 +4167,9 @@
       },
       "cardmax": {
         "storeId": "cardmax",
-        "nextAt": 1791176134882,
+        "nextAt": 1791179777770,
         "createdAt": 1791078090716,
-        "successes": 51,
+        "successes": 52,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4178,18 +4178,18 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791172537548
+            "lastAt": 1791176180875
           },
           {
             "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791168920053
+            "lastAt": 1791176182584
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791172534882,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791176177770,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -4203,13 +4203,22 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "search"
+            },
+            {
+              "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 47,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
             }
           ],
-          "requests": 1,
+          "requests": 2,
           "status": "ok",
-          "previousAt": 1791168915119
+          "previousAt": 1791172534882
         },
-        "lastAt": 1791172534882,
+        "lastAt": 1791176177770,
         "retryAt": 0,
         "error": "",
         "lastNewAt": 1791078196174,
@@ -32691,11 +32700,45 @@
         "reason": "取得範囲で24時間以上、対象ページの追加なし",
         "nextAt": 1791179729559,
         "at": 1791176129559
+      },
+      {
+        "kind": "listing",
+        "storeId": "cardmax",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.cardmax.jp/shop/shopbrand.html?search=BOX",
+            "head": true,
+            "productLinks": 47,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 47,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791172534882,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791179777770,
+        "at": 1791176177770
       }
     ],
     "budget": {
       "day": 20731,
-      "group": 715,
+      "group": 717,
       "fallback": 464
     },
     "nextFallbackAt": 1791176096040,
@@ -32721,8 +32764,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791176129559,
-  "lastCompletedAt": 1791176134414,
+  "lastTick": 1791176177770,
+  "lastCompletedAt": 1791176182584,
   "load": {
     "activePages": 72,
     "waitingPages": 0,
@@ -32733,8 +32776,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1405831,
-    "compressedBytes": 109993,
+    "uncompressedBytes": 1407252,
+    "compressedBytes": 110031,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -32764,8 +32807,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791176099557,
-    "nextSync": 1791183299557,
+    "lastSync": 1791176147768,
+    "nextSync": 1791183347768,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -34844,6 +34887,12 @@
       },
       {
         "at": 1791176099557,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791176147768,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -37751,13 +37800,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 151,
+          "negatives": 152,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791176108397,
+      "nextAt": 1791176466485,
       "failures": 0,
-      "lastChecked": 1791175820397,
+      "lastChecked": 1791176178485,
       "lastGood": {
         "title": "【新品】[TCG] (BOX)(再販) ガンダムカードゲーム ブースターパック Newtype Rising(ニュータイプ ライジング)【GD01】 バンダイ(24パック)(20260926)",
         "price": 6480,
@@ -37892,11 +37941,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円を超過",
           "at": 1791175820397,
-          "lastAt": 1791175820397,
-          "samples": 1
+          "lastAt": 1791176178485,
+          "samples": 2
         }
       ],
-      "lastGoodAt": 1791175820397,
+      "lastGoodAt": 1791176178485,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -37906,14 +37955,14 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,098円を超過",
-          "at": 1791175820397
+          "at": 1791176178485
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092126,
         "stock": "out_of_stock",
-        "lastAt": 1791175820397,
-        "lastUnavailableAt": 1791175820397
+        "lastAt": 1791176178485,
+        "lastUnavailableAt": 1791176178485
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -38072,13 +38121,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 429,
+          "negatives": 430,
           "lastEvent": 1791039217281
         }
       },
-      "nextAt": 1791176141010,
+      "nextAt": 1791176466925,
       "failures": 0,
-      "lastChecked": 1791175853010,
+      "lastChecked": 1791176178925,
       "lastGood": {
         "title": "【BOX】 ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX ｜ シュリンク付き 未開封 ポケカ トレカ トレーディングカード",
         "price": 33500,
@@ -38112,11 +38161,11 @@
           "comparable": true,
           "priceDecision": "通知上限14,400円を超過",
           "at": 1791078093471,
-          "lastAt": 1791175853010,
-          "samples": 429
+          "lastAt": 1791176178925,
+          "samples": 430
         }
       ],
-      "lastGoodAt": 1791175853010,
+      "lastGoodAt": 1791176178925,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -38126,7 +38175,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限14,400円を超過",
-          "at": 1791175853010
+          "at": 1791176178925
         }
       },
       "availabilityTiming": {
@@ -38135,8 +38184,8 @@
         "openAfter": null,
         "firstAvailableAt": 1791078093471,
         "stock": "in_stock",
-        "lastAt": 1791175853010,
-        "lastAvailableAt": 1791175853010
+        "lastAt": 1791176178925,
+        "lastAvailableAt": 1791176178925
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -49085,13 +49134,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791143088669,
-      "checked": 0,
-      "discovered": null,
-      "targets": 103,
-      "errors": 1
-    },
     {
       "at": 1791143118735,
       "checked": 2,
@@ -65937,6 +65979,45 @@
           "requests": 2,
           "status": "ok",
           "previousAt": 1791172503016
+        },
+        "error": ""
+      },
+      "targets": 104,
+      "errors": 0
+    },
+    {
+      "at": 1791176177770,
+      "checked": 2,
+      "discovered": {
+        "storeId": "cardmax",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.cardmax.jp/shop/shopbrand.html?search=BOX",
+              "head": true,
+              "productLinks": 47,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 47,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791172534882
         },
         "error": ""
       },
