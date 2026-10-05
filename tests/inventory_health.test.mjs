@@ -57,3 +57,62 @@ test('復旧は新しい巡回完了を待ち、商品・送信済み履歴を�
   const report=JSON.parse(await readFile(join(root,'inventory_status.json'),'utf8'));assert.equal(report.events.length,1);assert.equal(report.events[0].delivery,'sent');assert.equal(report.automatic.pricePolicy.defaultPercent,105);assert.match(await readFile(join(root,'inventory_status.md'),'utf8'),/定価の105%以下/);
   assert.equal(JSON.parse(await readFile(join(root,'inventory_incident.json'),'utf8')).fingerprint,'');
 });
+
+for(const endpoint of ['github','health'])for(const failure of ['transport','http','json']) {
+  test(`本番情報の一時失敗から回復し、実際の巡回完了を確認する ${endpoint}/${failure}`,async t=>{
+    const root=await mkdtemp(join(tmpdir(),'inventory-metadata-'));t.after(()=>rm(root,{recursive:true,force:true}));
+    await writeFile(join(root,'monitor_state.json'),JSON.stringify({seen_releases:{}}));
+    let attempts=0,reads=0,posts=0;const signals=[];
+    const fetcher=async(input,options={})=>{
+      const url=String(input),isRef=url.includes('api.github.com'),isHealth=url.endsWith('/api/health');
+      if((endpoint==='github'&&isRef)||(endpoint==='health'&&isHealth)) {
+        signals.push(options.signal);
+        if(++attempts===1) {
+          if(failure==='transport')throw new TypeError('fetch failed');
+          return new Response('temporarily unavailable',{status:failure==='http'?502:200});
+        }
+      }
+      if(isRef)return Response.json({object:{sha:SHA}});
+      if(isHealth)return Response.json({version:'0.13.0',commit:SHA});
+      if(url.endsWith('/api/monitor')){if(options.method==='GET')reads++;return Response.json({...state(),lastCompletedAt:reads>1?NOW+1:NOW});}
+      if(url.startsWith('https://discord.com')){posts++;return Response.json({id:'message'});}
+      throw new Error('unexpected request');
+    };
+    const health=await runInventorySync({root,webhook:WEBHOOK,fetcher,now:()=>NOW+100,pause:async()=>{},log:()=>{}});
+    assert.equal(health.status,'ok');assert.equal(attempts,2);assert(reads>=2);assert.equal(posts,0);
+    assert.notEqual(signals[0],signals[1]); // 再試行は、失効したタイムアウトを使い回さない。
+  });
+}
+
+for(const [status,expectedAttempts] of [[503,3],[403,1],[429,1]]) {
+  test(`本番情報が読めない場合は異常を保持し、設定を変えない HTTP ${status}`,async t=>{
+    const root=await mkdtemp(join(tmpdir(),'inventory-metadata-failure-'));t.after(()=>rm(root,{recursive:true,force:true}));
+    let attempts=0,commands=0;
+    const fetcher=async(input,options={})=>{
+      const url=String(input);
+      if(url.includes('api.github.com')){attempts++;return new Response('',{status});}
+      if(url.endsWith('/api/monitor'))commands++;
+      if(url.startsWith('https://discord.com'))return Response.json({id:'message'});
+      throw new Error('must not change configuration');
+    };
+    const health=await runInventorySync({root,webhook:WEBHOOK,fetcher,now:()=>NOW,pause:async()=>{},log:()=>{}});
+    assert.equal(health.status,'degraded');assert.equal(attempts,expectedAttempts);assert.equal(commands,0);
+    assert.equal(health.issues[0].code,'deployment_check_failed');assert.equal(health.issues[0].httpStatus,status);
+  });
+}
+
+test('通信が正常でも本当に古い稼働版は正常扱いにせず、設定を変えない',async t=>{
+  const root=await mkdtemp(join(tmpdir(),'inventory-old-deployment-'));t.after(()=>rm(root,{recursive:true,force:true}));
+  let healthReads=0,commands=0;
+  const fetcher=async input=>{
+    const url=String(input);
+    if(url.includes('api.github.com'))return Response.json({object:{sha:SHA}});
+    if(url.endsWith('/api/health')){healthReads++;return Response.json({version:'0.11.0',commit:'b'.repeat(40)});}
+    if(url.endsWith('/api/monitor'))commands++;
+    if(url.startsWith('https://discord.com'))return Response.json({id:'message'});
+    throw new Error('must not change configuration');
+  };
+  const health=await runInventorySync({root,webhook:WEBHOOK,fetcher,now:()=>NOW,pause:async()=>{},log:()=>{}});
+  assert.equal(health.status,'degraded');assert.equal(health.issues[0].code,'deployment_mismatch');
+  assert.equal(healthReads,12);assert.equal(commands,0);
+});
