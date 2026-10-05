@@ -1,12 +1,13 @@
 {
-  "checkedAt": 1791177975781,
-  "status": "ok",
-  "issues": [],
-  "deployment": {
-    "version": "0.14.0",
-    "commit": "8dc61954174f3d4cd86e315808f5709761724983",
-    "expectedCommit": "8dc61954174f3d4cd86e315808f5709761724983",
-    "deployedAt": "2026-10-05T05:19:59.16839Z"
-  },
-  "lastCompletedAt": 1791177974341
+  "checkedAt": 1791177989145,
+  "status": "degraded",
+  "issues": [
+    {
+      "code": "deployment_check_failed",
+      "message": "本番の修正版・変更番号を確認できない",
+      "stage": "deployment"
+    }
+  ],
+  "deployment": {},
+  "lastCompletedAt": null
 }
