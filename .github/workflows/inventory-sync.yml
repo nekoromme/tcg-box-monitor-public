@@ -16,6 +16,7 @@ permissions:
 # 抽選監視と同じ保存ブランチに追記するため、競合せず順番に保存する。
 concurrency:
   group: monitor-state
+  queue: max
   cancel-in-progress: false
 jobs:
   sync:
