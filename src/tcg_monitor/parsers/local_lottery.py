@@ -186,11 +186,28 @@ _DISALLOWED_REMOTE_APPLICATION_PATTERNS = (
     re.compile(r"当選(?:者|された方).{0,80}店頭.{0,30}予約(?:を|が|手続)", re.IGNORECASE),
     re.compile(r"予約手付金", re.IGNORECASE),
 )
+# Furuichi's W-chance opening draws distribute tickets at the store.  The
+# official Wakkanai campaign confirms that app membership is required only
+# when buying a win, so an app mention alone is not remote entry evidence.
+_STORE_W_CHANCE_DRAW = re.compile(
+    r"(?:店(?:頭|内)(?:で|にて).{0,60}wチャンス抽選販売|"
+    r"wチャンス店頭抽選販売)", re.IGNORECASE,
+)
+_REMOTE_APPLICATION_EVIDENCE = re.compile(
+    r"(?:web|ウェブ|オンライン|アプリ|ネット|フォーム).{0,16}"
+    r"(?:応募|申込|申し込|エントリー|受付)", re.IGNORECASE,
+)
 
 
 def _requires_disallowed_application(post_text: str) -> bool:
     compact = re.sub(r"\s+", "", post_text).casefold()
-    return any(marker in compact for marker in _DISALLOWED_REMOTE_APPLICATION_MARKERS) or any(
+    store_draw_only = bool(
+        _STORE_W_CHANCE_DRAW.search(compact)
+        and not _REMOTE_APPLICATION_EVIDENCE.search(compact)
+    )
+    return store_draw_only or any(
+        marker in compact for marker in _DISALLOWED_REMOTE_APPLICATION_MARKERS
+    ) or any(
         pattern.search(compact) for pattern in _DISALLOWED_REMOTE_APPLICATION_PATTERNS
     )
 

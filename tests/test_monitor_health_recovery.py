@@ -13,7 +13,11 @@ from tcg_monitor.config import load_config
 from tcg_monitor.fetching import FetchProblem, PageFetcher
 from tcg_monitor.fxembed import X_EPOCH_MS, FxEmbedReader, post_markup, timeline_url
 from tcg_monitor.http_client import FetchResult, HttpFetcher
-from tcg_monitor.parsers.local_lottery import _application_deadline, parse_yahoo_realtime
+from tcg_monitor.parsers.local_lottery import (
+    _application_deadline,
+    _requires_disallowed_application,
+    parse_yahoo_realtime,
+)
 from tcg_monitor.parsers.snkrdunk import parse_snkrdunk
 
 CONFIG = load_config("sites.yaml")
@@ -97,7 +101,8 @@ def test_actual_closed_lottery_notices_do_not_raise_missing_product_alerts() -> 
             html, "https://x.com/" + account, source, CONFIG, diagnostics=diagnostics,
         )
         assert not cases and not alerts
-        assert diagnostics["application_ended"] == 1
+        assert (diagnostics.get("application_ended", 0)
+                + diagnostics.get("disallowed_application", 0)) == 1
 
 
 def test_unread_current_lottery_still_raises_an_alert() -> None:
@@ -114,6 +119,43 @@ def test_historical_draw_days_do_not_override_a_new_application_period() -> None
     text = ("9/19・9/20の2日間は店頭抽選販売を実施しました。"
             "新たな抽選の応募期間：10/5〜10/8。当選発表10/12。")
     assert _application_deadline(text, date(2026, 10, 5)) == date(2026, 10, 8)
+
+
+@freeze_time("2026-10-05T04:00:00Z")
+def test_actual_future_store_ticket_draw_is_excluded_before_missing_product_alert() -> None:
+    post = json.loads(Path("tests/fixtures/furuichi_store_draw_20261005.json").read_text())
+    source = next(s for s in CONFIG.sources if s.id == "yahoo_realtime_furuichi")
+    markup = post_markup(post, "furu1tenpo")
+    assert markup
+    diagnostics: dict[str, int] = {}
+    cases, _, alerts = parse_yahoo_realtime(
+        markup, post["url"], source, CONFIG, diagnostics=diagnostics,
+        ocr_reader=lambda urls: pytest.fail("store ticket draw does not need OCR"),
+    )
+    assert not cases and not alerts
+    assert diagnostics["disallowed_application"] == 1
+
+
+@pytest.mark.parametrize("text", [
+    "店頭にてWチャンス抽選販売を限定開催！",
+    "Wチャンス店頭抽選販売。アプリ会員証は購入時に必要です。",
+])
+def test_store_draw_wording_is_not_remote_application(text: str) -> None:
+    assert _requires_disallowed_application(text)
+
+
+@freeze_time("2026-10-05T04:00:00Z")
+def test_w_chance_with_explicit_remote_entry_and_store_pickup_is_kept() -> None:
+    text = ("ポケモンカードゲーム 拡張パック「30th CELEBRATION」"
+            " Wチャンス店頭抽選販売。Webフォームから応募受付中。"
+            "応募期間：10/5〜10/8。当選時は店頭受取。")
+    assert not _requires_disallowed_application(text)
+    source = next(s for s in CONFIG.sources if s.id == "yahoo_realtime_furuichi")
+    markup = post_markup({"id": "2106926534179340691", "text": text,
+                          "author": {"screen_name": "furu1tenpo"}}, "furu1tenpo")
+    assert markup
+    cases, _, alerts = parse_yahoo_realtime(markup, "https://x.com/", source, CONFIG)
+    assert len(cases) == 1 and not alerts
 
 
 def test_snkrdunk_detail_link_row_is_part_of_its_parent_campaign() -> None:
