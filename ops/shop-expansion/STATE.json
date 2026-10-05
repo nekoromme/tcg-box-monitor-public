@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T04:57:59.571Z",
-  "phase": "waiting_stability_window",
+  "updatedAt": "2026-10-05T05:07:24.031Z",
+  "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
     "title": "カード監視の段階的店舗追加",
@@ -36,25 +36,25 @@
     "noPaidPlanChanges": true
   },
   "baseline": {
-    "checkedAt": "2026-10-04T23:15:51.960Z",
+    "checkedAt": "2026-10-05T05:07:24.031Z",
     "workerMainSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
-    "relayMainSha": "f0f92a63a67754c7b4ce6f0d48f04e9dac8dd9f6",
-    "inventorySnapshotAt": "2026-10-05T07:29:47+09:00",
-    "lastCompletedAt": "2026-10-05T07:29:44+09:00",
-    "latestSyncRunId": 37240182291,
+    "relayMainSha": "8e74bf9635037a33119b0c172f4507cda56f6c85",
+    "inventorySnapshotAt": "2026-10-05T13:56:23+09:00",
+    "lastCompletedAt": "2026-10-05T13:56:22+09:00",
+    "latestSyncRunId": 37265455844,
     "latestSyncRunConclusion": "success",
-    "latestSyncRunUpdatedAt": "2026-10-04T22:29:51Z",
+    "latestSyncRunUpdatedAt": "2026-10-05T04:56:28Z",
     "historicalWorkerVersion": "0.13.0",
     "registeredProducts": 38,
     "enabledProducts": 31,
     "pausedProducts": 7,
-    "liveHealthVerification": "verified_via_monitor_state_and_actions",
+    "liveHealthVerification": "verified_via_monitor_state_actions_and_job_log",
     "snapshotFreshness": "fresh_at_run",
     "healthAccessNote": "本番buildは保存されたhealthでmain一致。health直取得の経路制限は継続して区別。",
     "storage": {
       "format": "monitor-gzip-v1",
-      "uncompressedBytes": 1336472,
-      "compressedBytes": 105590,
+      "uncompressedBytes": 1407252,
+      "compressedBytes": 110031,
       "chunks": 2
     },
     "pricePolicy": {
@@ -79,15 +79,20 @@
   },
   "activeCandidateId": "bigweb",
   "pendingOperation": {
-    "kind": "preflight_stability_window",
-    "status": "waiting",
-    "startedAt": "2026-10-04T22:57:52.791Z",
-    "notBefore": "2026-10-05T01:51:38Z",
-    "nextCheck": "10:51 JST以後のinventory-sync/monitor-stateを読み、日次リセット後も正常ならBIGWEB実装へ。",
-    "attempt": 1
+    "kind": "implementation_pr",
+    "status": "intent_recorded",
+    "candidateId": "bigweb",
+    "workerRepo": "nekoromme/tcg-cross-search",
+    "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
+    "branch": "feat/shop-bigweb",
+    "startedAt": "2026-10-05T05:07:24.031Z",
+    "attempt": 1,
+    "expectedHeadSha": null,
+    "prNumber": null,
+    "nextCheck": "BIGWEB専用公開JSONアダプタを実装し、テスト後にPR作成。"
   },
   "stabilityWindow": {
-    "status": "observing_post_recovery",
+    "status": "passed",
     "from": "2026-10-04T10:51:38+09:00",
     "until": "2026-10-05T10:51:38+09:00",
     "evidence": [
@@ -108,9 +113,16 @@
         "health": "ok",
         "lastCompletedAt": "2026-10-05T07:29:44+09:00",
         "commit": "fc71ff842c1ed77a5eb0a1465a4d6ec49957dbda"
+      },
+      {
+        "at": "2026-10-05T13:56:23+09:00",
+        "health": "ok",
+        "lastCompletedAt": "2026-10-05T13:56:22+09:00",
+        "commit": "ccdd07ce6c009e9209097bd96cc2d490e1193409"
       }
     ],
-    "remainingGate": "復旧後24時間と2026-10-05 09:00 JSTの無料枠リセットを越えた後の新しい正常スナップショットが必要。"
+    "remainingGate": null,
+    "passedAt": "2026-10-05T13:56:23+09:00"
   },
   "queue": [
     {
@@ -156,13 +168,13 @@
       "id": "bigweb",
       "name": "BIGWEB／ビッグマジック",
       "priority": "2",
-      "status": "ready",
+      "status": "implementing",
       "attempts": 1,
       "notBefore": "2026-10-05T01:51:38Z",
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "design_ready",
+        "status": "intent_recorded",
         "sourceType": "public_json_api",
         "api": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
         "productUrlPattern": "https://www.bigweb.co.jp/ja/products/gundamgcg/cardViewer/{id}",
@@ -186,7 +198,9 @@
           "海外30th",
           "スタートデッキ",
           "売切れ"
-        ]
+        ],
+        "branch": "feat/shop-bigweb",
+        "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f"
       },
       "observation": null,
       "deliveryEvidence": {
