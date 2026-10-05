@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T05:07:24.031Z",
+  "updatedAt": "2026-10-05T05:07:58.004Z",
   "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -80,16 +80,17 @@
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "implementation_pr",
-    "status": "intent_recorded",
+    "status": "branch_created",
     "candidateId": "bigweb",
     "workerRepo": "nekoromme/tcg-cross-search",
     "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
     "branch": "feat/shop-bigweb",
     "startedAt": "2026-10-05T05:07:24.031Z",
     "attempt": 1,
-    "expectedHeadSha": null,
+    "expectedHeadSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
     "prNumber": null,
-    "nextCheck": "BIGWEB専用公開JSONアダプタを実装し、テスト後にPR作成。"
+    "nextCheck": "BIGWEB専用公開JSONアダプタを実装し、テスト後にPR作成。",
+    "branchCreatedAt": "2026-10-05T05:07:58.005Z"
   },
   "stabilityWindow": {
     "status": "passed",
@@ -174,7 +175,7 @@
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "intent_recorded",
+        "status": "coding",
         "sourceType": "public_json_api",
         "api": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
         "productUrlPattern": "https://www.bigweb.co.jp/ja/products/gundamgcg/cardViewer/{id}",
@@ -200,7 +201,8 @@
           "売切れ"
         ],
         "branch": "feat/shop-bigweb",
-        "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f"
+        "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
+        "branchCreatedAt": "2026-10-05T05:07:58.005Z"
       },
       "observation": null,
       "deliveryEvidence": {
