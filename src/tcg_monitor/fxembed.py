@@ -144,8 +144,34 @@ class FxEmbedReader:
     watermarks: dict[str, Any]
     max_pages: int = 5
     lookback_days: int = 7
+    request_attempts: int = 3
     snapshots: dict[str, PageResult | FetchProblem] = field(default_factory=dict)
     reports: dict[str, dict[str, object]] = field(default_factory=dict)
+
+    def _page(self, url: str, source: SourceConfig) -> tuple[PageResult, dict[str, Any]]:
+        """The public provider also returns temporary 404s for existing timelines.
+
+        Retry only this API's transient responses. Challenges, login gates and
+        rate limits retain the shared circuit-breaker policy.
+        """
+        for attempt in range(max(1, self.request_attempts)):
+            try:
+                response = self.page_fetcher.fetch(url, source, {})
+                payload = json.loads(response.html)
+                if not isinstance(payload, dict) or payload.get("code") != 200:
+                    raise ValueError("FxEmbed returned a non-success payload")
+                if not isinstance(payload.get("results"), list) or payload.get("error"):
+                    raise ValueError("FxEmbed results missing or partial error")
+                return response, payload
+            except (FetchProblem, ValueError) as exc:
+                retryable = isinstance(exc, ValueError) or (
+                    isinstance(exc, FetchProblem) and not exc.blocked
+                    and (exc.status_code in {404, 500, 502, 503, 504}
+                         or exc.reason.startswith("http_fetch_failed:"))
+                )
+                if not retryable or attempt + 1 >= max(1, self.request_attempts):
+                    raise
+        raise AssertionError("unreachable")
 
     def fetch(self, url: str, source: SourceConfig) -> PageResult:
         root = timeline_url(source)
@@ -185,14 +211,10 @@ class FxEmbedReader:
         duration = 0
         for page in range(max(1, self.max_pages)):
             try:
-                response = self.page_fetcher.fetch(next_url, http_source, {})
+                response, payload = self._page(next_url, http_source)
                 duration += response.duration_ms
-                payload = json.loads(response.html)
-                if not isinstance(payload, dict) or payload.get("code") != 200:
-                    raise ValueError("FxEmbed returned a non-success payload")
                 rows = payload.get("results")
-                if not isinstance(rows, list) or payload.get("error"):
-                    raise ValueError("FxEmbed results missing or partial error")
+                assert isinstance(rows, list)
             except (FetchProblem, ValueError) as exc:
                 if not markup:
                     if isinstance(exc, FetchProblem):

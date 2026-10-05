@@ -4,7 +4,7 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlsplit, urlunsplit
 
 import httpx
 from PIL import Image, UnidentifiedImageError
@@ -16,6 +16,20 @@ _ALLOWED_IMAGE_HOSTS = {
     "www.furu1.net",
 }
 _MAX_IMAGE_BYTES = 8_000_000
+
+
+def _image_urls(url: str) -> list[str]:
+    """Keep the exact attachment, with the default size as a 404 fallback."""
+    parts = urlsplit(url)
+    urls = [url]
+    if parts.netloc == "pbs.twimg.com" and parts.path.startswith("/media/"):
+        query = parse_qs(parts.query)
+        if "name" in query:
+            path = parts.path
+            if not Path(path).suffix and query.get("format", [""])[0] in {"png", "jpg", "webp"}:
+                path += "." + query["format"][0]
+            urls.append(urlunsplit((parts.scheme, parts.netloc, path, "", "")))
+    return list(dict.fromkeys(urls))
 
 
 def _color_text_variant(path: Path, destination: Path) -> Path | None:
@@ -60,10 +74,13 @@ def read_image_text(urls: list[str]) -> str:
             if parsed.scheme != "https" or parsed.netloc not in _ALLOWED_IMAGE_HOSTS:
                 continue
             try:
-                response = client.get(
-                    url,
-                    headers={"User-Agent": "TCGBoxLotteryMonitor/2.0"},
-                )
+                for candidate in _image_urls(url):
+                    response = client.get(
+                        candidate,
+                        headers={"User-Agent": "TCGBoxLotteryMonitor/2.0"},
+                    )
+                    if response.status_code != 404:
+                        break
                 response.raise_for_status()
             except httpx.HTTPError as exc:
                 # Yahoo image proxy URLs can expire while a direct X image in
