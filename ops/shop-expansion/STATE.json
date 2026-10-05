@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T11:11:58.772Z",
+  "updatedAt": "2026-10-05T22:56:35.812Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -77,7 +77,12 @@
       "context": "0.14.1デプロイ切替中の一時的deployment_check_failedからの復旧。最新incidentはrecovery/sent。"
     }
   },
-  "lease": null,
+  "lease": {
+    "runId": "20261005T225635812Z-4m7h2x",
+    "acquiredAt": "2026-10-05T22:56:35.812Z",
+    "expiresAt": "2026-10-06T00:26:35.812Z",
+    "owner": "scheduled-card-store-expansion"
+  },
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "production_observation",
