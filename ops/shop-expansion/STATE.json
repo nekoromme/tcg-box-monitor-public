@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T10:59:58.369Z",
+  "updatedAt": "2026-10-05T11:00:38.047Z",
   "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -80,7 +80,7 @@
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "implementation_pr",
-    "status": "inventory_sync_freshness_rerun_intent",
+    "status": "inventory_sync_freshness_rerun_submitted",
     "candidateId": "bigweb",
     "workerRepo": "nekoromme/tcg-cross-search",
     "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
@@ -147,7 +147,11 @@
       "latestSuccessfulRunId": 37278868343,
       "latestSuccessfulJobId": 111661983756,
       "intentAt": "2026-10-05T10:59:58.369Z",
-      "reason": "hourly schedule record absent for more than 2h15m; verify production state without changing notification data"
+      "reason": "hourly schedule record absent for more than 2h15m; verify production state without changing notification data",
+      "submittedAt": "2026-10-05T11:00:38.047Z",
+      "runId": 37278868343,
+      "jobId": 111661983756,
+      "expectedAttempt": 2
     }
   },
   "stabilityWindow": {
