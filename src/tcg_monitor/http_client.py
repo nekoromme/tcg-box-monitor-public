@@ -129,6 +129,7 @@ class HttpFetcher:
             if last_modified:
                 headers["If-Modified-Since"] = last_modified
             last_exc: httpx.HTTPError | None = None
+            last_result: FetchResult | None = None
             attempts = 0
             client = self._client()
             deadline = self._clock() + self.request_budget_seconds
@@ -143,9 +144,19 @@ class HttpFetcher:
                         headers=headers,
                         timeout=min(self.timeout, remaining),
                     )
+                    last_exc = None
                     self._last[host] = self._clock()
                     text = r.text[: self.max_bytes]
-                    return FetchResult(url, r.status_code, text, dict(r.headers))
+                    last_result = FetchResult(url, r.status_code, text, dict(r.headers))
+                    # Ordinary upstream failures can recover within the existing
+                    # retry/time budget. Access gates and 429 still reach the
+                    # shared circuit breaker immediately.
+                    if r.status_code in {408, 500, 502, 503, 504} and i < self.max_retries:
+                        remaining = deadline - self._clock()
+                        if remaining > 0:
+                            self._sleeper(min(self._retry_delay(i), remaining))
+                            continue
+                    return last_result
                 except httpx.HTTPError as e:
                     last_exc = e
                     if i == self.max_retries:
@@ -156,4 +167,6 @@ class HttpFetcher:
                     self._sleeper(min(self._retry_delay(i), remaining))
             if last_exc is not None:
                 raise HttpAttemptsExhausted(url, attempts, last_exc) from last_exc
+            if last_result is not None:
+                return last_result
             raise RuntimeError("request budget expired before the first attempt")
