@@ -10,17 +10,30 @@ from freezegun import freeze_time
 from tcg_monitor.config import load_config
 from tcg_monitor.fetching import FetchProblem, PageFetcher
 from tcg_monitor.fxembed import FxEmbedReader, post_markup, timeline_url
+from tcg_monitor.http_client import FetchResult, HttpFetcher
 from tcg_monitor.ocr import ExpiredImageProxyError
 from tcg_monitor.parsers.local_lottery import parse_yahoo_realtime
 from tcg_monitor.pipeline import run_pipeline
 from tcg_monitor.state import MonitorState
-from tests.test_monitor_health_recovery import SequenceFetcher
 
 CONFIG = load_config("sites.yaml")
 SOURCE = next(s for s in CONFIG.sources if s.id == "yahoo_realtime_dmm_tsuhan")
 POST = json.loads(Path("tests/fixtures/dmm_expired_proxy_post_20260907.json").read_text())
 API = "https://api.fxtwitter.com/status/" + POST["id"]
 PROXY = "https://rts-pctr.c.yimg.jp/expired-dmm"
+
+
+class SequenceFetcher(HttpFetcher):
+    def __init__(self, responses: list[tuple[int, str]]) -> None:
+        super().__init__(minimum_host_interval=0)
+        self.responses = responses
+        self.calls: list[str] = []
+
+    def fetch(self, url: str, etag: str | None = None,
+              last_modified: str | None = None) -> FetchResult:
+        self.calls.append(url)
+        status, body = self.responses.pop(0)
+        return FetchResult(url, status, body, {})
 
 
 def reader_for(payload: dict) -> tuple[FxEmbedReader, SequenceFetcher]:
