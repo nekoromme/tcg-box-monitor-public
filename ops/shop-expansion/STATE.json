@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T05:17:26.480Z",
+  "updatedAt": "2026-10-05T05:17:45.763Z",
   "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -80,7 +80,7 @@
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "implementation_pr",
-    "status": "branch_pushed_tests_passed",
+    "status": "pr_submit_intent",
     "candidateId": "bigweb",
     "workerRepo": "nekoromme/tcg-cross-search",
     "baseSha": "46e9d4b32671be31b06bbb51ab52c455b7a2d07f",
@@ -104,7 +104,9 @@
       "price": 6019,
       "stock": "out_of_stock",
       "stockQty": 0
-    }
+    },
+    "prTitle": "feat: add BIGWEB inventory monitoring",
+    "prIntentAt": "2026-10-05T05:17:45.763Z"
   },
   "stabilityWindow": {
     "status": "passed",
