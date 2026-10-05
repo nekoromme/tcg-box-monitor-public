@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T22:56:35.812Z",
+  "updatedAt": "2026-10-05T22:58:56.249Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -106,6 +106,15 @@
       "completedAt": "2026-10-05T11:01:05Z",
       "conclusion": "success",
       "note": "GitHub上の状態保存の鮮度回復。Cloudflare側のBIGWEB巡回は欠落時間中も継続していた。次回は定刻起動の自動復帰を確認。"
+    },
+    "syncFreshnessCheck": {
+      "status": "rerun_intent",
+      "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T17:21:53Z",
+      "latestSuccessfulRunId": 37347861347,
+      "latestSuccessfulJobId": 111890923873,
+      "expectedAttempt": 2,
+      "intentAt": "2026-10-05T22:58:56.249Z",
+      "reason": "定刻自動実行が5時間以上記録されず、Cloudflare巡回と保存状態を区別して確認する"
     }
   },
   "stabilityWindow": {
