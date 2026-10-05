@@ -21,6 +21,24 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
   const key=webhook?createHmac('sha256',webhook).update('tcg-cross-search:automatic-inventory:v1').digest('hex'):'';
   if(key)log(`::add-mask::${key}`);
   let state,policy,deployment={},issues=[],stage='configuration';
+  // 本番情報の一時的な通信失敗を、稼働版の不一致と取り違えない。
+  // 公開情報の読取だけを再試行し、アクセス拒否・制限はそのまま異常に残す。
+  async function readDeploymentJson(url,headers={}) {
+    let last;
+    for(let n=0;n<3;n++) {
+      try {
+        const response=await fetcher(url,{redirect:'error',headers,signal:AbortSignal.timeout(15000)});
+        if(response.ok)return await response.json();
+        last=Object.assign(new Error('本番情報への接続失敗'),{status:response.status});
+        if(![408,500,502,503,504].includes(response.status))break;
+      }catch{last=new Error('本番情報の通信・JSON読取に失敗');}
+      if(n<2) {
+        log(JSON.stringify({event:'inventory_metadata_retry',attempt:n+1,...(last?.status?{httpStatus:last.status}:{})}));
+        await pause(1000*(n+1));
+      }
+    }
+    throw last;
+  }
   // 同期操作は重複しても同じ対象へ収束するため、通信の一時失敗を3回まで再試行する。
   async function api(body) {
     let last;
@@ -43,14 +61,12 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
     // 読めない停止設定を空リストとして扱わない。既存設定を保持して異常を残す。
     try{policy=await loadInventoryPolicy();}catch{throw Object.assign(new Error('通知対象設定を確認できない'),{code:'notification_policy_invalid'});}
     stage='deployment';
-    const ref=await fetcher('https://api.github.com/repos/nekoromme/tcg-cross-search/git/ref/heads/main',{redirect:'error',headers:{Accept:'application/vnd.github+json','User-Agent':'TCGInventoryHealth/1.0'},signal:AbortSignal.timeout(15000)});
-    if(!ref.ok)throw new Error('運用コードの変更番号を確認できない');
-    const expectedCommit=(await ref.json()).object?.sha;
+    const ref=await readDeploymentJson('https://api.github.com/repos/nekoromme/tcg-cross-search/git/ref/heads/main',{Accept:'application/vnd.github+json','User-Agent':'TCGInventoryHealth/1.0'});
+    const expectedCommit=ref.object?.sha;
     if(!/^[a-f0-9]{40}$/.test(expectedCommit||''))throw new Error('変更番号の形式が不正');
     // 公開中の数分だけ待つ。旧版のままなら設定を触らず、外部から異常を知らせる。
     for(let n=0;n<12;n++) {
-      const response=await fetcher(BASE+'/api/health',{redirect:'error',signal:AbortSignal.timeout(15000)});
-      const health=await response.json();deployment={version:health.version,commit:health.commit,expectedCommit,deployedAt:health.deployedAt};
+      const health=await readDeploymentJson(BASE+'/api/health');deployment={version:health.version,commit:health.commit,expectedCommit,deployedAt:health.deployedAt};
       if(versionAtLeast(health.version)&&health.commit===expectedCommit)break;
       if(n<11)await pause(15000);
     }
