@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "checkedAt": 1791220924713,
+  "checkedAt": 1791241154753,
   "records": {
     "onepiece-eb-04": {
       "productId": "onepiece-eb-04",
@@ -543,24 +543,31 @@
       "game": "pokemon",
       "name": "ニンジャスピナー",
       "officialUrl": "https://www.pokemon-card.com/ex/m4/",
-      "checkedAt": 1791220924713,
-      "status": "quantity_unconfirmed",
+      "checkedAt": 1791241154753,
+      "status": "confirmed",
       "packPrice": 180,
-      "packsPerBox": null,
-      "boxPrice": null,
+      "packsPerBox": 30,
+      "boxPrice": 5400,
       "basis": "official_pack_times_verified_count",
       "sources": [
         {
           "url": "https://www.pokemon-card.com/ex/m4/",
-          "checkedAt": 1791220924713,
+          "checkedAt": 1791241154753,
           "kind": "official_price",
           "title": "ポケモンカードゲーム MEGA 拡張パック「ニンジャスピナー」|ポケモンカードゲーム公式ホームページ「トレーナーズウェブサイト」",
           "packPrice": 180,
           "boxPrice": null,
           "packsPerBox": null
+        },
+        {
+          "count": 30,
+          "url": "https://mediaworld.co.jp/products/13920917000",
+          "title": "【新品】[TCG] (BOX) ポケモンカードゲーム MEGA(メガ) 拡張パック ニンジャスピナー ポケモン(30パック)(20260313)",
+          "checkedAt": 1791240421380,
+          "kind": "observed_box_quantity"
         }
       ],
-      "nextCheckAt": 1791242524713
+      "nextCheckAt": 1791845954753
     },
     "pokemon-m3": {
       "parserVersion": 2,
@@ -1554,6 +1561,12 @@
       "productId": "gundam-gd03",
       "status": "quantity_unconfirmed",
       "boxPrice": null
+    },
+    {
+      "at": 1791241154753,
+      "productId": "pokemon-m4",
+      "status": "confirmed",
+      "boxPrice": 5400
     }
   ]
 }
