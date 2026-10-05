@@ -8,6 +8,21 @@ import pytest
 import tcg_monitor.ocr as ocr
 
 
+@pytest.mark.parametrize("host,status,expired", [
+    ("rts-pctr.c.yimg.jp", 400, True), ("rts-pctr.c.yimg.jp", 404, True),
+    ("rts-pctr.c.yimg.jp", 403, False), ("rts-pctr.c.yimg.jp", 429, False),
+    ("rts-pctr.c.yimg.jp", 503, False), ("pbs.twimg.com", 404, False),
+])
+def test_only_expired_search_proxies_allow_same_post_recovery(monkeypatch, host, status, expired):
+    url = f"https://{host}/expired"
+    client = _ImageClient({url: _ImageResponse(url, status, b"")})
+    monkeypatch.setattr(ocr.shutil, "which", lambda _: "/usr/bin/tesseract")
+    monkeypatch.setattr(ocr.httpx, "Client", lambda **_: client)
+    with pytest.raises(RuntimeError) as error:
+        ocr.read_image_text([url])
+    assert isinstance(error.value, ocr.ExpiredImageProxyError) is expired
+
+
 class _ImageResponse:
     def __init__(
         self,

@@ -40,6 +40,7 @@ from tcg_monitor.non_box_sales import (
     additional_sale_signal,
     period_has_ended,
 )
+from tcg_monitor.ocr import ExpiredImageProxyError
 from tcg_monitor.parsers.common import title, visible_text
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
 from tcg_monitor.store_scope import outside_store_scope
@@ -1677,6 +1678,7 @@ def parse_yahoo_realtime(
     ocr_cache_meta: dict[str, object] | None = None,
     ocr_attempt_token: str | None = None,
     diagnostics: dict[str, int] | None = None,
+    expired_proxy_reader: Callable[[str], str] | None = None,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     def count(reason: str) -> None:
         if diagnostics is not None:
@@ -1687,6 +1689,7 @@ def parse_yahoo_realtime(
         return _parse_secondary_social_feed(
             html, url, source, config, detected_on, ocr_reader, ocr_cache,
             known_releases, ocr_pending, ocr_cache_meta, ocr_attempt_token, diagnostics,
+            expired_proxy_reader,
         )
     profile = _yahoo_profile(source)
     if profile is None:
@@ -1921,7 +1924,16 @@ def parse_yahoo_realtime(
                 try:
                     ocr_text = ocr_reader(images).strip()[:12_000]
                 except Exception as exc:
-                    ocr_error = f"添付画像OCRに失敗: {type(exc).__name__}: {str(exc)[:160]}"
+                    recovered = False
+                    if isinstance(exc, ExpiredImageProxyError) and expired_proxy_reader:
+                        try:
+                            ocr_text = expired_proxy_reader(status_url).strip()[:12_000]
+                            recovered = True
+                            count("expired_proxy_recovered")
+                        except Exception as fallback_error:
+                            exc = fallback_error
+                    if not recovered:
+                        ocr_error = f"添付画像OCRに失敗: {type(exc).__name__}: {str(exc)[:160]}"
                 if not ocr_text and not ocr_error:
                     if image_only_candidate:
                         if ocr_cache_meta is not None:
@@ -2480,6 +2492,7 @@ def _parse_secondary_social_feed(
     ocr_cache_meta: dict[str, object] | None,
     ocr_attempt_token: str | None,
     diagnostics: dict[str, int] | None,
+    expired_proxy_reader: Callable[[str], str] | None,
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
     """共通フィードを一度分解し、店舗名が明記された単店の投稿だけを解析する。"""
     profiles = source.parser_options["retailer_profiles"]
@@ -2526,6 +2539,7 @@ def _parse_secondary_social_feed(
         parsed, _, found_alerts = parse_yahoo_realtime(
             "\n".join(markup), url, scoped, config, detected_on, ocr_reader, ocr_cache,
             known_releases, ocr_pending, ocr_cache_meta, ocr_attempt_token, diagnostics,
+            expired_proxy_reader,
         )
         cases.update((case.case_id, case) for case in parsed)
         alerts.update((alert.fingerprint, alert) for alert in found_alerts)
