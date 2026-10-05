@@ -197,6 +197,12 @@ _REMOTE_APPLICATION_EVIDENCE = re.compile(
     r"(?:web|ウェブ|オンライン|アプリ|ネット|フォーム).{0,16}"
     r"(?:応募|申込|申し込|エントリー|受付)", re.IGNORECASE,
 )
+_VENDING_RESTOCK_NOTICE = re.compile(
+    r"自販機オリパ.{0,80}(?:更新しました|販売開始|販売中)", re.IGNORECASE,
+)
+_POSSIBLE_APPLICATION_NOTICE = re.compile(
+    r"(?:抽選|応募|申込|申し込|BOX|ボックス|拡張パック)", re.IGNORECASE,
+)
 
 
 def _requires_disallowed_application(post_text: str) -> bool:
@@ -1755,6 +1761,18 @@ def parse_yahoo_realtime(
         selected_sale = additional_sale_signal(post_text) and bool(
             additional_game(post_text, source, config)
         )
+        # A vending-machine oripa restock is explicitly an ordinary sale.  Its
+        # prize-card picture cannot make it an unread BOX lottery merely because
+        # the attachment expires.  Mixed/possible application notices still OCR.
+        if (
+            not (body_announced or amazon_invitation or official_lorcana_sale or selected_sale)
+            and _VENDING_RESTOCK_NOTICE.search(compact_text)
+            and not _POSSIBLE_APPLICATION_NOTICE.search(compact_text)
+        ):
+            count("non_application_sale")
+            if ocr_pending is not None:
+                ocr_pending.pop(status_url, None)
+            continue
         posted_on = _post_date(status_id, config.timezone)
         images = _tweet_image_urls(container)
         # 本文が「お知らせ」「画像をご確認ください」だけでも、今日・昨日の

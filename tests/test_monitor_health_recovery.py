@@ -158,6 +158,42 @@ def test_w_chance_with_explicit_remote_entry_and_store_pickup_is_kept() -> None:
     assert len(cases) == 1 and not alerts
 
 
+@freeze_time("2026-10-05T04:00:00Z")
+def test_actual_vending_restock_does_not_retry_irrelevant_expired_image() -> None:
+    post = json.loads(Path("tests/fixtures/nakazato_vending_notice_20261004.json").read_text())
+    source = next(s for s in CONFIG.sources if s.id == "yahoo_realtime_tsutaya_nakazato")
+    markup = post_markup(post, "nakazatotoreka")
+    assert markup
+    pending: dict[str, object] = {post["url"]: {"attempts": 5}}
+    diagnostics: dict[str, int] = {}
+    cases, _, alerts = parse_yahoo_realtime(
+        markup, post["url"], source, CONFIG, diagnostics=diagnostics, ocr_pending=pending,
+        ocr_reader=lambda urls: pytest.fail("vending restock is already classified"),
+    )
+    assert not cases and not alerts and not pending
+    assert diagnostics["non_application_sale"] == 1
+
+
+@freeze_time("2026-10-05T04:00:00Z")
+def test_vending_notice_with_possible_box_application_still_reads_its_image() -> None:
+    post = json.loads(Path("tests/fixtures/nakazato_vending_notice_20261004.json").read_text())
+    post["text"] += "\nポケモンカードゲーム 新弾BOXのご案内も添付画像をご確認ください。"
+    source = next(s for s in CONFIG.sources if s.id == "yahoo_realtime_tsutaya_nakazato")
+    markup = post_markup(post, "nakazatotoreka")
+    assert markup
+    calls: list[list[str]] = []
+
+    def read_image(urls: list[str]) -> str:
+        calls.append(urls)
+        return ("ポケモンカードゲーム 拡張パック「30th CELEBRATION」"
+                "抽選応募受付期間：10/4〜10/8")
+
+    cases, _, alerts = parse_yahoo_realtime(
+        markup, post["url"], source, CONFIG, ocr_reader=read_image,
+    )
+    assert calls and len(cases) == 1 and not alerts
+
+
 def test_snkrdunk_detail_link_row_is_part_of_its_parent_campaign() -> None:
     source = next(s for s in CONFIG.sources if s.id == "snkrdunk_pokemon")
     html = """<h1>【ポケカ】30th CELEBRATIONの予約・抽選情報</h1>
