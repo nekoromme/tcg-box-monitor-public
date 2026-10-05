@@ -675,7 +675,7 @@ def _application_deadline(
         r"(?P<last>\d{1,2}[月/]\d{1,2}日?)(?:の)?[2２二]日間"
         r".{0,100}店頭抽選販売", compact,
     )
-    if event:
+    if event and not any(word in compact for word in _OPEN_APPLICATION_WORDS):
         first = parse_first_datetime(event.group("first"), base_date).value
         first_date = first.date() if isinstance(first, datetime) else first
         last = parse_first_datetime(event.group("last"), first_date).value

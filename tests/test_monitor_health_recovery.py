@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -12,7 +13,7 @@ from tcg_monitor.config import load_config
 from tcg_monitor.fetching import FetchProblem, PageFetcher
 from tcg_monitor.fxembed import X_EPOCH_MS, FxEmbedReader, post_markup, timeline_url
 from tcg_monitor.http_client import FetchResult, HttpFetcher
-from tcg_monitor.parsers.local_lottery import parse_yahoo_realtime
+from tcg_monitor.parsers.local_lottery import _application_deadline, parse_yahoo_realtime
 from tcg_monitor.parsers.snkrdunk import parse_snkrdunk
 
 CONFIG = load_config("sites.yaml")
@@ -107,6 +108,12 @@ def test_unread_current_lottery_still_raises_an_alert() -> None:
         cases, _, alerts = parse_yahoo_realtime(html, "https://x.com/", source, CONFIG)
     assert not cases
     assert [a.reason_code for a in alerts] == ["yahoo_lottery_post_without_product"]
+
+
+def test_historical_draw_days_do_not_override_a_new_application_period() -> None:
+    text = ("9/19・9/20の2日間は店頭抽選販売を実施しました。"
+            "新たな抽選の応募期間：10/5〜10/8。当選発表10/12。")
+    assert _application_deadline(text, date(2026, 10, 5)) == date(2026, 10, 8)
 
 
 def test_snkrdunk_detail_link_row_is_part_of_its_parent_campaign() -> None:
