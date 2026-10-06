@@ -100,6 +100,14 @@ def release_title_token(value: str) -> str:
         # value is normally the product's proper name and is stable across sources.
         text = max(quoted, key=len)
     else:
+        # MEGA等はポケカのシリーズ名。無引用の公式Xと引用付きの商品名を
+        # 同じ商品へ結び付ける。商品名自体の「MEGA DREAM ex」は残す。
+        text = re.sub(
+            r"^(?:(?:ポケモンカードゲーム|ポケモンカード|ポケカ)\s*)?"
+            r"(?:MEGA|スカーレット\s*[&＆]\s*バイオレット)\s*"
+            r"(?=(?:強化拡張パック|ハイクラスパック|再拡張パック|拡張パック))",
+            "", text, flags=re.I,
+        )
         text = _DATE_NOISE.sub("", text)
         text = _ONE_PIECE_CODE.sub("", text)
         text = _DRAGONBALL_CODE.sub("", text)
