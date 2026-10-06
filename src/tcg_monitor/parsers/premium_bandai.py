@@ -8,13 +8,14 @@ from urllib.parse import quote, urljoin
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
-from tcg_monitor.additional_products import additional_game, additional_matches
+from tcg_monitor.additional_products import additional_game, additional_matches, compact
 from tcg_monitor.classifier import classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime
 from tcg_monitor.models import (
     Alert,
     Config,
+    GameConfig,
     LotteryCase,
     Release,
     SourceConfig,
@@ -25,6 +26,13 @@ from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_
 from tcg_monitor.store_scope import outside_store_scope
 
 _HEADINGS = {"h2", "h3", "h4", "h5", "h6"}
+
+
+def _contains_game_keyword(game: GameConfig, text: str) -> bool:
+    # まとめ内の「ONE PIECE カードゲーム」「ONEPIECEカードゲーム」は同じ作品。
+    # 生文字列の事前判定で、分類可能なBOX・限定セットを捨てない。
+    folded = compact(text)
+    return any(compact(word) in folded for word in game.include_keywords)
 
 
 def _section_reference(case: LotteryCase, soup: BeautifulSoup, url: str,
@@ -131,7 +139,7 @@ def _products(
     saw_relevant_candidate = False
     saw_unexplained_non_box = False
     for value in candidates:
-        if not any(word in value for word in game.include_keywords):
+        if not _contains_game_keyword(game, value):
             continue
         saw_relevant_candidate = True
         has_box_code = bool(re.search(r"\b(?:OP|EB|PRB)-\d{2}\b", value, re.I))
@@ -322,9 +330,9 @@ def _fullcomp_product_candidates(tags: list[Tag]) -> list[str]:
 
 
 def _supported_game_id(text: str, source: SourceConfig) -> str | None:
-    folded = text.casefold()
+    folded = compact(text)
     if any(
-        marker.casefold() in folded
+        compact(marker) in folded
         for marker in (
             "ONE PIECEカード",
             "ONEPIECEカード",
@@ -334,7 +342,7 @@ def _supported_game_id(text: str, source: SourceConfig) -> str | None:
     ) and source.supports("one_piece_card"):
         return "one_piece_card"
     if any(
-        marker in text
+        compact(marker) in folded
         for marker in (
             "ドラゴンボールスーパーカードゲーム",
             "フュージョンワールド",
@@ -342,16 +350,15 @@ def _supported_game_id(text: str, source: SourceConfig) -> str | None:
         )
     ) and source.supports("dragon_ball_fusion_world"):
         return "dragon_ball_fusion_world"
-    if any(marker in text for marker in ("ポケモンカード", "ポケカ")) and source.supports(
-        "pokemon_card"
-    ):
+    if (source.supports("pokemon_card")
+            and any(compact(marker) in folded for marker in ("ポケモンカード", "ポケカ"))):
         return "pokemon_card"
     for game_id, markers in (
         ("yu_gi_oh", ("遊戯王OCG", "遊戯王")),
         ("lorcana", ("ディズニー・ロルカナ", "ロルカナ")),
         ("gundam_card", ("ガンダムカードゲーム", "GUNDAM CARD GAME")),
     ):
-        if source.supports(game_id) and any(marker.casefold() in folded for marker in markers):
+        if source.supports(game_id) and any(compact(marker) in folded for marker in markers):
             return game_id
     return None
 
@@ -621,8 +628,8 @@ def _parse_nyuka_now_priority_retailers(
 
         parsed_products = 0
         for candidate in candidates:
-            if not additional_matches(game, candidate) and not any(
-                word in candidate for word in game.include_keywords
+            if not additional_matches(game, candidate) and not _contains_game_keyword(
+                game, candidate,
             ):
                 continue
             if not additional_matches(game, candidate) and any(
