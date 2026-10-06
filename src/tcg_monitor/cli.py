@@ -26,7 +26,7 @@ from tcg_monitor.game_modes import (
     load_enabled_game_ids,
 )
 from tcg_monitor.google_calendar import RELEASE_EVENT_COLOR_ID, CalendarAdapter
-from tcg_monitor.identity import lottery_dedupe_key, release_dedupe_key
+from tcg_monitor.identity import lottery_dedupe_key, release_dedupe_key, release_title_token
 from tcg_monitor.logging_config import configure_logging, log_event
 from tcg_monitor.models import (
     Alert,
@@ -43,7 +43,7 @@ from tcg_monitor.purchase_review import run_purchase_reviews
 from tcg_monitor.release_sources import is_accepted_release, is_trusted_retailer_release
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS
 from tcg_monitor.source_groups import active_source_filter
-from tcg_monitor.source_priority import lottery_source_priority
+from tcg_monitor.source_priority import lottery_source_priority, merge_lotteries
 from tcg_monitor.state import MonitorState
 
 
@@ -390,6 +390,25 @@ def _migrate_existing_release_event_colors(
 
 def _reuse_first_detection_start(state: MonitorState, case: LotteryCase) -> LotteryCase:
     previous = state.data.get("seen_cases", {}).get(case.case_id, {})
+    if not previous and case.extraction_method == "yahoo_realtime_detected_open":
+        # 公式側へまとめ済みのX投稿は元のIDがseen_casesから消えている。
+        # 移行履歴の一意な参照先から開始日を復元し、翌日も同じ募集へまとめる。
+        aliases = []
+        for known_id, migration in state.data.get("case_id_migrations", {}).items():
+            if case.case_id not in [migration.get("legacy_id"),
+                                   *migration.get("legacy_ids", [])]:
+                continue
+            record = state.data.get("seen_cases", {}).get(known_id, {})
+            if (record.get("game_id") == case.game_id
+                    and record.get("retailer_id") == case.retailer_id
+                    and record.get("opportunity_kind", "lottery") == case.opportunity_kind.value
+                    and release_title_token(str(record.get("product_name") or ""))
+                    == release_title_token(case.product_name)
+                    and (not case.application_round or not record.get("application_round")
+                         or record["application_round"] == case.application_round)):
+                aliases.append(record)
+        if len(aliases) == 1:
+            previous = aliases[0]
     prepared = preserve_first_detection_start(case, previous)
     if case.extraction_method == "yahoo_realtime_detected_next_day":
         if previous.get("extraction_method") == case.extraction_method:
@@ -486,6 +505,12 @@ def _preserve_preferred_case_source(state: MonitorState, case: LotteryCase) -> L
 
 
 def _prepare_cases(state: MonitorState, cases: list[LotteryCase]) -> tuple[list[LotteryCase], int]:
+    # 開始日不明のX投稿は再取得日を仮の開始日にする。履歴を移す前に初回の日へ
+    # 戻して統合しないと、同じ募集の公式とXの間で配信履歴が往復してしまう。
+    stable_cases = [_reuse_first_detection_start(state, case) for case in cases]
+    if any(stable.start_at != current.start_at
+           for stable, current in zip(stable_cases, cases, strict=True)):
+        cases, _ = merge_lotteries(stable_cases)
     prepared: list[LotteryCase] = []
     new_count = 0
     for case in cases:

@@ -173,3 +173,36 @@ def test_news_index_keeps_past_draws_from_consuming_current_delivery(
     assert count == 0
     current = next(case for case in replay if case.case_id == current.case_id)
     assert restored.delivered(f"lottery:started:{current.case_id}")
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_old_x_post_detected_today_is_merged_before_history_moves(
+    tmp_path: Path, reverse: bool,
+) -> None:
+    state = MonitorState(tmp_path / "state.json")
+    state.data.update(json.loads(
+        (FIXTURES / "hobby_station_all_history_20261006.json").read_text()
+    ))
+    official = [case for case in _real_cases() if case.source_tier == SourceTier.OFFICIAL]
+    x_cases = [replace(case, start_at=date(2026, 10, 6)) for case in _real_cases()
+               if case.source_tier == SourceTier.OFFICIAL_INDIRECT]
+    candidates, _ = merge_lotteries([*official, *x_cases])
+    assert len(candidates) == 3  # 10月2日の投稿の仮日付は今日にずれている。
+    if reverse:
+        candidates.reverse()
+    prepared, count = _prepare_cases(state, candidates)
+    assert len(prepared) == 2
+    assert count == 0
+    assert all(case.source_tier == SourceTier.OFFICIAL for case in prepared)
+    assert all(state.delivered(f"lottery:started:{case.case_id}") for case in prepared)
+    assert len([row for row in state.data["seen_cases"].values()
+                if row["start_at"][:10] in {"2026-10-02", "2026-10-06"}]) == 2
+    for case in prepared:
+        _remember_case(state, case)
+    state.save()
+    restored = MonitorState.load(state.path)
+    later = [*official, *[replace(case, start_at=date(2026, 10, 7)) for case in x_cases]]
+    replay, count = _prepare_cases(restored, merge_lotteries(later)[0])
+    assert len(replay) == 2
+    assert count == 0
+    assert all(restored.delivered(f"lottery:started:{case.case_id}") for case in replay)
