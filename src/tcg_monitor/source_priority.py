@@ -59,7 +59,8 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
             else:
                 identity = lottery_dedupe_key(item)
                 aliases = observed_aliases.get(identity, set())
-                if item.extraction_method == "yahoo_realtime_detected_next_day" and len(aliases) == 1:
+                if (item.extraction_method == "yahoo_realtime_detected_next_day"
+                        and len(aliases) == 1):
                     identity = next(iter(aliases))
                     grouping_identity = identity
             item = replace(
