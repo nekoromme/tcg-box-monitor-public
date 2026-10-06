@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-06T05:03:46.908Z",
+  "updatedAt": "2026-10-06T05:07:15.454Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -77,26 +77,21 @@
       "context": "0.14.1デプロイ切替中の一時的deployment_check_failedからの復旧。最新incidentはrecovery/sent。"
     }
   },
-  "lease": {
-    "holder": "codex-automation",
-    "runId": "20261006T050346908Z-jbypul",
-    "acquiredAt": "2026-10-06T05:03:46.908Z",
-    "expiresAt": "2026-10-06T06:33:46.908Z"
-  },
+  "lease": null,
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "production_observation",
     "status": "observing",
     "candidateId": "bigweb",
-    "productionVersion": "0.14.1",
-    "productionSha": "06426bb5c16c029bb8004a227ae6df9465e50fa7",
+    "productionVersion": "0.14.2",
+    "productionSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
     "implementationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/30",
     "migrationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/31",
     "observationStartedAt": "2026-10-05T05:44:34.496Z",
     "minimumObservationEndsAt": "2026-10-06T05:44:34.496Z",
     "finalObservationEndsAt": "2026-10-07T05:44:34.496Z",
-    "latestEvidenceAt": "2026-10-05T22:59:51.420Z",
-    "nextCheck": "2026-10-06 14:44 JST以後に24時間観察を評価。先に新しい定刻inventory-syncが手動介入なしで成功したか確認し、自動保存の再欠落が続くなら次店追加より安定化を優先。",
+    "latestEvidenceAt": "2026-10-06T03:18:17.123Z",
+    "nextCheck": "2026-10-06 14:44 JST以後に24時間観察を評価。12:17 JSTの自動schedule成功後も保存が続くかを確認し、問題があれば次店追加より安定化を優先。",
     "syncFreshnessRecovery": {
       "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T07:38:26Z",
       "runId": 37278868343,
@@ -108,20 +103,22 @@
       "note": "GitHub上の状態保存の鮮度回復。Cloudflare側のBIGWEB巡回は欠落時間中も継続していた。次回は定刻起動の自動復帰を確認。"
     },
     "syncFreshnessCheck": {
-      "status": "completed",
-      "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T17:21:53Z",
-      "latestSuccessfulRunId": 37347861347,
-      "originalJobId": 111890923873,
-      "runId": 37347861347,
-      "attempt": 2,
-      "jobId": 112018734635,
-      "intentAt": "2026-10-05T22:58:56.249Z",
-      "submittedAt": "2026-10-05T22:59:11.053Z",
-      "completedAt": "2026-10-05T22:59:56Z",
+      "status": "automatic_schedule_recovered_once",
+      "fingerprint": "inventory_sync_schedule_recovered_2026-10-06T03:17:34Z",
+      "latestSuccessfulRunId": 37408287617,
+      "event": "schedule",
+      "attempt": 1,
+      "completedAt": "2026-10-06T03:18:21Z",
       "conclusion": "success",
-      "result": "health ok; lastCompletedAt advanced to 2026-10-06 07:59:49 JST; BIGWEB continued during export gap",
-      "remainingIssue": "schedule event reliability not yet demonstrated; workflow is active, GitHub Status reported operational, and GitHub documents that scheduled jobs can be delayed or dropped under load",
-      "reference": "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule"
+      "result": "health ok; 0.14.2 and main match; lastCompletedAt advanced; BIGWEB 43 listing rounds",
+      "precedingTransientFailure": {
+        "runId": 37387910622,
+        "event": "schedule",
+        "completedAt": "2026-10-05T23:23:50Z",
+        "reason": "deployment_check_failed HTTP403 during 0.14.2 deployment transition",
+        "recoveredByRunId": 37388131888
+      },
+      "remainingIssue": "24時間観察の最短時刻より前に取得した証拠。14:44 JST以後の再評価が必要。"
     }
   },
   "stabilityWindow": {
@@ -260,9 +257,9 @@
         "startedAt": "2026-10-05T05:44:34.496Z",
         "minimumEndsAt": "2026-10-06T05:44:34.496Z",
         "finalEndsAt": "2026-10-07T05:44:34.496Z",
-        "listingRoundsObserved": 35,
+        "listingRoundsObserved": 43,
         "firstListingAt": "2026-10-05T05:44:34.496Z",
-        "latestListingAt": "2026-10-05T22:56:08.078Z",
+        "latestListingAt": "2026-10-06T02:58:27.348Z",
         "listingRequestsPerRound": 1,
         "listingStatus": "ok",
         "matchedPages": 2,
@@ -272,8 +269,8 @@
             "storeProductId": 3447424,
             "price": 5200,
             "stock": "out_of_stock",
-            "samples": 285,
-            "lastCheckedAt": "2026-10-05T22:57:13.157Z",
+            "samples": 354,
+            "lastCheckedAt": "2026-10-06T03:15:54.906Z",
             "priceDecision": "within_limit",
             "maxPrice": 6098,
             "failures": 0
@@ -283,8 +280,8 @@
             "storeProductId": 3548567,
             "price": 6019,
             "stock": "out_of_stock",
-            "samples": 285,
-            "lastCheckedAt": "2026-10-05T22:56:42.465Z",
+            "samples": 355,
+            "lastCheckedAt": "2026-10-06T03:16:28.029Z",
             "priceDecision": "within_limit",
             "maxPrice": 6300,
             "failures": 0
@@ -292,18 +289,26 @@
         ],
         "existingMonitorImpact": {
           "health": "ok",
-          "lastCompletedAt": "2026-10-06T07:59:49+09:00",
+          "checkedAt": "2026-10-06T03:18:17.123Z",
+          "lastCompletedAt": "2026-10-06T03:18:16.214Z",
+          "deploymentVersion": "0.14.2",
+          "deploymentSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
           "deliveryConsecutiveFailures": 0,
-          "storageFormat": "monitor-gzip-v1"
+          "storageFormat": "monitor-gzip-v1",
+          "sent": 12,
+          "pending": 0,
+          "failed": 0,
+          "policyVersion": 1,
+          "pausedProducts": 7
         },
-        "scheduleExportNote": "定刻inventory-syncは前回後に2:22 JSTで一度自動成功したが、その後7:59まで記録欠落。workflowはactive、GitHub Statusは正常。attempt 2の一度だけの再実行で保存回復。GitHub公式のschedule遅延・drop仕様と整合するが、自動安定は未確認。"
+        "scheduleExportNote": "2026-10-06 12:17 JSTにschedule起動run 37408287617がattempt 1で自動成功。07:59 JSTの手動再実行後、少なくとも1回は手動介入なしで保存できた。08:23 JSTのrun 37387910622はデプロイ切替中のhealth取得HTTP403で失敗したが、直後のworkflow_run 37388131888と12:17のscheduleでhealth=okへ回復。"
       },
       "deliveryEvidence": {
         "status": "awaiting_real_opportunity",
         "receiptIds": [],
-        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。35一覧巡回・各285商品観測で実在庫なし。架空在庫や過去sent IDは再送していない。"
+        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。43一覧巡回・GD01 354回・GD05 355回観測で実在庫なし。架空在庫や過去sent IDは再送していない。"
       },
-      "nextAction": "2026-10-06 14:44 JST以後に24時間観察を評価。UTC日次境界後の巡回、BIGWEB一覧・2商品、既存監視、価格policy、gzip、配送healthに加え、inventory-sync定刻起動の自動復帰を確認。",
+      "nextAction": "2026-10-06 14:44 JST以後に24時間観察を評価。最新inventory-sync、BIGWEB一覧・2商品、既存監視、価格policy、gzip、配送healthを再取得し、問題なければ次候補の調査へ進む。",
       "decisionFinal": false
     },
     {
@@ -434,24 +439,17 @@
     }
   ],
   "lastRun": {
-    "id": "20261005T225635812Z-4m7h2x",
-    "status": "completed_observing_with_schedule_gap",
+    "id": "20261006T050346908Z-jbypul",
+    "status": "completed_pre_24h_observation",
     "externalChanges": [
-      {
-        "kind": "workflow_job_rerun",
-        "runId": 37347861347,
-        "attempt": 2,
-        "jobId": 112018734635,
-        "conclusion": "success"
-      },
       {
         "kind": "state_and_progress_update",
         "branch": "shop-expansion-state"
       }
     ],
-    "notes": "BIGWEBは追加後約17時間、一覧35回すべて成功しGD01/GD05各285回をエラー0で観測。価格条件・停止7商品・履歴を維持。GitHub定刻書き出しは夜間に再欠落したため一度だけ再実行し最新状態を保存。24時間・UTC境界前なので次店追加なし。"
+    "notes": "12:17 JSTのinventory-sync定刻起動が手動介入なしで成功。BIGWEBは43一覧巡回、GD01 354回・GD05 355回をエラー0で観測。0.14.2、価格policy v1、停止7、gzip、配送連続失敗0、送信済み履歴を維持。確認時点が14:44 JST前のため次店追加なし。"
   },
-  "nextAction": "最新headから開始し、新しい定刻inventory-syncが手動介入なしで成功したか最初に確認。2026-10-06 14:44 JST以後にBIGWEBの24時間観察を評価し、UTC日次境界後も正常か確認。保存起動の欠落が続く間は次店を追加しない。",
+  "nextAction": "最新headから開始し、2026-10-06 14:44 JST以後のhealth・inventory-sync・BIGWEB観測を取得して24時間判定。12:17 JST以後の定刻保存継続も確認し、問題なければ次候補の調査へ進む。",
   "completion": {
     "status": "in_progress",
     "disabledAt": null,

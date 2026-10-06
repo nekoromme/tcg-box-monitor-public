@@ -63,3 +63,13 @@
 - 通知：BIGWEBでは条件内の実在庫がまだ現れておらず、新規通知なし。送信障害ではなく `awaiting_real_opportunity` を継続。
 - 保存起動：定刻inventory-syncは前回後に02:22 JSTで一度自動成功したが、以後07:59まで5時間超の記録欠落。workflow自体はactive、確認時のGitHub Statusは正常。GitHub公式にはscheduleが負荷時に遅延・破棄され得るとの説明がある。最新run [37347861347](https://github.com/nekoromme/tcg-box-monitor-public/actions/runs/37347861347) をattempt 2で一度だけ再実行し、07:59:51 JSTにhealth=`ok`・lastCompletedAt=07:59:49・gzip保存を確認した。
 - 判断：Cloudflare側のBIGWEB巡回は欠落時間中も継続しており、監視停止ではない。ただしGitHubへの自動保存安定性は未確認のため、次店追加は保留。24時間到達は2026-10-06 14:44 JST、無料枠の日次境界は09:00 JSTなので、次回は両方を越えた自動巡回・自動保存を確認する。
+
+
+## 2026-10-06 14:08 JST BIGWEB 24時間判定前・定刻保存の自動復帰確認
+
+- 実行ID：`20261006T050346908Z-jbypul`
+- 定刻保存：12:17 JSTのinventory-sync [run 37408287617](https://github.com/nekoromme/tcg-box-monitor-public/actions/runs/37408287617) がscheduleイベント・attempt 1で自動成功。07:59 JSTの手動再実行後、少なくとも1回は手動介入なしで保存できた。
+- 一時失敗の区別：08:23 JSTの [run 37387910622](https://github.com/nekoromme/tcg-box-monitor-public/actions/runs/37387910622) はWorker 0.14.2切替中の本番health HTTP403。直後のworkflow_run [37388131888](https://github.com/nekoromme/tcg-box-monitor-public/actions/runs/37388131888) と12:17の定刻runでhealth=`ok`へ戻り、継続障害ではない。
+- BIGWEB：一覧43回すべて成功・毎回1通信・対象2件。GD01は5,200円・売切れを354回、GD05は6,019円・売切れを355回確認し、両方とも取得失敗0。条件内の実在庫はまだなく通知機会なし。
+- 条件維持：Worker mainと保存された本番は `0.14.2 / 35a194ea7e4d549090d29cdad9b7010f222f45cb` で一致。価格policy v1（通常105%、通常30thのみ200%）、停止7商品、`monitor-gzip-v1`、送信済み12・待機0・失敗0・連続失敗0。既存の送信済みIDも保持。
+- 判断：取得時点は24時間到達の14:44 JSTより前。次店は追加せず、14:44以後の新しいhealth・定刻保存・BIGWEB観測で判定する。
