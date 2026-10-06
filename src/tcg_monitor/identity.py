@@ -4,7 +4,7 @@ import re
 import unicodedata
 from datetime import date, datetime
 
-from tcg_monitor.models import LotteryCase, OpportunityKind, Release
+from tcg_monitor.models import LotteryCase, OpportunityKind, Release, stable_url_identity
 
 _ONE_PIECE_CODE = re.compile(r"\b(?:OP|EB|PRB)-\d{2}\b", re.I)
 _DRAGONBALL_CODE = re.compile(r"\b(?:FB|SB|ST)\d{2}\b", re.I)
@@ -145,6 +145,17 @@ def is_pokemon_30th_cardset(game_id: str, product_key: str) -> bool:
 
 
 def lottery_dedupe_key(case: LotteryCase) -> str:
+    if (is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
+            and case.extraction_method == "yahoo_realtime_detected_next_day"):
+        # 開始日不明の仮日付は取得の翌日であり、抽選回の識別には使えない。
+        # 同じ締切の再告知も一回。締切がなければ同じ投稿だけ。
+        end_day = (case.end_at.date() if isinstance(case.end_at, datetime) else case.end_at)
+        anchor = ("deadline:" + end_day.isoformat() if end_day is not None
+                  else "notice:" + stable_url_identity(case.source_url or case.official_url))
+        return "|".join((
+            case.game_id, case.retailer_id, "pokemon_30th_cardset", anchor,
+            case.opportunity_kind.value, case.application_round,
+        ))
     if (case.game_id == "lorcana" and case.retailer_id == "lorcana_official"
             and case.opportunity_kind != OpportunityKind.LOTTERY
             and not case.extraction_method.startswith("yahoo_realtime_official_restock_")):

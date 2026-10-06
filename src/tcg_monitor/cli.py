@@ -26,7 +26,7 @@ from tcg_monitor.game_modes import (
     load_enabled_game_ids,
 )
 from tcg_monitor.google_calendar import RELEASE_EVENT_COLOR_ID, CalendarAdapter
-from tcg_monitor.identity import lottery_dedupe_key, lottery_dedupe_key_values, release_dedupe_key
+from tcg_monitor.identity import lottery_dedupe_key, release_dedupe_key
 from tcg_monitor.logging_config import configure_logging, log_event
 from tcg_monitor.models import (
     Alert,
@@ -446,6 +446,9 @@ def _preserve_preferred_case_source(state: MonitorState, case: LotteryCase) -> L
         previous_start = (datetime.fromisoformat(raw_start) if len(raw_start) > 10
                           else date.fromisoformat(raw_start))
         previous_kind = OpportunityKind(previous.get("opportunity_kind") or "lottery")
+        raw_end = str(previous.get("end_at") or "")
+        previous_end = ((datetime.fromisoformat(raw_end) if len(raw_end) > 10
+                         else date.fromisoformat(raw_end)) if raw_end else None)
     except (ValueError, TypeError):
         return case
     if not url or lottery_source_priority(tier, url) >= lottery_source_priority(
@@ -453,10 +456,15 @@ def _preserve_preferred_case_source(state: MonitorState, case: LotteryCase) -> L
     ):
         return case
     # 同じURLで開催される次回抽選や、別商品・別の販売方式に古い告知を使わない。
-    previous_key = lottery_dedupe_key_values(
-        case.game_id, case.retailer_id, str(previous.get("product_name") or ""),
-        str(previous.get("canonical_product_key") or ""), previous_start, previous_kind,
-    )
+    # 通知と同じ識別規則を使い、締切でまとめたカードセットでも公式の告知を保持する。
+    previous_key = lottery_dedupe_key(replace(
+        case, product_name=str(previous.get("product_name") or ""),
+        canonical_product_key=str(previous.get("canonical_product_key") or ""),
+        start_at=previous_start, end_at=previous_end, opportunity_kind=previous_kind,
+        extraction_method=str(previous.get("extraction_method") or ""),
+        source_url=url, official_url=str(previous.get("official_url") or ""),
+        application_round=str(previous.get("application_round") or ""),
+    ))
     if previous_key != lottery_dedupe_key(case) or (
         case.application_round and previous.get("application_round")
         and case.application_round != previous["application_round"]
