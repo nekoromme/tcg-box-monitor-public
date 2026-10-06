@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-06T22:57:12Z",
+  "updatedAt": "2026-10-06T23:02:13Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -36,25 +36,25 @@
     "noPaidPlanChanges": true
   },
   "baseline": {
-    "checkedAt": "2026-10-05T23:03:24.829Z",
-    "workerMainSha": "06426bb5c16c029bb8004a227ae6df9465e50fa7",
-    "relayMainSha": "5ffa6e8688d8f74be1d442c2774a33372cd32916",
-    "inventorySnapshotAt": "2026-10-06T07:59:51+09:00",
-    "lastCompletedAt": "2026-10-06T07:59:49+09:00",
-    "latestSyncRunId": 37347861347,
+    "checkedAt": "2026-10-06T23:00:24Z",
+    "workerMainSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
+    "relayMainSha": "02280ec0b445b4e490249c451aa3ff7cafa82a1e",
+    "inventorySnapshotAt": "2026-10-06T21:52:39.543Z",
+    "lastCompletedAt": "2026-10-06T21:52:38.496Z",
+    "latestSyncRunId": 37536837347,
     "latestSyncRunConclusion": "success",
-    "latestSyncRunUpdatedAt": "2026-10-05T22:59:56Z",
-    "historicalWorkerVersion": "0.14.1",
+    "latestSyncRunUpdatedAt": "2026-10-06T21:52:43Z",
+    "historicalWorkerVersion": "0.14.2",
     "registeredProducts": 38,
     "enabledProducts": 31,
     "pausedProducts": 7,
-    "liveHealthVerification": "verified_via_direct_production_health_monitor_state_actions_job_log_and_saved_state",
-    "snapshotFreshness": "fresh_after_single_rerun",
-    "healthAccessNote": "本番/api/healthは0.14.1・main SHA一致。Cloudflare側はBIGWEBを含め継続巡回。GitHub Actionsの定刻inventory-syncは2:22〜7:59 JSTに記録欠落し、同じrunのattempt 2で最新状態を保存した。",
+    "liveHealthVerification": "verified_via_fresh_actions_health_job_log_and_monitor_state",
+    "snapshotFreshness": "within_current_freshness_threshold",
+    "healthAccessNote": "本番直接web取得は経路エラー。既存Actionsの本番healthで0.14.2・Worker main SHA一致を確認。定刻保存は夜間に数時間間隔の欠落があるが最新06:52 JSTは鮮度基準内。",
     "storage": {
       "format": "monitor-gzip-v1",
-      "uncompressedBytes": 1412991,
-      "compressedBytes": 111113,
+      "uncompressedBytes": 1478153,
+      "compressedBytes": 116001,
       "chunks": 2
     },
     "pricePolicy": {
@@ -63,25 +63,25 @@
       "normal30thPercent": 200
     },
     "deliveryHealth": {
+      "lastAttemptAt": 1791078435925,
+      "lastSuccessAt": 1791078435925,
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-04T10:47:15+09:00"
+      "retryAt": 0,
+      "error": ""
     },
     "recoveryNotification": {
       "deliveredAt": "2026-10-04T10:51:38+09:00",
       "delivery": "sent"
     },
-    "latestSyncRunAttempt": 2,
+    "latestSyncRunAttempt": 1,
     "latestRecoveryNotification": {
       "deliveredAt": "2026-10-05T14:27:17+09:00",
       "delivery": "sent",
       "context": "0.14.1デプロイ切替中の一時的deployment_check_failedからの復旧。最新incidentはrecovery/sent。"
-    }
+    },
+    "quotaNote": "Cloudflare実利用量の正規メトリクスは未取得。新しいhealth issuesなし、無料枠停止の証拠なし。"
   },
-  "lease": {
-    "runId": "20261006T225712Z-shop",
-    "acquiredAt": "2026-10-06T22:57:12Z",
-    "expiresAt": "2026-10-07T00:27:12Z"
-  },
+  "lease": null,
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "production_observation",
@@ -94,7 +94,7 @@
     "observationStartedAt": "2026-10-05T05:44:34.496Z",
     "minimumObservationEndsAt": "2026-10-06T05:44:34.496Z",
     "finalObservationEndsAt": "2026-10-07T05:44:34.496Z",
-    "latestEvidenceAt": "2026-10-06T10:44:48.854Z",
+    "latestEvidenceAt": "2026-10-06T21:52:39.699Z",
     "nextCheck": "2026-10-07 14:44 JST以後に48時間最終観察を評価。BIGWEBの通常監視は継続。ドラゴンスターは対象BOX不在のため本番追加なし。",
     "syncFreshnessRecovery": {
       "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T07:38:26Z",
@@ -107,13 +107,14 @@
       "note": "GitHub上の状態保存の鮮度回復。Cloudflare側のBIGWEB巡回は欠落時間中も継続していた。次回は定刻起動の自動復帰を確認。"
     },
     "syncFreshnessCheck": {
-      "status": "automatic_schedule_stable",
-      "latestSuccessfulRunId": 37451728152,
+      "status": "fresh_automatic_export_with_schedule_gaps",
+      "latestSuccessfulRunId": 37536837347,
       "event": "schedule",
       "attempt": 1,
-      "completedAt": "2026-10-06T10:44:54Z",
+      "completedAt": "2026-10-06T21:52:43Z",
       "conclusion": "success",
-      "result": "health ok; lastCompletedAt 2026-10-06 19:44:47 JST; 12:17後も定刻保存が継続"
+      "priorRunId": 37536498080,
+      "result": "06:49:36→06:52:38 JSTにlastCompletedAt進行、両health ok。snapshot鮮度は約68分で現行閾値内。定刻runには数時間の間隔欠落があるがCloudflare巡回は継続。"
     }
   },
   "stabilityWindow": {
@@ -175,19 +176,27 @@
       "id": "hobby-search",
       "name": "ホビーサーチ",
       "priority": "併用",
-      "status": "researching",
-      "attempts": 0,
+      "status": "manual_required",
+      "attempts": 1,
       "notBefore": null,
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
-      "implementation": null,
+      "implementation": {
+        "status": "final_hold_no_existing_approved_restock_route",
+        "checkedAt": "2026-10-06T23:00:24Z",
+        "productUrl": "https://www.1999.co.jp/11383250",
+        "termsUrl": "https://www.1999.co.jp/terms/",
+        "result": "GD05は5,717円・品切れ中・注文再開メールあり。店表示の希望小売6,019円は公式定価6,000円へ上書きしない。最新sites.yamlのhobby_search_lotteryとyahoo_realtime_hobby_search_secondaryはいずれもdisabled、前者は抽選用で再入荷メールではない。STORESにホビーサーチなし。コード・設定上、承認済みのGD05再入荷メール連携は確認できない。私的メールの登録状況は取得していない。",
+        "termsFinding": "WEBサイト利用規約第2条2項は商用目的の情報利用を禁止。商品販売規約第4条3項で注文再開メールは予約/購入申込ではない。",
+        "permissionBoundary": "新規メール登録・新規接続は実施しない。抽選の停止設定は維持。"
+      },
       "observation": null,
       "deliveryEvidence": {
         "status": "not_started",
         "receiptIds": []
       },
-      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
-      "decisionFinal": false
+      "nextAction": "今回の自動追加は最終保留。必要なら本人が商品ページの公式注文再開メールを確認・登録。別途明示された既存の許可済み連携経路がある場合のみ再評価。",
+      "decisionFinal": true
     },
     {
       "id": "bigweb",
@@ -252,40 +261,40 @@
         "startedAt": "2026-10-05T05:44:34.496Z",
         "minimumEndsAt": "2026-10-06T05:44:34.496Z",
         "finalEndsAt": "2026-10-07T05:44:34.496Z",
-        "listingRoundsObserved": 53,
+        "listingRoundsObserved": 64,
         "firstListingAt": "2026-10-05T05:44:34.496Z",
-        "latestListingAt": "2026-10-06T10:01:07.439Z",
+        "latestListingAt": "2026-10-06T21:04:42.167Z",
         "listingRequestsPerRound": 1,
         "listingStatus": "ok",
         "matchedPages": 2,
         "targets": [
           {
-            "productId": "gundam-gd01",
-            "storeProductId": 3447424,
-            "price": 5200,
-            "stock": "out_of_stock",
-            "samples": 480,
-            "lastCheckedAt": "2026-10-06T10:42:47.561Z",
-            "priceDecision": "within_limit",
-            "maxPrice": 6098,
-            "failures": 0
-          },
-          {
             "productId": "gundam-gd05",
             "storeProductId": 3548567,
             "price": 6019,
             "stock": "out_of_stock",
-            "samples": 481,
-            "lastCheckedAt": "2026-10-06T10:43:51.888Z",
+            "samples": 662,
+            "lastCheckedAt": "2026-10-06T21:51:43.123Z",
             "priceDecision": "within_limit",
             "maxPrice": 6300,
+            "failures": 0
+          },
+          {
+            "productId": "gundam-gd01",
+            "storeProductId": 3447424,
+            "price": 5200,
+            "stock": "out_of_stock",
+            "samples": 660,
+            "lastCheckedAt": "2026-10-06T21:49:36.187Z",
+            "priceDecision": "within_limit",
+            "maxPrice": 6098,
             "failures": 0
           }
         ],
         "existingMonitorImpact": {
           "health": "ok",
-          "checkedAt": "2026-10-06T10:44:48.854Z",
-          "lastCompletedAt": "2026-10-06T10:44:47.728Z",
+          "checkedAt": "2026-10-06T21:52:39.699Z",
+          "lastCompletedAt": "2026-10-06T21:52:38.496Z",
           "deploymentVersion": "0.14.2",
           "deploymentSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
           "deliveryConsecutiveFailures": 0,
@@ -296,7 +305,7 @@
           "policyVersion": 1,
           "pausedProducts": 7
         },
-        "scheduleExportNote": "2026-10-06 19:44 JSTのschedule起動run 37451728152がattempt 1で自動成功。12:17 JSTの定刻成功後も保存が継続し、lastCompletedAtが進行。",
+        "scheduleExportNote": "2026-10-07 06:49・06:52 JSTにworkflow_run/scheduleで自動保存成功。夜間に数時間のschedule欠落はあるが現行snapshotは鮮度基準内。BIGWEB一覧は毎時継続。手動再実行なし。",
         "minimumPassedAt": "2026-10-06T10:44:48.854Z",
         "cadenceMode": "quiet",
         "cadenceReason": "取得範囲で24時間以上、対象ページの追加なし",
@@ -305,7 +314,7 @@
       "deliveryEvidence": {
         "status": "awaiting_real_opportunity",
         "receiptIds": [],
-        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。53一覧巡回・GD01 480回・GD05 481回観測で実在庫なし。新着なしであり送信障害ではない。"
+        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。64一覧巡回・GD01 660回・GD05 662回の観測で実在庫なし。新着なしであり送信障害ではない。"
       },
       "nextAction": "2026-10-07 14:44 JST以後に48時間観察を最終判定。通常監視は継続し、その前でも全体障害が出た場合だけ修復を優先。",
       "decisionFinal": false
@@ -361,18 +370,36 @@
       "id": "ryuunoshippo",
       "name": "竜のしっぽ",
       "priority": "後方",
-      "status": "deferred_no_target",
-      "attempts": 0,
-      "notBefore": null,
+      "status": "researching",
+      "attempts": 1,
+      "notBefore": "2026-10-07T05:44:34.496Z",
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
-      "implementation": null,
+      "implementation": {
+        "status": "target_found_pending_access_and_regression",
+        "checkedAt": "2026-10-06T23:00:24Z",
+        "sourceType": "public_html",
+        "listingUrl": "https://www.ryuunoshippo7.com/product-group/2?view=recommend",
+        "productUrl": "https://www.ryuunoshippo7.com/product/1273",
+        "productId": "gundam-gd01",
+        "price": 5800,
+        "stock": "out_of_stock",
+        "unit": "1BOX・24パック",
+        "newEvidence": "公式『新品・予約商品 [おすすめ商品]』欄9件に商品1273を掲載。商品詳細は未開封品と明記。",
+        "storeIdentity": "返品窓口は株式会社ウィンウィン。古物許可があることだけで当該新品BOXを中古としない。",
+        "limitations": "Worker相当の取得・無通知dry-run・規約全体・fixture検証は未実施。GD05の通常BOXはまだ未確認。公式新品欄所属を維持している対象だけ採用する。",
+        "warnings": [
+          "外装傷み・輸送時の箱潰れは了承条件",
+          "返品連絡期限は3日と7日の両表記があり3日基準、差は未解決"
+        ],
+        "termsUrl": "https://www.ryuunoshippo7.com/info"
+      },
       "observation": null,
       "deliveryEvidence": {
         "status": "not_started",
         "receiptIds": []
       },
-      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "nextAction": "BIGWEB48h最終判定後、新品欄のGD01 /product/1273の公開取得と規約を確認。無通知で5,800円・売切れ・24パックを照合し、既存ocnk形式の再利用・用品/中古除外を回帰検証。取得制限は回避せず保留。",
       "decisionFinal": false
     },
     {
@@ -434,35 +461,62 @@
       "name": "フルコンプ通販",
       "priority": "後方",
       "status": "deferred_no_target",
-      "attempts": 0,
+      "attempts": 1,
       "notBefore": null,
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
-      "implementation": null,
+      "implementation": {
+        "status": "final_hold_no_verified_new_target",
+        "checkedAt": "2026-10-06T23:00:24Z",
+        "listingUrl": "https://shopping.fullcomp.jp/collections/p_supplies",
+        "normal30thSeriesUrl": "https://shopping.fullcomp.jp/collections/p_m6a",
+        "result": "公式未開封品・サプライ欄の30th CELEBRATION FUTURISTIC BOXは79,800円・在庫1・中古A。通常30th新品BOXとは異なり対象外。正常な30thシリーズ欄はシングル主体、GD01/GD05・他現行弾の新品通常BOXは今回の公式ページと限定検索範囲で特定できなかった。全商品不在の証明とはしない。",
+        "resumeCondition": "現在有効な対象弾・新品・通常BOXの具体的通販ページが提示/掲載されること"
+      },
       "observation": null,
       "deliveryEvidence": {
         "status": "not_started",
         "receiptIds": []
       },
-      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
-      "decisionFinal": false
+      "nextAction": "今回の店舗拡張は最終保留。新品の有効対象BOXの具体的掲載が出た場合のみ再評価。FUTURISTIC/中古Aを通常30thに混ぜない。",
+      "decisionFinal": true
     }
   ],
   "lastRun": {
-    "id": "20261006T105748719Z-7ud9nu",
-    "status": "completed_24h_passed_dragonstar_deferred",
+    "id": "20261006T225712Z-shop",
+    "status": "completed_observation_and_candidate_research",
     "externalChanges": [
       {
-        "kind": "state_candidates_progress_update",
+        "kind": "ledger_only",
         "branch": "shop-expansion-state"
       }
     ],
-    "notes": "BIGWEBは約29時間、一覧53回・GD01 480回・GD05 481回をエラー0で観測し24時間条件通過。定刻保存も12:17と19:44 JSTに自動成功。ドラゴンスターは公開ページを再確認したが対象通常BOXなしのため追加せず保留。"
+    "notes": "BIGWEB64一覧・GD01 660/GD05 662観測で売切れ・失敗0。hobby-searchは許可済み再入荷経路未確認で最終保留、fullcompは中古別仕様のため最終保留。竜のしっぽGD01新品欄の対象を発見し技術検証待ちへ。実装/本番変更/通知送信なし。"
   },
-  "nextAction": "最新headから開始し、BIGWEBの48時間観察終了（2026-10-07 14:44 JST）以後のhealth・inventory-sync・BIGWEB観測を最終確認。終了前は新店の本番追加をせず、候補調査のみ進める。ドラゴンスターは対象BOX新規掲載まで保留。",
+  "nextAction": "最新headとActions/monitor-stateを読む。BIGWEB48時間終了は2026-10-07 14:44 JSTなので前なら候補/注意情報の読み取り調査のみ。終了以後の正常snapshotを得たら最終判定し、竜のしっぽ新品GD01 /product/1273の取得/規約/無通知回帰検証へ。既存店の根拠URL・確認日付き注意リンクはsendDiscord/public UIで未整備なので別の小PRで仕上げる。",
   "completion": {
     "status": "in_progress",
     "disabledAt": null,
-    "remainingManualItems": []
+    "remainingManualItems": [
+      {
+        "candidateId": "hobby-search",
+        "item": "公式注文再開メールは自動登録しない。コード上で既存承認済み再入荷メール経路を確認できず今回の自動追加は保留。"
+      }
+    ]
+  },
+  "maintenanceFindings": {
+    "checkedAt": "2026-10-06T23:00:24Z",
+    "mediaworld": {
+      "status": "transient_rate_limit",
+      "target429Count": 3,
+      "listingFailures": 2,
+      "latestListingSuccessAt": "2026-10-06T19:07:34.927Z",
+      "nextAction": "次回latest snapshotで429の回復・待機動作を確認。突破や短周期追加再試行なし、失敗を売切れにしない。全体health ok。"
+    },
+    "storeNoticeDisplay": {
+      "status": "not_implemented_with_sources_and_dates",
+      "evidence": "最新main src/monitor-engine.js sendDiscordは店舗注意へのリンク/確認日を含まない。public/ui.jsはstoreNoteを持つが表示行には注意を描画していない。STORES.noteに一部概要だけ存在。",
+      "nextAction": "公式ページの動画/返品条項を再確認後、既存noteを重複させず共通注意メタデータ+参照リンクとして追加。今回のweb findは動画語が抽出されず再検証未完。過去確認日10/4を現在日へ書き換えない。"
+    }
   }
 }

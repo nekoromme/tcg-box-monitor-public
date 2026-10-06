@@ -47,6 +47,8 @@
   - [GD05・注文再開メール](https://www.1999.co.jp/11383250)
   - [各種規約](https://www.1999.co.jp/terms/)
 
+- 2026-10-07再実査：GD05は5,717円・品切れ中で注文再開メールの案内がある。ただし最新main `sites.yaml` の公式抽選・補完経路はともに停止中で、許可済みのGD05再入荷メール連携はコード/設定から確認できなかった。WEBサイト利用規約第2条2項の商用目的の情報利用制限を確認し、自前巡回・公開連携は行わず今回の候補は `manual_required` の最終保留。本人の私的メール登録の有無は未確認。商品販売規約第4条3項によると注文再開メールは予約・購入申込みではない。必要な場合は本人が公式商品ページで登録する。店表示の希望小売6,019円を公式定価6,000円へ上書きしない。
+
 ## 3. BIGWEB／ビッグマジック
 
 - ID：`bigweb`
@@ -102,6 +104,8 @@
   - [ガンダム通販](https://www.ryuunoshippo7.com/)
   - [運営・返品](https://www.ryuunoshippo7.com/info)
 
+- 2026-10-07再実査：初期のシングル主体という見立てを更新。[新品・予約商品のおすすめ欄](https://www.ryuunoshippo7.com/product-group/2?view=recommend) に [GD01の通常24パックBOX（商品1273）](https://www.ryuunoshippo7.com/product/1273) があり、5,800円・在庫なし。商品詳細は未開封品、外装傷み・輸送時箱潰れの了承条件を記載。新品欄所属という肯定的根拠はあるが、取得条件/Worker相当dry-run/回帰検証はまだ未実施のため `researching`。BIGWEBの48時間最終観察後にこの1商品の技術検証を行う。停止中GD03/GD04/EB01の掲載を追加理由にしない。返品3日/7日差は再確認しても残る。
+
 ## 7. あみあみ本店
 
 - ID：`amiami`
@@ -150,6 +154,8 @@
 - 参照：
   - [公式通販](https://shopping.fullcomp.jp/)
   - [実店舗の取扱商品](https://www.fullcomp.jp/tachikawa/item/)
+
+- 2026-10-07再実査：[ポケカ未開封品・サプライ欄](https://shopping.fullcomp.jp/collections/p_supplies) の30th CELEBRATION FUTURISTIC BOXは79,800円・在庫1・中古A表記。通常30th新品BOXと仕様/状態が異なるため対象外。[通常30thシリーズ欄](https://shopping.fullcomp.jp/collections/p_m6a) はシングル主体で、公式ページと限定検索範囲では現在有効な弾の新品通常BOXを特定できなかった。全商品不在の証明とはしないが、本番追加の肯定的根拠がないため今回は最終保留。新品・有効対象・通常BOXの具体的な通販掲載が出た時だけ再評価する。
 
 ## 調査の限界
 
