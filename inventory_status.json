@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791323377742,
+  "generatedAt": 1791323559543,
   "prices": {
     "version": 1,
-    "checkedAt": 1791323345815,
+    "checkedAt": 1791323527746,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -1883,7 +1883,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791323377741,
+    "checkedAt": 1791323559542,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -2200,7 +2200,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791323377737,
+    "verifiedAt": 1791323559541,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -4664,7 +4664,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 1440850,
+        "intervalMs": 1258953,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -36086,9 +36086,9 @@
     "budget": {
       "day": 20733,
       "group": 216,
-      "fallback": 265
+      "fallback": 266
     },
-    "nextFallbackAt": 1791323448417,
+    "nextFallbackAt": 1791323588452,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -36111,8 +36111,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791323374940,
-  "lastCompletedAt": 1791323376194,
+  "lastTick": 1791323557077,
+  "lastCompletedAt": 1791323558496,
   "load": {
     "activePages": 76,
     "waitingPages": 0,
@@ -36123,8 +36123,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1478615,
-    "compressedBytes": 116010,
+    "uncompressedBytes": 1478153,
+    "compressedBytes": 116001,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36154,8 +36154,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791323344938,
-    "nextSync": 1791330544938,
+    "lastSync": 1791323527075,
+    "nextSync": 1791330727075,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38481,6 +38481,12 @@
       },
       {
         "at": 1791323344938,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791323527075,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -41661,13 +41667,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 986,
+          "negatives": 987,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791323523152,
+      "nextAt": 1791323846217,
       "failures": 0,
-      "lastChecked": 1791323235152,
+      "lastChecked": 1791323558217,
       "lastGood": {
         "title": "【BOX】ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 9500,
@@ -41720,11 +41726,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1791309331729,
-          "lastAt": 1791323235152,
-          "samples": 44
+          "lastAt": 1791323558217,
+          "samples": 45
         }
       ],
-      "lastGoodAt": 1791323235152,
+      "lastGoodAt": 1791323558217,
       "priceDecisions": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "referencePrice": 6000,
@@ -41734,14 +41740,14 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1791323235152
+          "at": 1791323558217
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078129094,
         "stock": "out_of_stock",
-        "lastAt": 1791323235152,
-        "lastUnavailableAt": 1791323235152
+        "lastAt": 1791323558217,
+        "lastUnavailableAt": 1791323558217
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -41820,13 +41826,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 895,
+          "negatives": 896,
           "lastEvent": 1791039217281
         }
       },
-      "nextAt": 1791323421854,
+      "nextAt": 1791323726440,
       "failures": 0,
-      "lastChecked": 1791323133854,
+      "lastChecked": 1791323438440,
       "lastGood": {
         "title": "【BOX】 ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX ｜ シュリンク付き 未開封 ポケカ トレカ トレーディングカード",
         "price": 33500,
@@ -41909,11 +41915,11 @@
           "priceDecision": "通知上限14,400円を超過",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1791316632495,
-          "lastAt": 1791323133854,
-          "samples": 24
+          "lastAt": 1791323438440,
+          "samples": 25
         }
       ],
-      "lastGoodAt": 1791323133854,
+      "lastGoodAt": 1791323438440,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -41923,15 +41929,15 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限14,400円を超過",
-          "at": 1791323133854
+          "at": 1791323438440
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093471,
         "firstAvailableAt": 1791078093471,
         "stock": "in_stock",
-        "lastAt": 1791323133854,
-        "lastAvailableAt": 1791323133854,
+        "lastAt": 1791323438440,
+        "lastAvailableAt": 1791323438440,
         "lastSale": {
           "at": 1791284311610,
           "targetId": "a45b6168-dfe0-4fd9-ac7d-ca5218375332",
@@ -42025,13 +42031,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 1233,
+          "negatives": 1234,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791323554600,
+      "nextAt": 1791323846482,
       "failures": 0,
-      "lastChecked": 1791323266600,
+      "lastChecked": 1791323558482,
       "lastGood": {
         "title": "ブースターパック　Newtype Rising　BOX【ガンダムカードゲーム】",
         "price": 5808,
@@ -42082,11 +42088,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791264459142,
-          "lastAt": 1791323266600,
-          "samples": 235
+          "lastAt": 1791323558482,
+          "samples": 236
         }
       ],
-      "lastGoodAt": 1791323266600,
+      "lastGoodAt": 1791323558482,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -42096,14 +42102,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791323266600
+          "at": 1791323558482
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078128567,
         "stock": "out_of_stock",
-        "lastAt": 1791323266600,
-        "lastUnavailableAt": 1791323266600
+        "lastAt": 1791323558482,
+        "lastUnavailableAt": 1791323558482
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -42122,13 +42128,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 1494,
+          "negatives": 1495,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791323455077,
+      "nextAt": 1791323658089,
       "failures": 0,
-      "lastChecked": 1791323267077,
+      "lastChecked": 1791323470089,
       "lastGood": {
         "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 5808,
@@ -42164,11 +42170,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791078092888,
-          "lastAt": 1791323267077,
-          "samples": 1338
+          "lastAt": 1791323470089,
+          "samples": 1339
         }
       ],
-      "lastGoodAt": 1791323267077,
+      "lastGoodAt": 1791323470089,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -42178,14 +42184,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791323267077
+          "at": 1791323470089
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092888,
         "stock": "out_of_stock",
-        "lastAt": 1791323267077,
-        "lastUnavailableAt": 1791323267077
+        "lastAt": 1791323470089,
+        "lastUnavailableAt": 1791323470089
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -49994,13 +50000,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 1080,
+          "negatives": 1081,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791323421424,
+      "nextAt": 1791323725921,
       "failures": 0,
-      "lastChecked": 1791323133424,
+      "lastChecked": 1791323437921,
       "lastGood": {
         "title": "拡張パック　30th CELEBRATION　BOX【ポケモンカードゲーム】",
         "price": 7200,
@@ -50075,11 +50081,11 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張商品の1BOX表記を確認",
           "at": 1791262132957,
-          "lastAt": 1791323133424,
-          "samples": 246
+          "lastAt": 1791323437921,
+          "samples": 247
         }
       ],
-      "lastGoodAt": 1791323133424,
+      "lastGoodAt": 1791323437921,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -50089,14 +50095,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1791323133424
+          "at": 1791323437921
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092857,
         "stock": "out_of_stock",
-        "lastAt": 1791323133424,
-        "lastUnavailableAt": 1791323133424
+        "lastAt": 1791323437921,
+        "lastUnavailableAt": 1791323437921
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -51326,13 +51332,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 503,
+          "negatives": 504,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791323489767,
+      "nextAt": 1791323791395,
       "failures": 0,
-      "lastChecked": 1791323201767,
+      "lastChecked": 1791323503395,
       "lastGood": {
         "title": "【BOX】 ガンダムカードゲーム ブースターパック Newtype Rising GD01 BOX ｜ ニュータイプ ライジング 未開封 GUNDAM CARD GAME TCG",
         "price": 7200,
@@ -51368,7 +51374,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,098円を超過",
-          "at": 1791323201767
+          "at": 1791323503395
         }
       },
       "history": [
@@ -51379,8 +51385,8 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円を超過",
           "at": 1791164189902,
-          "lastAt": 1791323201767,
-          "samples": 503
+          "lastAt": 1791323503395,
+          "samples": 504
         }
       ],
       "availabilityTiming": {
@@ -51389,10 +51395,10 @@
         "openAfter": null,
         "firstAvailableAt": 1791164189902,
         "stock": "in_stock",
-        "lastAt": 1791323201767,
-        "lastAvailableAt": 1791323201767
+        "lastAt": 1791323503395,
+        "lastAvailableAt": 1791323503395
       },
-      "lastGoodAt": 1791323201767,
+      "lastGoodAt": 1791323503395,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 288,
@@ -51410,13 +51416,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 661,
+          "negatives": 662,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791323490405,
+      "nextAt": 1791323695123,
       "failures": 0,
-      "lastChecked": 1791323298405,
+      "lastChecked": 1791323503123,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Freedom Ascension [GD05] BOX(24パック入)",
         "price": 6019,
@@ -51450,7 +51456,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,300円以下",
-          "at": 1791323298405
+          "at": 1791323503123
         }
       },
       "history": [
@@ -51461,17 +51467,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円以下",
           "at": 1791179122022,
-          "lastAt": 1791323298405,
-          "samples": 661
+          "lastAt": 1791323503123,
+          "samples": 662
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791179122022,
         "stock": "out_of_stock",
-        "lastAt": 1791323298405,
-        "lastUnavailableAt": 1791323298405
+        "lastAt": 1791323503123,
+        "lastUnavailableAt": 1791323503123
       },
-      "lastGoodAt": 1791323298405,
+      "lastGoodAt": 1791323503123,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 192,
@@ -51647,13 +51653,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 81,
+          "negatives": 82,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791323453172,
+      "nextAt": 1791323791091,
       "failures": 0,
-      "lastChecked": 1791323165172,
+      "lastChecked": 1791323503091,
       "lastGood": {
         "title": "拡張パック　30th CELEBRATION　BOX【ポケモンカードゲーム】",
         "price": 7200,
@@ -51699,7 +51705,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1791323165172
+          "at": 1791323503091
         }
       },
       "history": [
@@ -51711,17 +51717,17 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張商品の1BOX表記を確認",
           "at": 1791298569073,
-          "lastAt": 1791323165172,
-          "samples": 81
+          "lastAt": 1791323503091,
+          "samples": 82
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791298569073,
         "stock": "out_of_stock",
-        "lastAt": 1791323165172,
-        "lastUnavailableAt": 1791323165172
+        "lastAt": 1791323503091,
+        "lastUnavailableAt": 1791323503091
       },
-      "lastGoodAt": 1791323165172,
+      "lastGoodAt": 1791323503091,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 288,
@@ -53918,83 +53924,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791290535261,
-      "checked": 1,
-      "discovered": null,
-      "targets": 107,
-      "errors": 2
-    },
-    {
-      "at": 1791290567332,
-      "checked": 1,
-      "discovered": null,
-      "targets": 107,
-      "errors": 2
-    },
-    {
-      "at": 1791290599033,
-      "checked": 1,
-      "discovered": null,
-      "targets": 107,
-      "errors": 2
-    },
-    {
-      "at": 1791290630813,
-      "checked": 2,
-      "discovered": {
-        "storeId": "masters_gundam",
-        "mode": "store-listing",
-        "result": {
-          "matched": 3,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://www.masters-square.com/new",
-              "head": true,
-              "productLinks": 228,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "new"
-            },
-            {
-              "url": "https://www.masters-square.com/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-              "head": true,
-              "productLinks": 82,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "alternate"
-            }
-          ],
-          "requests": 2,
-          "status": "ok",
-          "previousAt": 1791287005844
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 2
-    },
-    {
-      "at": 1791290667005,
-      "checked": 1,
-      "discovered": {
-        "ruleId": "c582cc9d-f015-46cc-99dd-490aab5bb6f0",
-        "storeId": "masters_gundam",
-        "result": {
-          "at": 1791290667005,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 2
-    },
     {
       "at": 1791290700330,
       "checked": 3,
@@ -68046,6 +67975,51 @@
     },
     {
       "at": 1791323374940,
+      "checked": 2,
+      "discovered": null,
+      "targets": 108,
+      "errors": 3
+    },
+    {
+      "at": 1791323406200,
+      "checked": 0,
+      "discovered": null,
+      "targets": 108,
+      "errors": 3
+    },
+    {
+      "at": 1791323436281,
+      "checked": 2,
+      "discovered": null,
+      "targets": 108,
+      "errors": 3
+    },
+    {
+      "at": 1791323468452,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "51eedfe0-b4ef-4789-99ac-45667087da0e",
+        "storeId": "cardmax",
+        "result": {
+          "at": 1791323468452,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 108,
+      "errors": 3
+    },
+    {
+      "at": 1791323501781,
+      "checked": 3,
+      "discovered": null,
+      "targets": 108,
+      "errors": 3
+    },
+    {
+      "at": 1791323557077,
       "checked": 2,
       "discovered": null,
       "targets": 108,
