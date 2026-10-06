@@ -31,8 +31,19 @@ def lottery_source_priority(tier: SourceTier, url: str) -> tuple[int, int]:
 
 
 def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[Alert]]:
+    observed_aliases: dict[str, set[str]] = defaultdict(set)
+    for item in items:
+        if (is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
+                and item.end_at is not None
+                and item.extraction_method != "yahoo_realtime_detected_next_day"):
+            # 同じ締切について実際の開始日も読めたら、その従来IDへ仮日付側をまとめる。
+            observed_key = lottery_dedupe_key(replace(
+                item, extraction_method="yahoo_realtime_detected_next_day",
+            ))
+            observed_aliases[observed_key].add(lottery_dedupe_key(item))
     grouped: dict[str, list[LotteryCase]] = defaultdict(list)
     for item in items:
+        grouping_identity = lottery_dedupe_key(item)
         if is_pokemon_30th_cardset(item.game_id, item.canonical_product_key):
             # 店舗・抽選回は従来どおり区別し、種類だけを共通の商品名にまとめる。
             # 公式LINEフォームの開始日は取得日なので毎日変わる。同じフォームを
@@ -47,19 +58,25 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
                 ))
             else:
                 identity = lottery_dedupe_key(item)
+                aliases = observed_aliases.get(identity, set())
+                if item.extraction_method == "yahoo_realtime_detected_next_day" and len(aliases) == 1:
+                    identity = next(iter(aliases))
+                    grouping_identity = identity
             item = replace(
                 item,
                 product_name="30th CELEBRATION カードセット",
                 canonical_product_key="pokemon_30th_cardset",
                 case_id=sha256(identity.encode()).hexdigest(),
             )
-        grouped[lottery_dedupe_key(item)].append(item)
+        grouped[grouping_identity].append(item)
     merged = []
     for values in grouped.values():
         ordered = sorted(values, key=lambda item: (
             int(item.extraction_method.startswith("additional_product_")
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
             *lottery_source_priority(item.source_tier, item.source_url),
+            int(is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
+                and item.extraction_method == "yahoo_realtime_detected_next_day"),
             int(item.retailer_id == "lorcana_official"
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
         ))

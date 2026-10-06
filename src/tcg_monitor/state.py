@@ -395,6 +395,30 @@ class MonitorState:
             same_sale_end = case.end_at is not None and (
                 str(raw_record.get("end_at") or "")[:10] == case.end_at.isoformat()[:10]
             )
+            old_urls = {
+                stable_url_identity(str(value))
+                for value in (raw_record.get("official_url"), raw_record.get("source_url"))
+                if value
+            }
+            cardset_pair = (
+                is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
+                and is_pokemon_30th_cardset(
+                    case.game_id, str(raw_record.get("canonical_product_key") or "")
+                )
+            )
+            observed_cardset_pair = cardset_pair and "yahoo_realtime_detected_next_day" in {
+                case.extraction_method, str(raw_record.get("extraction_method") or ""),
+            }
+            # 明示された締切が変われば、同じURL・開始日でも次回の募集として残す。
+            if (cardset_pair and case.end_at is not None and raw_record.get("end_at")
+                    and not same_sale_end):
+                continue
+            same_cardset_observation = observed_cardset_pair and (
+                same_sale_end or bool(current_urls & old_urls)
+            )
+            if observed_cardset_pair and not same_cardset_observation:
+                # 仮日付が偶然同じでも、別の締切や別の告知へ履歴を移さない。
+                continue
             if (additional_sale and old_kind == OpportunityKind.DIRECT_SALE.value
                     and case.opportunity_kind == OpportunityKind.DIRECT_SALE
                     and str(raw_record.get("start_at") or "")[:10]
@@ -405,6 +429,7 @@ class MonitorState:
                 is_shared_retailer_application_url(case.retailer_id, case.official_url)
                 and str(raw_record.get("start_at") or "")[:10]
                 != case.start_at.isoformat()[:10]
+                and not same_cardset_observation
             ):
                 continue
             # 公式投稿と補助記事のURLが異なっても、同じ店舗・商品・開始日
@@ -429,6 +454,7 @@ class MonitorState:
                 is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
                 and str(raw_record.get("start_at") or "")[:10]
                 != case.start_at.isoformat()[:10]
+                and not same_cardset_observation
                 and not (
                     case.extraction_method == "tsutaya_line_official_form_first_seen"
                     and raw_record.get("extraction_method")
@@ -445,18 +471,10 @@ class MonitorState:
                 and is_pokemon_30th_cardset(
                     case.game_id, str(raw_record.get("canonical_product_key") or "")
                 )
-                and str(raw_record.get("start_at") or "")[:10]
-                == case.start_at.isoformat()[:10]
+                and (str(raw_record.get("start_at") or "")[:10]
+                     == case.start_at.isoformat()[:10] or same_cardset_observation)
             ):
                 same_family.append((old_id, raw_record))
-            old_urls = {
-                stable_url_identity(str(value))
-                for value in (
-                    raw_record.get("official_url"),
-                    raw_record.get("source_url"),
-                )
-                if value
-            }
             if (case.retailer_id == "yamada_denki"
                     and stable_url_identity(str(raw_record.get("source_url") or ""))
                     != stable_url_identity(case.source_url)
@@ -540,7 +558,20 @@ class MonitorState:
             )
             return (int(delivered), updated_at, str(previous.get("start_at") or ""))
 
-        old_id, previous = max(candidates, key=candidate_score)
+        observed_cardset = (
+            is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
+            and any(record.get("extraction_method") == "yahoo_realtime_detected_next_day"
+                    for _, record in candidates)
+        )
+        if observed_cardset:
+            # 旧版で重複送信した場合は最初の成功履歴を採用し、仮日付も固定する。
+            old_id, previous = min(candidates, key=lambda candidate: (
+                -candidate_score(candidate)[0],
+                candidate_score(candidate)[1] or "9999",
+                candidate_score(candidate)[2],
+            ))
+        else:
+            old_id, previous = max(candidates, key=candidate_score)
         equivalent_ids = [candidate_id for candidate_id, _ in candidates]
         migrated = {**previous, "case_id": case.case_id}
         seen_cases[case.case_id] = migrated
@@ -580,13 +611,20 @@ class MonitorState:
                 journal[old_key] for old_key in old_keys if old_key in journal
             ]
             if delivered_records:
-                journal[new_key] = max(
-                    delivered_records,
-                    key=lambda record: (
-                        isinstance(record, dict) and record.get("status") == "complete",
-                        str(record.get("updated_at") if isinstance(record, dict) else ""),
-                    ),
-                )
+                if observed_cardset:
+                    journal[new_key] = min(delivered_records, key=lambda record: (
+                        not (isinstance(record, dict) and record.get("status") == "complete"),
+                        str(record.get("updated_at") or "9999")
+                        if isinstance(record, dict) else "9999",
+                    ))
+                else:
+                    journal[new_key] = max(
+                        delivered_records,
+                        key=lambda record: (
+                            isinstance(record, dict) and record.get("status") == "complete",
+                            str(record.get("updated_at") if isinstance(record, dict) else ""),
+                        ),
+                    )
             for old_key in old_keys:
                 if old_key != new_key:
                     journal.pop(old_key, None)
