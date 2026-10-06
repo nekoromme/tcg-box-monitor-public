@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791276941361,
+  "generatedAt": 1791277927218,
   "prices": {
     "version": 1,
-    "checkedAt": 1791276909345,
+    "checkedAt": 1791277892521,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -1871,7 +1871,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791276941360,
+    "checkedAt": 1791277927217,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -2188,7 +2188,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791276941359,
+    "verifiedAt": 1791277927213,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -4086,9 +4086,9 @@
     "stores": {
       "193": {
         "storeId": "193",
-        "nextAt": 1791277273861,
+        "nextAt": 1791280885389,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4097,18 +4097,18 @@
             "role": "search",
             "depth": 2,
             "nextUrl": "https://193tcg.com/products/list?name=BOX&pageno=3",
-            "lastAt": 1791273682681
+            "lastAt": 1791277290318
           },
           {
             "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
-            "depth": 1,
-            "nextUrl": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&pageno=2",
-            "lastAt": 1791270074685
+            "depth": 2,
+            "nextUrl": null,
+            "lastAt": 1791277292128
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791273673861,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791277285389,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -4124,20 +4124,20 @@
               "order": "search"
             },
             {
-              "url": "https://193tcg.com/products/list?name=BOX&pageno=2",
+              "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&pageno=2",
               "head": false,
-              "productLinks": 40,
+              "productLinks": 11,
               "scope": "read",
-              "hasMore": true,
+              "hasMore": false,
               "depthLimited": false,
-              "order": "search"
+              "order": "alternate"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1791270068041
+          "previousAt": 1791273673861
         },
-        "lastAt": 1791273673861,
+        "lastAt": 1791277285389,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -4147,9 +4147,9 @@
       },
       "advantage1": {
         "storeId": "advantage1",
-        "nextAt": 1791277312686,
+        "nextAt": 1791280922155,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4158,18 +4158,18 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791273715546
+            "lastAt": 1791277325830
           },
           {
             "url": "https://www.advantagetcg.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791270109554
+            "lastAt": 1791277327000
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791273712686,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791277322155,
         "lastResult": {
           "matched": 1,
           "registered": 0,
@@ -4183,13 +4183,22 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "search"
+            },
+            {
+              "url": "https://www.advantagetcg.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 12,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
             }
           ],
-          "requests": 1,
+          "requests": 2,
           "status": "ok",
-          "previousAt": 1791270104690
+          "previousAt": 1791273712686
         },
-        "lastAt": 1791273712686,
+        "lastAt": 1791277322155,
         "retryAt": 0,
         "error": "",
         "lastNewAt": 1791078127198,
@@ -4200,9 +4209,9 @@
       },
       "advantage2": {
         "storeId": "advantage2",
-        "nextAt": 1791277345552,
+        "nextAt": 1791280957033,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4211,18 +4220,18 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791273749006
+            "lastAt": 1791277360706
           },
           {
             "url": "https://www.advantagetcg2nd.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791270144535
+            "lastAt": 1791277361596
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791273745552,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791277357033,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -4236,13 +4245,22 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "search"
+            },
+            {
+              "url": "https://www.advantagetcg2nd.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 1,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
             }
           ],
-          "requests": 1,
+          "requests": 2,
           "status": "ok",
-          "previousAt": 1791270139558
+          "previousAt": 1791273745552
         },
-        "lastAt": 1791273745552,
+        "lastAt": 1791277357033,
         "retryAt": 0,
         "error": "",
         "lastNewAt": 1791078161602,
@@ -4253,9 +4271,9 @@
       },
       "cardmax": {
         "storeId": "cardmax",
-        "nextAt": 1791277411163,
+        "nextAt": 1791281024906,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4264,18 +4282,18 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791273814253
+            "lastAt": 1791277426450
           },
           {
             "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791270213119
+            "lastAt": 1791277427608
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791273811163,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791277424906,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -4289,13 +4307,22 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "search"
+            },
+            {
+              "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 47,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
             }
           ],
-          "requests": 1,
+          "requests": 2,
           "status": "ok",
-          "previousAt": 1791270208027
+          "previousAt": 1791273811163
         },
-        "lastAt": 1791273811163,
+        "lastAt": 1791277424906,
         "retryAt": 0,
         "error": "",
         "lastNewAt": 1791078196174,
@@ -4306,9 +4333,9 @@
       },
       "cardwiz": {
         "storeId": "cardwiz",
-        "nextAt": 1791277475670,
+        "nextAt": 1791281084939,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4322,20 +4349,20 @@
           {
             "url": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
-            "depth": 2,
-            "nextUrl": null,
-            "lastAt": 1791266676035
+            "depth": 1,
+            "nextUrl": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&page=2",
+            "lastAt": 1791277489213
           },
           {
             "url": "https://www.cardwiz.jp/new",
             "role": "new",
             "depth": 1,
             "nextUrl": "https://www.cardwiz.jp/new?page=2",
-            "lastAt": 1791273886573
+            "lastAt": 1791277488474
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791273875670,
+        "sourceCursor": 2,
+        "lastAttemptAt": 1791277484939,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -4351,20 +4378,20 @@
               "order": "new"
             },
             {
-              "url": "https://www.cardwiz.jp/product-list?keyword=BOX&page=5",
-              "head": false,
+              "url": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
               "productLinks": 60,
               "scope": "read",
               "hasMore": true,
               "depthLimited": false,
-              "order": "search"
+              "order": "alternate"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1791270274544
+          "previousAt": 1791273875670
         },
-        "lastAt": 1791273875670,
+        "lastAt": 1791277484939,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -4374,9 +4401,9 @@
       },
       "dayya": {
         "storeId": "dayya",
-        "nextAt": 1791277517277,
+        "nextAt": 1791281119245,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4385,18 +4412,18 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791273924374
+            "lastAt": 1791277526275
           },
           {
             "url": "https://www.tcg-dayya.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791270320029
+            "lastAt": 1791277531507
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791273917277,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791277519245,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -4410,13 +4437,22 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "search"
+            },
+            {
+              "url": "https://www.tcg-dayya.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 102,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
             }
           ],
-          "requests": 1,
+          "requests": 2,
           "status": "ok",
-          "previousAt": 1791270307098
+          "previousAt": 1791273917277
         },
-        "lastAt": 1791273917277,
+        "lastAt": 1791277519245,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -4426,9 +4462,9 @@
       },
       "futaki": {
         "storeId": "futaki",
-        "nextAt": 1791277706973,
+        "nextAt": 1791281326624,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4451,18 +4487,18 @@
             "role": "sorted",
             "depth": 2,
             "nextUrl": "https://www.target.co.jp/view/search?page=3&search_keyword=BOX&sort=order",
-            "lastAt": 1791274110200
+            "lastAt": 1791277729592
           },
           {
             "url": "https://www.target.co.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
             "role": "sorted",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791263223743
+            "lastAt": 1791277730487
           }
         ],
-        "sourceCursor": 3,
-        "lastAttemptAt": 1791274106973,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791277726624,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -4478,20 +4514,20 @@
               "order": "sorted"
             },
             {
-              "url": "https://www.target.co.jp/view/search?page=2&search_keyword=BOX&sort=order",
-              "head": false,
+              "url": "https://www.target.co.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
+              "head": true,
               "productLinks": 16,
               "scope": "read",
-              "hasMore": true,
+              "hasMore": false,
               "depthLimited": false,
               "order": "sorted"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1791270448389
+          "previousAt": 1791274106973
         },
-        "lastAt": 1791274106973,
+        "lastAt": 1791277726624,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -4616,34 +4652,34 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 2434066,
+        "intervalMs": 1448279,
         "storeName": "メディアワールド本店"
       },
       "papy": {
         "storeId": "papy",
-        "nextAt": 1791277773818,
+        "nextAt": 1791281391737,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
           {
             "url": "https://papysougouten.ocnk.net/product-list?keyword=BOX",
             "role": "search",
-            "depth": 2,
-            "nextUrl": null,
-            "lastAt": 1791274177611
+            "depth": 1,
+            "nextUrl": "https://papysougouten.ocnk.net/product-list?keyword=BOX&page=2",
+            "lastAt": 1791277794929
           },
           {
             "url": "https://papysougouten.ocnk.net/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791270553887
+            "lastAt": 1791277795456
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791274173818,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791277791737,
         "lastResult": {
           "matched": 2,
           "registered": 0,
@@ -4659,20 +4695,20 @@
               "order": "search"
             },
             {
-              "url": "https://papysougouten.ocnk.net/product-list?keyword=BOX&page=2",
-              "head": false,
+              "url": "https://papysougouten.ocnk.net/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
               "productLinks": 4,
               "scope": "read",
               "hasMore": false,
               "depthLimited": false,
-              "order": "search"
+              "order": "alternate"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1791270550239
+          "previousAt": 1791274173818
         },
-        "lastAt": 1791274173818,
+        "lastAt": 1791277791737,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -4682,9 +4718,9 @@
       },
       "suns": {
         "storeId": "suns",
-        "nextAt": 1791277903934,
+        "nextAt": 1791281521793,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4693,20 +4729,20 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791274305995
+            "lastAt": 1791277924900
           },
           {
             "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791270684996
+            "lastAt": 1791277925987
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791274303934,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791277921793,
         "lastResult": {
-          "matched": 0,
+          "matched": 1,
           "registered": 0,
           "limited": 0,
           "pages": [
@@ -4718,13 +4754,22 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "search"
+            },
+            {
+              "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 30,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
             }
           ],
-          "requests": 1,
+          "requests": 2,
           "status": "ok",
-          "previousAt": 1791270681325
+          "previousAt": 1791274303934
         },
-        "lastAt": 1791274303934,
+        "lastAt": 1791277921793,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -5122,20 +5167,20 @@
       },
       "bigweb": {
         "storeId": "bigweb",
-        "nextAt": 1791277241861,
+        "nextAt": 1791280852416,
         "createdAt": 1791179074496,
-        "successes": 51,
+        "successes": 52,
         "failures": 0,
         "rapidSales": [],
         "sources": [
           {
             "url": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
             "role": "official_json_api",
-            "lastAt": 1791273643858
+            "lastAt": 1791277255386
           }
         ],
         "sourceCursor": 0,
-        "lastAttemptAt": 1791273641861,
+        "lastAttemptAt": 1791277252416,
         "lastResult": {
           "matched": 2,
           "registered": 0,
@@ -5152,9 +5197,9 @@
           ],
           "requests": 1,
           "status": "ok",
-          "previousAt": 1791270034965
+          "previousAt": 1791273641861
         },
-        "lastAt": 1791273641861,
+        "lastAt": 1791277252416,
         "retryAt": 0,
         "error": "",
         "lastNewAt": 1791179074496,
@@ -5165,337 +5210,6 @@
       }
     },
     "log": [
-      {
-        "kind": "listing",
-        "storeId": "advantage2",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.advantagetcg2nd.jp/product-list?keyword=BOX",
-            "head": true,
-            "productLinks": 38,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://www.advantagetcg2nd.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 1,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "alternate"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118124118,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791121726655,
-        "at": 1791119926655
-      },
-      {
-        "kind": "listing",
-        "storeId": "cardmax",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.cardmax.jp/shop/shopbrand.html?search=BOX",
-            "head": true,
-            "productLinks": 47,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 47,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "alternate"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118190692,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791121791496,
-        "at": 1791119991496
-      },
-      {
-        "kind": "listing",
-        "storeId": "cardwiz",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.cardwiz.jp/new",
-            "head": true,
-            "productLinks": 64,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "new"
-          },
-          {
-            "url": "https://www.cardwiz.jp/new?page=2",
-            "head": false,
-            "productLinks": 6,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "new"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118224067,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791121825383,
-        "at": 1791120025383
-      },
-      {
-        "kind": "listing",
-        "storeId": "dayya",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.tcg-dayya.com/products/list?name=BOX",
-            "head": true,
-            "productLinks": 56,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://www.tcg-dayya.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 103,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "alternate"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118289696,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791121892727,
-        "at": 1791120092727
-      },
-      {
-        "kind": "listing",
-        "storeId": "futaki",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.target.co.jp/view/search?search_keyword=BOX&sort=order",
-            "head": true,
-            "productLinks": 16,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "sorted"
-          },
-          {
-            "url": "https://www.target.co.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
-            "head": true,
-            "productLinks": 16,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "sorted"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118361306,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791121967291,
-        "at": 1791120167291
-      },
-      {
-        "kind": "listing",
-        "storeId": "papy",
-        "matched": 2,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://papysougouten.ocnk.net/product-list?keyword=BOX",
-            "head": true,
-            "productLinks": 60,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://papysougouten.ocnk.net/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 4,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "alternate"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118396066,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791122002325,
-        "at": 1791120202325
-      },
-      {
-        "kind": "listing",
-        "storeId": "suns",
-        "matched": 1,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=BOX",
-            "head": true,
-            "productLinks": 30,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 30,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "alternate"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118516069,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791122131640,
-        "at": 1791120331640
-      },
-      {
-        "kind": "listing",
-        "storeId": "masters_gundam",
-        "matched": 3,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.masters-square.com/new",
-            "head": true,
-            "productLinks": 228,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "new"
-          },
-          {
-            "url": "https://www.masters-square.com/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 82,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "alternate"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118582603,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791122197652,
-        "at": 1791120397652
-      },
-      {
-        "kind": "listing",
-        "storeId": "tcgacademy",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.tcgacademy.com/product-list?keyword=BOX",
-            "head": true,
-            "productLinks": 100,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://www.tcgacademy.com/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 93,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "alternate"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118618117,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791122233040,
-        "at": 1791120433040
-      },
-      {
-        "kind": "listing",
-        "storeId": "tier1_gundam",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://tier-one.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
-            "head": true,
-            "productLinks": 22,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "sorted"
-          }
-        ],
-        "requests": 1,
-        "status": "ok",
-        "previousAt": 1791118652767,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791122268430,
-        "at": 1791120468430
-      },
       {
         "kind": "listing",
         "storeId": "torecolo",
@@ -36254,14 +35968,344 @@
         "reason": "取得範囲で24時間以上、対象ページの追加なし",
         "nextAt": 1791279752762,
         "at": 1791276152762
+      },
+      {
+        "kind": "listing",
+        "storeId": "bigweb",
+        "matched": 2,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
+            "head": true,
+            "productLinks": 5,
+            "scope": "read",
+            "hasMore": false,
+            "order": "official_json_api"
+          }
+        ],
+        "requests": 1,
+        "status": "ok",
+        "previousAt": 1791273641861,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791280852416,
+        "at": 1791277252416
+      },
+      {
+        "kind": "listing",
+        "storeId": "193",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://193tcg.com/products/list?name=BOX",
+            "head": true,
+            "productLinks": 40,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&pageno=2",
+            "head": false,
+            "productLinks": 11,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791273673861,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791280885389,
+        "at": 1791277285389
+      },
+      {
+        "kind": "listing",
+        "storeId": "advantage1",
+        "matched": 1,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.advantagetcg.jp/product-list?keyword=BOX",
+            "head": true,
+            "productLinks": 66,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://www.advantagetcg.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 12,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791273712686,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791280922155,
+        "at": 1791277322155
+      },
+      {
+        "kind": "listing",
+        "storeId": "advantage2",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.advantagetcg2nd.jp/product-list?keyword=BOX",
+            "head": true,
+            "productLinks": 38,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://www.advantagetcg2nd.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 1,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791273745552,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791280957033,
+        "at": 1791277357033
+      },
+      {
+        "kind": "listing",
+        "storeId": "cardmax",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.cardmax.jp/shop/shopbrand.html?search=BOX",
+            "head": true,
+            "productLinks": 47,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 47,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791273811163,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791281024906,
+        "at": 1791277424906
+      },
+      {
+        "kind": "listing",
+        "storeId": "cardwiz",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.cardwiz.jp/new",
+            "head": true,
+            "productLinks": 64,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "new"
+          },
+          {
+            "url": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 60,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791273875670,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791281084939,
+        "at": 1791277484939
+      },
+      {
+        "kind": "listing",
+        "storeId": "dayya",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.tcg-dayya.com/products/list?name=BOX",
+            "head": true,
+            "productLinks": 56,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://www.tcg-dayya.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 102,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791273917277,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791281119245,
+        "at": 1791277519245
+      },
+      {
+        "kind": "listing",
+        "storeId": "futaki",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.target.co.jp/view/search?search_keyword=BOX&sort=order",
+            "head": true,
+            "productLinks": 16,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "sorted"
+          },
+          {
+            "url": "https://www.target.co.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
+            "head": true,
+            "productLinks": 16,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "sorted"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791274106973,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791281326624,
+        "at": 1791277726624
+      },
+      {
+        "kind": "listing",
+        "storeId": "papy",
+        "matched": 2,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://papysougouten.ocnk.net/product-list?keyword=BOX",
+            "head": true,
+            "productLinks": 60,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://papysougouten.ocnk.net/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 4,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791274173818,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791281391737,
+        "at": 1791277791737
+      },
+      {
+        "kind": "listing",
+        "storeId": "suns",
+        "matched": 1,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=BOX",
+            "head": true,
+            "productLinks": 30,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 30,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791274303934,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791281521793,
+        "at": 1791277921793
       }
     ],
     "budget": {
       "day": 20732,
-      "group": 557,
-      "fallback": 631
+      "group": 576,
+      "fallback": 639
     },
-    "nextFallbackAt": 1791276998499,
+    "nextFallbackAt": 1791277945495,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -36284,8 +36328,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791276938747,
-  "lastCompletedAt": 1791276940395,
+  "lastTick": 1791277921793,
+  "lastCompletedAt": 1791277925987,
   "load": {
     "activePages": 75,
     "waitingPages": 0,
@@ -36296,8 +36340,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1468048,
-    "compressedBytes": 115643,
+    "uncompressedBytes": 1471519,
+    "compressedBytes": 115789,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36327,8 +36371,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791276908745,
-    "nextSync": 1791284108745,
+    "lastSync": 1791277891766,
+    "nextSync": 1791285091766,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38594,6 +38638,12 @@
       },
       {
         "at": 1791276908745,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791277891766,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -41774,13 +41824,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 846,
+          "negatives": 849,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277039505,
+      "nextAt": 1791277944531,
       "failures": 0,
-      "lastChecked": 1791276751505,
+      "lastChecked": 1791277656531,
       "lastGood": {
         "title": "【BOX】ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 9500,
@@ -41816,11 +41866,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1791078129094,
-          "lastAt": 1791276751505,
-          "samples": 750
+          "lastAt": 1791277656531,
+          "samples": 753
         }
       ],
-      "lastGoodAt": 1791276751505,
+      "lastGoodAt": 1791277656531,
       "priceDecisions": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "referencePrice": 6000,
@@ -41830,14 +41880,14 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1791276751505
+          "at": 1791277656531
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078129094,
         "stock": "out_of_stock",
-        "lastAt": 1791276751505,
-        "lastUnavailableAt": 1791276751505
+        "lastAt": 1791277656531,
+        "lastUnavailableAt": 1791277656531
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -41916,13 +41966,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 751,
+          "negatives": 754,
           "lastEvent": 1791039217281
         }
       },
-      "nextAt": 1791277072505,
+      "nextAt": 1791277975724,
       "failures": 0,
-      "lastChecked": 1791276784505,
+      "lastChecked": 1791277687724,
       "lastGood": {
         "title": "【BOX】 ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX ｜ シュリンク付き 未開封 ポケカ トレカ トレーディングカード",
         "price": 33500,
@@ -41983,11 +42033,11 @@
           "priceDecision": "通知上限14,400円を超過",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1791242403339,
-          "lastAt": 1791276784505,
-          "samples": 111
+          "lastAt": 1791277687724,
+          "samples": 114
         }
       ],
-      "lastGoodAt": 1791276784505,
+      "lastGoodAt": 1791277687724,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -41997,7 +42047,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限14,400円を超過",
-          "at": 1791276784505
+          "at": 1791277687724
         }
       },
       "availabilityTiming": {
@@ -42006,8 +42056,8 @@
         "openAfter": null,
         "firstAvailableAt": 1791078093471,
         "stock": "in_stock",
-        "lastAt": 1791276784505,
-        "lastAvailableAt": 1791276784505
+        "lastAt": 1791277687724,
+        "lastAvailableAt": 1791277687724
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -42086,13 +42136,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 1057,
+          "negatives": 1062,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277071808,
+      "nextAt": 1791278115076,
       "failures": 0,
-      "lastChecked": 1791276879808,
+      "lastChecked": 1791277923076,
       "lastGood": {
         "title": "ブースターパック　Newtype Rising　BOX【ガンダムカードゲーム】",
         "price": 5808,
@@ -42143,11 +42193,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791264459142,
-          "lastAt": 1791276879808,
-          "samples": 59
+          "lastAt": 1791277923076,
+          "samples": 64
         }
       ],
-      "lastGoodAt": 1791276879808,
+      "lastGoodAt": 1791277923076,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -42157,14 +42207,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791276879808
+          "at": 1791277923076
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078128567,
         "stock": "out_of_stock",
-        "lastAt": 1791276879808,
-        "lastUnavailableAt": 1791276879808
+        "lastAt": 1791277923076,
+        "lastUnavailableAt": 1791277923076
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -42183,13 +42233,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 1269,
+          "negatives": 1274,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277053112,
+      "nextAt": 1791278061576,
       "failures": 0,
-      "lastChecked": 1791276880112,
+      "lastChecked": 1791277888576,
       "lastGood": {
         "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 5808,
@@ -42225,11 +42275,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791078092888,
-          "lastAt": 1791276880112,
-          "samples": 1113
+          "lastAt": 1791277888576,
+          "samples": 1118
         }
       ],
-      "lastGoodAt": 1791276880112,
+      "lastGoodAt": 1791277888576,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -42239,14 +42289,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791276880112
+          "at": 1791277888576
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092888,
         "stock": "out_of_stock",
-        "lastAt": 1791276880112,
-        "lastUnavailableAt": 1791276880112
+        "lastAt": 1791277888576,
+        "lastUnavailableAt": 1791277888576
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -42265,13 +42315,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 1271,
+          "negatives": 1276,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791276958658,
+      "nextAt": 1791277934665,
       "failures": 0,
-      "lastChecked": 1791276785658,
+      "lastChecked": 1791277761665,
       "lastGood": {
         "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
         "price": 5808,
@@ -42338,11 +42388,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791274048227,
-          "lastAt": 1791276785658,
-          "samples": 15
+          "lastAt": 1791277761665,
+          "samples": 20
         }
       ],
-      "lastGoodAt": 1791276785658,
+      "lastGoodAt": 1791277761665,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -42352,14 +42402,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791276785658
+          "at": 1791277761665
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093552,
         "stock": "out_of_stock",
-        "lastAt": 1791276785658,
-        "lastUnavailableAt": 1791276785658
+        "lastAt": 1791277761665,
+        "lastUnavailableAt": 1791277761665
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -49997,13 +50047,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 904,
+          "negatives": 909,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277040486,
+      "nextAt": 1791278080264,
       "failures": 0,
-      "lastChecked": 1791276848486,
+      "lastChecked": 1791277888264,
       "lastGood": {
         "title": "拡張パック　30th CELEBRATION　BOX【ポケモンカードゲーム】",
         "price": 7200,
@@ -50078,11 +50128,11 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張商品の1BOX表記を確認",
           "at": 1791262132957,
-          "lastAt": 1791276848486,
-          "samples": 70
+          "lastAt": 1791277888264,
+          "samples": 75
         }
       ],
-      "lastGoodAt": 1791276848486,
+      "lastGoodAt": 1791277888264,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -50092,14 +50142,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1791276848486
+          "at": 1791277888264
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092857,
         "stock": "out_of_stock",
-        "lastAt": 1791276848486,
-        "lastUnavailableAt": 1791276848486
+        "lastAt": 1791277888264,
+        "lastUnavailableAt": 1791277888264
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -51311,13 +51361,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 363,
+          "negatives": 366,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277136416,
+      "nextAt": 1791278081266,
       "failures": 0,
-      "lastChecked": 1791276848416,
+      "lastChecked": 1791277793266,
       "lastGood": {
         "title": "【BOX】 ガンダムカードゲーム ブースターパック Newtype Rising GD01 BOX ｜ ニュータイプ ライジング 未開封 GUNDAM CARD GAME TCG",
         "price": 7200,
@@ -51353,7 +51403,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,098円を超過",
-          "at": 1791276848416
+          "at": 1791277793266
         }
       },
       "history": [
@@ -51364,8 +51414,8 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円を超過",
           "at": 1791164189902,
-          "lastAt": 1791276848416,
-          "samples": 363
+          "lastAt": 1791277793266,
+          "samples": 366
         }
       ],
       "availabilityTiming": {
@@ -51374,10 +51424,10 @@
         "openAfter": null,
         "firstAvailableAt": 1791164189902,
         "stock": "in_stock",
-        "lastAt": 1791276848416,
-        "lastAvailableAt": 1791276848416
+        "lastAt": 1791277793266,
+        "lastAvailableAt": 1791277793266
       },
-      "lastGoodAt": 1791276848416,
+      "lastGoodAt": 1791277793266,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 288,
@@ -51395,13 +51445,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 450,
+          "negatives": 455,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277008893,
+      "nextAt": 1791278080175,
       "failures": 0,
-      "lastChecked": 1791276816893,
+      "lastChecked": 1791277888175,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Freedom Ascension [GD05] BOX(24パック入)",
         "price": 6019,
@@ -51435,7 +51485,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,300円以下",
-          "at": 1791276816893
+          "at": 1791277888175
         }
       },
       "history": [
@@ -51446,17 +51496,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円以下",
           "at": 1791179122022,
-          "lastAt": 1791276816893,
-          "samples": 450
+          "lastAt": 1791277888175,
+          "samples": 455
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791179122022,
         "stock": "out_of_stock",
-        "lastAt": 1791276816893,
-        "lastUnavailableAt": 1791276816893
+        "lastAt": 1791277888175,
+        "lastUnavailableAt": 1791277888175
       },
-      "lastGoodAt": 1791276816893,
+      "lastGoodAt": 1791277888175,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 192,
@@ -51474,13 +51524,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 450,
+          "negatives": 454,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277132391,
+      "nextAt": 1791277953706,
       "failures": 0,
-      "lastChecked": 1791276940391,
+      "lastChecked": 1791277761706,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Newtype Rising [GD01] BOX(24パック入)",
         "price": 5200,
@@ -51514,7 +51564,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791276940391
+          "at": 1791277761706
         }
       },
       "history": [
@@ -51525,17 +51575,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791179154500,
-          "lastAt": 1791276940391,
-          "samples": 450
+          "lastAt": 1791277761706,
+          "samples": 454
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791179154500,
         "stock": "out_of_stock",
-        "lastAt": 1791276940391,
-        "lastUnavailableAt": 1791276940391
+        "lastAt": 1791277761706,
+        "lastUnavailableAt": 1791277761706
       },
-      "lastGoodAt": 1791276940391,
+      "lastGoodAt": 1791277761706,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 192,
@@ -53811,489 +53861,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791244086153,
-      "checked": 1,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244117426,
-      "checked": 2,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244148758,
-      "checked": 3,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244180710,
-      "checked": 0,
-      "discovered": {
-        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
-        "storeId": "advantage2",
-        "result": {
-          "at": 1791244180710,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244213339,
-      "checked": 3,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244245006,
-      "checked": 0,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244275059,
-      "checked": 3,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244306683,
-      "checked": 3,
-      "discovered": {
-        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
-        "storeId": "cardmax",
-        "result": {
-          "at": 1791244306683,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244341892,
-      "checked": 4,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244373511,
-      "checked": 0,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244403572,
-      "checked": 1,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244434859,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
-        "storeId": "cardwiz",
-        "result": {
-          "at": 1791244434859,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244468407,
-      "checked": 3,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244500449,
-      "checked": 1,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244532067,
-      "checked": 2,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244563765,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
-        "storeId": "dayya",
-        "result": {
-          "at": 1791244563765,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244607519,
-      "checked": 4,
-      "discovered": {
-        "storeId": "bigweb",
-        "mode": "store-listing",
-        "result": {
-          "matched": 2,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
-              "head": true,
-              "productLinks": 5,
-              "scope": "read",
-              "hasMore": false,
-              "order": "official_json_api"
-            }
-          ],
-          "requests": 1,
-          "status": "ok",
-          "previousAt": 1791242797386
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244640244,
-      "checked": 4,
-      "discovered": null,
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244681916,
-      "checked": 2,
-      "discovered": {
-        "storeId": "193",
-        "mode": "store-listing",
-        "result": {
-          "matched": 0,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://193tcg.com/products/list?name=BOX",
-              "head": true,
-              "productLinks": 40,
-              "scope": "read",
-              "hasMore": true,
-              "depthLimited": false,
-              "order": "search"
-            },
-            {
-              "url": "https://193tcg.com/products/list?name=BOX&pageno=2",
-              "head": false,
-              "productLinks": 40,
-              "scope": "read",
-              "hasMore": true,
-              "depthLimited": false,
-              "order": "search"
-            }
-          ],
-          "requests": 2,
-          "status": "ok",
-          "previousAt": 1791241065564
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244720538,
-      "checked": 4,
-      "discovered": {
-        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
-        "storeId": "futaki",
-        "result": {
-          "at": 1791244720538,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244753972,
-      "checked": 2,
-      "discovered": {
-        "storeId": "advantage1",
-        "mode": "store-listing",
-        "result": {
-          "matched": 1,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://www.advantagetcg.jp/product-list?keyword=BOX",
-              "head": true,
-              "productLinks": 66,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "search"
-            }
-          ],
-          "requests": 1,
-          "status": "ok",
-          "previousAt": 1791241134327
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244787475,
-      "checked": 4,
-      "discovered": {
-        "storeId": "mediaworld",
-        "mode": "store-listing",
-        "result": {
-          "matched": 5,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://mediaworld.co.jp/search?type=product&q=BOX",
-              "head": true,
-              "productLinks": 24,
-              "scope": "read",
-              "hasMore": true,
-              "depthLimited": false,
-              "order": "search"
-            },
-            {
-              "url": "https://mediaworld.co.jp/search?page=2&q=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&type=product",
-              "head": false,
-              "productLinks": 15,
-              "scope": "read",
-              "hasMore": true,
-              "depthLimited": false,
-              "order": "alternate"
-            }
-          ],
-          "requests": 2,
-          "status": "ok",
-          "previousAt": 1791239814839
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244821637,
-      "checked": 2,
-      "discovered": {
-        "storeId": "advantage2",
-        "mode": "store-listing",
-        "result": {
-          "matched": 0,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://www.advantagetcg2nd.jp/product-list?keyword=BOX",
-              "head": true,
-              "productLinks": 38,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "search"
-            }
-          ],
-          "requests": 1,
-          "status": "ok",
-          "previousAt": 1791241219476
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244854924,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "627a9651-0c28-4e7e-ac3a-a0e294a62657",
-        "storeId": "mediaworld",
-        "result": {
-          "at": 1791244854924,
-          "status": "ok",
-          "matched": 1,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244887744,
-      "checked": 3,
-      "discovered": {
-        "storeId": "cardmax",
-        "mode": "store-listing",
-        "result": {
-          "matched": 0,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://www.cardmax.jp/shop/shopbrand.html?search=BOX",
-              "head": true,
-              "productLinks": 47,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "search"
-            }
-          ],
-          "requests": 1,
-          "status": "ok",
-          "previousAt": 1791241285625
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 1
-    },
-    {
-      "at": 1791244920536,
-      "checked": 6,
-      "discovered": null,
-      "targets": 107,
-      "errors": 2
-    },
-    {
-      "at": 1791244952559,
-      "checked": 3,
-      "discovered": {
-        "storeId": "cardwiz",
-        "mode": "store-listing",
-        "result": {
-          "matched": 0,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://www.cardwiz.jp/new",
-              "head": true,
-              "productLinks": 64,
-              "scope": "read",
-              "hasMore": true,
-              "depthLimited": false,
-              "order": "new"
-            },
-            {
-              "url": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&page=2",
-              "head": false,
-              "productLinks": 19,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "alternate"
-            }
-          ],
-          "requests": 2,
-          "status": "ok",
-          "previousAt": 1791241320579
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 2
-    },
-    {
-      "at": 1791244987809,
-      "checked": 2,
-      "discovered": {
-        "storeId": "dayya",
-        "mode": "store-listing",
-        "result": {
-          "matched": 0,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://www.tcg-dayya.com/products/list?name=BOX",
-              "head": true,
-              "productLinks": 56,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "search"
-            }
-          ],
-          "requests": 1,
-          "status": "ok",
-          "previousAt": 1791241386175
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 2
-    },
-    {
-      "at": 1791245025013,
-      "checked": 0,
-      "discovered": {
-        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
-        "storeId": "masters_gundam",
-        "result": {
-          "at": 1791245025013,
-          "status": "ok",
-          "matched": 1,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 107,
-      "errors": 2
-    },
     {
       "at": 1791245056664,
       "checked": 2,
@@ -68045,6 +67612,579 @@
       "at": 1791276938747,
       "checked": 1,
       "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791276970398,
+      "checked": 1,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277001627,
+      "checked": 0,
+      "discovered": {
+        "ruleId": "0cffc351-4771-4c54-9159-44f554d95760",
+        "storeId": "torecolo",
+        "result": {
+          "at": 1791277001627,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277033696,
+      "checked": 1,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277065023,
+      "checked": 3,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277097142,
+      "checked": 2,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277128420,
+      "checked": 0,
+      "discovered": {
+        "ruleId": "7e95a72d-18bd-4a12-8d37-26d36df4497b",
+        "storeId": "advantage2",
+        "result": {
+          "at": 1791277128420,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277160675,
+      "checked": 3,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277192317,
+      "checked": 0,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277222361,
+      "checked": 0,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277252416,
+      "checked": 1,
+      "discovered": {
+        "storeId": "bigweb",
+        "mode": "store-listing",
+        "result": {
+          "matched": 2,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
+              "head": true,
+              "productLinks": 5,
+              "scope": "read",
+              "hasMore": false,
+              "order": "official_json_api"
+            }
+          ],
+          "requests": 1,
+          "status": "ok",
+          "previousAt": 1791273641861
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277285389,
+      "checked": 2,
+      "discovered": {
+        "storeId": "193",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://193tcg.com/products/list?name=BOX",
+              "head": true,
+              "productLinks": 40,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&pageno=2",
+              "head": false,
+              "productLinks": 11,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791273673861
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277322155,
+      "checked": 1,
+      "discovered": {
+        "storeId": "advantage1",
+        "mode": "store-listing",
+        "result": {
+          "matched": 1,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.advantagetcg.jp/product-list?keyword=BOX",
+              "head": true,
+              "productLinks": 66,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://www.advantagetcg.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 12,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791273712686
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277357033,
+      "checked": 3,
+      "discovered": {
+        "storeId": "advantage2",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.advantagetcg2nd.jp/product-list?keyword=BOX",
+              "head": true,
+              "productLinks": 38,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://www.advantagetcg2nd.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 1,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791273745552
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277391622,
+      "checked": 1,
+      "discovered": {
+        "ruleId": "7e95a72d-18bd-4a12-8d37-26d36df4497b",
+        "storeId": "cardmax",
+        "result": {
+          "at": 1791277391622,
+          "status": "ok",
+          "matched": 1,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277424906,
+      "checked": 0,
+      "discovered": {
+        "storeId": "cardmax",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.cardmax.jp/shop/shopbrand.html?search=BOX",
+              "head": true,
+              "productLinks": 47,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 47,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791273811163
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277484939,
+      "checked": 4,
+      "discovered": {
+        "storeId": "cardwiz",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.cardwiz.jp/new",
+              "head": true,
+              "productLinks": 64,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "new"
+            },
+            {
+              "url": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 60,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791273875670
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277519245,
+      "checked": 1,
+      "discovered": {
+        "storeId": "dayya",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.tcg-dayya.com/products/list?name=BOX",
+              "head": true,
+              "productLinks": 56,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://www.tcg-dayya.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 102,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791273917277
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277561542,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "7e95a72d-18bd-4a12-8d37-26d36df4497b",
+        "storeId": "cardwiz",
+        "result": {
+          "at": 1791277561542,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277594309,
+      "checked": 0,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277624383,
+      "checked": 0,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277654463,
+      "checked": 1,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277686567,
+      "checked": 4,
+      "discovered": {
+        "ruleId": "7e95a72d-18bd-4a12-8d37-26d36df4497b",
+        "storeId": "dayya",
+        "result": {
+          "at": 1791277686567,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277726624,
+      "checked": 1,
+      "discovered": {
+        "storeId": "futaki",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.target.co.jp/view/search?search_keyword=BOX&sort=order",
+              "head": true,
+              "productLinks": 16,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "sorted"
+            },
+            {
+              "url": "https://www.target.co.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
+              "head": true,
+              "productLinks": 16,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "sorted"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791274106973
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277760512,
+      "checked": 2,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277791737,
+      "checked": 1,
+      "discovered": {
+        "storeId": "papy",
+        "mode": "store-listing",
+        "result": {
+          "matched": 2,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://papysougouten.ocnk.net/product-list?keyword=BOX",
+              "head": true,
+              "productLinks": 60,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://papysougouten.ocnk.net/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 4,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791274173818
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277825495,
+      "checked": 0,
+      "discovered": {
+        "ruleId": "7e95a72d-18bd-4a12-8d37-26d36df4497b",
+        "storeId": "futaki",
+        "result": {
+          "at": 1791277825495,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277856815,
+      "checked": 0,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277886883,
+      "checked": 3,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277921793,
+      "checked": 1,
+      "discovered": {
+        "storeId": "suns",
+        "mode": "store-listing",
+        "result": {
+          "matched": 1,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=BOX",
+              "head": true,
+              "productLinks": 30,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 30,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791274303934
+        },
+        "error": ""
+      },
       "targets": 107,
       "errors": 2
     }
