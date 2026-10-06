@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-06T10:57:48.719Z",
+  "updatedAt": "2026-10-06T11:01:27.482Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -77,16 +77,11 @@
       "context": "0.14.1デプロイ切替中の一時的deployment_check_failedからの復旧。最新incidentはrecovery/sent。"
     }
   },
-  "lease": {
-    "holder": "codex-automation",
-    "runId": "20261006T105748719Z-7ud9nu",
-    "acquiredAt": "2026-10-06T10:57:48.719Z",
-    "expiresAt": "2026-10-06T12:27:48.719Z"
-  },
+  "lease": null,
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "production_observation",
-    "status": "observing",
+    "status": "minimum_passed_observing_to_48h",
     "candidateId": "bigweb",
     "productionVersion": "0.14.2",
     "productionSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
@@ -95,8 +90,8 @@
     "observationStartedAt": "2026-10-05T05:44:34.496Z",
     "minimumObservationEndsAt": "2026-10-06T05:44:34.496Z",
     "finalObservationEndsAt": "2026-10-07T05:44:34.496Z",
-    "latestEvidenceAt": "2026-10-06T03:18:17.123Z",
-    "nextCheck": "2026-10-06 14:44 JST以後に24時間観察を評価。12:17 JSTの自動schedule成功後も保存が続くかを確認し、問題があれば次店追加より安定化を優先。",
+    "latestEvidenceAt": "2026-10-06T10:44:48.854Z",
+    "nextCheck": "2026-10-07 14:44 JST以後に48時間最終観察を評価。BIGWEBの通常監視は継続。ドラゴンスターは対象BOX不在のため本番追加なし。",
     "syncFreshnessRecovery": {
       "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T07:38:26Z",
       "runId": 37278868343,
@@ -108,22 +103,13 @@
       "note": "GitHub上の状態保存の鮮度回復。Cloudflare側のBIGWEB巡回は欠落時間中も継続していた。次回は定刻起動の自動復帰を確認。"
     },
     "syncFreshnessCheck": {
-      "status": "automatic_schedule_recovered_once",
-      "fingerprint": "inventory_sync_schedule_recovered_2026-10-06T03:17:34Z",
-      "latestSuccessfulRunId": 37408287617,
+      "status": "automatic_schedule_stable",
+      "latestSuccessfulRunId": 37451728152,
       "event": "schedule",
       "attempt": 1,
-      "completedAt": "2026-10-06T03:18:21Z",
+      "completedAt": "2026-10-06T10:44:54Z",
       "conclusion": "success",
-      "result": "health ok; 0.14.2 and main match; lastCompletedAt advanced; BIGWEB 43 listing rounds",
-      "precedingTransientFailure": {
-        "runId": 37387910622,
-        "event": "schedule",
-        "completedAt": "2026-10-05T23:23:50Z",
-        "reason": "deployment_check_failed HTTP403 during 0.14.2 deployment transition",
-        "recoveredByRunId": 37388131888
-      },
-      "remainingIssue": "24時間観察の最短時刻より前に取得した証拠。14:44 JST以後の再評価が必要。"
+      "result": "health ok; lastCompletedAt 2026-10-06 19:44:47 JST; 12:17後も定刻保存が継続"
     }
   },
   "stabilityWindow": {
@@ -203,9 +189,9 @@
       "id": "bigweb",
       "name": "BIGWEB／ビッグマジック",
       "priority": "2",
-      "status": "observing",
+      "status": "observing_final",
       "attempts": 1,
-      "notBefore": "2026-10-06T05:44:34.496Z",
+      "notBefore": "2026-10-07T05:44:34.496Z",
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
@@ -258,13 +244,13 @@
         "automaticRuleMigration": "GD01/GD05 rules include bigweb; disabled products remain disabled"
       },
       "observation": {
-        "status": "active",
+        "status": "minimum_passed_final_observation",
         "startedAt": "2026-10-05T05:44:34.496Z",
         "minimumEndsAt": "2026-10-06T05:44:34.496Z",
         "finalEndsAt": "2026-10-07T05:44:34.496Z",
-        "listingRoundsObserved": 43,
+        "listingRoundsObserved": 53,
         "firstListingAt": "2026-10-05T05:44:34.496Z",
-        "latestListingAt": "2026-10-06T02:58:27.348Z",
+        "latestListingAt": "2026-10-06T10:01:07.439Z",
         "listingRequestsPerRound": 1,
         "listingStatus": "ok",
         "matchedPages": 2,
@@ -274,8 +260,8 @@
             "storeProductId": 3447424,
             "price": 5200,
             "stock": "out_of_stock",
-            "samples": 354,
-            "lastCheckedAt": "2026-10-06T03:15:54.906Z",
+            "samples": 480,
+            "lastCheckedAt": "2026-10-06T10:42:47.561Z",
             "priceDecision": "within_limit",
             "maxPrice": 6098,
             "failures": 0
@@ -285,8 +271,8 @@
             "storeProductId": 3548567,
             "price": 6019,
             "stock": "out_of_stock",
-            "samples": 355,
-            "lastCheckedAt": "2026-10-06T03:16:28.029Z",
+            "samples": 481,
+            "lastCheckedAt": "2026-10-06T10:43:51.888Z",
             "priceDecision": "within_limit",
             "maxPrice": 6300,
             "failures": 0
@@ -294,8 +280,8 @@
         ],
         "existingMonitorImpact": {
           "health": "ok",
-          "checkedAt": "2026-10-06T03:18:17.123Z",
-          "lastCompletedAt": "2026-10-06T03:18:16.214Z",
+          "checkedAt": "2026-10-06T10:44:48.854Z",
+          "lastCompletedAt": "2026-10-06T10:44:47.728Z",
           "deploymentVersion": "0.14.2",
           "deploymentSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
           "deliveryConsecutiveFailures": 0,
@@ -306,32 +292,47 @@
           "policyVersion": 1,
           "pausedProducts": 7
         },
-        "scheduleExportNote": "2026-10-06 12:17 JSTにschedule起動run 37408287617がattempt 1で自動成功。07:59 JSTの手動再実行後、少なくとも1回は手動介入なしで保存できた。08:23 JSTのrun 37387910622はデプロイ切替中のhealth取得HTTP403で失敗したが、直後のworkflow_run 37388131888と12:17のscheduleでhealth=okへ回復。"
+        "scheduleExportNote": "2026-10-06 19:44 JSTのschedule起動run 37451728152がattempt 1で自動成功。12:17 JSTの定刻成功後も保存が継続し、lastCompletedAtが進行。",
+        "minimumPassedAt": "2026-10-06T10:44:48.854Z",
+        "cadenceMode": "quiet",
+        "cadenceReason": "取得範囲で24時間以上、対象ページの追加なし",
+        "intervalMs": 3600000
       },
       "deliveryEvidence": {
         "status": "awaiting_real_opportunity",
         "receiptIds": [],
-        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。43一覧巡回・GD01 354回・GD05 355回観測で実在庫なし。架空在庫や過去sent IDは再送していない。"
+        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。53一覧巡回・GD01 480回・GD05 481回観測で実在庫なし。新着なしであり送信障害ではない。"
       },
-      "nextAction": "2026-10-06 14:44 JST以後に24時間観察を評価。最新inventory-sync、BIGWEB一覧・2商品、既存監視、価格policy、gzip、配送healthを再取得し、問題なければ次候補の調査へ進む。",
+      "nextAction": "2026-10-07 14:44 JST以後に48時間観察を最終判定。通常監視は継続し、その前でも全体障害が出た場合だけ修復を優先。",
       "decisionFinal": false
     },
     {
       "id": "dragon-star",
       "name": "ドラゴンスター",
       "priority": "3",
-      "status": "blocked_access",
-      "attempts": 0,
-      "notBefore": null,
+      "status": "deferred_no_target",
+      "attempts": 1,
+      "notBefore": "2026-10-13T00:00:00Z",
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
-      "implementation": null,
+      "implementation": {
+        "status": "not_started_no_target",
+        "checkedAt": "2026-10-06T11:01:27.482Z",
+        "sourceType": "public_html",
+        "officialTop": "https://dorasuta.jp/gundam-gcg",
+        "seriesList": "https://dorasuta.jp/gundam-gcg/series-list",
+        "gd01Series": "https://dorasuta.jp/gundam-gcg/product-list?sid=10159",
+        "gd05Series": "https://dorasuta.jp/gundam-gcg/product-list?sid=13852",
+        "result": "公式公開ページは参照できるが、GD01/GD05のシリーズ一覧はシングルカード中心。新品パック欄で現在確認できたのはST10スタートデッキのみで、対象の通常BOXなし。",
+        "accessNote": "検索経由の公開ページ表示は成功。Worker実行環境の直接取得可否は、対象BOX掲載がないため今回未試行。403回避はしていない。",
+        "requiredIdentity": "商品名に通販新品、GD01またはGD05、通常24パックBOX。シングル、SC01 8パック、スタートデッキ、買取を除外。"
+      },
       "observation": null,
       "deliveryEvidence": {
-        "status": "not_started",
+        "status": "not_started_no_target",
         "receiptIds": []
       },
-      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
+      "nextAction": "2026-10-13 JST以後またはGD01/GD05通常BOXの具体的な新規掲載証拠が出た時に1回再確認。対象掲載時だけWorker相当の無通知dry-runを行い、403が続けば回避せず最終保留。",
       "decisionFinal": false
     },
     {
@@ -444,17 +445,17 @@
     }
   ],
   "lastRun": {
-    "id": "20261006T050346908Z-jbypul",
-    "status": "completed_pre_24h_observation",
+    "id": "20261006T105748719Z-7ud9nu",
+    "status": "completed_24h_passed_dragonstar_deferred",
     "externalChanges": [
       {
-        "kind": "state_and_progress_update",
+        "kind": "state_candidates_progress_update",
         "branch": "shop-expansion-state"
       }
     ],
-    "notes": "12:17 JSTのinventory-sync定刻起動が手動介入なしで成功。BIGWEBは43一覧巡回、GD01 354回・GD05 355回をエラー0で観測。0.14.2、価格policy v1、停止7、gzip、配送連続失敗0、送信済み履歴を維持。確認時点が14:44 JST前のため次店追加なし。"
+    "notes": "BIGWEBは約29時間、一覧53回・GD01 480回・GD05 481回をエラー0で観測し24時間条件通過。定刻保存も12:17と19:44 JSTに自動成功。ドラゴンスターは公開ページを再確認したが対象通常BOXなしのため追加せず保留。"
   },
-  "nextAction": "最新headから開始し、2026-10-06 14:44 JST以後のhealth・inventory-sync・BIGWEB観測を取得して24時間判定。12:17 JST以後の定刻保存継続も確認し、問題なければ次候補の調査へ進む。",
+  "nextAction": "最新headから開始し、BIGWEBの48時間観察終了（2026-10-07 14:44 JST）以後のhealth・inventory-sync・BIGWEB観測を最終確認。終了前は新店の本番追加をせず、候補調査のみ進める。ドラゴンスターは対象BOX新規掲載まで保留。",
   "completion": {
     "status": "in_progress",
     "disabledAt": null,
