@@ -357,10 +357,13 @@ class MonitorState:
         if current_record is not None:
             self._drop_same_event_provisional_duplicates(case, seen_cases)
 
+        # 店舗ニュース一覧の共通URLは同一募集の根拠にならない。
+        # 個別の応募URL、または店舗・商品・開始日の組み合わせで履歴を照合する。
         current_urls = {
             stable_url_identity(value)
             for value in (case.official_url, case.source_url)
             if value
+            and not is_shared_retailer_application_url(case.retailer_id, value)
         }
         same_family: list[tuple[str, dict[str, Any]]] = []
         same_article: list[tuple[str, dict[str, Any]]] = []
@@ -399,6 +402,7 @@ class MonitorState:
                 stable_url_identity(str(value))
                 for value in (raw_record.get("official_url"), raw_record.get("source_url"))
                 if value
+                and not is_shared_retailer_application_url(case.retailer_id, str(value))
             }
             cardset_pair = (
                 is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
@@ -654,6 +658,7 @@ class MonitorState:
             stable_url_identity(value)
             for value in (case.official_url, case.source_url)
             if value
+            and not is_shared_retailer_application_url(case.retailer_id, value)
         }
         journal = _mapping(self.data.setdefault("delivery_journal", {}))
         calendar_sync = _mapping(self.data.setdefault("calendar_sync", {}))
@@ -679,6 +684,7 @@ class MonitorState:
                     raw_record.get("source_url"),
                 )
                 if value
+                and not is_shared_retailer_application_url(case.retailer_id, str(value))
             }
             if not current_urls.intersection(old_urls):
                 continue

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from tcg_monitor.cli import _prepare_cases
+from tcg_monitor.cli import _prepare_cases, _remember_case
 from tcg_monitor.config import load_config
 from tcg_monitor.identity import release_title_token
 from tcg_monitor.models import LotteryCase, OpportunityKind, SourceTier
@@ -46,6 +46,7 @@ def test_actual_hobby_station_duplicates_merge_keep_history_and_restart(tmp_path
     assert count == 0
     assert len(state.data["seen_cases"]) == 2
     for case in prepared:
+        _remember_case(state, case)
         assert state.delivered(f"lottery:started:{case.case_id}")
         old_ids = {row.case_id for row in _real_cases()
                    if row.start_at.isoformat()[:10] == case.start_at.isoformat()[:10]}
@@ -71,6 +72,7 @@ def test_real_next_campaign_store_and_product_still_notify(tmp_path: Path, chang
                    if case.official_url == "https://livepocket.jp/e/cp5ds")
     state = MonitorState(tmp_path / "state.json")
     _prepare_cases(state, [current])
+    _remember_case(state, current)
     state.mark_delivered(f"lottery:started:{current.case_id}")
     new = replace(current, **change,
                   official_url="https://livepocket.jp/e/new-round", case_id="").with_id()
@@ -136,3 +138,38 @@ def test_same_spacing_in_fullcomp_summary_is_also_recognized(name: str) -> None:
     assert not alerts
     assert len(cases) == 1
     assert cases[0].canonical_product_key == "OP-17"
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_news_index_keeps_past_draws_from_consuming_current_delivery(
+    tmp_path: Path, reverse: bool,
+) -> None:
+    fixture = json.loads((FIXTURES / "hobby_station_all_history_20261006.json").read_text())
+    state = MonitorState(tmp_path / "state.json")
+    state.data.update(fixture)
+    source = next(s for s in CONFIG.sources if s.id == "livepocket_hobby_station")
+    official, _, alerts = parse_hobby_station_news(
+        (FIXTURES / "hobby_station_news_history_20261006.html").read_text(),
+        source.discovery_urls[0], source, CONFIG,
+    )
+    assert not alerts
+    x_cases = [case for case in _real_cases() if case.source_tier == SourceTier.OFFICIAL_INDIRECT]
+    merged, _ = merge_lotteries([*official, *x_cases])
+    if reverse:
+        merged.reverse()
+    prepared, count = _prepare_cases(state, merged)
+    assert count == 0
+    storm = [case for case in prepared if "ストームエメラルダ" in case.product_name]
+    assert {case.start_at.isoformat()[:10] for case in storm} == {
+        "2026-09-01", "2026-09-18", "2026-10-06",
+    }
+    current = next(case for case in storm if case.start_at.isoformat()[:10] == "2026-10-06")
+    assert state.delivered(f"lottery:started:{current.case_id}")
+    for case in prepared:
+        _remember_case(state, case)
+    state.save()
+    restored = MonitorState.load(state.path)
+    replay, count = _prepare_cases(restored, merged)
+    assert count == 0
+    current = next(case for case in replay if case.case_id == current.case_id)
+    assert restored.delivered(f"lottery:started:{current.case_id}")
