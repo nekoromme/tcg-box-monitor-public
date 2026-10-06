@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791277927218,
+  "generatedAt": 1791277980504,
   "prices": {
     "version": 1,
-    "checkedAt": 1791277892521,
+    "checkedAt": 1791277945231,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -1871,7 +1871,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791277927217,
+    "checkedAt": 1791277980503,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -2188,7 +2188,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791277927213,
+    "verifiedAt": 1791277980500,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -4652,7 +4652,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 1448279,
+        "intervalMs": 1395070,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -4779,9 +4779,9 @@
       },
       "tcgacademy": {
         "storeId": "tcgacademy",
-        "nextAt": 1791277935998,
+        "nextAt": 1791281574508,
         "createdAt": 1791078090716,
-        "successes": 79,
+        "successes": 80,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -4790,18 +4790,18 @@
             "role": "search",
             "depth": 5,
             "nextUrl": "https://www.tcgacademy.com/product-list?keyword=BOX&page=6",
-            "lastAt": 1791274340565
+            "lastAt": 1791277978035
           },
           {
             "url": "https://www.tcgacademy.com/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1791270719750
+            "lastAt": 1791277979166
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791274335998,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791277974508,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -4817,20 +4817,20 @@
               "order": "search"
             },
             {
-              "url": "https://www.tcgacademy.com/product-list?keyword=BOX&page=5",
-              "head": false,
-              "productLinks": 100,
+              "url": "https://www.tcgacademy.com/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 93,
               "scope": "read",
-              "hasMore": true,
+              "hasMore": false,
               "depthLimited": false,
-              "order": "search"
+              "order": "alternate"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1791270715000
+          "previousAt": 1791274335998
         },
-        "lastAt": 1791274335998,
+        "lastAt": 1791277974508,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -5210,40 +5210,6 @@
       }
     },
     "log": [
-      {
-        "kind": "listing",
-        "storeId": "torecolo",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.torecolo.jp/shop/goods/search.aspx?search=x&ps=50&keyword=BOX",
-            "head": true,
-            "productLinks": 73,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://www.torecolo.jp/shop/goods/search.aspx?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&search=x&p=4&ps=50",
-            "head": false,
-            "productLinks": 67,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "alternate"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791118688028,
-        "mode": "normal",
-        "reason": "通常の観測・記録",
-        "nextAt": 1791122301724,
-        "at": 1791120501724
-      },
       {
         "kind": "listing",
         "storeId": "torezamu",
@@ -36298,11 +36264,45 @@
         "reason": "取得範囲で24時間以上、対象ページの追加なし",
         "nextAt": 1791281521793,
         "at": 1791277921793
+      },
+      {
+        "kind": "listing",
+        "storeId": "tcgacademy",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.tcgacademy.com/product-list?keyword=BOX",
+            "head": true,
+            "productLinks": 100,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://www.tcgacademy.com/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 93,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791274335998,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791281574508,
+        "at": 1791277974508
       }
     ],
     "budget": {
       "day": 20732,
-      "group": 576,
+      "group": 578,
       "fallback": 639
     },
     "nextFallbackAt": 1791277945495,
@@ -36328,8 +36328,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791277921793,
-  "lastCompletedAt": 1791277925987,
+  "lastTick": 1791277974508,
+  "lastCompletedAt": 1791277979166,
   "load": {
     "activePages": 75,
     "waitingPages": 0,
@@ -36340,8 +36340,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1471519,
-    "compressedBytes": 115789,
+    "uncompressedBytes": 1472124,
+    "compressedBytes": 115784,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36371,8 +36371,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791277891766,
-    "nextSync": 1791285091766,
+    "lastSync": 1791277944489,
+    "nextSync": 1791285144489,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38644,6 +38644,12 @@
       },
       {
         "at": 1791277891766,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791277944489,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -41824,13 +41830,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 849,
+          "negatives": 850,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277944531,
+      "nextAt": 1791278263324,
       "failures": 0,
-      "lastChecked": 1791277656531,
+      "lastChecked": 1791277975324,
       "lastGood": {
         "title": "【BOX】ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 9500,
@@ -41866,11 +41872,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1791078129094,
-          "lastAt": 1791277656531,
-          "samples": 753
+          "lastAt": 1791277975324,
+          "samples": 754
         }
       ],
-      "lastGoodAt": 1791277656531,
+      "lastGoodAt": 1791277975324,
       "priceDecisions": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "referencePrice": 6000,
@@ -41880,14 +41886,14 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1791277656531
+          "at": 1791277975324
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078129094,
         "stock": "out_of_stock",
-        "lastAt": 1791277656531,
-        "lastUnavailableAt": 1791277656531
+        "lastAt": 1791277975324,
+        "lastUnavailableAt": 1791277975324
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -42315,13 +42321,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 1276,
+          "negatives": 1277,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277934665,
+      "nextAt": 1791278148622,
       "failures": 0,
-      "lastChecked": 1791277761665,
+      "lastChecked": 1791277975622,
       "lastGood": {
         "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
         "price": 5808,
@@ -42388,11 +42394,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791274048227,
-          "lastAt": 1791277761665,
-          "samples": 20
+          "lastAt": 1791277975622,
+          "samples": 21
         }
       ],
-      "lastGoodAt": 1791277761665,
+      "lastGoodAt": 1791277975622,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -42402,14 +42408,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791277761665
+          "at": 1791277975622
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093552,
         "stock": "out_of_stock",
-        "lastAt": 1791277761665,
-        "lastUnavailableAt": 1791277761665
+        "lastAt": 1791277975622,
+        "lastUnavailableAt": 1791277975622
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -51524,13 +51530,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 454,
+          "negatives": 455,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791277953706,
+      "nextAt": 1791278168061,
       "failures": 0,
-      "lastChecked": 1791277761706,
+      "lastChecked": 1791277976061,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Newtype Rising [GD01] BOX(24パック入)",
         "price": 5200,
@@ -51564,7 +51570,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791277761706
+          "at": 1791277976061
         }
       },
       "history": [
@@ -51575,17 +51581,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791179154500,
-          "lastAt": 1791277761706,
-          "samples": 454
+          "lastAt": 1791277976061,
+          "samples": 455
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791179154500,
         "stock": "out_of_stock",
-        "lastAt": 1791277761706,
-        "lastUnavailableAt": 1791277761706
+        "lastAt": 1791277976061,
+        "lastUnavailableAt": 1791277976061
       },
-      "lastGoodAt": 1791277761706,
+      "lastGoodAt": 1791277976061,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 192,
@@ -53861,13 +53867,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791245056664,
-      "checked": 2,
-      "discovered": null,
-      "targets": 107,
-      "errors": 2
-    },
     {
       "at": 1791245088304,
       "checked": 1,
@@ -68182,6 +68181,45 @@
           "requests": 2,
           "status": "ok",
           "previousAt": 1791274303934
+        },
+        "error": ""
+      },
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791277974508,
+      "checked": 3,
+      "discovered": {
+        "storeId": "tcgacademy",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.tcgacademy.com/product-list?keyword=BOX",
+              "head": true,
+              "productLinks": 100,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://www.tcgacademy.com/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 93,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791274335998
         },
         "error": ""
       },
