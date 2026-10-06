@@ -34,7 +34,7 @@ def stable_url_identity(value: str) -> str:
 
 
 def is_shared_retailer_application_url(retailer_id: str, value: str) -> bool:
-    """These guides have no campaign identifier and are reused for later draws."""
+    """These guides/indexes have no campaign identifier and serve multiple draws."""
     parts = urlsplit(value)
     host = parts.netloc.casefold().removeprefix("www.")
     path = parts.path.rstrip("/")
@@ -44,6 +44,7 @@ def is_shared_retailer_application_url(retailer_id: str, value: str) -> bool:
         ("ministop_online", "online.ministop.co.jp", ""),
         ("yodobashi", "limited.yodobashi.com", ""),
         ("yodobashi", "limited.yodobashi.com", "/entry/shared"),
+        ("hobby_station", "hbst.net", "/category/news"),
     }
 
 
