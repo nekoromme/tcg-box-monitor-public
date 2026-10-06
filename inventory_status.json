@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791274948083,
+  "generatedAt": 1791275001026,
   "prices": {
     "version": 1,
-    "checkedAt": 1791274913732,
+    "checkedAt": 1791274969130,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -1871,7 +1871,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791274948082,
+    "checkedAt": 1791275001026,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -2188,7 +2188,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791274948081,
+    "verifiedAt": 1791275001021,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -4607,7 +4607,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 818557,
+        "intervalMs": 765800,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -36293,8 +36293,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791274943057,
-  "lastCompletedAt": 1791274945098,
+  "lastTick": 1791274998512,
+  "lastCompletedAt": 1791274999977,
   "load": {
     "activePages": 75,
     "waitingPages": 0,
@@ -36305,8 +36305,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1467600,
-    "compressedBytes": 115666,
+    "uncompressedBytes": 1467660,
+    "compressedBytes": 115679,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36336,8 +36336,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791274913056,
-    "nextSync": 1791282113056,
+    "lastSync": 1791274968511,
+    "nextSync": 1791282168511,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38591,6 +38591,12 @@
       },
       {
         "at": 1791274913056,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791274968511,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -51298,13 +51304,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 356,
+          "negatives": 357,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791274958060,
+      "nextAt": 1791275287397,
       "failures": 0,
-      "lastChecked": 1791274670060,
+      "lastChecked": 1791274999397,
       "lastGood": {
         "title": "【BOX】 ガンダムカードゲーム ブースターパック Newtype Rising GD01 BOX ｜ ニュータイプ ライジング 未開封 GUNDAM CARD GAME TCG",
         "price": 7200,
@@ -51340,7 +51346,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,098円を超過",
-          "at": 1791274670060
+          "at": 1791274999397
         }
       },
       "history": [
@@ -51351,8 +51357,8 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円を超過",
           "at": 1791164189902,
-          "lastAt": 1791274670060,
-          "samples": 356
+          "lastAt": 1791274999397,
+          "samples": 357
         }
       ],
       "availabilityTiming": {
@@ -51361,10 +51367,10 @@
         "openAfter": null,
         "firstAvailableAt": 1791164189902,
         "stock": "in_stock",
-        "lastAt": 1791274670060,
-        "lastAvailableAt": 1791274670060
+        "lastAt": 1791274999397,
+        "lastAvailableAt": 1791274999397
       },
-      "lastGoodAt": 1791274670060,
+      "lastGoodAt": 1791274999397,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 288,
@@ -51461,13 +51467,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 440,
+          "negatives": 441,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791274958158,
+      "nextAt": 1791275191974,
       "failures": 0,
-      "lastChecked": 1791274766158,
+      "lastChecked": 1791274999974,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Newtype Rising [GD01] BOX(24パック入)",
         "price": 5200,
@@ -51501,7 +51507,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1791274766158
+          "at": 1791274999974
         }
       },
       "history": [
@@ -51512,17 +51518,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791179154500,
-          "lastAt": 1791274766158,
-          "samples": 440
+          "lastAt": 1791274999974,
+          "samples": 441
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791179154500,
         "stock": "out_of_stock",
-        "lastAt": 1791274766158,
-        "lastUnavailableAt": 1791274766158
+        "lastAt": 1791274999974,
+        "lastUnavailableAt": 1791274999974
       },
-      "lastGoodAt": 1791274766158,
+      "lastGoodAt": 1791274999974,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 192,
@@ -53798,13 +53804,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791242174756,
-      "checked": 2,
-      "discovered": null,
-      "targets": 107,
-      "errors": 0
-    },
     {
       "at": 1791242207031,
       "checked": 4,
@@ -68033,6 +68032,13 @@
     {
       "at": 1791274943057,
       "checked": 3,
+      "discovered": null,
+      "targets": 107,
+      "errors": 2
+    },
+    {
+      "at": 1791274998512,
+      "checked": 2,
       "discovered": null,
       "targets": 107,
       "errors": 2
