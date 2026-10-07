@@ -43,6 +43,7 @@ from tcg_monitor.non_box_sales import (
 from tcg_monitor.ocr import ExpiredImageProxyError
 from tcg_monitor.parsers.common import title, visible_text
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS, published_result_date
+from tcg_monitor.retailer_identity import retailer_mention_matches
 from tcg_monitor.store_scope import outside_store_scope
 
 
@@ -1718,8 +1719,8 @@ def parse_yahoo_realtime(
             count("disallowed_application")
             continue
         required_mentions = _string_list_option(source, "required_retailer_mentions")
-        if required_mentions and not any(
-            mention.casefold() in compact_text.casefold() for mention in required_mentions
+        if required_mentions and not retailer_mention_matches(
+            retailer_id, post_text, required_mentions,
         ):
             count("retailer_not_matched")
             continue
@@ -2514,9 +2515,9 @@ def _parse_secondary_social_feed(
         if href in processed:
             continue
         processed.add(href)
-        body = re.sub(r"\s+", "", _tweet_body(container)).casefold()
-        matched = [item for item in profiles if any(
-            alias.casefold() in body for alias in item["required_retailer_mentions"]
+        body = _tweet_body(container)
+        matched = [item for item in profiles if retailer_mention_matches(
+            item["retailer_id"], body, item["required_retailer_mentions"],
         )]
         # 店舗一覧や合同まとめの日付を、列挙された全店舗へ流用しない。
         if len(matched) != 1:

@@ -198,11 +198,11 @@ def test_snkrdunk_detail_link_row_is_part_of_its_parent_campaign() -> None:
     source = next(s for s in CONFIG.sources if s.id == "snkrdunk_pokemon")
     html = """<h1>【ポケカ】30th CELEBRATIONの予約・抽選情報</h1>
     <p>拡張パック「30th CELEBRATION」 発売日 2026年9月16日</p>
-    <h4>文真堂書店ゲオ 倉賀野店</h4><table>
+    <h4>ゲオ</h4><table>
     <tr><th>抽選期間</th><td>10/3〜10/7</td></tr>
     <tr><th>当選発表</th><td>10/12</td></tr>
-    <tr><th>抽選詳細</th><td><a href="https://x.com/buntckuraga_jp/status/2106174748661289247">
-    X：文真堂書店ゲオ 倉賀野店（@buntckuraga_jp）</a></td></tr></table>"""
+    <tr><th>抽選詳細</th><td><a href="https://geo-online.co.jp/news/785">
+    ゲオ公式抽選ページ</a></td></tr></table>"""
     cases, _, alerts = parse_snkrdunk(html, "https://snkrdunk.com/articles/32998/", source, CONFIG)
     assert len(cases) == 1
     assert not alerts

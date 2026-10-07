@@ -13,6 +13,7 @@ from tcg_monitor.config import source_with_runtime_parser_profile
 from tcg_monitor.japanese_datetime import parse_first_datetime, parse_period_start
 from tcg_monitor.models import Alert, Config, LotteryCase, Release, SourceConfig
 from tcg_monitor.result_date import published_result_date
+from tcg_monitor.retailer_identity import retailer_mention_matches
 from tcg_monitor.store_scope import outside_store_scope
 
 _HEADINGS = {"h2", "h3", "h4", "h5", "h6"}
@@ -121,7 +122,6 @@ def is_snkrdunk_schedule_healthy_without_candidates(
 
 def _retailer(value: str, source: SourceConfig) -> tuple[str, str] | None:
     source = source_with_runtime_parser_profile(source)
-    folded = value.casefold()
     profiles = source.parser_options.get("retailers", [])
     if not isinstance(profiles, list):
         raise ValueError(f"bad retailer profiles: {source.id}")
@@ -138,7 +138,7 @@ def _retailer(value: str, source: SourceConfig) -> tuple[str, str] | None:
             and all(isinstance(alias, str) and alias for alias in aliases)
         ):
             raise ValueError(f"bad retailer profile: {source.id}")
-        if any(alias.casefold() in folded for alias in aliases):
+        if retailer_mention_matches(retailer_id, value, aliases, label=True):
             return retailer_id, retailer_name
     return None
 

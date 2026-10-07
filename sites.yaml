@@ -28,6 +28,22 @@ system:
     fullcomp: [仙台]
   runtime:
     confirmed_false_positive_cases:
+      # SuperKaBoS+GEO鯖江店の独自抽選を全国のゲオと誤認した予定。
+      51ab65736f47928b107768c5921d1833d07ae1b835e862f7649a0f8640a6f2de:
+        retailer_id: geo
+        retailer_name: ゲオ
+        product_name: 拡張パック「30th CELEBRATION」
+        start_at: '2026-10-06 20:00:00+09:00'
+        source_url: https://snkrdunk.com/articles/33304/
+        event_id: tcgd8ee2f204960d27004b99c3fd9d7b3b04caab97745b8dc15e1fb70a21dfe4
+      # 同じ部分一致で全国募集へ混入した文真堂書店ゲオ倉賀野店の店頭抽選。
+      3c5a22f01b1184df175da22500654f144ffed8932afca104490347ff17aa9953:
+        retailer_id: geo
+        retailer_name: ゲオ
+        product_name: 30th CELEBRATION カードセット
+        start_at: '2026-10-03'
+        source_url: https://snkrdunk.com/articles/32998/
+        event_id: tcg671ba2da8c7702e2f1dcc82f18e63a2f110846fce3da0d68533ad10a6e111
       # 引用先のまとめ画像を混ぜた誤商品と、仙台を含まないことを公式確認した募集。
       35ccaaf5b6d6ddf271b6d5c2704e0681c52f84fc7cbcb367ac2722f5074f05bc:
         retailer_id: kojima
