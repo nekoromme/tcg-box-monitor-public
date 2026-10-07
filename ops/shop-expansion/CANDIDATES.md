@@ -60,6 +60,7 @@
 - 2026-10-05実査：公式画面が利用する公開JSON API `https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1` を確認。GD01（商品ID3447424、5,200円）とGD05（3548567、6,019円）の通常24パックBOXが登録されているが、確認時はいずれも `is_sold_out=true`・在庫0。正規の商品リンクは `/ja/products/gundamgcg/cardViewer/{id}`。APIは売切れも返すため `is_sold_out` と `stock_count` の厳格判定が必要。SC01のGD05 8パックセット、カスタムデッキボックス、スタートデッキ、海外30thを除外するfixtureを必須にし、安定性ゲート通過後の実装候補を `ready` とした。
 
 - 2026-10-05本番反映：Worker [PR #30](https://github.com/nekoromme/tcg-cross-search/pull/30) と移行修正 [PR #31](https://github.com/nekoromme/tcg-cross-search/pull/31) をマージし、本番0.14.1へ反映。14:44〜19:48 JSTに一覧11巡回がすべて成功し、GD01（5,200円・売切れ）とGD05（6,019円・売切れ）を各85回以上観測。価格上限内だが実在庫なしのため通知は送っていない。2026-10-06 14:44 JST以後まで1店だけの24時間観察を継続する。
+- 2026-10-07最終観察：本番追加から48時間超の一覧77巡回が全て成功し、GD01（5,200円・売切れ）878回、GD05（6,019円・売切れ）879回、両対象失敗0。health正常、保存・価格・停止・送信履歴への悪影響なしとして候補を完了。実在庫は無く通知機会なし。
 - 参照：
   - [本店BOX一覧](https://www.bigweb.co.jp/ja/products/gundamgcg/boxes)
   - [公式楽天店の運営](https://www.rakuten.co.jp/auc-big-web/info.html)
@@ -105,6 +106,8 @@
 - 参照：
   - [ガンダム通販](https://www.ryuunoshippo7.com/)
   - [運営・返品](https://www.ryuunoshippo7.com/info)
+
+- 2026-10-07本番反映：Worker [PR #33](https://github.com/nekoromme/tcg-cross-search/pull/33) をマージし、本番0.14.2／`823986b3a3108ced89e76161b5de01885d066110`へ反映。公式の新品・予約商品9件の固定一覧だけを30分起点で1通信取得する。fixtureは商品1273（GD01、通常24パックBOX、5,800円、売切れ）と停止済みGD03/GD04/EB01、デッキ・用品を分離。CIは193件成功、health正常、GD01/GD05の既存ルールへ店舗追加、ポケカ30thには追加なし、停止7弾を維持。本番登録直後で初回一覧通信は次snapshot待ちのため、48時間観察中。
 
 - 2026-10-07再実査：初期のシングル主体という見立てを更新。[新品・予約商品のおすすめ欄](https://www.ryuunoshippo7.com/product-group/2?view=recommend) に [GD01の通常24パックBOX（商品1273）](https://www.ryuunoshippo7.com/product/1273) があり、5,800円・在庫なし。商品詳細は未開封品、外装傷み・輸送時箱潰れの了承条件を記載。新品欄所属という肯定的根拠はあるが、取得条件/Worker相当dry-run/回帰検証はまだ未実施のため `researching`。BIGWEBの48時間最終観察後にこの1商品の技術検証を行う。停止中GD03/GD04/EB01の掲載を追加理由にしない。返品3日/7日差は再確認しても残る。
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-07T11:19:00.729Z",
-  "phase": "implementing",
+  "updatedAt": "2026-10-07T11:21:44.938Z",
+  "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
     "title": "カード監視の段階的店舗追加",
@@ -36,25 +36,25 @@
     "noPaidPlanChanges": true
   },
   "baseline": {
-    "checkedAt": "2026-10-07T11:20:00.000Z",
-    "workerMainSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
+    "checkedAt": "2026-10-07T11:19:41.577Z",
+    "workerMainSha": "823986b3a3108ced89e76161b5de01885d066110",
     "relayMainSha": "c0e241521446c549abcd538715328436a150f614",
-    "inventorySnapshotAt": "2026-10-07T10:59:37.497Z",
-    "lastCompletedAt": "2026-10-07T10:59:36.379Z",
+    "inventorySnapshotAt": "2026-10-07T11:19:41.231Z",
+    "lastCompletedAt": "2026-10-07T11:19:39.027Z",
     "latestSyncRunId": 37610977429,
     "latestSyncRunConclusion": "success",
-    "latestSyncRunUpdatedAt": "2026-10-07T10:59:41Z",
+    "latestSyncRunUpdatedAt": "2026-10-07T11:19:45Z",
     "historicalWorkerVersion": "0.14.2",
     "registeredProducts": 38,
     "enabledProducts": 31,
     "pausedProducts": 7,
-    "liveHealthVerification": "verified_via_latest_successful_actions_health_job_log_and_monitor_state",
+    "liveHealthVerification": "verified_via_inventory_sync_attempt_2_health_log_and_monitor_state",
     "snapshotFreshness": "current",
-    "healthAccessNote": "本番直接取得は経路エラーのため障害判定に使わず、Actionsの本番healthで0.14.2・Worker main SHA一致を確認。最新保存は11:36 JSTで、確認時点13:56 JSTには現行135分目安を約5分超過。最新runは成功しており障害とは断定せず、48時間終了後の新しい自動保存を待つ。",
+    "healthAccessNote": "本番直接取得は経路制限。既存secret利用のinventory-sync attempt 2でhealth ok・main SHA一致を確認。",
     "storage": {
       "format": "monitor-gzip-v1",
-      "uncompressedBytes": 1484272,
-      "compressedBytes": 116419,
+      "uncompressedBytes": 1488934,
+      "compressedBytes": 116713,
       "chunks": 2
     },
     "pricePolicy": {
@@ -73,7 +73,7 @@
       "deliveredAt": "2026-10-04T10:51:38+09:00",
       "delivery": "sent"
     },
-    "latestSyncRunAttempt": 1,
+    "latestSyncRunAttempt": 2,
     "latestRecoveryNotification": {
       "deliveredAt": "2026-10-05T14:27:17+09:00",
       "delivery": "sent",
@@ -81,25 +81,23 @@
     },
     "quotaNote": "Cloudflare実利用量の正規メトリクスは未取得。最新health issuesなし、無料枠停止の証拠なし。"
   },
-  "lease": {
-    "runId": "20261007T110637Z-exp",
-    "acquiredAt": "2026-10-07T11:06:37.562Z",
-    "expiresAt": "2026-10-07T12:36:37.562Z"
-  },
+  "lease": null,
   "activeCandidateId": "ryuunoshippo",
   "pendingOperation": {
-    "kind": "inventory_sync_rerun_intent",
-    "status": "rerun_submitted",
+    "kind": "production_observation",
+    "status": "deployed_registration_verified_first_listing_pending",
     "candidateId": "ryuunoshippo",
+    "implementationPrNumber": 33,
+    "implementationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/33",
     "mergeSha": "823986b3a3108ced89e76161b5de01885d066110",
-    "sourceRunId": 37610977429,
-    "sourceJobId": 112757887635,
-    "expectedAttempt": 2,
-    "reason": "本番healthの直接取得は経路制限。既存secret利用の同一inventory-syncを1回だけ再実行し、production SHA・state migration・実巡回を確認する。",
-    "submittedAt": "2026-10-07T11:19:00.729Z",
-    "runId": 37610977429,
-    "previousJobId": 112757887635,
-    "notBefore": "2026-10-07T11:21:00.729Z"
+    "productionVersion": "0.14.2",
+    "productionSha": "823986b3a3108ced89e76161b5de01885d066110",
+    "deployVerifiedAt": "2026-10-07T11:19:41.577Z",
+    "observationStartedAt": "2026-10-07T11:16:38.740Z",
+    "minimumObservationEndsAt": "2026-10-08T11:16:38.740Z",
+    "finalObservationEndsAt": "2026-10-09T11:16:38.740Z",
+    "latestEvidenceAt": "2026-10-07T11:19:41.231Z",
+    "nextCheck": "最新monitor-stateで竜のしっぽ一覧のsuccesses/lastResult、商品1273の登録・5,800円・売切れ・失敗数を確認。初回取得が未実行/失敗なら売切れとせず原因分類。24時間までは次店を追加しない。"
   },
   "stabilityWindow": {
     "status": "passed",
@@ -364,13 +362,13 @@
       "id": "ryuunoshippo",
       "name": "竜のしっぽ",
       "priority": "後方",
-      "status": "implementing",
+      "status": "observing_production",
       "attempts": 1,
-      "notBefore": "2026-10-07T05:44:34.496Z",
+      "notBefore": "2026-10-08T11:16:38.740Z",
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "merged_sync_rerun_submitted",
+        "status": "deployed_registration_verified",
         "checkedAt": "2026-10-07T11:20:00.000Z",
         "sourceType": "public_html",
         "listingUrl": "https://www.ryuunoshippo7.com/product-group/2?view=recommend",
@@ -410,14 +408,68 @@
         "mainCiRunId": 37612951250,
         "mainCiConclusion": "success",
         "productionVerificationRunId": 37610977429,
-        "productionVerificationAttempt": 2
+        "productionVerificationAttempt": 2,
+        "productionVersion": "0.14.2",
+        "productionSha": "823986b3a3108ced89e76161b5de01885d066110",
+        "deployedAt": "2026-10-07T11:16:38.740132Z",
+        "productionVerificationJobId": 112765313514,
+        "registrationVerifiedAt": "2026-10-07T11:19:41.231Z",
+        "rulesAddedTo": [
+          "gundam-gd01",
+          "gundam-gd05"
+        ],
+        "notAddedTo": [
+          "pokemon-m6a"
+        ],
+        "stoppedProductsPreserved": [
+          "gundam-eb01",
+          "gundam-gd04",
+          "gundam-gd03",
+          "gundam-gd02",
+          "lorcana-azurite-sea",
+          "yugioh-/japan/products/26lp/",
+          "yugioh-/japan/products/ut01/"
+        ]
       },
-      "observation": null,
+      "observation": {
+        "status": "started_first_listing_pending",
+        "startedAt": "2026-10-07T11:16:38.740Z",
+        "minimumEndsAt": "2026-10-08T11:16:38.740Z",
+        "finalEndsAt": "2026-10-09T11:16:38.740Z",
+        "registrationSnapshotAt": "2026-10-07T11:19:41.231Z",
+        "discoveryMode": "normal",
+        "intervalMs": 1800000,
+        "successes": 0,
+        "failures": 0,
+        "firstListingAt": null,
+        "firstListingResult": null,
+        "expectedListingUrl": "https://www.ryuunoshippo7.com/product-group/2?view=recommend",
+        "expectedTargetUrl": "https://www.ryuunoshippo7.com/product/1273",
+        "expectedTarget": {
+          "productId": "gundam-gd01",
+          "price": 5800,
+          "stock": "out_of_stock",
+          "unit": "1BOX・24パック"
+        },
+        "existingMonitorImpact": {
+          "health": "ok",
+          "lastCompletedAt": "2026-10-07T11:19:39.027Z",
+          "storageFormat": "monitor-gzip-v1",
+          "deliveryConsecutiveFailures": 0,
+          "sent": 12,
+          "pending": 0,
+          "failed": 0,
+          "policyVersion": 1,
+          "pausedProducts": 7
+        },
+        "note": "本番登録と次回予定は確認済み。保存直前には初回一覧通信がまだ実行されていないため、実巡回成功とは記録しない。"
+      },
       "deliveryEvidence": {
-        "status": "not_started",
-        "receiptIds": []
+        "status": "awaiting_real_opportunity",
+        "receiptIds": [],
+        "note": "追加時点の商品1273は売切れ。通知試験は行わず、過去sent 12件を保持。"
       },
-      "nextAction": "BIGWEB48h最終判定後、新品欄のGD01 /product/1273の公開取得と規約を確認。無通知で5,800円・売切れ・24パックを照合し、既存ocnk形式の再利用・用品/中古除外を回帰検証。取得制限は回避せず保留。",
+      "nextAction": "最新monitor-stateで竜のしっぽ一覧のsuccesses/lastResult、商品1273の登録・5,800円・売切れ・失敗数を確認。初回取得が未実行/失敗なら売切れとせず原因分類。24時間までは次店を追加しない。",
       "decisionFinal": false
     },
     {
@@ -510,17 +562,30 @@
     }
   ],
   "lastRun": {
-    "id": "20261007T045646Z-exp",
-    "status": "completed_pregate_candidate_resolution",
+    "id": "20261007T110637Z-exp",
+    "status": "completed_ryu_deployed_observation_started",
     "externalChanges": [
       {
-        "kind": "ledger_only",
+        "kind": "worker_pr",
+        "number": 33,
+        "url": "https://github.com/nekoromme/tcg-cross-search/pull/33",
+        "mergeSha": "823986b3a3108ced89e76161b5de01885d066110"
+      },
+      {
+        "kind": "inventory_sync_rerun",
+        "runId": 37610977429,
+        "attempt": 2,
+        "jobId": 112765313514,
+        "conclusion": "success"
+      },
+      {
+        "kind": "ledger",
         "branch": "shop-expansion-state"
       }
     ],
-    "notes": "BIGWEB69一覧・GD01 736/GD05 737観測で売切れ・失敗0。48時間終了14:44 JST前かつ最新snapshotが鮮度目安を約5分超えたため最終判定/次店追加なし。あみあみは規約で最終除外、セラは対象範囲不一致で最終保留。メディアワールド一覧429は回復したが商品ページ4件は残存。"
+    "notes": "BIGWEB48時間観察を正常完了。竜のしっぽを公式新品欄1通信の低頻度監視として本番追加。CI193成功、本番health/main一致、ルール移行と停止7弾保持を確認。初回実店舗一覧通信は次snapshot待ち。通知送信なし。"
   },
-  "nextAction": "竜のしっぽ実装ブランチをbaseShaから作成し、fixture回帰・CI・PR・本番反映へ進む。外部操作IDを都度保存する。",
+  "nextAction": "最新monitor-stateで竜のしっぽ一覧のsuccesses/lastResult、商品1273の登録・5,800円・売切れ・失敗数を確認。初回取得が未実行/失敗なら売切れとせず原因分類。24時間までは次店を追加しない。",
   "completion": {
     "status": "in_progress",
     "disabledAt": null,
