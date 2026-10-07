@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-07T11:21:44.938Z",
+  "updatedAt": "2026-10-07T23:04:15.418Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -81,7 +81,11 @@
     },
     "quotaNote": "Cloudflare実利用量の正規メトリクスは未取得。最新health issuesなし、無料枠停止の証拠なし。"
   },
-  "lease": null,
+  "lease": {
+    "runId": "20261007T230415418Z-exp",
+    "acquiredAt": "2026-10-07T23:04:15.418Z",
+    "expiresAt": "2026-10-08T00:34:15.418Z"
+  },
   "activeCandidateId": "ryuunoshippo",
   "pendingOperation": {
     "kind": "production_observation",
