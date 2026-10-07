@@ -418,6 +418,7 @@ def _reuse_first_detection_start(state: MonitorState, case: LotteryCase) -> Lott
         # 初回の通知履歴があれば下で復元し、なければ今回の検知日を使う。
         prepared = case
     first_delivery_start_offsets = {
+        "yahoo_realtime_detected_open": 0,
         "snkrdunk_open_invitation_seen": 0,
         "yahoo_realtime_detected_next_day": 1,
         "furuichi_official_open_detected": 0,
@@ -518,10 +519,52 @@ def _prepare_cases(state: MonitorState, cases: list[LotteryCase]) -> tuple[list[
         migrated_from = state.migrate_case_identity(case)
         if not already_known and migrated_from is None:
             new_count += 1
+        if migrated_from is not None:
+            log_event(phase="lottery_history_migration", outcome="reused",
+                      retailer_id=case.retailer_id, case_id=case.case_id,
+                      previous_case_id=migrated_from,
+                      already_delivered=state.delivered(f"lottery:started:{case.case_id}"))
         prepared.append(_preserve_preferred_case_source(
             state, _reuse_first_detection_start(state, case),
         ))
     return prepared, new_count
+
+
+def _cleanup_duplicate_lottery_events(
+    state: MonitorState, calendar: CalendarAdapter, case: LotteryCase,
+    summary: str, description: str,
+) -> None:
+    """残す予定が存在することを確認してから、同じ募集の余分な予定だけを消す。"""
+    migration = state.data.get("case_id_migrations", {}).get(case.case_id, {})
+    duplicates = migration.get("duplicate_calendar_events", {})
+    pending = [record for record in duplicates.values()
+               if record.get("status") not in {"deleted", "not_found"}]
+    if not pending:
+        return
+    sync_key = f"lottery:{case.case_id}"
+    sync = state.data.get("calendar_sync", {}).get(sync_key, {})
+    # 既存予定が手動で消されていても、削除に先立ち残す1件を復元する。
+    kept = calendar.reconcile(
+        "lottery", state.calendar_case_identity(case.case_id), summary, case.start_at,
+        description, known_event_id=sync.get("event_id"),
+    )
+    if kept.get("status") not in {"inserted", "updated", "unchanged"}:
+        raise RuntimeError(f"重複整理の前に残す予定を確認できませんでした: {kept}")
+    state.mark_calendar_synced(sync_key, _calendar_payload_hash(
+        summary, case.start_at, description,
+    ), kept)
+    for record in pending:
+        if record["event_id"] == kept.get("event_id"):
+            continue
+        result = calendar.delete_owned_event(
+            str(record["event_id"]), kind="lottery", internal_id=str(record["internal_id"]),
+        )
+        if result.get("status") not in {"deleted", "not_found"}:
+            raise RuntimeError(f"同一募集の重複予定整理が完了しませんでした: {result}")
+        record.update(status=result["status"], updated_at=datetime.now(UTC).isoformat())
+        state.save()
+        log_event(phase="calendar_duplicate_cleanup", outcome=result["status"],
+                  case_id=case.case_id, event_id=record["event_id"])
 
 
 def _prepare_releases(state: MonitorState, releases: list[Release]) -> tuple[list[Release], int]:
@@ -807,6 +850,8 @@ def _lottery_description(
                 "受付開始日: 不明",
                 "仮の開始日: 初回検知の翌日（実際の受付開始日ではありません）",
             ] if case.extraction_method == "yahoo_realtime_detected_next_day" else []),
+            *(["受付開始日: 不明", "予定の日付は受付を初めて確認した日です。"]
+              if case.extraction_method == "yahoo_realtime_detected_open" else []),
             *([f"{'応募締切' if case.opportunity_kind == OpportunityKind.LOTTERY else '受付締切'}: "
                f"{_format_user_datetime(case.end_at)}"] if case.end_at else []),
             *([f"結果発表: {_format_user_datetime(case.result_at)}"] if case.result_at else []),
@@ -901,6 +946,8 @@ def _lottery_discord_description(case: LotteryCase, config: Config | None = None
         date_label = "招待受付の確認日（開始日時不明）"
     elif case.extraction_method == "yahoo_realtime_detected_next_day":
         date_label = "仮の開始日（開始日不明・初回検知の翌日）"
+    elif case.extraction_method == "yahoo_realtime_detected_open":
+        date_label = "受付を確認した日（開始日時不明）"
     else:
         date_label = "受付開始"
     application_label = _lottery_application_label(case)
@@ -941,7 +988,9 @@ def _opportunity_title_prefix(case: LotteryCase, config: Config) -> str:
     if _is_amazon_invitation(case):
         return f"【{config.games[case.game_id].short_name}Amazon招待】"
     if case.opportunity_kind == OpportunityKind.LOTTERY:
-        if case.extraction_method == "yahoo_realtime_detected_next_day":
+        if case.extraction_method in {
+            "yahoo_realtime_detected_open", "yahoo_realtime_detected_next_day",
+        }:
             return f"【{config.games[case.game_id].short_name}抽選・開始日不明】"
         return config.games[case.game_id].lottery_start_prefix
     sale_label = (
@@ -1459,6 +1508,10 @@ def main(argv: list[str] | None = None) -> int:
                         f"Google Calendar登録が完了しませんでした: {calendar_result}"
                     )
                 state.mark_calendar_synced(sync_key, payload_hash, calendar_result)
+            if uses_calendar:
+                _cleanup_duplicate_lottery_events(
+                    state, calendar, case, calendar_summary, calendar_description,
+                )
             if not already_delivered and (
                 in_delivery_window or _opportunity_is_still_open(case, today)
             ):
