@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-07T11:13:33.477Z",
+  "updatedAt": "2026-10-07T11:16:06.645Z",
   "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -88,8 +88,8 @@
   },
   "activeCandidateId": "ryuunoshippo",
   "pendingOperation": {
-    "kind": "ci_wait",
-    "status": "pr_open",
+    "kind": "merge_intent",
+    "status": "intent_recorded",
     "candidateId": "ryuunoshippo",
     "repository": "nekoromme/tcg-cross-search",
     "baseSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
@@ -106,13 +106,18 @@
       "全回帰テストとWrangler dry-run"
     ],
     "noNotification": true,
-    "branchHeadSha": "b303b08945777a24a9d736691c4d27e9fae73c40",
+    "branchHeadSha": "d2bfb4363b0bfe1bf4022404678fb5a7c31e3be2",
     "branchCreatedAt": "2026-10-07T11:23:00.000Z",
     "prTitle": "feat: monitor Ryu new-product listings",
     "prNumber": 33,
     "prUrl": "https://github.com/nekoromme/tcg-cross-search/pull/33",
     "openedAt": "2026-10-07T11:13:18Z",
-    "notBefore": "2026-10-07T11:18:18Z"
+    "notBefore": "2026-10-07T11:18:18Z",
+    "ciRunId": 37612835410,
+    "ciConclusion": "success",
+    "ciJobId": 112763987764,
+    "tests": "193 passed",
+    "build": "wrangler dry-run success"
   },
   "stabilityWindow": {
     "status": "passed",
@@ -383,7 +388,7 @@
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "pr_open_ci_wait",
+        "status": "ci_passed_merge_intent",
         "checkedAt": "2026-10-07T11:20:00.000Z",
         "sourceType": "public_html",
         "listingUrl": "https://www.ryuunoshippo7.com/product-group/2?view=recommend",
@@ -405,7 +410,7 @@
         "design": "公式の新品・予約商品9件の固定一覧だけを30〜60分枠で1通信取得。検索語を変えても同一URLへ重複しない。対象一致後に商品詳細で価格・在庫確認。",
         "safety": "GD01/GD05/通常30thなど既存自動商品だけに適用。停止済み弾のenabledは変更しない。追加通知や架空在庫テストなし。",
         "branchCreatedAt": "2026-10-07T11:09:00Z",
-        "headSha": "b303b08945777a24a9d736691c4d27e9fae73c40",
+        "headSha": "d2bfb4363b0bfe1bf4022404678fb5a7c31e3be2",
         "files": [
           "src/stores.js",
           "test/monitor-discovery.test.js",
@@ -413,7 +418,11 @@
         ],
         "prNumber": 33,
         "prUrl": "https://github.com/nekoromme/tcg-cross-search/pull/33",
-        "prOpenedAt": "2026-10-07T11:13:18Z"
+        "prOpenedAt": "2026-10-07T11:13:18Z",
+        "ciRunId": 37612835410,
+        "ciConclusion": "success",
+        "tests": "193 passed",
+        "build": "wrangler dry-run success"
       },
       "observation": null,
       "deliveryEvidence": {
