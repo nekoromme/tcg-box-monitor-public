@@ -92,6 +92,8 @@
   - [公式通販](https://cardshop-serra.com/)
   - [運営・返品](https://cardshop-serra.com/pages/legal-notice)
 
+- 2026-10-07再実査：現在の公式通販はMTG中心で、既存監視範囲のGD01・GD05・通常30th新品BOXは限定的な公式サイト検索で特定できなかった。サイト内検索URLはこの実行経路で正常取得できず、全商品に存在しないことの証明ではないが、監視作品を増やさない条件では追加実益がないため `deferred_no_target` の最終保留。具体的な新品通常BOXの商品ページが出た場合のみ再評価する。
+
 ## 6. 竜のしっぽ
 
 - ID：`ryuunoshippo`
@@ -117,6 +119,9 @@
 - 参照：
   - [GD05 BOX](https://www.amiami.jp/top/detail/detail?gcode=CARD-00033666)
   - [抽選条件の例](https://form.amiami.jp/draw20260303)
+
+- 2026-10-07規約確認：GD05通常24パックBOXの商品ページはあるが販売停止中。公式利用規約は事前承諾のない営利目的利用を禁止し、監視ツールを含む自動化利用も禁止している。今回の仕入れ監視用途では条件に合わないため `excluded` とし、許可取り・制限回避は行わない。公式規約の変更または明示的な利用許諾を確認できた場合だけ再評価する。
+- 追加参照：[利用規約](https://www.amiami.jp/top/page/t/terms.html)／[自動購入・監視ツール等の禁止案内](https://support.amiami.jp/hc/ja/articles/360056062872)
 
 ## 8. イエローサブマリン楽天市場店
 

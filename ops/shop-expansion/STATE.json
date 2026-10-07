@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-07T04:56:46.447Z",
+  "updatedAt": "2026-10-07T05:00:55.649Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -36,25 +36,25 @@
     "noPaidPlanChanges": true
   },
   "baseline": {
-    "checkedAt": "2026-10-06T23:00:24Z",
+    "checkedAt": "2026-10-07T05:00:55.649Z",
     "workerMainSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
-    "relayMainSha": "02280ec0b445b4e490249c451aa3ff7cafa82a1e",
-    "inventorySnapshotAt": "2026-10-06T21:52:39.543Z",
-    "lastCompletedAt": "2026-10-06T21:52:38.496Z",
-    "latestSyncRunId": 37536837347,
+    "relayMainSha": "c0e241521446c549abcd538715328436a150f614",
+    "inventorySnapshotAt": "2026-10-07T02:36:44.722Z",
+    "lastCompletedAt": "2026-10-07T02:36:43.597Z",
+    "latestSyncRunId": 37562751081,
     "latestSyncRunConclusion": "success",
-    "latestSyncRunUpdatedAt": "2026-10-06T21:52:43Z",
+    "latestSyncRunUpdatedAt": "2026-10-07T02:36:49Z",
     "historicalWorkerVersion": "0.14.2",
     "registeredProducts": 38,
     "enabledProducts": 31,
     "pausedProducts": 7,
-    "liveHealthVerification": "verified_via_fresh_actions_health_job_log_and_monitor_state",
-    "snapshotFreshness": "within_current_freshness_threshold",
-    "healthAccessNote": "本番直接web取得は経路エラー。既存Actionsの本番healthで0.14.2・Worker main SHA一致を確認。定刻保存は夜間に数時間間隔の欠落があるが最新06:52 JSTは鮮度基準内。",
+    "liveHealthVerification": "verified_via_latest_successful_actions_health_job_log_and_monitor_state",
+    "snapshotFreshness": "slightly_over_current_135_minute_threshold",
+    "healthAccessNote": "本番直接取得は経路エラーのため障害判定に使わず、Actionsの本番healthで0.14.2・Worker main SHA一致を確認。最新保存は11:36 JSTで、確認時点13:56 JSTには現行135分目安を約5分超過。最新runは成功しており障害とは断定せず、48時間終了後の新しい自動保存を待つ。",
     "storage": {
       "format": "monitor-gzip-v1",
-      "uncompressedBytes": 1478153,
-      "compressedBytes": 116001,
+      "uncompressedBytes": 1480090,
+      "compressedBytes": 116753,
       "chunks": 2
     },
     "pricePolicy": {
@@ -79,13 +79,9 @@
       "delivery": "sent",
       "context": "0.14.1デプロイ切替中の一時的deployment_check_failedからの復旧。最新incidentはrecovery/sent。"
     },
-    "quotaNote": "Cloudflare実利用量の正規メトリクスは未取得。新しいhealth issuesなし、無料枠停止の証拠なし。"
+    "quotaNote": "Cloudflare実利用量の正規メトリクスは未取得。最新health issuesなし、無料枠停止の証拠なし。"
   },
-  "lease": {
-    "runId": "20261007T045646Z-exp",
-    "acquiredAt": "2026-10-07T04:56:46.447Z",
-    "expiresAt": "2026-10-07T06:26:46.447Z"
-  },
+  "lease": null,
   "activeCandidateId": "bigweb",
   "pendingOperation": {
     "kind": "production_observation",
@@ -98,8 +94,8 @@
     "observationStartedAt": "2026-10-05T05:44:34.496Z",
     "minimumObservationEndsAt": "2026-10-06T05:44:34.496Z",
     "finalObservationEndsAt": "2026-10-07T05:44:34.496Z",
-    "latestEvidenceAt": "2026-10-06T21:52:39.699Z",
-    "nextCheck": "2026-10-07 14:44 JST以後に48時間最終観察を評価。BIGWEBの通常監視は継続。ドラゴンスターは対象BOX不在のため本番追加なし。",
+    "latestEvidenceAt": "2026-10-07T02:36:44.722Z",
+    "nextCheck": "2026-10-07 14:44 JST以後の新しい自動保存で48時間最終観察を評価。現snapshotは11:36 JSTで最終時刻前かつ鮮度目安をわずかに超えたため完了扱いしない。",
     "syncFreshnessRecovery": {
       "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T07:38:26Z",
       "runId": 37278868343,
@@ -111,14 +107,14 @@
       "note": "GitHub上の状態保存の鮮度回復。Cloudflare側のBIGWEB巡回は欠落時間中も継続していた。次回は定刻起動の自動復帰を確認。"
     },
     "syncFreshnessCheck": {
-      "status": "fresh_automatic_export_with_schedule_gaps",
-      "latestSuccessfulRunId": 37536837347,
-      "event": "schedule",
+      "status": "latest_successful_but_slightly_over_freshness_threshold",
+      "latestSuccessfulRunId": 37562751081,
+      "event": "workflow_run",
       "attempt": 1,
-      "completedAt": "2026-10-06T21:52:43Z",
+      "completedAt": "2026-10-07T02:36:49Z",
       "conclusion": "success",
-      "priorRunId": 37536498080,
-      "result": "06:49:36→06:52:38 JSTにlastCompletedAt進行、両health ok。snapshot鮮度は約68分で現行閾値内。定刻runには数時間の間隔欠落があるがCloudflare巡回は継続。"
+      "priorScheduledRunId": 37558746705,
+      "result": "11:36 JSTにhealth ok・lastCompletedAt進行。13:56 JST確認時は約140分前で現行135分目安を約5分超過。失敗runではないため再実行せず、14:44 JST以後の自動保存で最終判定する。"
     }
   },
   "stabilityWindow": {
@@ -265,9 +261,9 @@
         "startedAt": "2026-10-05T05:44:34.496Z",
         "minimumEndsAt": "2026-10-06T05:44:34.496Z",
         "finalEndsAt": "2026-10-07T05:44:34.496Z",
-        "listingRoundsObserved": 64,
+        "listingRoundsObserved": 69,
         "firstListingAt": "2026-10-05T05:44:34.496Z",
-        "latestListingAt": "2026-10-06T21:04:42.167Z",
+        "latestListingAt": "2026-10-07T02:05:46.225Z",
         "listingRequestsPerRound": 1,
         "listingStatus": "ok",
         "matchedPages": 2,
@@ -277,8 +273,8 @@
             "storeProductId": 3548567,
             "price": 6019,
             "stock": "out_of_stock",
-            "samples": 662,
-            "lastCheckedAt": "2026-10-06T21:51:43.123Z",
+            "samples": 737,
+            "lastCheckedAt": "2026-10-07T02:34:00.891Z",
             "priceDecision": "within_limit",
             "maxPrice": 6300,
             "failures": 0
@@ -288,8 +284,8 @@
             "storeProductId": 3447424,
             "price": 5200,
             "stock": "out_of_stock",
-            "samples": 660,
-            "lastCheckedAt": "2026-10-06T21:49:36.187Z",
+            "samples": 736,
+            "lastCheckedAt": "2026-10-07T02:34:31.957Z",
             "priceDecision": "within_limit",
             "maxPrice": 6098,
             "failures": 0
@@ -297,8 +293,8 @@
         ],
         "existingMonitorImpact": {
           "health": "ok",
-          "checkedAt": "2026-10-06T21:52:39.699Z",
-          "lastCompletedAt": "2026-10-06T21:52:38.496Z",
+          "checkedAt": "2026-10-07T02:36:44.722Z",
+          "lastCompletedAt": "2026-10-07T02:36:43.597Z",
           "deploymentVersion": "0.14.2",
           "deploymentSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
           "deliveryConsecutiveFailures": 0,
@@ -309,7 +305,7 @@
           "policyVersion": 1,
           "pausedProducts": 7
         },
-        "scheduleExportNote": "2026-10-07 06:49・06:52 JSTにworkflow_run/scheduleで自動保存成功。夜間に数時間のschedule欠落はあるが現行snapshotは鮮度基準内。BIGWEB一覧は毎時継続。手動再実行なし。",
+        "scheduleExportNote": "11:36 JSTのinventory-syncはworkflow_run・attempt 1で成功。確認時点では約140分前で鮮度目安をわずかに超えるため、14:44 JST以後の新しい自動保存を最終証拠にする。手動再実行なし。",
         "minimumPassedAt": "2026-10-06T10:44:48.854Z",
         "cadenceMode": "quiet",
         "cadenceReason": "取得範囲で24時間以上、対象ページの追加なし",
@@ -318,9 +314,9 @@
       "deliveryEvidence": {
         "status": "awaiting_real_opportunity",
         "receiptIds": [],
-        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。64一覧巡回・GD01 660回・GD05 662回の観測で実在庫なし。新着なしであり送信障害ではない。"
+        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。69一覧巡回・GD01 736回・GD05 737回の観測で実在庫なし。新着なしであり送信障害ではない。"
       },
-      "nextAction": "2026-10-07 14:44 JST以後に48時間観察を最終判定。通常監視は継続し、その前でも全体障害が出た場合だけ修復を優先。",
+      "nextAction": "2026-10-07 14:44 JST以後の新しいhealth/snapshotで48時間観察を最終判定。通常監視は継続し、その前でも全体障害が出た場合だけ修復を優先。",
       "decisionFinal": false
     },
     {
@@ -357,18 +353,27 @@
       "name": "カードショップセラ",
       "priority": "後方",
       "status": "deferred_no_target",
-      "attempts": 0,
+      "attempts": 1,
       "notBefore": null,
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
-      "implementation": null,
+      "implementation": {
+        "status": "final_hold_scope_mismatch",
+        "checkedAt": "2026-10-07T05:00:55.649Z",
+        "sourceType": "official_html_and_limited_exact_search",
+        "officialTop": "https://cardshop-serra.com/",
+        "legalUrl": "https://cardshop-serra.com/pages/legal-notice",
+        "result": "現在の公式通販はMTG中心。既存監視範囲のGD01/GD05/通常30th新品BOXは限定的な公式サイト検索で特定できず、対象作品を店舗数のために増やす実益がない。",
+        "limitation": "サイト内検索URLはこの実行経路で正常取得できず、全商品に存在しないことの証明ではない。具体的な新品通常BOXの商品ページが確認できた場合だけ再評価。",
+        "requiredIdentity": "GD01/GD05/通常30thの新品通常BOX。旧版未開封、福袋、カードセット、シングルは除外。"
+      },
       "observation": null,
       "deliveryEvidence": {
-        "status": "not_started",
+        "status": "not_started_no_target",
         "receiptIds": []
       },
-      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
-      "decisionFinal": false
+      "nextAction": "今回の拡張では根拠付き最終保留。既存監視範囲の新品通常BOXの具体的掲載が出た場合のみ再開。",
+      "decisionFinal": true
     },
     {
       "id": "ryuunoshippo",
@@ -410,19 +415,28 @@
       "id": "amiami",
       "name": "あみあみ本店",
       "priority": "保留",
-      "status": "manual_required",
-      "attempts": 0,
+      "status": "excluded",
+      "attempts": 1,
       "notBefore": null,
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
-      "implementation": null,
+      "implementation": {
+        "status": "excluded_terms",
+        "checkedAt": "2026-10-07T05:00:55.649Z",
+        "sourceType": "official_html",
+        "productUrl": "https://www.amiami.jp/top/detail/detail?gcode=CARD-00033666",
+        "termsUrl": "https://www.amiami.jp/top/page/t/terms.html",
+        "noticeUrl": "https://support.amiami.jp/hc/ja/articles/360056062872",
+        "result": "GD05通常24パックBOXの商品ページはあるが販売停止中。公式規約は事前承諾のない営利目的利用と、監視ツールを含む自動化利用を禁止しているため、今回の仕入れ監視用途に採用しない。",
+        "permissionBoundary": "許可取り・新規登録・制限回避は行っていない。明示的な利用許諾と規約変更が確認できる場合だけ再評価。"
+      },
       "observation": null,
       "deliveryEvidence": {
-        "status": "not_started",
+        "status": "not_started_excluded",
         "receiptIds": []
       },
-      "nextAction": "CANDIDATES.mdの次の作業を実施。除外済みは根拠を維持。",
-      "decisionFinal": false
+      "nextAction": "今回用途では最終除外。公式規約の変更または明示的な利用許諾が確認できた場合のみ再評価。",
+      "decisionFinal": true
     },
     {
       "id": "yellow-submarine-rakuten",
@@ -487,17 +501,17 @@
     }
   ],
   "lastRun": {
-    "id": "20261006T225712Z-shop",
-    "status": "completed_observation_and_candidate_research",
+    "id": "20261007T045646Z-exp",
+    "status": "completed_pregate_candidate_resolution",
     "externalChanges": [
       {
         "kind": "ledger_only",
         "branch": "shop-expansion-state"
       }
     ],
-    "notes": "BIGWEB64一覧・GD01 660/GD05 662観測で売切れ・失敗0。hobby-searchは許可済み再入荷経路未確認で最終保留、fullcompは中古別仕様のため最終保留。竜のしっぽGD01新品欄の対象を発見し技術検証待ちへ。実装/本番変更/通知送信なし。"
+    "notes": "BIGWEB69一覧・GD01 736/GD05 737観測で売切れ・失敗0。48時間終了14:44 JST前かつ最新snapshotが鮮度目安を約5分超えたため最終判定/次店追加なし。あみあみは規約で最終除外、セラは対象範囲不一致で最終保留。メディアワールド一覧429は回復したが商品ページ4件は残存。"
   },
-  "nextAction": "最新headとActions/monitor-stateを読む。BIGWEB48時間終了は2026-10-07 14:44 JSTなので前なら候補/注意情報の読み取り調査のみ。終了以後の正常snapshotを得たら最終判定し、竜のしっぽ新品GD01 /product/1273の取得/規約/無通知回帰検証へ。既存店の根拠URL・確認日付き注意リンクはsendDiscord/public UIで未整備なので別の小PRで仕上げる。",
+  "nextAction": "最新headとActions/monitor-stateを読む。2026-10-07 14:44 JST以後の新しい正常snapshotでBIGWEB48時間を最終判定。保存がまだ鮮度基準外なら既存inventory-syncを重複なく1回だけ起動できるか確認し、同じrunを追う。完了後、竜のしっぽ新品GD01 /product/1273の公開取得・規約・無通知回帰検証へ進む。メディアワールド商品ページ429も自然回復を確認する。",
   "completion": {
     "status": "in_progress",
     "disabledAt": null,
@@ -509,13 +523,21 @@
     ]
   },
   "maintenanceFindings": {
-    "checkedAt": "2026-10-06T23:00:24Z",
+    "checkedAt": "2026-10-07T05:00:55.649Z",
     "mediaworld": {
-      "status": "transient_rate_limit",
-      "target429Count": 3,
-      "listingFailures": 2,
-      "latestListingSuccessAt": "2026-10-06T19:07:34.927Z",
-      "nextAction": "次回latest snapshotで429の回復・待機動作を確認。突破や短周期追加再試行なし、失敗を売切れにしない。全体health ok。"
+      "status": "listing_recovered_target_429_remain",
+      "listingSuccesses": 54,
+      "listingFailures": 0,
+      "latestListingSuccessAt": "2026-10-07T01:33:47.917Z",
+      "target429Count": 4,
+      "maxConsecutiveTargetFailures": 2,
+      "affectedUrls": [
+        "https://mediaworld.co.jp/products/13920927000",
+        "https://mediaworld.co.jp/products/13920681000",
+        "https://mediaworld.co.jp/products/13921470000",
+        "https://mediaworld.co.jp/products/13920605000"
+      ],
+      "nextAction": "一覧取得は回復済みだが商品ページ4件にHTTP429が残る。次回snapshotで自然回復を確認。突破や短周期追加再試行はせず、失敗を売切れにしない。全体healthはok。"
     },
     "storeNoticeDisplay": {
       "status": "not_implemented_with_sources_and_dates",
