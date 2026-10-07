@@ -45,6 +45,7 @@ def is_shared_retailer_application_url(retailer_id: str, value: str) -> bool:
         ("yodobashi", "limited.yodobashi.com", ""),
         ("yodobashi", "limited.yodobashi.com", "/entry/shared"),
         ("hobby_station", "hbst.net", "/category/news"),
+        ("premium_bandai", "onepiece-cardgame.com", "/topics"),
     }
 
 

@@ -10,6 +10,7 @@ from typing import Any
 
 from tcg_monitor.game_modes import LEGACY_ENABLED_GAME_IDS
 from tcg_monitor.identity import (
+    OBSERVED_SOCIAL_START_METHODS,
     is_pokemon_30th_cardset,
     is_provisional_product_name,
     lottery_dedupe_key,
@@ -410,9 +411,9 @@ class MonitorState:
                     case.game_id, str(raw_record.get("canonical_product_key") or "")
                 )
             )
-            observed_cardset_pair = cardset_pair and "yahoo_realtime_detected_next_day" in {
+            observed_cardset_pair = cardset_pair and bool(OBSERVED_SOCIAL_START_METHODS & {
                 case.extraction_method, str(raw_record.get("extraction_method") or ""),
-            }
+            })
             # 明示された締切が変われば、同じURL・開始日でも次回の募集として残す。
             if (cardset_pair and case.end_at is not None and raw_record.get("end_at")
                     and not same_sale_end):
@@ -564,7 +565,7 @@ class MonitorState:
 
         observed_cardset = (
             is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
-            and any(record.get("extraction_method") == "yahoo_realtime_detected_next_day"
+            and any(record.get("extraction_method") in OBSERVED_SOCIAL_START_METHODS
                     for _, record in candidates)
         )
         if observed_cardset:
@@ -586,6 +587,34 @@ class MonitorState:
         migrations = _mapping(self.data.setdefault("case_id_migrations", {}))
         prior_migration = _mapping(migrations.get(old_id))
         existing_sync = _mapping(self.data.setdefault("calendar_sync", {}))
+        # 重複IDごとに作られた予定は、履歴だけ捨てるとカレンダーに残り続ける。
+        # 最初の成功予定を残し、ほかの監視所有予定を安全な削除の待ち行列へ引き継ぐ。
+        duplicate_events: dict[str, Any] = {}
+        legacy_deliveries: dict[str, Any] = {}
+        for candidate_id in equivalent_ids:
+            migration = _mapping(migrations.get(candidate_id))
+            duplicate_events.update(_mapping(migration.get("duplicate_calendar_events")))
+            legacy_deliveries.update(_mapping(migration.get("legacy_deliveries")))
+            if observed_cardset:
+                for kind in ("started", "scheduled"):
+                    key = f"lottery:{kind}:{candidate_id}"
+                    if key in journal:
+                        legacy_deliveries[key] = dict(_mapping(journal[key]))
+        kept_sync = _mapping(existing_sync.get(f"lottery:{old_id}"))
+        if not kept_sync:
+            kept_sync = _mapping(existing_sync.get(f"lottery:{case.case_id}"))
+        kept_event_id = str(kept_sync.get("event_id") or "")
+        if observed_cardset and kept_event_id:
+            for candidate_id in equivalent_ids:
+                sync = _mapping(existing_sync.get(f"lottery:{candidate_id}"))
+                event_id = str(sync.get("event_id") or "")
+                if event_id and event_id != kept_event_id:
+                    duplicate_events.setdefault(event_id, {
+                        "event_id": event_id,
+                        "internal_id": self.calendar_case_identity(candidate_id),
+                        "status": "pending",
+                        "original_sync": dict(sync),
+                    })
         has_calendar_history = any(
             f"lottery:{kind}:{candidate_id}" in journal
             for kind in ("started", "scheduled")
@@ -603,6 +632,8 @@ class MonitorState:
             "legacy_ids": equivalent_ids,
             "calendar_identity": calendar_identity,
             "migrated_at": datetime.now(UTC).isoformat(),
+            **({"duplicate_calendar_events": duplicate_events} if duplicate_events else {}),
+            **({"legacy_deliveries": legacy_deliveries} if legacy_deliveries else {}),
         }
 
         for notification_kind in ("started", "scheduled"):
@@ -638,7 +669,9 @@ class MonitorState:
             f"lottery:{candidate_id}" for candidate_id in equivalent_ids
         ]
         new_sync_key = f"lottery:{case.case_id}"
-        if new_sync_key not in calendar_sync:
+        if kept_sync:
+            calendar_sync[new_sync_key] = kept_sync
+        elif new_sync_key not in calendar_sync:
             for old_sync_key in old_sync_keys:
                 if old_sync_key in calendar_sync:
                     calendar_sync[new_sync_key] = calendar_sync[old_sync_key]

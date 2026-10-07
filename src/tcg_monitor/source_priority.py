@@ -7,6 +7,7 @@ from hashlib import sha256
 from urllib.parse import urlsplit
 
 from tcg_monitor.identity import (
+    OBSERVED_SOCIAL_START_METHODS,
     is_pokemon_30th_cardset,
     lottery_dedupe_key,
     release_dedupe_key,
@@ -35,7 +36,7 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
     for item in items:
         if (is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
                 and item.end_at is not None
-                and item.extraction_method != "yahoo_realtime_detected_next_day"):
+                and item.extraction_method not in OBSERVED_SOCIAL_START_METHODS):
             # 同じ締切について実際の開始日も読めたら、その従来IDへ仮日付側をまとめる。
             observed_key = lottery_dedupe_key(replace(
                 item, extraction_method="yahoo_realtime_detected_next_day",
@@ -59,7 +60,7 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
             else:
                 identity = lottery_dedupe_key(item)
                 aliases = observed_aliases.get(identity, set())
-                if (item.extraction_method == "yahoo_realtime_detected_next_day"
+                if (item.extraction_method in OBSERVED_SOCIAL_START_METHODS
                         and len(aliases) == 1):
                     identity = next(iter(aliases))
                     grouping_identity = identity
@@ -77,7 +78,7 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
             *lottery_source_priority(item.source_tier, item.source_url),
             int(is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
-                and item.extraction_method == "yahoo_realtime_detected_next_day"),
+                and item.extraction_method in OBSERVED_SOCIAL_START_METHODS),
             int(item.retailer_id == "lorcana_official"
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
         ))

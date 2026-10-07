@@ -739,7 +739,7 @@ def test_run_corrects_existing_calendar_without_duplicate_discord(
 
     assert cli.main(["--config", "sites.yaml", "--state", str(state_path), "run"]) == 0
     saved = json.loads(state_path.read_text())
-    assert calendar_summaries == ["【ポケカ抽選開始】萬屋盛岡店／ストームエメラルダ"]
+    assert calendar_summaries == ["【ポケカ抽選・開始日不明】萬屋盛岡店／ストームエメラルダ"]
     assert not discord_calls
     assert saved["seen_cases"][old.case_id]["product_name"] == "ストームエメラルダ"
 

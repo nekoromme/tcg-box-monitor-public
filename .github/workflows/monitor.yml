@@ -158,6 +158,8 @@ jobs:
           MONITOR_STATUS=$?
           tcg-monitor --state "$MONITOR_STATE_PATH" summary
           SUMMARY_STATUS=$?
+          python scripts/write_monitor_diagnostics.py "$MONITOR_STATE_PATH" \
+            "$GITHUB_WORKSPACE/.monitor-state/monitor_diagnostics.json"
           set -e
           if [ "$MONITOR_STATUS" -ne 0 ]; then
             exit "$MONITOR_STATUS"
@@ -170,7 +172,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f monitor_state.json
+          git add -f monitor_state.json monitor_diagnostics.json
           if git diff --cached --quiet; then
             exit 0
           fi

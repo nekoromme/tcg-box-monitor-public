@@ -152,10 +152,16 @@ def is_pokemon_30th_cardset(game_id: str, product_key: str) -> bool:
     return game_id == "pokemon_card" and product_key.split(":", 1)[0] == "pokemon_30th_cardset"
 
 
+OBSERVED_SOCIAL_START_METHODS = frozenset({
+    "yahoo_realtime_detected_open",
+    "yahoo_realtime_detected_next_day",
+})
+
+
 def lottery_dedupe_key(case: LotteryCase) -> str:
     if (is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
-            and case.extraction_method == "yahoo_realtime_detected_next_day"):
-        # 開始日不明の仮日付は取得の翌日であり、抽選回の識別には使えない。
+            and case.extraction_method in OBSERVED_SOCIAL_START_METHODS):
+        # 開始日不明の仮日付は取得日か翌日であり、抽選回の識別には使えない。
         # 同じ締切の再告知も一回。締切がなければ同じ投稿だけ。
         end_day = (case.end_at.date() if isinstance(case.end_at, datetime) else case.end_at)
         anchor = ("deadline:" + end_day.isoformat() if end_day is not None
