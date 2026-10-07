@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-07T11:06:37.562Z",
-  "phase": "observing",
+  "updatedAt": "2026-10-07T11:20:00.000Z",
+  "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
     "title": "カード監視の段階的店舗追加",
@@ -36,25 +36,25 @@
     "noPaidPlanChanges": true
   },
   "baseline": {
-    "checkedAt": "2026-10-07T05:00:55.649Z",
+    "checkedAt": "2026-10-07T11:20:00.000Z",
     "workerMainSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
     "relayMainSha": "c0e241521446c549abcd538715328436a150f614",
-    "inventorySnapshotAt": "2026-10-07T02:36:44.722Z",
-    "lastCompletedAt": "2026-10-07T02:36:43.597Z",
-    "latestSyncRunId": 37562751081,
+    "inventorySnapshotAt": "2026-10-07T10:59:37.497Z",
+    "lastCompletedAt": "2026-10-07T10:59:36.379Z",
+    "latestSyncRunId": 37610977429,
     "latestSyncRunConclusion": "success",
-    "latestSyncRunUpdatedAt": "2026-10-07T02:36:49Z",
+    "latestSyncRunUpdatedAt": "2026-10-07T10:59:41Z",
     "historicalWorkerVersion": "0.14.2",
     "registeredProducts": 38,
     "enabledProducts": 31,
     "pausedProducts": 7,
     "liveHealthVerification": "verified_via_latest_successful_actions_health_job_log_and_monitor_state",
-    "snapshotFreshness": "slightly_over_current_135_minute_threshold",
+    "snapshotFreshness": "current",
     "healthAccessNote": "本番直接取得は経路エラーのため障害判定に使わず、Actionsの本番healthで0.14.2・Worker main SHA一致を確認。最新保存は11:36 JSTで、確認時点13:56 JSTには現行135分目安を約5分超過。最新runは成功しており障害とは断定せず、48時間終了後の新しい自動保存を待つ。",
     "storage": {
       "format": "monitor-gzip-v1",
-      "uncompressedBytes": 1480090,
-      "compressedBytes": 116753,
+      "uncompressedBytes": 1484272,
+      "compressedBytes": 116419,
       "chunks": 2
     },
     "pricePolicy": {
@@ -86,40 +86,26 @@
     "acquiredAt": "2026-10-07T11:06:37.562Z",
     "expiresAt": "2026-10-07T12:36:37.562Z"
   },
-  "activeCandidateId": "bigweb",
+  "activeCandidateId": "ryuunoshippo",
   "pendingOperation": {
-    "kind": "production_observation",
-    "status": "minimum_passed_observing_to_48h",
-    "candidateId": "bigweb",
-    "productionVersion": "0.14.2",
-    "productionSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
-    "implementationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/30",
-    "migrationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/31",
-    "observationStartedAt": "2026-10-05T05:44:34.496Z",
-    "minimumObservationEndsAt": "2026-10-06T05:44:34.496Z",
-    "finalObservationEndsAt": "2026-10-07T05:44:34.496Z",
-    "latestEvidenceAt": "2026-10-07T02:36:44.722Z",
-    "nextCheck": "2026-10-07 14:44 JST以後の新しい自動保存で48時間最終観察を評価。現snapshotは11:36 JSTで最終時刻前かつ鮮度目安をわずかに超えたため完了扱いしない。",
-    "syncFreshnessRecovery": {
-      "fingerprint": "inventory_sync_schedule_gap_after_2026-10-05T07:38:26Z",
-      "runId": 37278868343,
-      "attempt": 2,
-      "jobId": 111730612380,
-      "submittedAt": "2026-10-05T11:00:14Z",
-      "completedAt": "2026-10-05T11:01:05Z",
-      "conclusion": "success",
-      "note": "GitHub上の状態保存の鮮度回復。Cloudflare側のBIGWEB巡回は欠落時間中も継続していた。次回は定刻起動の自動復帰を確認。"
-    },
-    "syncFreshnessCheck": {
-      "status": "latest_successful_but_slightly_over_freshness_threshold",
-      "latestSuccessfulRunId": 37562751081,
-      "event": "workflow_run",
-      "attempt": 1,
-      "completedAt": "2026-10-07T02:36:49Z",
-      "conclusion": "success",
-      "priorScheduledRunId": 37558746705,
-      "result": "11:36 JSTにhealth ok・lastCompletedAt進行。13:56 JST確認時は約140分前で現行135分目安を約5分超過。失敗runではないため再実行せず、14:44 JST以後の自動保存で最終判定する。"
-    }
+    "kind": "implementation_intent",
+    "status": "intent_recorded",
+    "candidateId": "ryuunoshippo",
+    "repository": "nekoromme/tcg-cross-search",
+    "baseSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
+    "branch": "feat/shop-ryuunoshippo",
+    "plannedFiles": [
+      "src/stores.js",
+      "test/monitor-discovery.test.js",
+      "test/fixtures/ryuunoshippo-new-products-2026-10-07.html"
+    ],
+    "plannedValidation": [
+      "fixtureでGD01通常24パックBOXだけ一致",
+      "価格5800円・売切れを詳細解析",
+      "自動同期で既存ルールへ店を追加し停止済み弾を復活させない",
+      "全回帰テストとWrangler dry-run"
+    ],
+    "noNotification": true
   },
   "stabilityWindow": {
     "status": "passed",
@@ -206,9 +192,9 @@
       "id": "bigweb",
       "name": "BIGWEB／ビッグマジック",
       "priority": "2",
-      "status": "observing_final",
+      "status": "completed",
       "attempts": 1,
-      "notBefore": "2026-10-07T05:44:34.496Z",
+      "notBefore": null,
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
@@ -261,13 +247,13 @@
         "automaticRuleMigration": "GD01/GD05 rules include bigweb; disabled products remain disabled"
       },
       "observation": {
-        "status": "minimum_passed_final_observation",
+        "status": "final_passed",
         "startedAt": "2026-10-05T05:44:34.496Z",
         "minimumEndsAt": "2026-10-06T05:44:34.496Z",
         "finalEndsAt": "2026-10-07T05:44:34.496Z",
-        "listingRoundsObserved": 69,
+        "listingRoundsObserved": 77,
         "firstListingAt": "2026-10-05T05:44:34.496Z",
-        "latestListingAt": "2026-10-07T02:05:46.225Z",
+        "latestListingAt": "2026-10-07T09:28:30.861Z",
         "listingRequestsPerRound": 1,
         "listingStatus": "ok",
         "matchedPages": 2,
@@ -277,8 +263,8 @@
             "storeProductId": 3548567,
             "price": 6019,
             "stock": "out_of_stock",
-            "samples": 737,
-            "lastCheckedAt": "2026-10-07T02:34:00.891Z",
+            "samples": 879,
+            "lastCheckedAt": "2026-10-07T10:57:36.000Z",
             "priceDecision": "within_limit",
             "maxPrice": 6300,
             "failures": 0
@@ -288,8 +274,8 @@
             "storeProductId": 3447424,
             "price": 5200,
             "stock": "out_of_stock",
-            "samples": 736,
-            "lastCheckedAt": "2026-10-07T02:34:31.957Z",
+            "samples": 878,
+            "lastCheckedAt": "2026-10-07T10:59:35.000Z",
             "priceDecision": "within_limit",
             "maxPrice": 6098,
             "failures": 0
@@ -297,8 +283,8 @@
         ],
         "existingMonitorImpact": {
           "health": "ok",
-          "checkedAt": "2026-10-07T02:36:44.722Z",
-          "lastCompletedAt": "2026-10-07T02:36:43.597Z",
+          "checkedAt": "2026-10-07T10:59:37.583Z",
+          "lastCompletedAt": "2026-10-07T10:59:36.379Z",
           "deploymentVersion": "0.14.2",
           "deploymentSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
           "deliveryConsecutiveFailures": 0,
@@ -313,15 +299,16 @@
         "minimumPassedAt": "2026-10-06T10:44:48.854Z",
         "cadenceMode": "quiet",
         "cadenceReason": "取得範囲で24時間以上、対象ページの追加なし",
-        "intervalMs": 3600000
+        "intervalMs": 3600000,
+        "finalPassedAt": "2026-10-07T11:20:00.000Z"
       },
       "deliveryEvidence": {
         "status": "awaiting_real_opportunity",
         "receiptIds": [],
-        "note": "BIGWEBのGD01/GD05は価格条件内だが売切れ。69一覧巡回・GD01 736回・GD05 737回の観測で実在庫なし。新着なしであり送信障害ではない。"
+        "note": "48時間超の77一覧巡回・GD01 878回/GD05 879回で価格条件内だが売切れ。実在庫なしであり送信障害ではない。"
       },
-      "nextAction": "2026-10-07 14:44 JST以後の新しいhealth/snapshotで48時間観察を最終判定。通常監視は継続し、その前でも全体障害が出た場合だけ修復を優先。",
-      "decisionFinal": false
+      "nextAction": "通常監視を継続。実在庫かつ価格条件内の機会が出た時だけ既存の重複抑止付き通知を行う。",
+      "decisionFinal": true
     },
     {
       "id": "dragon-star",
@@ -383,14 +370,14 @@
       "id": "ryuunoshippo",
       "name": "竜のしっぽ",
       "priority": "後方",
-      "status": "researching",
+      "status": "implementing",
       "attempts": 1,
       "notBefore": "2026-10-07T05:44:34.496Z",
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "target_found_pending_access_and_regression",
-        "checkedAt": "2026-10-06T23:00:24Z",
+        "status": "intent_recorded",
+        "checkedAt": "2026-10-07T11:20:00.000Z",
         "sourceType": "public_html",
         "listingUrl": "https://www.ryuunoshippo7.com/product-group/2?view=recommend",
         "productUrl": "https://www.ryuunoshippo7.com/product/1273",
@@ -405,7 +392,11 @@
           "外装傷み・輸送時の箱潰れは了承条件",
           "返品連絡期限は3日と7日の両表記があり3日基準、差は未解決"
         ],
-        "termsUrl": "https://www.ryuunoshippo7.com/info"
+        "termsUrl": "https://www.ryuunoshippo7.com/info",
+        "baseSha": "35a194ea7e4d549090d29cdad9b7010f222f45cb",
+        "branch": "feat/shop-ryuunoshippo",
+        "design": "公式の新品・予約商品9件の固定一覧だけを30〜60分枠で1通信取得。検索語を変えても同一URLへ重複しない。対象一致後に商品詳細で価格・在庫確認。",
+        "safety": "GD01/GD05/通常30thなど既存自動商品だけに適用。停止済み弾のenabledは変更しない。追加通知や架空在庫テストなし。"
       },
       "observation": null,
       "deliveryEvidence": {
@@ -515,7 +506,7 @@
     ],
     "notes": "BIGWEB69一覧・GD01 736/GD05 737観測で売切れ・失敗0。48時間終了14:44 JST前かつ最新snapshotが鮮度目安を約5分超えたため最終判定/次店追加なし。あみあみは規約で最終除外、セラは対象範囲不一致で最終保留。メディアワールド一覧429は回復したが商品ページ4件は残存。"
   },
-  "nextAction": "最新headとActions/monitor-stateを読む。2026-10-07 14:44 JST以後の新しい正常snapshotでBIGWEB48時間を最終判定。保存がまだ鮮度基準外なら既存inventory-syncを重複なく1回だけ起動できるか確認し、同じrunを追う。完了後、竜のしっぽ新品GD01 /product/1273の公開取得・規約・無通知回帰検証へ進む。メディアワールド商品ページ429も自然回復を確認する。",
+  "nextAction": "竜のしっぽ実装ブランチをbaseShaから作成し、fixture回帰・CI・PR・本番反映へ進む。外部操作IDを都度保存する。",
   "completion": {
     "status": "in_progress",
     "disabledAt": null,
@@ -527,21 +518,18 @@
     ]
   },
   "maintenanceFindings": {
-    "checkedAt": "2026-10-07T05:00:55.649Z",
+    "checkedAt": "2026-10-07T11:20:00.000Z",
     "mediaworld": {
-      "status": "listing_recovered_target_429_remain",
-      "listingSuccesses": 54,
-      "listingFailures": 0,
-      "latestListingSuccessAt": "2026-10-07T01:33:47.917Z",
-      "target429Count": 4,
-      "maxConsecutiveTargetFailures": 2,
+      "status": "listing_429_waiting_single_target_429",
+      "listingSuccesses": 56,
+      "listingFailures": 6,
+      "latestListingSuccessAt": "2026-10-07T04:50:58Z",
+      "target429Count": 1,
+      "maxConsecutiveTargetFailures": 1,
       "affectedUrls": [
-        "https://mediaworld.co.jp/products/13920927000",
-        "https://mediaworld.co.jp/products/13920681000",
-        "https://mediaworld.co.jp/products/13921470000",
-        "https://mediaworld.co.jp/products/13920605000"
+        "https://mediaworld.co.jp/products/13921514000"
       ],
-      "nextAction": "一覧取得は回復済みだが商品ページ4件にHTTP429が残る。次回snapshotで自然回復を確認。突破や短周期追加再試行はせず、失敗を売切れにしない。全体healthはok。"
+      "nextAction": "店舗別の待機・再試行に任せる。頻度を上げず、失敗を売切れと扱わない。全体healthはok。"
     },
     "storeNoticeDisplay": {
       "status": "not_implemented_with_sources_and_dates",
