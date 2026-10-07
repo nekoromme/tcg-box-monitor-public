@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-07T11:18:46.381Z",
+  "updatedAt": "2026-10-07T11:19:00.729Z",
   "phase": "implementing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -89,14 +89,17 @@
   "activeCandidateId": "ryuunoshippo",
   "pendingOperation": {
     "kind": "inventory_sync_rerun_intent",
-    "status": "intent_recorded",
+    "status": "rerun_submitted",
     "candidateId": "ryuunoshippo",
     "mergeSha": "823986b3a3108ced89e76161b5de01885d066110",
     "sourceRunId": 37610977429,
     "sourceJobId": 112757887635,
     "expectedAttempt": 2,
     "reason": "本番healthの直接取得は経路制限。既存secret利用の同一inventory-syncを1回だけ再実行し、production SHA・state migration・実巡回を確認する。",
-    "submittedAt": null
+    "submittedAt": "2026-10-07T11:19:00.729Z",
+    "runId": 37610977429,
+    "previousJobId": 112757887635,
+    "notBefore": "2026-10-07T11:21:00.729Z"
   },
   "stabilityWindow": {
     "status": "passed",
@@ -367,7 +370,7 @@
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "merged_sync_rerun_intent",
+        "status": "merged_sync_rerun_submitted",
         "checkedAt": "2026-10-07T11:20:00.000Z",
         "sourceType": "public_html",
         "listingUrl": "https://www.ryuunoshippo7.com/product-group/2?view=recommend",
@@ -405,7 +408,9 @@
         "mergeSha": "823986b3a3108ced89e76161b5de01885d066110",
         "mergedAt": "2026-10-07T11:16:27.791Z",
         "mainCiRunId": 37612951250,
-        "mainCiConclusion": "success"
+        "mainCiConclusion": "success",
+        "productionVerificationRunId": 37610977429,
+        "productionVerificationAttempt": 2
       },
       "observation": null,
       "deliveryEvidence": {
