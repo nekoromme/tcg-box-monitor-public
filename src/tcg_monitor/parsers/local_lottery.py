@@ -19,7 +19,11 @@ from tcg_monitor.additional_products import (
 )
 from tcg_monitor.classifier import canonical_product_key, classify_product
 from tcg_monitor.config import source_with_runtime_parser_profile
-from tcg_monitor.identity import is_provisional_product_name, release_title_token
+from tcg_monitor.identity import (
+    OBSERVED_START_METHODS,
+    is_provisional_product_name,
+    release_title_token,
+)
 from tcg_monitor.japanese_datetime import (
     parse_first_datetime,
     parse_period_start,
@@ -2551,18 +2555,7 @@ def preserve_first_detection_start(
     case: LotteryCase, previous: dict[str, object] | None
 ) -> LotteryCase:
     """Keep a first-detection date that must not follow later page updates."""
-    fallback_methods = {
-        "yahoo_realtime_detected_open",
-        "yahoo_realtime_detected_next_day",
-        "yahoo_realtime_amazon_invitation_seen",
-        "yahoo_realtime_official_sale_seen",
-        "tsutaya_line_official_form_first_seen",
-        "snkrdunk_open_invitation_seen",
-        "takaratomy_mall_first_seen_available",
-        "furuichi_official_open_detected",
-        "hobby_search_active_lottery_detected",
-    }
-    if case.extraction_method not in fallback_methods or not previous:
+    if case.extraction_method not in OBSERVED_START_METHODS or not previous:
         return case
     raw_start = previous.get("start_at")
     if isinstance(raw_start, (date, datetime)):
