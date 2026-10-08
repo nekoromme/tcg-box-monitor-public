@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791447248135,
+  "generatedAt": 1791447307848,
   "prices": {
     "version": 1,
-    "checkedAt": 1791447216038,
+    "checkedAt": 1791447265099,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -110,7 +110,7 @@
         "game": "gundam",
         "name": "Blazing Fist [GD07]",
         "officialUrl": "https://www.gundam-gcg.com/jp/products/gd07.html",
-        "checkedAt": 1791425658119,
+        "checkedAt": 1791447265099,
         "status": "price_unpublished",
         "packPrice": null,
         "packsPerBox": null,
@@ -119,7 +119,7 @@
         "sources": [
           {
             "url": "https://www.gundam-gcg.com/jp/products/gd07.html",
-            "checkedAt": 1791425658119,
+            "checkedAt": 1791447265099,
             "kind": "official_price",
             "title": "Blazing Fist [GD07] | GUNDAM CARD GAME 公式サイト",
             "packPrice": null,
@@ -127,7 +127,7 @@
             "packsPerBox": null
           }
         ],
-        "nextCheckAt": 1791447258119
+        "nextCheckAt": 1791468865099
       },
       "gundam-gd06": {
         "productId": "gundam-gd06",
@@ -824,7 +824,7 @@
         "game": "gundam",
         "name": "Steel Requiem",
         "officialUrl": "https://www.gundam-gcg.com/jp/products/gd03.html",
-        "checkedAt": 1791425658119,
+        "checkedAt": 1791447265099,
         "status": "quantity_unconfirmed",
         "packPrice": 242,
         "packsPerBox": null,
@@ -833,7 +833,7 @@
         "sources": [
           {
             "url": "https://www.gundam-gcg.com/jp/products/gd03.html",
-            "checkedAt": 1791425658119,
+            "checkedAt": 1791447265099,
             "kind": "official_price",
             "title": "Steel Requiem [GD03] | GUNDAM CARD GAME 公式サイト",
             "packPrice": 242,
@@ -841,7 +841,7 @@
             "packsPerBox": null
           }
         ],
-        "nextCheckAt": 1791447258119
+        "nextCheckAt": 1791468865099
       },
       "gundam-gd02": {
         "productId": "gundam-gd02",
@@ -1653,6 +1653,18 @@
         "productId": "gundam-gd03",
         "status": "quantity_unconfirmed",
         "boxPrice": null
+      },
+      {
+        "at": 1791447265099,
+        "productId": "gundam-gd07",
+        "status": "price_unpublished",
+        "boxPrice": null
+      },
+      {
+        "at": 1791447265099,
+        "productId": "gundam-gd03",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
       }
     ]
   },
@@ -1931,7 +1943,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791447248134,
+    "checkedAt": 1791447307847,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -2248,7 +2260,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791447248130,
+    "verifiedAt": 1791447307846,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -4703,7 +4715,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 2973713,
+        "intervalMs": 2913837,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -35816,9 +35828,9 @@
     "budget": {
       "day": 20734,
       "group": 556,
-      "fallback": 585
+      "fallback": 589
     },
-    "nextFallbackAt": 1791447286418,
+    "nextFallbackAt": 1791447414370,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -35841,8 +35853,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791447245361,
-  "lastCompletedAt": 1791447247045,
+  "lastTick": 1791447294370,
+  "lastCompletedAt": 1791447306718,
   "load": {
     "activePages": 77,
     "waitingPages": 0,
@@ -35853,7 +35865,7 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1500183,
+    "uncompressedBytes": 1500180,
     "compressedBytes": 118489,
     "chunks": 2
   },
@@ -35884,8 +35896,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791447215359,
-    "nextSync": 1791454415359,
+    "lastSync": 1791447264368,
+    "nextSync": 1791454464368,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -37657,12 +37669,6 @@
     ],
     "log": [
       {
-        "at": 1791039229960,
-        "kind": "catalog",
-        "count": 38,
-        "added": []
-      },
-      {
         "at": 1791039308629,
         "kind": "catalog",
         "count": 38,
@@ -38300,6 +38306,12 @@
       },
       {
         "at": 1791447215359,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791447264368,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -54436,23 +54448,6 @@
   ],
   "runs": [
     {
-      "at": 1791414306877,
-      "checked": 1,
-      "discovered": {
-        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
-        "storeId": "torecolo",
-        "result": {
-          "at": 1791414306877,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 109,
-      "errors": 3
-    },
-    {
       "at": 1791414340758,
       "checked": 3,
       "discovered": null,
@@ -68903,6 +68898,23 @@
       "at": 1791447245361,
       "checked": 5,
       "discovered": null,
+      "targets": 109,
+      "errors": 2
+    },
+    {
+      "at": 1791447294370,
+      "checked": 0,
+      "discovered": {
+        "ruleId": "5c351ab5-8245-48c8-8270-3fb3d6bbcb03",
+        "storeId": "dayya",
+        "result": {
+          "at": 1791447294370,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
       "targets": 109,
       "errors": 2
     }
