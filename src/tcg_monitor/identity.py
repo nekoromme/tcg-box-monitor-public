@@ -183,6 +183,12 @@ def lottery_dedupe_key(case: LotteryCase) -> str:
         end_day = (case.end_at.date() if isinstance(case.end_at, datetime) else case.end_at)
         anchor = ("deadline:" + end_day.isoformat() if end_day is not None
                   else "notice:" + stable_url_identity(case.source_url or case.official_url))
+        if case.extraction_method == "tsutaya_line_official_form_first_seen":
+            # 店舗別のLINEフォームは締切が同じでも別の応募機会。
+            # 同じフォームの次回募集は、分かっている締切で区別する。
+            anchor = "form:" + stable_url_identity(case.official_url)
+            if end_day is not None:
+                anchor += "|deadline:" + end_day.isoformat()
         return "|".join((
             case.game_id, case.retailer_id, "pokemon_30th_cardset", anchor,
             case.opportunity_kind.value, case.application_round,

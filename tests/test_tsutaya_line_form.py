@@ -12,7 +12,7 @@ import pytest
 import tcg_monitor.pipeline as pipeline
 from tcg_monitor.config import load_config
 from tcg_monitor.http_client import FetchResult
-from tcg_monitor.identity import lottery_dedupe_key
+from tcg_monitor.identity import lottery_dedupe_key_values
 from tcg_monitor.models import SourceTier
 from tcg_monitor.parsers.tsutaya_line import parse_tsutaya_line_form
 from tcg_monitor.source_priority import merge_lotteries
@@ -345,7 +345,10 @@ def test_cardset_form_keeps_notification_identity_across_daily_scans(tmp_path: P
     state = MonitorState(tmp_path / "state.json")
     old_identity = replace(
         first,
-        case_id=sha256(lottery_dedupe_key(first).encode()).hexdigest(),
+        case_id=sha256(lottery_dedupe_key_values(
+            first.game_id, first.retailer_id, first.product_name,
+            first.canonical_product_key, first.start_at,
+        ).encode()).hexdigest(),
     )
     state.data["seen_cases"][old_identity.case_id] = {
         **old_identity.__dict__, "start_at": "2026-09-22",
@@ -358,7 +361,10 @@ def test_cardset_form_keeps_notification_identity_across_daily_scans(tmp_path: P
 
     # A different form is a separate application even for the same product.
     next_form = replace(following, official_url=following.official_url + "&formUrl=new")
-    assert merge_lotteries([next_form])[0][0].case_id != following.case_id
+    next_case = merge_lotteries([next_form])[0][0]
+    assert next_case.case_id != following.case_id
+    assert state.migrate_case_identity(next_case) is None
+    assert not state.delivered(f"lottery:started:{next_case.case_id}")
 
 
 def test_variant_choices_require_opt_in_and_matching_form_title() -> None:

@@ -18,7 +18,6 @@ from tcg_monitor.models import (
     OpportunityKind,
     Release,
     SourceTier,
-    stable_url_identity,
 )
 from tcg_monitor.release_sources import is_trusted_retailer_release
 
@@ -47,24 +46,13 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
         grouping_identity = lottery_dedupe_key(item)
         if is_pokemon_30th_cardset(item.game_id, item.canonical_product_key):
             # 店舗・抽選回は従来どおり区別し、種類だけを共通の商品名にまとめる。
-            # 公式LINEフォームの開始日は取得日なので毎日変わる。同じフォームを
-            # 翌日も新規抽選として通知しないよう、フォーム固有のURLで識別する。
-            # 締切も分かる場合は共通の締切キーを使い、同じフォームの次回募集を残す。
-            if (item.extraction_method == "tsutaya_line_official_form_first_seen"
-                    and item.end_at is None):
-                identity = "|".join((
-                    item.game_id,
-                    item.retailer_id,
-                    "pokemon_30th_cardset",
-                    stable_url_identity(item.official_url),
-                ))
-            else:
-                identity = lottery_dedupe_key(item)
-                aliases = observed_aliases.get(identity, set())
-                if (item.extraction_method in OBSERVED_START_METHODS
-                        and len(aliases) == 1):
-                    identity = next(iter(aliases))
-                    grouping_identity = identity
+            # 仮日付・LINEフォームの識別もidentityの共通規則に従う。
+            identity = grouping_identity
+            aliases = observed_aliases.get(identity, set())
+            if (item.extraction_method in OBSERVED_START_METHODS
+                    and len(aliases) == 1):
+                identity = next(iter(aliases))
+                grouping_identity = identity
             item = replace(
                 item,
                 product_name="30th CELEBRATION カードセット",

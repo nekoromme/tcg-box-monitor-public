@@ -414,6 +414,12 @@ class MonitorState:
             observed_cardset_pair = cardset_pair and bool(OBSERVED_START_METHODS & {
                 case.extraction_method, str(raw_record.get("extraction_method") or ""),
             })
+            if (case.extraction_method == "tsutaya_line_official_form_first_seen"
+                    and raw_record.get("extraction_method") == case.extraction_method
+                    and stable_url_identity(case.official_url)
+                    != stable_url_identity(str(raw_record.get("official_url") or ""))):
+                # 同じ締切でも、別の店舗用フォームへ配信済み履歴を移さない。
+                continue
             # 明示された締切が変われば、同じURL・開始日でも次回の募集として残す。
             if (cardset_pair and case.end_at is not None and raw_record.get("end_at")
                     and not same_sale_end):
