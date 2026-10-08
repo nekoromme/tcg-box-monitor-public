@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08T11:05:42.883Z",
+  "updatedAt": "2026-10-08T11:06:48.765Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -36,25 +36,25 @@
     "noPaidPlanChanges": true
   },
   "baseline": {
-    "checkedAt": "2026-10-08T02:14:52.476Z",
+    "checkedAt": "2026-10-08T09:25:48.880Z",
     "workerMainSha": "823986b3a3108ced89e76161b5de01885d066110",
-    "relayMainSha": "f1219a1ebfad45f771cf096b0475a9abda72aa4d",
-    "inventorySnapshotAt": "2026-10-08T02:14:52.476Z",
-    "lastCompletedAt": "2026-10-08T02:14:51.130Z",
-    "latestSyncRunId": 37716864033,
+    "relayMainSha": "1abc140b08b4a848c0b313ecee809fb4f965964d",
+    "inventorySnapshotAt": "2026-10-08T09:25:48.880Z",
+    "lastCompletedAt": "2026-10-08T09:25:47.667Z",
+    "latestSyncRunId": 37756490293,
     "latestSyncRunConclusion": "success",
-    "latestSyncRunUpdatedAt": "2026-10-08T02:14:57Z",
+    "latestSyncRunUpdatedAt": "2026-10-08T09:25:53Z",
     "historicalWorkerVersion": "0.14.2",
     "registeredProducts": 38,
     "enabledProducts": 31,
     "pausedProducts": 7,
     "liveHealthVerification": "verified_via_successful_inventory_sync_and_monitor_state",
     "snapshotFreshness": "latest_successful_export_before_24h_gate",
-    "healthAccessNote": "本番healthのこの実行経路からの直接取得は制限。既存inventory-sync run 37716864033成功と、同run保存のhealth ok・期待main SHA一致で確認。",
+    "healthAccessNote": "本番healthのこの実行経路からの直接取得は制限。inventory-sync run 37756490293成功と、同run保存のhealth ok・期待main SHA一致で確認。",
     "storage": {
       "format": "monitor-gzip-v1",
-      "uncompressedBytes": 1498303,
-      "compressedBytes": 118169,
+      "uncompressedBytes": 1504038,
+      "compressedBytes": 118510,
       "chunks": 2
     },
     "pricePolicy": {
@@ -82,11 +82,7 @@
     "quotaNote": "Cloudflare実利用量の正規メトリクスは未取得。最新health issuesなし、無料枠停止の証拠なし。",
     "activePages": 77
   },
-  "lease": {
-    "runId": "20261008110542883Z-exp",
-    "acquiredAt": "2026-10-08T11:05:42.883Z",
-    "expiresAt": "2026-10-08T12:35:42.883Z"
-  },
+  "lease": null,
   "activeCandidateId": "ryuunoshippo",
   "pendingOperation": {
     "kind": "production_observation",
@@ -101,8 +97,8 @@
     "observationStartedAt": "2026-10-07T11:16:38.740Z",
     "minimumObservationEndsAt": "2026-10-08T11:16:38.740Z",
     "finalObservationEndsAt": "2026-10-09T11:16:38.740Z",
-    "latestEvidenceAt": "2026-10-08T02:14:52.476Z",
-    "nextCheck": "竜のしっぽ追加24時間は2026-10-08 20:16 JST。到達前は次店を追加しない。次の保存記録で一覧成功数、商品1273、全体health、価格条件、送信履歴を再確認し、24時間通過後も最終48時間（2026-10-09 20:16 JST）まで観察する。"
+    "latestEvidenceAt": "2026-10-08T09:25:48.880Z",
+    "nextCheck": "24時間到達は2026-10-08 20:16 JST。今回の最新保存は18:25 JSTで到達前のため通過判定しない。次回は新しいmonitor-stateで24時間超の一覧成功数、商品1273、全体health、価格条件、送信履歴を確認し、正常ならminimum passedを記録。最終48時間は2026-10-09 20:16 JST。"
   },
   "stabilityWindow": {
     "status": "passed",
@@ -458,7 +454,7 @@
         "registrationSnapshotAt": "2026-10-07T11:19:41.231Z",
         "discoveryMode": "normal",
         "intervalMs": 1800000,
-        "successes": 30,
+        "successes": 44,
         "failures": 0,
         "firstListingAt": "2026-10-07T11:20:44.044Z",
         "firstListingResult": {
@@ -478,8 +474,8 @@
         },
         "existingMonitorImpact": {
           "health": "ok",
-          "checkedAt": "2026-10-08T02:14:52.476Z",
-          "lastCompletedAt": "2026-10-08T02:14:51.130Z",
+          "checkedAt": "2026-10-08T09:25:48.880Z",
+          "lastCompletedAt": "2026-10-08T09:25:47.667Z",
           "deploymentVersion": "0.14.2",
           "deploymentSha": "823986b3a3108ced89e76161b5de01885d066110",
           "activePages": 77,
@@ -491,8 +487,8 @@
           "policyVersion": 1,
           "pausedProducts": 7
         },
-        "note": "一覧は30回成功・0失敗へ進行。GD01商品1273は5,800円・売切れ・価格条件内、商品詳細の現在failures=0。条件内在庫がないため通知なしは正常。24時間判定前のため次店追加なし。",
-        "latestListingAt": "2026-10-08T01:58:02.429Z",
+        "note": "18:25 JST保存で一覧44回成功・0失敗。GD01商品1273は5,800円・売切れ・価格条件内、商品詳細failures=0。最新証拠が24時間到達前のためminimum passedとはまだ記録しない。",
+        "latestListingAt": "2026-10-08T09:01:52.218Z",
         "latestListingResult": {
           "matched": 1,
           "registered": 0,
@@ -510,7 +506,7 @@
           ],
           "requests": 1,
           "status": "ok",
-          "previousAt": 1791422869664
+          "previousAt": 1791448296412
         },
         "target": {
           "productId": "gundam-gd01",
@@ -520,18 +516,18 @@
           "detailChecked": true,
           "priceDecision": "within_limit",
           "maxPrice": 6098,
-          "observationSamples": 234,
+          "observationSamples": 349,
           "currentFailures": 0,
           "recoveredTransientErrors": 1,
-          "lastCheckedAt": "2026-10-08T02:11:52.709Z"
+          "lastCheckedAt": "2026-10-08T09:25:44.178Z"
         }
       },
       "deliveryEvidence": {
         "status": "awaiting_real_opportunity",
         "receiptIds": [],
-        "note": "商品1273は価格条件内だが売切れ。新規送信機会はなく、sent 12件・pending 0・failed 0を保持。"
+        "note": "商品1273は価格条件内だが売切れ。新規送信機会なし。sent12・pending0・failed0を維持。"
       },
-      "nextAction": "竜のしっぽ追加24時間は2026-10-08 20:16 JST。到達前は次店を追加しない。次の保存記録で一覧成功数、商品1273、全体health、価格条件、送信履歴を再確認し、24時間通過後も最終48時間（2026-10-09 20:16 JST）まで観察する。",
+      "nextAction": "24時間到達は2026-10-08 20:16 JST。今回の最新保存は18:25 JSTで到達前のため通過判定しない。次回は新しいmonitor-stateで24時間超の一覧成功数、商品1273、全体health、価格条件、送信履歴を確認し、正常ならminimum passedを記録。最終48時間は2026-10-09 20:16 JST。",
       "decisionFinal": false
     },
     {
@@ -624,17 +620,17 @@
     }
   ],
   "lastRun": {
-    "id": "20261008050416676Z-exp",
-    "status": "completed_ryu_pre24h_check_mediaworld_listing_recovered",
+    "id": "20261008110542883Z-exp",
+    "status": "completed_pre24h_snapshot_verified_mediaworld_429_recurred",
     "externalChanges": [
       {
         "kind": "ledger",
         "branch": "shop-expansion-state"
       }
     ],
-    "notes": "竜のしっぽ一覧は30回成功・0失敗。GD01商品1273は5,800円・売切れ・価格条件内、current failures=0。全体health ok、active pages77、価格policy/停止7弾/sent12を維持。メディアワールド一覧429は自然回復し、個別2ページの単発429のみ待機中。24時間前のため次店追加なし。"
+    "notes": "18:25 JST保存で竜のしっぽ一覧44回成功・0失敗、商品1273は5,800円・売切れ・current failures=0。全体health ok、価格policy/停止7弾/sent12を維持。メディアワールド一覧429は回復後に再発し、個別2ページの単発429も残るが全体監視には波及なし。最新証拠が24時間到達前のため通過判定なし。"
   },
-  "nextAction": "竜のしっぽ追加24時間は2026-10-08 20:16 JST。到達前は次店を追加しない。次の保存記録で一覧成功数、商品1273、全体health、価格条件、送信履歴を再確認し、24時間通過後も最終48時間（2026-10-09 20:16 JST）まで観察する。",
+  "nextAction": "24時間到達は2026-10-08 20:16 JST。今回の最新保存は18:25 JSTで到達前のため通過判定しない。次回は新しいmonitor-stateで24時間超の一覧成功数、商品1273、全体health、価格条件、送信履歴を確認し、正常ならminimum passedを記録。最終48時間は2026-10-09 20:16 JST。",
   "completion": {
     "status": "in_progress",
     "disabledAt": null,
@@ -646,21 +642,21 @@
     ]
   },
   "maintenanceFindings": {
-    "checkedAt": "2026-10-08T02:14:52.476Z",
+    "checkedAt": "2026-10-08T09:25:48.880Z",
     "mediaworld": {
-      "status": "listing_recovered_target_429s_isolated",
-      "listingSuccesses": 61,
-      "listingFailures": 0,
-      "latestListingSuccessAt": "2026-10-08T01:02:18.051Z",
-      "latestAttemptAt": "2026-10-08T01:02:18.051Z",
-      "retryAt": null,
+      "status": "intermittent_listing_429_recurred_after_recovery",
+      "listingSuccesses": 65,
+      "listingFailures": 3,
+      "latestListingSuccessAt": "2026-10-08T05:47:41.060Z",
+      "latestAttemptAt": "2026-10-08T09:04:00.837Z",
+      "retryAt": "2026-10-08T10:04:00.837Z",
       "currentTarget429Count": 2,
       "maxConsecutiveTargetFailures": 1,
       "affectedUrls": [
-        "https://mediaworld.co.jp/products/13921505000",
-        "https://mediaworld.co.jp/products/13921503000"
+        "https://mediaworld.co.jp/products/13921635000",
+        "https://mediaworld.co.jp/products/13921514000"
       ],
-      "nextAction": "一覧429は自然回復しquiet/60分へ移行。個別2ページの単発429は既存待機・再試行を継続し、売切れ扱い・頻度引上げ・制限回避をしない。全体healthはok。"
+      "nextAction": "一覧429が再発して店舗別待機中。正常取得と429を往復しており、失敗を売切れ扱いせず既存の待機・再試行を継続。頻度引上げや制限回避はしない。全体healthはok。"
     },
     "storeNoticeDisplay": {
       "status": "not_implemented_with_sources_and_dates",
