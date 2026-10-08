@@ -7,7 +7,7 @@ from hashlib import sha256
 from urllib.parse import urlsplit
 
 from tcg_monitor.identity import (
-    OBSERVED_SOCIAL_START_METHODS,
+    OBSERVED_START_METHODS,
     is_pokemon_30th_cardset,
     lottery_dedupe_key,
     release_dedupe_key,
@@ -18,7 +18,6 @@ from tcg_monitor.models import (
     OpportunityKind,
     Release,
     SourceTier,
-    stable_url_identity,
 )
 from tcg_monitor.release_sources import is_trusted_retailer_release
 
@@ -36,7 +35,7 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
     for item in items:
         if (is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
                 and item.end_at is not None
-                and item.extraction_method not in OBSERVED_SOCIAL_START_METHODS):
+                and item.extraction_method not in OBSERVED_START_METHODS):
             # 同じ締切について実際の開始日も読めたら、その従来IDへ仮日付側をまとめる。
             observed_key = lottery_dedupe_key(replace(
                 item, extraction_method="yahoo_realtime_detected_next_day",
@@ -47,23 +46,13 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
         grouping_identity = lottery_dedupe_key(item)
         if is_pokemon_30th_cardset(item.game_id, item.canonical_product_key):
             # 店舗・抽選回は従来どおり区別し、種類だけを共通の商品名にまとめる。
-            # 公式LINEフォームの開始日は取得日なので毎日変わる。同じフォームを
-            # 翌日も新規抽選として通知しないよう、フォーム固有のURLで識別する。
-            # 他店舗の投稿は別の抽選回を区別するため従来の日付キーを使う。
-            if item.extraction_method == "tsutaya_line_official_form_first_seen":
-                identity = "|".join((
-                    item.game_id,
-                    item.retailer_id,
-                    "pokemon_30th_cardset",
-                    stable_url_identity(item.official_url),
-                ))
-            else:
-                identity = lottery_dedupe_key(item)
-                aliases = observed_aliases.get(identity, set())
-                if (item.extraction_method in OBSERVED_SOCIAL_START_METHODS
-                        and len(aliases) == 1):
-                    identity = next(iter(aliases))
-                    grouping_identity = identity
+            # 仮日付・LINEフォームの識別もidentityの共通規則に従う。
+            identity = grouping_identity
+            aliases = observed_aliases.get(identity, set())
+            if (item.extraction_method in OBSERVED_START_METHODS
+                    and len(aliases) == 1):
+                identity = next(iter(aliases))
+                grouping_identity = identity
             item = replace(
                 item,
                 product_name="30th CELEBRATION カードセット",
@@ -78,7 +67,7 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
             *lottery_source_priority(item.source_tier, item.source_url),
             int(is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
-                and item.extraction_method in OBSERVED_SOCIAL_START_METHODS),
+                and item.extraction_method in OBSERVED_START_METHODS),
             int(item.retailer_id == "lorcana_official"
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
         ))

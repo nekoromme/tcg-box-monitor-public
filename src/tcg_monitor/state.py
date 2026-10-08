@@ -10,7 +10,7 @@ from typing import Any
 
 from tcg_monitor.game_modes import LEGACY_ENABLED_GAME_IDS
 from tcg_monitor.identity import (
-    OBSERVED_SOCIAL_START_METHODS,
+    OBSERVED_START_METHODS,
     is_pokemon_30th_cardset,
     is_provisional_product_name,
     lottery_dedupe_key,
@@ -411,9 +411,15 @@ class MonitorState:
                     case.game_id, str(raw_record.get("canonical_product_key") or "")
                 )
             )
-            observed_cardset_pair = cardset_pair and bool(OBSERVED_SOCIAL_START_METHODS & {
+            observed_cardset_pair = cardset_pair and bool(OBSERVED_START_METHODS & {
                 case.extraction_method, str(raw_record.get("extraction_method") or ""),
             })
+            if (case.extraction_method == "tsutaya_line_official_form_first_seen"
+                    and raw_record.get("extraction_method") == case.extraction_method
+                    and stable_url_identity(case.official_url)
+                    != stable_url_identity(str(raw_record.get("official_url") or ""))):
+                # 同じ締切でも、別の店舗用フォームへ配信済み履歴を移さない。
+                continue
             # 明示された締切が変われば、同じURL・開始日でも次回の募集として残す。
             if (cardset_pair and case.end_at is not None and raw_record.get("end_at")
                     and not same_sale_end):
@@ -565,7 +571,7 @@ class MonitorState:
 
         observed_cardset = (
             is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
-            and any(record.get("extraction_method") in OBSERVED_SOCIAL_START_METHODS
+            and any(record.get("extraction_method") in OBSERVED_START_METHODS
                     for _, record in candidates)
         )
         if observed_cardset:

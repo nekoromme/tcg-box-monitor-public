@@ -152,6 +152,23 @@ def is_pokemon_30th_cardset(game_id: str, product_key: str) -> bool:
     return game_id == "pokemon_card" and product_key.split(":", 1)[0] == "pokemon_30th_cardset"
 
 
+# 仮の開始日を使う取得方法はここだけで管理する。Xだけを特別扱いすると、
+# 公式ページ・LINEフォーム等の再取得日が新しい抽選として通知されてしまう。
+# 値は初回検知日に対する日数。実際の応募開始日が読める方法は含めない。
+FIRST_DETECTION_START_OFFSETS = {
+    "yahoo_realtime_detected_open": 0,
+    "yahoo_realtime_detected_next_day": 1,
+    "yahoo_realtime_amazon_invitation_seen": 0,
+    "yahoo_realtime_official_sale_seen": 0,
+    "tsutaya_line_official_form_first_seen": 0,
+    "snkrdunk_open_invitation_seen": 0,
+    "takaratomy_mall_first_seen_available": 0,
+    "furuichi_official_open_detected": 0,
+    "hobby_search_active_lottery_detected": 0,
+}
+OBSERVED_START_METHODS = frozenset(FIRST_DETECTION_START_OFFSETS)
+
+# 既存の外部参照との互換性だけ残す。重複判定は取得元共通の集合を使う。
 OBSERVED_SOCIAL_START_METHODS = frozenset({
     "yahoo_realtime_detected_open",
     "yahoo_realtime_detected_next_day",
@@ -160,12 +177,18 @@ OBSERVED_SOCIAL_START_METHODS = frozenset({
 
 def lottery_dedupe_key(case: LotteryCase) -> str:
     if (is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
-            and case.extraction_method in OBSERVED_SOCIAL_START_METHODS):
+            and case.extraction_method in OBSERVED_START_METHODS):
         # 開始日不明の仮日付は取得日か翌日であり、抽選回の識別には使えない。
         # 同じ締切の再告知も一回。締切がなければ同じ投稿だけ。
         end_day = (case.end_at.date() if isinstance(case.end_at, datetime) else case.end_at)
         anchor = ("deadline:" + end_day.isoformat() if end_day is not None
                   else "notice:" + stable_url_identity(case.source_url or case.official_url))
+        if case.extraction_method == "tsutaya_line_official_form_first_seen":
+            # 店舗別のLINEフォームは締切が同じでも別の応募機会。
+            # 同じフォームの次回募集は、分かっている締切で区別する。
+            anchor = "form:" + stable_url_identity(case.official_url)
+            if end_day is not None:
+                anchor += "|deadline:" + end_day.isoformat()
         return "|".join((
             case.game_id, case.retailer_id, "pokemon_30th_cardset", anchor,
             case.opportunity_kind.value, case.application_round,

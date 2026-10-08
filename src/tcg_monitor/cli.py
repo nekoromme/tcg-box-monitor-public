@@ -26,7 +26,13 @@ from tcg_monitor.game_modes import (
     load_enabled_game_ids,
 )
 from tcg_monitor.google_calendar import RELEASE_EVENT_COLOR_ID, CalendarAdapter
-from tcg_monitor.identity import lottery_dedupe_key, release_dedupe_key, release_title_token
+from tcg_monitor.identity import (
+    FIRST_DETECTION_START_OFFSETS,
+    OBSERVED_START_METHODS,
+    lottery_dedupe_key,
+    release_dedupe_key,
+    release_title_token,
+)
 from tcg_monitor.logging_config import configure_logging, log_event
 from tcg_monitor.models import (
     Alert,
@@ -390,7 +396,7 @@ def _migrate_existing_release_event_colors(
 
 def _reuse_first_detection_start(state: MonitorState, case: LotteryCase) -> LotteryCase:
     previous = state.data.get("seen_cases", {}).get(case.case_id, {})
-    if not previous and case.extraction_method == "yahoo_realtime_detected_open":
+    if not previous and case.extraction_method in OBSERVED_START_METHODS:
         # 公式側へまとめ済みのX投稿は元のIDがseen_casesから消えている。
         # 移行履歴の一意な参照先から開始日を復元し、翌日も同じ募集へまとめる。
         aliases = []
@@ -417,14 +423,7 @@ def _reuse_first_detection_start(state: MonitorState, case: LotteryCase) -> Lott
         # 旧方式で保存された「開始日」は締切の誤読かもしれない。
         # 初回の通知履歴があれば下で復元し、なければ今回の検知日を使う。
         prepared = case
-    first_delivery_start_offsets = {
-        "yahoo_realtime_detected_open": 0,
-        "snkrdunk_open_invitation_seen": 0,
-        "yahoo_realtime_detected_next_day": 1,
-        "furuichi_official_open_detected": 0,
-        "hobby_search_active_lottery_detected": 0,
-    }
-    day_offset = first_delivery_start_offsets.get(case.extraction_method)
+    day_offset = FIRST_DETECTION_START_OFFSETS.get(case.extraction_method)
     if day_offset is None or not previous:
         return prepared
 
@@ -851,7 +850,8 @@ def _lottery_description(
                 "仮の開始日: 初回検知の翌日（実際の受付開始日ではありません）",
             ] if case.extraction_method == "yahoo_realtime_detected_next_day" else []),
             *(["受付開始日: 不明", "予定の日付は受付を初めて確認した日です。"]
-              if case.extraction_method == "yahoo_realtime_detected_open" else []),
+              if case.extraction_method in OBSERVED_START_METHODS
+              and case.extraction_method != "yahoo_realtime_detected_next_day" else []),
             *([f"{'応募締切' if case.opportunity_kind == OpportunityKind.LOTTERY else '受付締切'}: "
                f"{_format_user_datetime(case.end_at)}"] if case.end_at else []),
             *([f"結果発表: {_format_user_datetime(case.result_at)}"] if case.result_at else []),
@@ -946,7 +946,7 @@ def _lottery_discord_description(case: LotteryCase, config: Config | None = None
         date_label = "招待受付の確認日（開始日時不明）"
     elif case.extraction_method == "yahoo_realtime_detected_next_day":
         date_label = "仮の開始日（開始日不明・初回検知の翌日）"
-    elif case.extraction_method == "yahoo_realtime_detected_open":
+    elif case.extraction_method in OBSERVED_START_METHODS:
         date_label = "受付を確認した日（開始日時不明）"
     else:
         date_label = "受付開始"
@@ -988,9 +988,7 @@ def _opportunity_title_prefix(case: LotteryCase, config: Config) -> str:
     if _is_amazon_invitation(case):
         return f"【{config.games[case.game_id].short_name}Amazon招待】"
     if case.opportunity_kind == OpportunityKind.LOTTERY:
-        if case.extraction_method in {
-            "yahoo_realtime_detected_open", "yahoo_realtime_detected_next_day",
-        }:
+        if case.extraction_method in OBSERVED_START_METHODS:
             return f"【{config.games[case.game_id].short_name}抽選・開始日不明】"
         return config.games[case.game_id].lottery_start_prefix
     sale_label = (
