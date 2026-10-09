@@ -10,7 +10,7 @@ from typing import Any
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
-from tcg_monitor.discord import DiscordAdapter
+from tcg_monitor.discord import DiscordAdapter, split_discord_description
 from tcg_monitor.google_calendar import CalendarAdapter
 from tcg_monitor.identity import OBSERVED_START_METHODS
 from tcg_monitor.logging_config import log_event
@@ -203,6 +203,37 @@ def _cleanup_individual_events(
             state.save()
 
 
+def _resume_notification_parts(
+    state: MonitorState, discord: DiscordAdapter, batch: RakutenBatch,
+) -> int:
+    """分割ごとの成功を保存し、失敗後は未送信の続きだけ送る。"""
+    journal = state.data.setdefault("delivery_journal", {})
+    progress = journal.get(f"{batch.sync_key}:notification", {})
+    if progress.get("status") != "in_progress":
+        return 0
+    sent_count = 0
+    for index, part in enumerate(progress["parts"], start=1):
+        if part.get("status") == "complete":
+            continue
+        sent = discord.send(part["title"], part["description"])
+        if sent.get("status") != "sent":
+            raise RuntimeError("楽天ブックスの集約通知が送信されませんでした")
+        timestamp = datetime.now(JST).isoformat()
+        part.update(status="complete", updated_at=timestamp)
+        progress["updated_at"] = timestamp
+        for url in part["urls"]:
+            key = f"{batch.sync_key}:url:{sha256(url.encode()).hexdigest()}"
+            journal.setdefault(key, {"status": "complete", "updated_at": timestamp})
+        # 最後の分割だけ失敗しても、成功した分を次の巡回で送らない。
+        state.save()
+        sent_count += 1
+        log_event(phase="rakuten_batch_notification", outcome="sent", day=batch.day,
+                  part=index, parts=len(progress["parts"]), products=len(part["urls"]))
+    progress.update(status="complete", updated_at=datetime.now(JST).isoformat())
+    state.save()
+    return sent_count
+
+
 def sync_rakuten_batch(
     state: MonitorState, calendar: CalendarAdapter, discord: DiscordAdapter,
     batch: RakutenBatch,
@@ -223,9 +254,10 @@ def sync_rakuten_batch(
         state.data["seen_cases"][case.case_id] = case.__dict__
     state.save()
 
-    # 送信済みURLごとに保存するので、別表記の再取得では通知せず、後から
-    # 別の商品が増えた場合だけ全種類と追加数を1回の通知で知らせる。
+    # 途中で失敗した通知は、当時の本文・分割番号のまま続きを送る。
+    # 後から商品が増えても、未完了の本文を組み直して重複送信しない。
     journal = state.data.setdefault("delivery_journal", {})
+    sent_parts = _resume_notification_parts(state, discord, batch)
     notified_urls = {
         url for url in batch.urls
         if state.delivered(f"{batch.sync_key}:url:{sha256(url.encode()).hexdigest()}")
@@ -235,9 +267,25 @@ def sync_rakuten_batch(
     pending_urls = set(batch.urls) - notified_urls
     if pending_urls:
         title = batch.title + (f"（追加{len(pending_urls)}種）" if notified_urls else "")
-        sent = discord.send(title, batch.description)
-        if sent.get("status") != "sent":
-            raise RuntimeError("楽天ブックスの集約通知が送信されませんでした")
+        # 追加通知には新しいURLだけを載せる。全URLは1件の予定に保持するので、
+        # 大量の商品へ1種類が追加された時に前の一覧を何通も送り直さない。
+        notification_description = "\n".join(
+            line for line in batch.description.splitlines()
+            if line not in batch.urls or line in pending_urls
+        )
+        descriptions = split_discord_description(notification_description)
+        journal[f"{batch.sync_key}:notification"] = {
+            "status": "in_progress", "updated_at": datetime.now(JST).isoformat(),
+            "parts": [{
+                "title": title + (f"・{index}/{len(descriptions)}" if len(descriptions) > 1
+                                  else ""),
+                "description": description,
+                "urls": [url for url in batch.urls if url in description.splitlines()],
+                "status": "pending",
+            } for index, description in enumerate(descriptions, start=1)],
+        }
+        state.save()
+        sent_parts += _resume_notification_parts(state, discord, batch)
     for url in batch.urls:
         key = f"{batch.sync_key}:url:{sha256(url.encode()).hexdigest()}"
         journal.setdefault(key, {"status": "complete", "updated_at": datetime.now(JST).isoformat()})
@@ -249,8 +297,8 @@ def sync_rakuten_batch(
     _cleanup_individual_events(state, calendar, batch)
     log_event(phase="rakuten_batch", outcome=result["status"],
               day=batch.day, products=len(batch.urls), case_records=len(batch.cases),
-              notification="sent" if pending_urls else "already_delivered",
-              new_products=len(pending_urls))
+              notification="sent" if sent_parts else "already_delivered",
+              new_products=len(pending_urls), sent_parts=sent_parts)
 
 
 def already_grouped(state: MonitorState, case: LotteryCase) -> bool:
