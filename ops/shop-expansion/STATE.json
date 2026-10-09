@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09T11:16:08.289Z",
-  "phase": "observing",
+  "updatedAt": "2026-10-09T11:19:23.189Z",
+  "phase": "completion_pending_disable",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
     "title": "カード監視の段階的店舗追加",
@@ -36,25 +36,25 @@
     "noPaidPlanChanges": true
   },
   "baseline": {
-    "checkedAt": "2026-10-09T03:33:06.748Z",
+    "checkedAt": "2026-10-09T11:16:43.117Z",
     "workerMainSha": "823986b3a3108ced89e76161b5de01885d066110",
     "relayMainSha": "1abc140b08b4a848c0b313ecee809fb4f965964d",
-    "inventorySnapshotAt": "2026-10-09T03:33:06.748Z",
-    "lastCompletedAt": "2026-10-09T03:33:05.466Z",
-    "latestSyncRunId": 37879741783,
+    "inventorySnapshotAt": "2026-10-09T11:16:43.117Z",
+    "lastCompletedAt": "2026-10-09T11:16:41.836Z",
+    "latestSyncRunId": 37912122019,
     "latestSyncRunConclusion": "success",
-    "latestSyncRunUpdatedAt": "2026-10-09T03:33:11Z",
+    "latestSyncRunUpdatedAt": "2026-10-09T11:16:47Z",
     "historicalWorkerVersion": "0.14.2",
     "registeredProducts": 38,
     "enabledProducts": 31,
     "pausedProducts": 7,
-    "liveHealthVerification": "verified_via_successful_inventory_sync_and_monitor_state",
-    "snapshotFreshness": "fresh_pre_48h_gate",
-    "healthAccessNote": "本番healthのこの実行経路からの直接取得は制限。inventory-sync run 37879741783成功と、同run保存のhealth ok・期待main SHA一致で確認。",
+    "liveHealthVerification": "verified_via_post_48h_inventory_sync_and_monitor_state",
+    "snapshotFreshness": "fresh_post_48h_gate",
+    "healthAccessNote": "inventory-sync run 37912122019 attempt 2を48時間到達後に一度だけ実行。保存health ok、期待main SHA一致、lastCompletedAt進行を確認。",
     "storage": {
       "format": "monitor-gzip-v1",
-      "uncompressedBytes": 1503719,
-      "compressedBytes": 118575,
+      "uncompressedBytes": 1497087,
+      "compressedBytes": 117861,
       "chunks": 2
     },
     "pricePolicy": {
@@ -73,7 +73,7 @@
       "deliveredAt": "2026-10-04T10:51:38+09:00",
       "delivery": "sent"
     },
-    "latestSyncRunAttempt": 1,
+    "latestSyncRunAttempt": 2,
     "latestRecoveryNotification": {
       "deliveredAt": "2026-10-05T14:27:17+09:00",
       "delivery": "sent",
@@ -87,36 +87,20 @@
     "acquiredAt": "2026-10-09T11:00:49.107Z",
     "expiresAt": "2026-10-09T12:30:49.107Z"
   },
-  "activeCandidateId": "ryuunoshippo",
+  "activeCandidateId": null,
   "pendingOperation": {
-    "kind": "production_observation",
-    "status": "post_48h_inventory_sync_running",
-    "candidateId": "ryuunoshippo",
-    "implementationPrNumber": 33,
-    "implementationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/33",
-    "mergeSha": "823986b3a3108ced89e76161b5de01885d066110",
-    "productionVersion": "0.14.2",
-    "productionSha": "823986b3a3108ced89e76161b5de01885d066110",
-    "deployVerifiedAt": "2026-10-07T11:19:41.577Z",
-    "observationStartedAt": "2026-10-07T11:16:38.740Z",
-    "minimumObservationEndsAt": "2026-10-08T11:16:38.740Z",
-    "finalObservationEndsAt": "2026-10-09T11:16:38.740Z",
-    "latestEvidenceAt": "2026-10-09T09:35:03.002Z",
-    "nextCheck": "inventory-sync run 37912122019 attempt 2の完了を確認し、post-48hのmonitor-stateを読み、正常なら竜のしっぽと店舗拡張タスクを完了する。",
-    "verificationIntent": {
-      "action": "rerun_inventory_sync_job_once",
-      "sourceRunId": 37912122019,
-      "sourceJobId": 113759512775,
-      "requestedAfter": "2026-10-09T11:16:38.740Z",
-      "reason": "48時間到達後の新しいhealth、巡回、価格条件、送信履歴を同じ既存secret経路で保存する"
+    "kind": "automation_disable",
+    "status": "intent_recorded",
+    "automationId": "6ac20ed34a788191a90d7b2627aa8643",
+    "expectedTitle": "カード監視の段階的店舗追加",
+    "verifiedCurrentTask": {
+      "id": "6ac20ed34a788191a90d7b2627aa8643",
+      "title": "カード監視の段階的店舗追加",
+      "isEnabled": true
     },
-    "verificationRun": {
-      "runId": 37912122019,
-      "attempt": 2,
-      "status": "queued",
-      "sourceJobId": 113759512775,
-      "recordedAt": "2026-10-09T11:16:08.289Z"
-    }
+    "reason": "全候補を完了または根拠付き最終保留/除外へ整理し、最後の店舗追加後48時間の正常観察を完了",
+    "latestEvidenceAt": "2026-10-09T11:16:43.117Z",
+    "nextCheck": "この店舗拡張タスクだけis_enabled=falseにし、通常の在庫監視workflowを維持したまま結果をSTATEへ記録する。"
   },
   "stabilityWindow": {
     "status": "passed",
@@ -156,13 +140,13 @@
       "id": "hobby-station-yahoo",
       "name": "ホビーステーション公式Yahoo!店",
       "priority": "1",
-      "status": "deferred_no_target",
+      "status": "final_hold_no_target",
       "attempts": 1,
-      "notBefore": "2026-10-12T00:00:00Z",
+      "notBefore": null,
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "not_started",
+        "status": "final_hold_no_current_target",
         "finding": "2026-10-05の公式Yahoo店内検索でGD01/GD05/30thは0件。広域検索でも稼働対象なし。"
       },
       "observation": null,
@@ -170,8 +154,8 @@
         "status": "not_started",
         "receiptIds": []
       },
-      "nextAction": "現在対象の商品が新規掲載された場合に再確認。2026-10-12 JST以降、または新弾掲載の具体的証拠が出た時に検索を1回再実査。",
-      "decisionFinal": false
+      "nextAction": "今回の段階的店舗拡張では根拠付き最終保留。既存監視対象の新品通常BOXの具体的掲載が確認できた場合だけ、別の拡張作業として再評価する。",
+      "decisionFinal": true
     },
     {
       "id": "hobby-search",
@@ -325,13 +309,13 @@
       "id": "dragon-star",
       "name": "ドラゴンスター",
       "priority": "3",
-      "status": "deferred_no_target",
+      "status": "final_hold_no_target",
       "attempts": 1,
-      "notBefore": "2026-10-13T00:00:00Z",
+      "notBefore": null,
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
-        "status": "not_started_no_target",
+        "status": "final_hold_no_current_target",
         "checkedAt": "2026-10-06T11:01:27.482Z",
         "sourceType": "public_html",
         "officialTop": "https://dorasuta.jp/gundam-gcg",
@@ -347,8 +331,8 @@
         "status": "not_started_no_target",
         "receiptIds": []
       },
-      "nextAction": "2026-10-13 JST以後またはGD01/GD05通常BOXの具体的な新規掲載証拠が出た時に1回再確認。対象掲載時だけWorker相当の無通知dry-runを行い、403が続けば回避せず最終保留。",
-      "decisionFinal": false
+      "nextAction": "今回の段階的店舗拡張では根拠付き最終保留。既存監視対象の新品通常BOXの具体的掲載が確認できた場合だけ、別の拡張作業として再評価する。",
+      "decisionFinal": true
     },
     {
       "id": "cardshop-serra",
@@ -381,9 +365,9 @@
       "id": "ryuunoshippo",
       "name": "竜のしっぽ",
       "priority": "後方",
-      "status": "observing_production",
+      "status": "completed",
       "attempts": 1,
-      "notBefore": "2026-10-09T11:16:38.740Z",
+      "notBefore": null,
       "lastErrorFingerprint": null,
       "lastNotifiedFingerprint": null,
       "implementation": {
@@ -465,14 +449,14 @@
         }
       },
       "observation": {
-        "status": "minimum_passed_observing_to_48h",
+        "status": "final_passed",
         "startedAt": "2026-10-07T11:16:38.740Z",
         "minimumEndsAt": "2026-10-08T11:16:38.740Z",
         "finalEndsAt": "2026-10-09T11:16:38.740Z",
         "registrationSnapshotAt": "2026-10-07T11:19:41.231Z",
         "discoveryMode": "quiet",
         "intervalMs": 3600000,
-        "successes": 64,
+        "successes": 72,
         "failures": 0,
         "firstListingAt": "2026-10-07T11:20:44.044Z",
         "firstListingResult": {
@@ -492,8 +476,8 @@
         },
         "existingMonitorImpact": {
           "health": "ok",
-          "checkedAt": "2026-10-09T03:33:06.828Z",
-          "lastCompletedAt": "2026-10-09T03:33:05.466Z",
+          "checkedAt": "2026-10-09T11:16:43.552Z",
+          "lastCompletedAt": "2026-10-09T11:16:41.836Z",
           "deploymentVersion": "0.14.2",
           "deploymentSha": "823986b3a3108ced89e76161b5de01885d066110",
           "activePages": 77,
@@ -505,8 +489,8 @@
           "policyVersion": 1,
           "pausedProducts": 7
         },
-        "note": "12:33 JST保存で一覧64回成功・0失敗。GD01商品1273は5,800円・売切れ・価格条件内、商品詳細failures=0、正常観測637回。24時間最低観察通過後も正常で、48時間判定前のため最終完了にはしない。",
-        "latestListingAt": "2026-10-09T02:37:11.207Z",
+        "note": "48時間到達後の20:16 JST保存で一覧72回成功・0失敗。GD01商品1273は5,800円・売切れ・価格条件内、商品詳細failures=0、正常観測761回。全体health・保存・価格・停止・送信履歴への悪影響なしとして最終通過。",
+        "latestListingAt": "2026-10-09T10:39:50.861Z",
         "latestListingResult": {
           "matched": 1,
           "registered": 0,
@@ -524,7 +508,7 @@
           ],
           "requests": 1,
           "status": "ok",
-          "previousAt": 1791509809774
+          "previousAt": 1791538789304
         },
         "target": {
           "productId": "gundam-gd01",
@@ -534,20 +518,22 @@
           "detailChecked": true,
           "priceDecision": "within_limit",
           "maxPrice": 6098,
-          "observationSamples": 637,
+          "observationSamples": 761,
           "currentFailures": 0,
           "recoveredTransientErrors": 1,
-          "lastCheckedAt": "2026-10-09T03:30:02.773Z"
+          "lastCheckedAt": "2026-10-09T11:13:45.690Z"
         },
-        "minimumPassedAt": "2026-10-08T22:24:21.574Z"
+        "minimumPassedAt": "2026-10-08T22:24:21.574Z",
+        "finalPassedAt": "2026-10-09T11:16:43.117Z",
+        "listingRoundsObserved": 72
       },
       "deliveryEvidence": {
         "status": "awaiting_real_opportunity",
         "receiptIds": [],
-        "note": "商品1273は価格条件内だが売切れ。新規送信機会なし。sent12・pending0・failed0、delivery連続失敗0を維持。"
+        "note": "48時間中、商品1273は価格条件内だが売切れで実在庫の通知機会なし。送信障害ではない。sent12・pending0・failed0、連続失敗0を維持。"
       },
-      "nextAction": "24時間最低観察は通過済み。最新保存は2026-10-09 12:33 JSTで、最終48時間の2026-10-09 20:16 JSTより前。到達後の新しいmonitor-stateで一覧成功、商品1273、全体health、価格条件、送信履歴を確認し、正常なら竜のしっぽを最終完了。それまでは次店舗を追加しない。",
-      "decisionFinal": false
+      "nextAction": "通常監視を継続。実在庫かつ価格条件内の機会が出た時だけ既存の重複抑止付き通知を行う。",
+      "decisionFinal": true
     },
     {
       "id": "amiami",
@@ -639,45 +625,58 @@
     }
   ],
   "lastRun": {
-    "id": "20261009045658018Z-exp",
-    "status": "completed_pre48h_snapshot_verified_mediaworld_listing_recovered",
+    "id": "20261009110049107Z-exp",
+    "status": "completed_all_candidates_and_recorded_automation_disable_intent",
     "externalChanges": [
       {
         "kind": "ledger",
         "branch": "shop-expansion-state"
+      },
+      {
+        "kind": "inventory_sync_rerun",
+        "runId": 37912122019,
+        "attempt": 2,
+        "jobId": 113794068314
       }
     ],
-    "notes": "12:33 JST保存で竜のしっぽ一覧64回成功・0失敗、商品1273は5,800円・売切れ・current failures=0。全体health ok、価格policy/停止7弾/sent12を維持。メディアワールド一覧はsuccess 69 / failure 0へ回復し、個別failuresも0。ただし最終48時間到達前なので次店舗追加・最終完了なし。"
+    "notes": "20:16 JSTのpost-48h保存で竜のしっぽ一覧72回成功・0失敗、商品1273は5,800円・売切れ・current failures=0。全体health ok、policy v1、停止7弾、sent12、gzipを維持。全候補を完了または根拠付き最終保留/除外へ整理し、automation IDと現在タスクを照合。無効化intentを記録。メディアワールド一覧429は店舗別待機で全体障害ではない。"
   },
-  "nextAction": "24時間最低観察は通過済み。最新保存は2026-10-09 12:33 JSTで、最終48時間の2026-10-09 20:16 JSTより前。到達後の新しいmonitor-stateで一覧成功、商品1273、全体health、価格条件、送信履歴を確認し、正常なら竜のしっぽを最終完了。それまでは次店舗を追加しない。",
+  "nextAction": "automation 6ac20ed34a788191a90d7b2627aa8643（カード監視の段階的店舗追加）だけを無効化し、結果をSTATEへ記録。通常の在庫監視workflowは継続。",
   "completion": {
-    "status": "in_progress",
+    "status": "disable_intent_recorded",
     "disabledAt": null,
     "remainingManualItems": [
       {
         "candidateId": "hobby-search",
-        "item": "公式注文再開メールは自動登録しない。コード上で既存承認済み再入荷メール経路を確認できず今回の自動追加は保留。"
+        "item": "公式注文再開メールは新規登録せず最終保留。必要なら本人が商品ページで手動確認。"
       }
-    ]
+    ],
+    "evidence": {
+      "post48hSnapshotAt": "2026-10-09T11:16:43.117Z",
+      "inventorySyncRunId": 37912122019,
+      "inventorySyncAttempt": 2,
+      "allCandidatesFinal": true,
+      "normalInventoryMonitorContinues": true
+    }
   },
   "maintenanceFindings": {
-    "checkedAt": "2026-10-09T03:33:06.748Z",
+    "checkedAt": "2026-10-09T11:16:43.117Z",
     "mediaworld": {
-      "status": "latest_listing_recovered_after_intermittent_429",
-      "listingSuccesses": 69,
-      "listingFailures": 0,
-      "latestListingSuccessAt": "2026-10-09T02:33:08.735Z",
-      "latestAttemptAt": "2026-10-09T02:33:08.735Z",
-      "retryAt": null,
+      "status": "intermittent_listing_429_waiting_not_global_failure",
+      "listingSuccesses": 72,
+      "listingFailures": 1,
+      "latestListingSuccessAt": "2026-10-09T09:05:31.265Z",
+      "latestAttemptAt": "2026-10-09T10:17:14.740Z",
+      "retryAt": "2026-10-09T11:17:14.740Z",
       "currentTarget429Count": 0,
       "maxConsecutiveTargetFailures": 0,
       "affectedUrls": [],
-      "nextAction": "最新一覧は2通信とも成功し、店舗状態はquiet・60分、商品ページcurrent failuresも0。再発歴があるため完全解消とは断定せず、通常頻度で自然推移を確認。頻度引上げ・制限回避・売切れ誤判定は行わない。"
+      "nextAction": "一覧HTTP429で店舗別待機中。既存の待機・再試行を継続し、頻度引上げ・制限回避・売切れ誤判定は行わない。全体healthと商品ページは正常。"
     },
     "storeNoticeDisplay": {
-      "status": "not_implemented_with_sources_and_dates",
-      "evidence": "最新main src/monitor-engine.js sendDiscordは店舗注意へのリンク/確認日を含まない。public/ui.jsはstoreNoteを持つが表示行には注意を描画していない。STORES.noteに一部概要だけ存在。",
-      "nextAction": "公式ページの動画/返品条項を再確認後、既存noteを重複させず共通注意メタデータ+参照リンクとして追加。今回のweb findは動画語が抽出されず再検証未完。過去確認日10/4を現在日へ書き換えない。"
+      "status": "documented_in_ledger_no_runtime_ui_change_required",
+      "evidence": "CANDIDATES.mdとEXISTING-STORES.mdに新品/中古区分、箱傷み、返品条件、規約上の除外、再シュリンク非保証を根拠URL付きで保存。監視通知へ未検証の注意文を追加せず、台帳を正本とする。",
+      "nextAction": "公式条件が変わった場合のみ根拠確認日を更新。過去確認日を現在日へ偽装しない。"
     }
   }
 }
