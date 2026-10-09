@@ -7,12 +7,18 @@ from pathlib import Path
 from unittest.mock import MagicMock
 from zoneinfo import ZoneInfo
 
+import httpx
 import pytest
 from freezegun import freeze_time
 
 from tcg_monitor import cli
 from tcg_monitor.config import load_config
-from tcg_monitor.discord import DiscordAdapter
+from tcg_monitor.discord import (
+    DISCORD_SAFE_DESCRIPTION_LIMIT,
+    DiscordAdapter,
+    discord_text_length,
+    split_discord_description,
+)
 from tcg_monitor.google_calendar import CalendarAdapter
 from tcg_monitor.models import LotteryCase, OpportunityKind, SourceTier
 from tcg_monitor.rakuten_batches import (
@@ -135,6 +141,7 @@ def test_new_batch_once_then_addition_updates_same_event_and_notifies_once(tmp_p
     sync_rakuten_batch(state, calendar, discord, next_batch)
     assert discord.send.call_count == 2
     assert discord.send.call_args.args[0] == "【抽選】楽天ブックス／全5種（追加1種）"
+    assert discord.send.call_args.args[1].count("https://books.rakuten.co.jp/rb/") == 1
     assert calendar.reconcile.call_args.kwargs["known_event_id"] == "batch-event"
     sync_rakuten_batch(MonitorState.load(state.path), calendar, discord, next_batch)
     assert discord.send.call_count == 2
@@ -165,7 +172,10 @@ def test_send_failure_retries_full_batch_after_partial_fetch(tmp_path):
     discord.send.side_effect = RuntimeError("試験送信失敗")
     with pytest.raises(RuntimeError, match="試験送信失敗"):
         sync_rakuten_batch(state, calendar, discord, batch)
-    assert state.data["delivery_journal"] == {}
+    progress = state.data["delivery_journal"][f"{batch.sync_key}:notification"]
+    assert progress["status"] == "in_progress"
+    assert all(part["status"] == "pending" for part in progress["parts"])
+    assert all(not state.delivered(f"lottery:started:{case.case_id}") for case in batch.cases)
     calendar.delete_owned_event.assert_not_called()
     state = MonitorState.load(state.path)
     retry = build_rakuten_batches(state, [batch.cases[0]], CONFIG, TODAY)[0]
@@ -248,3 +258,108 @@ def test_batch_description_keeps_all_deadlines_explicitly_unconfirmed_when_diffe
     batch = RakutenBatch(date(2026, 10, 14), tuple(items))
     assert "締切は各リンク先で確認" in batch.description
     assert "応募締切:" not in batch.description
+
+
+@pytest.mark.parametrize(("count", "message_count"), [(20, 1), (100, 2), (200, 3)])
+def test_large_batch_splits_without_missing_urls_and_keeps_one_calendar(
+    tmp_path, count, message_count,
+):
+    state = MonitorState(tmp_path / "state.json")
+    batch = build_rakuten_batches(state, products(count), CONFIG, TODAY)[0]
+    calendar, discord = adapters()
+    sync_rakuten_batch(state, calendar, discord, batch)
+    calls = discord.send.call_args_list
+    assert len(calls) == message_count
+    assert "".join(call.args[1] for call in calls) == batch.description
+    notified = [line for call in calls for line in call.args[1].splitlines()
+                if line.startswith("https://books.rakuten.co.jp/rb/")]
+    assert notified == list(batch.urls)
+    assert all(discord_text_length(call.args[1]) <= DISCORD_SAFE_DESCRIPTION_LIMIT
+               for call in calls)
+    for index, call in enumerate(calls, start=1):
+        assert f"全{count}種" in call.args[0]
+        if message_count > 1:
+            assert call.args[0].endswith(f"・{index}/{message_count}")
+    assert calendar.reconcile.call_count == 1
+    assert calendar.reconcile.call_args.args[4] == batch.description
+    sync_rakuten_batch(MonitorState.load(state.path), calendar, discord, batch)
+    assert discord.send.call_count == message_count
+
+
+def test_split_batch_reaches_discord_payload_without_truncation(tmp_path, monkeypatch):
+    payloads = []
+
+    def capture_post(url, *, json, timeout):
+        payloads.append(json)
+        return httpx.Response(200, request=httpx.Request("POST", url))
+
+    monkeypatch.setattr(httpx, "post", capture_post)
+    state = MonitorState(tmp_path / "state.json")
+    batch = build_rakuten_batches(state, products(200), CONFIG, TODAY)[0]
+    calendar, _ = adapters()
+    sync_rakuten_batch(state, calendar, DiscordAdapter(webhook_url="https://example.com/mock"),
+                       batch)
+    embeds = [payload["embeds"][0] for payload in payloads]
+    assert len(embeds) == 3
+    assert "".join(embed["description"] for embed in embeds) == batch.description
+    assert all(discord_text_length(embed["description"]) <= DISCORD_SAFE_DESCRIPTION_LIMIT
+               for embed in embeds)
+    assert embeds[-1]["title"] == "【抽選】楽天ブックス／全200種・3/3"
+
+
+def test_failed_second_part_resumes_unchanged_remaining_parts_after_reload(tmp_path):
+    state = MonitorState(tmp_path / "state.json")
+    batch = build_rakuten_batches(state, products(200), CONFIG, TODAY)[0]
+    parts = split_discord_description(batch.description)
+    calendar, discord = adapters()
+    discord.send.side_effect = [{"status": "sent"}, RuntimeError("分割2件目の送信失敗")]
+    with pytest.raises(RuntimeError, match="分割2件目"):
+        sync_rakuten_batch(state, calendar, discord, batch)
+    state = MonitorState.load(state.path)
+    progress = state.data["delivery_journal"][f"{batch.sync_key}:notification"]
+    assert [part["status"] for part in progress["parts"]] == ["complete", "pending", "pending"]
+    assert not all(state.delivered(f"lottery:started:{case.case_id}") for case in batch.cases)
+    retry = build_rakuten_batches(state, [batch.cases[0]], CONFIG, TODAY)[0]
+    _, resumed_discord = adapters()
+    sync_rakuten_batch(state, calendar, resumed_discord, retry)
+    assert [call.args[1] for call in resumed_discord.send.call_args_list] == list(parts[1:])
+    assert [call.args[0] for call in resumed_discord.send.call_args_list] == [
+        "【抽選】楽天ブックス／全200種・2/3", "【抽選】楽天ブックス／全200種・3/3",
+    ]
+    assert state.data["delivery_journal"][f"{batch.sync_key}:notification"]["status"] == "complete"
+    sync_rakuten_batch(MonitorState.load(state.path), calendar, resumed_discord, retry)
+    assert resumed_discord.send.call_count == 2
+
+
+def test_new_items_during_partial_delivery_finish_old_parts_then_notify_only_additions(tmp_path):
+    state = MonitorState(tmp_path / "state.json")
+    batch = build_rakuten_batches(state, products(100), CONFIG, TODAY)[0]
+    calendar, discord = adapters()
+    discord.send.side_effect = [{"status": "sent"}, RuntimeError("送信失敗")]
+    with pytest.raises(RuntimeError, match="送信失敗"):
+        sync_rakuten_batch(state, calendar, discord, batch)
+    state = MonitorState.load(state.path)
+    updated = build_rakuten_batches(state, products(105)[100:], CONFIG, TODAY)[0]
+    _, retry_discord = adapters()
+    sync_rakuten_batch(state, calendar, retry_discord, updated)
+    assert [call.args[0] for call in retry_discord.send.call_args_list] == [
+        "【抽選】楽天ブックス／全100種・2/2", "【抽選】楽天ブックス／全105種（追加5種）",
+    ]
+    assert retry_discord.send.call_args_list[-1].args[1].count(
+        "https://books.rakuten.co.jp/rb/",
+    ) == 5
+    assert all(state.delivered(f"lottery:started:{case.case_id}") for case in updated.cases)
+
+
+def test_split_counts_emoji_conservatively_and_never_breaks_a_url():
+    url = "https://books.rakuten.co.jp/rb/10000000/"
+    text = "😀" * 1900 + "\n" + url
+    parts = split_discord_description(text)
+    assert len(parts) == 2 and "".join(parts) == text
+    assert all(discord_text_length(part) <= DISCORD_SAFE_DESCRIPTION_LIMIT for part in parts)
+    assert any(url in part.splitlines() for part in parts)
+    # URLの文字数ちょうどで分割してもURL自体は割らない。
+    parts = split_discord_description(url + "\n次の行", limit=len(url))
+    assert parts[0] == url and "".join(parts) == url + "\n次の行"
+    with pytest.raises(ValueError, match="URL"):
+        split_discord_description(url, limit=10)
