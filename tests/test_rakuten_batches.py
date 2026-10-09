@@ -104,6 +104,8 @@ def test_actual_saved_six_records_become_five_urls_without_renotification(tmp_pa
     sync_rakuten_batch(state, calendar, discord, batch)
     discord.send.assert_not_called()
     assert calendar.delete_owned_event.call_count == 6
+    assert all(call.kwargs["expected_day"] == date(2026, 10, 14)
+               for call in calendar.delete_owned_event.call_args_list)
     assert calendar.reconcile.call_args.args[2] == "【抽選】楽天ブックス／全5種"
     assert calendar.reconcile.call_args.args[3] == datetime(2026, 10, 14, 10, tzinfo=JST)
     assert batch.description.count("https://books.rakuten.co.jp/rb/") == 5

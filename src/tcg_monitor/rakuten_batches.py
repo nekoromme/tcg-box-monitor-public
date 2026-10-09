@@ -173,8 +173,9 @@ def _cleanup_individual_events(
                 result = calendar.delete_owned_event(
                     event_id, kind="lottery",
                     internal_id=state.calendar_case_identity(case.case_id),
+                    expected_day=batch.day,
                 )
-                if result.get("status") not in {"deleted", "not_found"}:
+                if result.get("status") not in {"deleted", "not_found", "retained_other_day"}:
                     raise RuntimeError(f"楽天ブックスの商品別予定の整理が未完了: {result}")
                 # 旧版で同じ予定IDを使った過去の別表記も再作成しない。
                 # 新しい応募日はgrouped_dayより後なら通常の処理に戻れる。
@@ -189,13 +190,14 @@ def _cleanup_individual_events(
         # 商品別の履歴移行で残っていた余分な予定も同じ整理対象に含める。
         migration = state.data.get("case_id_migrations", {}).get(case.case_id, {})
         for duplicate in migration.get("duplicate_calendar_events", {}).values():
-            if duplicate.get("status") in {"deleted", "not_found"}:
+            if duplicate.get("status") in {"deleted", "not_found", "retained_other_day"}:
                 continue
             result = calendar.delete_owned_event(
                 str(duplicate["event_id"]), kind="lottery",
                 internal_id=str(duplicate["internal_id"]),
+                expected_day=batch.day,
             )
-            if result.get("status") not in {"deleted", "not_found"}:
+            if result.get("status") not in {"deleted", "not_found", "retained_other_day"}:
                 raise RuntimeError(f"楽天ブックスの旧重複予定の整理が未完了: {result}")
             duplicate["status"] = result["status"]
             state.save()

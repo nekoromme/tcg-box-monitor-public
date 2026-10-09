@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date
 from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, call
@@ -118,6 +119,29 @@ def test_delete_owned_event_refuses_identity_mismatch(
         )
 
     assert not events.delete_calls
+
+
+@pytest.mark.parametrize(("start", "status"), [
+    ({"dateTime": "2026-08-27T10:00:00+09:00"}, "retained_other_day"),
+    ({"dateTime": "2026-10-14T10:00:00+09:00"}, "deleted"),
+    ({"dateTime": "2026-10-13T17:00:00Z"}, "deleted"),
+    ({"date": "2026-10-14"}, "deleted"),
+    ({}, "retained_other_day"),
+])
+def test_batch_cleanup_preserves_other_days_and_requires_readable_japan_date(
+    monkeypatch, start, status,
+):
+    monkeypatch.setenv("GOOGLE_SERVICE_ACCOUNT_JSON", "{}")
+    events = _Events({
+        "start": start,
+        "extendedProperties": {"private": {"kind": "lottery", "internal_id": "test-id"}},
+    })
+    adapter = CalendarAdapter(calendar_id="calendar@example.com")
+    adapter._service = _Service(events)
+    result = adapter.delete_owned_event("test-event", kind="lottery", internal_id="test-id",
+                                        expected_day=date(2026, 10, 14))
+    assert result["status"] == status
+    assert bool(events.delete_calls) == (status == "deleted")
 
 
 def _false_positive_state(path: Path) -> MonitorState:
