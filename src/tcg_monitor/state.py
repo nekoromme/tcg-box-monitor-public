@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from tcg_monitor.game_modes import LEGACY_ENABLED_GAME_IDS
 from tcg_monitor.identity import (
@@ -396,6 +397,20 @@ class MonitorState:
             if (case.application_round and raw_record.get("application_round")
                     and raw_record["application_round"] != case.application_round):
                 continue
+            if case.retailer_id == "rakuten_books":
+                # 商品URLが共通でも、確定した開始日が違えば別の抽選。
+                # 同日分の旧IDは引き継ぎ、開始日不明からの補完は従来どおり。
+                old_start_at = _timestamp(raw_record.get("start_at"))
+                start_day = (case.start_at.astimezone(ZoneInfo("Asia/Tokyo")).date()
+                             if isinstance(case.start_at, datetime) and case.start_at.tzinfo
+                             else case.start_at.date() if isinstance(case.start_at, datetime)
+                             else case.start_at)
+                unknown_start = OBSERVED_START_METHODS & {
+                    case.extraction_method, str(raw_record.get("extraction_method") or ""),
+                }
+                if (old_start_at is not None and not unknown_start
+                        and old_start_at.astimezone(ZoneInfo("Asia/Tokyo")).date() != start_day):
+                    continue
             same_sale_end = case.end_at is not None and (
                 str(raw_record.get("end_at") or "")[:10] == case.end_at.isoformat()[:10]
             )
