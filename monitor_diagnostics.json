@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "code_sha": "71dc352c1a844891d587609121c66911e8a56610",
-  "recorded_at": "2026-10-09T12:54:48.894948+00:00",
+  "recorded_at": "2026-10-09T17:40:01.458852+00:00",
   "armed": true,
   "last_run_summary": {
-    "alerts": 4,
+    "alerts": 2,
     "degraded_monitors": 1,
-    "duration_ms": 907513,
+    "duration_ms": 864038,
     "enabled_game_ids": [
       "dragon_ball_fusion_world",
       "gundam_card",
@@ -15,7 +15,7 @@
       "pokemon_card",
       "yu_gi_oh"
     ],
-    "failed_monitors": 5,
+    "failed_monitors": 2,
     "monitored_source_ids": [
       "clabo_release_calendar",
       "dragonball_official_products",
@@ -92,9 +92,9 @@
     ],
     "new_lotteries": 0,
     "new_releases": 0,
-    "recorded_at": "2026-10-09T12:54:39.082830+00:00",
-    "source_failures": 6,
-    "successful_monitors": 66
+    "recorded_at": "2026-10-09T17:39:35.984681+00:00",
+    "source_failures": 3,
+    "successful_monitors": 69
   },
   "seen_cases": {
     "00095fb3bb820b598898f5dc905458f4efaaae38ea45aeb9262ec9af1051a2f6": {
@@ -2280,25 +2280,6 @@
       "source_url": "https://x.com/Batoloco_1852/status/2097598132741968093",
       "start_at": "2026-09-09"
     },
-    "4d8241edd761f601056524c707cb4bc762c6dae3bc556d051763889b9ee97803": {
-      "application_round": "",
-      "canonical_product_key": "ブースターパック「ハイペリアシティ」",
-      "case_id": "4d8241edd761f601056524c707cb4bc762c6dae3bc556d051763889b9ee97803",
-      "confidence": "high",
-      "end_at": null,
-      "extraction_method": "yahoo_realtime_official_sale_period",
-      "game_id": "lorcana",
-      "official_url": "https://www.takaratomy.co.jp/products/disneylorcana/product/hyperia-city/booster-pack/",
-      "opportunity_kind": "direct_sale",
-      "product_category": "ブースターパック",
-      "product_name": "ブースターパック「ハイペリアシティ」",
-      "result_at": null,
-      "retailer_id": "lorcana_official",
-      "retailer_name": "ディズニーロルカナ公式",
-      "source_tier": "official_indirect",
-      "source_url": "https://x.com/DisneyLOR_JP/status/2100857510114795972",
-      "start_at": "2026-09-24"
-    },
     "4db7d0d313aaeb7ce46696c8610e262fe6cf07b5e367d6b7d5009ee1864a6ec8": {
       "canonical_product_key": "拡張パック「30thCELEBRATION」",
       "case_id": "4db7d0d313aaeb7ce46696c8610e262fe6cf07b5e367d6b7d5009ee1864a6ec8",
@@ -2457,6 +2438,25 @@
       "source_tier": "official_indirect",
       "source_url": "https://x.com/BMike_pokemon/status/2095771151385690507",
       "start_at": "2026-09-04"
+    },
+    "53908a133c5bc058dbb692e2abefeca26a1a504e2f72576d379c343aa535b894": {
+      "application_round": "",
+      "canonical_product_key": "ディズニー・ロルカナ・TCG日本語版ブースターパックハイペリアシティ",
+      "case_id": "53908a133c5bc058dbb692e2abefeca26a1a504e2f72576d379c343aa535b894",
+      "confidence": "high",
+      "end_at": null,
+      "extraction_method": "yahoo_realtime_official_sale_period",
+      "game_id": "lorcana",
+      "official_url": "",
+      "opportunity_kind": "direct_sale",
+      "product_category": "ブースターパック",
+      "product_name": "ディズニー・ロルカナ・TCG日本語版 ブースターパック ハイペリアシティ",
+      "result_at": null,
+      "retailer_id": "lorcana_official",
+      "retailer_name": "ディズニーロルカナ公式",
+      "source_tier": "official_indirect",
+      "source_url": "https://x.com/DisneyLOR_JP/status/2100857510114795972",
+      "start_at": "2026-09-24"
     },
     "5459de0391f753ec5a87fc0d145a3f0151385e1d0d74d3e20ef246a7137d97ed": {
       "canonical_product_key": "拡張パックメガブレイブ",
@@ -7748,7 +7748,7 @@
     },
     "lottery:started:7d4e9f917e45ea36e6cdadb99d21d1af2117cce58c0d0724251270ad3141fbfc": {
       "status": "complete",
-      "updated_at": "2026-10-09T12:54:44.861261+00:00"
+      "updated_at": "2026-10-09T17:39:39.650274+00:00"
     },
     "lottery:started:7e460f64ff4fea30bbb3d2f2ffefe95b1d0cb522d83a7e57885844e79e977f15": {
       "status": "complete",
@@ -9320,7 +9320,7 @@
       "event_id": "tcg4befc5d23f36fd14fc5ffc55ec5db4d92e73f7af639621869b1d4256c742f",
       "payload_hash": "ccc230f76fdadabc081ac293ea3f0c2e2338f2b49d7bd29bad4555315f9400af",
       "status": "updated",
-      "updated_at": "2026-10-09T12:54:41.787571+00:00"
+      "updated_at": "2026-10-09T17:39:38.680161+00:00"
     },
     "lottery:7e460f64ff4fea30bbb3d2f2ffefe95b1d0cb522d83a7e57885844e79e977f15": {
       "event_id": "tcg22886af0ceaa5f0a80aaf2f698742ea5c8cd874807279feb84e5a9788d1bd",
@@ -10260,7 +10260,7 @@
       "event_id": "tcgebfaa05d5ecd6502f5c67131873c4b1e32a92bfed52c8361594b193668291",
       "payload_hash": "425522e792499f6a9ef1edf2e298a1e84f85800acd03ea6b9b312e9fc340e953",
       "status": "updated",
-      "updated_at": "2026-10-09T12:54:40.076415+00:00"
+      "updated_at": "2026-10-09T17:39:36.948031+00:00"
     },
     "release:08dc858f23cb073ae0d527ee5aa81f491fc17d4cce728f25b22f16790e3c5901": {
       "event_id": "tcg0094319be1456d0afeb706a84f45c0bd8822ba720bdb48322a4e1cb80eaa8",
@@ -10469,7 +10469,7 @@
       "legacy_ids": [
         "7d4e9f917e45ea36e6cdadb99d21d1af2117cce58c0d0724251270ad3141fbfc"
       ],
-      "migrated_at": "2026-10-09T12:54:39.044821+00:00"
+      "migrated_at": "2026-10-09T17:39:35.949917+00:00"
     },
     "109390b83504f095c2ff4a96e5135360e2145bb0d5daf0fd97d79be8cb6d4bed": {
       "calendar_identity": "d420953260bd3cea9d25f7f81534d8f984a6b4f601de8f5714a7ee0421d3de19",
@@ -10877,7 +10877,7 @@
       "legacy_ids": [
         "4d8241edd761f601056524c707cb4bc762c6dae3bc556d051763889b9ee97803"
       ],
-      "migrated_at": "2026-10-08T07:50:04.502860+00:00"
+      "migrated_at": "2026-10-09T17:39:35.757468+00:00"
     },
     "549f07741c26969921893f10075c5a4c0b8c5098cafd4098ebb14b2e50759ddb": {
       "calendar_identity": "7c3d305bac927141a9170a79ad488d858b1233c34c44575821d3ed4a30f1b9af",
@@ -11067,7 +11067,7 @@
         },
         "lottery:started:7d4e9f917e45ea36e6cdadb99d21d1af2117cce58c0d0724251270ad3141fbfc": {
           "status": "complete",
-          "updated_at": "2026-10-09T12:25:08.835804+00:00"
+          "updated_at": "2026-10-09T12:54:44.861261+00:00"
         }
       },
       "legacy_id": "0f999bac95a67644a86b6cd49f7ef218642699e851c9f89ae149baa734dc8331",
@@ -11075,7 +11075,7 @@
         "0f999bac95a67644a86b6cd49f7ef218642699e851c9f89ae149baa734dc8331",
         "7d4e9f917e45ea36e6cdadb99d21d1af2117cce58c0d0724251270ad3141fbfc"
       ],
-      "migrated_at": "2026-10-09T12:54:39.041867+00:00"
+      "migrated_at": "2026-10-09T17:39:35.947292+00:00"
     },
     "7ee02518d67e5f36fde7cdecd34144c58281ab1a94cf39879c194a8bb65bfd8a": {
       "calendar_identity": "7ee02518d67e5f36fde7cdecd34144c58281ab1a94cf39879c194a8bb65bfd8a",
@@ -11777,24 +11777,24 @@
   },
   "monitors": {
     "clabo_release_calendar": {
-      "outcome": "failed",
-      "last_success_at": "2026-10-09T12:09:22.090399+00:00",
-      "last_candidate_at": "2026-10-09T12:09:22.090399+00:00",
-      "consecutive_failures": 1,
-      "http_status": null,
+      "outcome": "success",
+      "last_success_at": "2026-10-09T17:25:21.929403+00:00",
+      "last_candidate_at": "2026-10-09T17:25:21.929403+00:00",
+      "consecutive_failures": 0,
+      "http_status": 200,
       "fetch_method": "http"
     },
     "dragonball_official_products": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:40:41.820439+00:00",
-      "last_candidate_at": "2026-10-09T12:40:41.820439+00:00",
+      "last_success_at": "2026-10-09T17:25:32.006059+00:00",
+      "last_candidate_at": "2026-10-09T17:25:32.006059+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "dragonball_official_store": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:43:10.467053+00:00",
+      "last_success_at": "2026-10-09T17:28:16.236396+00:00",
       "last_candidate_at": "2026-09-27T14:38:02.590089+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -11802,7 +11802,7 @@
     },
     "edion_online_lottery": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:47:12.486578+00:00",
+      "last_success_at": "2026-10-09T17:32:21.456327+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -11810,15 +11810,15 @@
     },
     "furuichi_official_lottery": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:46:42.481769+00:00",
-      "last_candidate_at": "2026-10-09T12:46:42.481769+00:00",
+      "last_success_at": "2026-10-09T17:32:00.190900+00:00",
+      "last_candidate_at": "2026-10-09T17:32:00.190900+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "geo": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:43:22.368313+00:00",
+      "last_success_at": "2026-10-09T17:28:27.921331+00:00",
       "last_candidate_at": "2026-10-01T10:04:15.612381+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -11826,15 +11826,15 @@
     },
     "gundam_official_products": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:42:24.062653+00:00",
-      "last_candidate_at": "2026-10-09T12:42:24.062653+00:00",
+      "last_success_at": "2026-10-09T17:27:21.695875+00:00",
+      "last_candidate_at": "2026-10-09T17:27:21.695875+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "hobbylink_japan_lottery": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:47:13.306047+00:00",
+      "last_success_at": "2026-10-09T17:32:22.256590+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -11842,7 +11842,7 @@
     },
     "itoyokado_online_lottery": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:47:12.939338+00:00",
+      "last_success_at": "2026-10-09T17:32:21.896282+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -11850,7 +11850,7 @@
     },
     "kojima": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:45:03.559162+00:00",
+      "last_success_at": "2026-10-09T17:29:59.710394+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -11858,63 +11858,63 @@
     },
     "livepocket_hobby_station": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:45:48.138182+00:00",
-      "last_candidate_at": "2026-10-09T12:45:48.138182+00:00",
+      "last_success_at": "2026-10-09T17:30:43.674849+00:00",
+      "last_candidate_at": "2026-10-09T17:30:43.674849+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "lorcana_official_products": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:42:21.380830+00:00",
-      "last_candidate_at": "2026-10-09T12:42:21.380830+00:00",
+      "last_success_at": "2026-10-09T17:27:19.030401+00:00",
+      "last_candidate_at": "2026-10-09T17:27:19.030401+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "namco_onepiece_official_shop_miyagi": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:53:04.489366+00:00",
-      "last_candidate_at": "2026-10-09T12:53:04.489366+00:00",
+      "last_success_at": "2026-10-09T17:37:57.456265+00:00",
+      "last_candidate_at": "2026-10-09T17:37:57.456265+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "nyuka_now_fullcomp_livepocket": {
-      "outcome": "failed",
-      "last_success_at": "2026-10-09T12:15:05.203150+00:00",
-      "last_candidate_at": "2026-10-09T12:15:05.203150+00:00",
-      "consecutive_failures": 1,
-      "http_status": null,
+      "outcome": "success",
+      "last_success_at": "2026-10-09T17:30:57.098665+00:00",
+      "last_candidate_at": "2026-10-09T17:30:57.098665+00:00",
+      "consecutive_failures": 0,
+      "http_status": 200,
       "fetch_method": "http"
     },
     "onepiece_official_products": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:40:34.521753+00:00",
-      "last_candidate_at": "2026-10-09T12:40:34.521753+00:00",
+      "last_success_at": "2026-10-09T17:25:24.589334+00:00",
+      "last_candidate_at": "2026-10-09T17:25:24.589334+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "onepiece_official_shop_news": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:42:59.059309+00:00",
-      "last_candidate_at": "2026-10-09T12:42:59.059309+00:00",
+      "last_success_at": "2026-10-09T17:28:04.255668+00:00",
+      "last_candidate_at": "2026-10-09T17:28:04.255668+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "onepiece_official_topics": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:40:39.154948+00:00",
-      "last_candidate_at": "2026-10-09T12:40:39.154948+00:00",
+      "last_success_at": "2026-10-09T17:25:29.305195+00:00",
+      "last_candidate_at": "2026-10-09T17:25:29.305195+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "pokemon_official_products": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:39:33.657877+00:00",
+      "last_success_at": "2026-10-09T17:25:14.130933+00:00",
       "last_candidate_at": "2026-09-16T14:02:46.781082+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -11922,7 +11922,7 @@
     },
     "premium_bandai_dragonball": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:43:00.331863+00:00",
+      "last_success_at": "2026-10-09T17:28:05.443004+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -11930,48 +11930,48 @@
     },
     "premium_bandai_onepiece": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:45:47.772929+00:00",
-      "last_candidate_at": "2026-10-09T12:45:47.772929+00:00",
+      "last_success_at": "2026-10-09T17:30:43.310601+00:00",
+      "last_candidate_at": "2026-10-09T17:30:43.310601+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "rakuten_books": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:44:32.576073+00:00",
-      "last_candidate_at": "2026-10-09T12:44:32.576073+00:00",
+      "last_success_at": "2026-10-09T17:29:25.894480+00:00",
+      "last_candidate_at": "2026-10-09T17:29:25.894480+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "secondary_onepiece_news": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:54:24.044291+00:00",
-      "last_candidate_at": "2026-10-09T12:54:24.044291+00:00",
+      "last_success_at": "2026-10-09T17:39:16.814497+00:00",
+      "last_candidate_at": "2026-10-09T17:39:16.814497+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "secondary_pokeget_news": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:54:09.809688+00:00",
-      "last_candidate_at": "2026-10-09T12:54:09.809688+00:00",
+      "last_success_at": "2026-10-09T17:39:08.355309+00:00",
+      "last_candidate_at": "2026-10-09T17:39:08.355309+00:00",
       "consecutive_failures": 0,
-      "http_status": 200,
-      "fetch_method": "fxembed_public"
+      "http_status": 404,
+      "fetch_method": "http"
     },
     "snkrdunk_onepiece": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:45:44.635826+00:00",
-      "last_candidate_at": "2026-10-09T12:45:44.635826+00:00",
+      "last_success_at": "2026-10-09T17:30:40.158074+00:00",
+      "last_candidate_at": "2026-10-09T17:30:40.158074+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "snkrdunk_pokemon": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:45:27.696771+00:00",
-      "last_candidate_at": "2026-10-09T12:45:27.696771+00:00",
+      "last_success_at": "2026-10-09T17:30:23.482009+00:00",
+      "last_candidate_at": "2026-10-09T17:30:23.482009+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
@@ -11980,21 +11980,21 @@
       "outcome": "failed",
       "last_success_at": "2026-10-07T23:43:25.061240+00:00",
       "last_candidate_at": "2026-09-30T23:39:03.739755+00:00",
-      "consecutive_failures": 8,
+      "consecutive_failures": 9,
       "http_status": 429,
       "fetch_method": "http"
     },
     "yahoo_realtime_batoloco_morioka": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:53:28.068365+00:00",
-      "last_candidate_at": "2026-10-09T12:53:28.068365+00:00",
+      "last_success_at": "2026-10-09T17:38:20.943227+00:00",
+      "last_candidate_at": "2026-10-09T17:38:20.943227+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_batoloco_sendai": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:53:40.001088+00:00",
+      "last_success_at": "2026-10-09T17:38:32.874882+00:00",
       "last_candidate_at": "2026-09-22T14:08:53.516103+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12002,15 +12002,15 @@
     },
     "yahoo_realtime_dmm_myca": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:48:31.697952+00:00",
-      "last_candidate_at": "2026-10-09T12:48:31.697952+00:00",
+      "last_success_at": "2026-10-09T17:33:43.323505+00:00",
+      "last_candidate_at": "2026-10-09T17:33:43.323505+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_dmm_tsuhan": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:48:23.626140+00:00",
+      "last_success_at": "2026-10-09T17:33:25.368704+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12018,7 +12018,7 @@
     },
     "yahoo_realtime_donki_official": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:43:36.481070+00:00",
+      "last_success_at": "2026-10-09T17:28:37.874565+00:00",
       "last_candidate_at": "2026-10-04T13:42:33.290681+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12026,7 +12026,7 @@
     },
     "yahoo_realtime_dragonball_official_store": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:43:12.903755+00:00",
+      "last_success_at": "2026-10-09T17:28:18.701324+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12034,39 +12034,39 @@
     },
     "yahoo_realtime_dragonstar_online": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:48:09.066438+00:00",
-      "last_candidate_at": "2026-10-09T12:48:09.066438+00:00",
+      "last_success_at": "2026-10-09T17:33:16.255172+00:00",
+      "last_candidate_at": "2026-10-09T17:33:16.255172+00:00",
       "consecutive_failures": 0,
-      "http_status": 404,
-      "fetch_method": "http"
+      "http_status": 200,
+      "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_edion": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:48:43.711518+00:00",
+      "last_success_at": "2026-10-09T17:33:51.394692+00:00",
       "last_candidate_at": "2026-10-09T12:48:43.711518+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_famima": {
-      "outcome": "failed",
-      "last_success_at": "2026-10-09T12:18:29.132307+00:00",
+      "outcome": "success",
+      "last_success_at": "2026-10-09T17:34:03.767862+00:00",
       "last_candidate_at": null,
-      "consecutive_failures": 1,
-      "http_status": 404,
-      "fetch_method": "http"
+      "consecutive_failures": 0,
+      "http_status": 200,
+      "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_fullcomp_sendai": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:52:22.781202+00:00",
-      "last_candidate_at": "2026-10-09T12:52:22.781202+00:00",
+      "last_success_at": "2026-10-09T17:37:08.027787+00:00",
+      "last_candidate_at": "2026-10-09T17:37:08.027787+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_furuichi": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:46:57.004809+00:00",
+      "last_success_at": "2026-10-09T17:32:08.497791+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12074,15 +12074,15 @@
     },
     "yahoo_realtime_geo_official": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:43:56.656457+00:00",
-      "last_candidate_at": "2026-10-09T12:43:56.656457+00:00",
+      "last_success_at": "2026-10-09T17:28:51.797447+00:00",
+      "last_candidate_at": "2026-10-09T17:28:51.797447+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_great_yorozuya_morioka": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:51:26.076589+00:00",
+      "last_success_at": "2026-10-09T17:36:14.855828+00:00",
       "last_candidate_at": "2026-09-22T14:06:43.300707+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12090,7 +12090,7 @@
     },
     "yahoo_realtime_hmv": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:47:11.512939+00:00",
+      "last_success_at": "2026-10-09T17:32:20.493535+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12098,15 +12098,15 @@
     },
     "yahoo_realtime_hobby_station_official": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:54:37.718688+00:00",
-      "last_candidate_at": "2026-10-09T12:54:37.718688+00:00",
+      "last_success_at": "2026-10-09T17:39:34.597149+00:00",
+      "last_candidate_at": "2026-10-09T17:39:34.597149+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_hobbylink_japan": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:47:19.576913+00:00",
+      "last_success_at": "2026-10-09T17:32:37.558474+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12114,7 +12114,7 @@
     },
     "yahoo_realtime_kids_republic_official": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:44:56.173821+00:00",
+      "last_success_at": "2026-10-09T17:29:52.433187+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12122,7 +12122,7 @@
     },
     "yahoo_realtime_konami_style": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:42:26.724859+00:00",
+      "last_success_at": "2026-10-09T17:27:29.955682+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12130,15 +12130,15 @@
     },
     "yahoo_realtime_lorcana_official": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:42:38.598762+00:00",
-      "last_candidate_at": "2026-10-09T12:42:38.598762+00:00",
+      "last_success_at": "2026-10-09T17:27:43.860584+00:00",
+      "last_candidate_at": "2026-10-09T17:27:43.860584+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_magi_sendai": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:52:14.048376+00:00",
+      "last_success_at": "2026-10-09T17:36:56.300443+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12146,7 +12146,7 @@
     },
     "yahoo_realtime_mandai_furukawa": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:51:38.532718+00:00",
+      "last_success_at": "2026-10-09T17:36:26.112606+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12154,15 +12154,15 @@
     },
     "yahoo_realtime_mint_sendai": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:50:00.368716+00:00",
-      "last_candidate_at": "2026-10-09T12:50:00.368716+00:00",
+      "last_success_at": "2026-10-09T17:34:57.326883+00:00",
+      "last_candidate_at": "2026-10-09T17:34:57.326883+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_nojima_online": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:47:45.674824+00:00",
+      "last_success_at": "2026-10-09T17:33:04.645536+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12170,39 +12170,39 @@
     },
     "yahoo_realtime_onepiece_premium_bandai": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:46:14.795226+00:00",
-      "last_candidate_at": "2026-10-09T12:46:14.795226+00:00",
+      "last_success_at": "2026-10-09T17:31:23.348086+00:00",
+      "last_candidate_at": "2026-10-09T17:31:23.348086+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_pokedou_kitakami": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:52:46.389957+00:00",
+      "last_success_at": "2026-10-09T17:37:40.152516+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_pokedou_morioka": {
-      "outcome": "success",
+      "outcome": "failed",
       "last_success_at": "2026-10-09T12:52:34.556351+00:00",
       "last_candidate_at": null,
-      "consecutive_failures": 0,
-      "http_status": 200,
-      "fetch_method": "fxembed_public"
+      "consecutive_failures": 1,
+      "http_status": 404,
+      "fetch_method": "http"
     },
     "yahoo_realtime_pokemon_center_store": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:44:10.645327+00:00",
-      "last_candidate_at": "2026-10-09T12:44:10.645327+00:00",
+      "last_success_at": "2026-10-09T17:29:04.486473+00:00",
+      "last_candidate_at": "2026-10-09T17:29:04.486473+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_premium_bandai_onepiece": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:45:56.939817+00:00",
+      "last_success_at": "2026-10-09T17:31:05.392602+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12210,15 +12210,15 @@
     },
     "yahoo_realtime_seagull_common": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:46:38.759585+00:00",
-      "last_candidate_at": "2026-10-09T12:46:38.759585+00:00",
+      "last_success_at": "2026-10-09T17:31:56.496349+00:00",
+      "last_candidate_at": "2026-10-09T17:31:56.496349+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_seven_net": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:47:37.322122+00:00",
+      "last_success_at": "2026-10-09T17:32:49.680247+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12226,7 +12226,7 @@
     },
     "yahoo_realtime_tcgpit_sendai": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:53:51.951352+00:00",
+      "last_success_at": "2026-10-09T17:38:44.506266+00:00",
       "last_candidate_at": "2026-09-05T22:57:43.869237+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12234,7 +12234,7 @@
     },
     "yahoo_realtime_toreca_douraku_sendai": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:51:56.781541+00:00",
+      "last_success_at": "2026-10-09T17:36:44.515696+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12242,39 +12242,39 @@
     },
     "yahoo_realtime_torecano_mizusawa": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:50:31.431835+00:00",
-      "last_candidate_at": "2026-10-09T12:50:31.431835+00:00",
+      "last_success_at": "2026-10-09T17:35:26.660362+00:00",
+      "last_candidate_at": "2026-10-09T17:35:26.660362+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_torecaplaza55": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:46:27.690905+00:00",
+      "last_success_at": "2026-10-09T17:31:47.288878+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_tsutaya_akebono": {
-      "outcome": "failed",
-      "last_success_at": "2026-10-09T12:18:37.844481+00:00",
+      "outcome": "success",
+      "last_success_at": "2026-10-09T17:34:15.828377+00:00",
       "last_candidate_at": "2026-10-07T11:32:41.303805+00:00",
-      "consecutive_failures": 1,
+      "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
     },
     "yahoo_realtime_tsutaya_ichinoseki": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:49:36.851990+00:00",
-      "last_candidate_at": "2026-10-09T12:49:36.851990+00:00",
+      "last_success_at": "2026-10-09T17:34:27.218163+00:00",
+      "last_candidate_at": "2026-10-09T17:34:27.218163+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_tsutaya_ichinoseki_store": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:50:23.272561+00:00",
+      "last_success_at": "2026-10-09T17:35:18.299669+00:00",
       "last_candidate_at": "2026-09-27T14:45:02.068452+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12282,23 +12282,23 @@
     },
     "yahoo_realtime_tsutaya_nakazato": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:50:43.338326+00:00",
-      "last_candidate_at": "2026-10-09T12:50:43.338326+00:00",
+      "last_success_at": "2026-10-09T17:35:38.800729+00:00",
+      "last_candidate_at": "2026-10-09T17:35:38.800729+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_tsutaya_sanuma": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:49:48.585389+00:00",
-      "last_candidate_at": "2026-10-09T12:49:48.585389+00:00",
+      "last_success_at": "2026-10-09T17:34:38.887002+00:00",
+      "last_candidate_at": "2026-10-09T17:34:38.887002+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "fxembed_public"
     },
     "yahoo_realtime_tsutaya_tsukidate": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:52:57.880259+00:00",
+      "last_success_at": "2026-10-09T17:37:50.839839+00:00",
       "last_candidate_at": "2026-09-06T07:06:00.690365+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12306,7 +12306,7 @@
     },
     "yahoo_realtime_yodobashi": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:44:47.858424+00:00",
+      "last_success_at": "2026-10-09T17:29:43.029992+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12314,7 +12314,7 @@
     },
     "yahoo_realtime_yorozuya_morioka": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:51:14.648750+00:00",
+      "last_success_at": "2026-10-09T17:36:02.222508+00:00",
       "last_candidate_at": "2026-09-05T14:50:56.963261+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12322,7 +12322,7 @@
     },
     "yahoo_realtime_yorozuya_shiwa": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:51:06.107769+00:00",
+      "last_success_at": "2026-10-09T17:35:50.584471+00:00",
       "last_candidate_at": "2026-09-05T14:50:44.258684+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12330,7 +12330,7 @@
     },
     "yamada_denki": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:44:59.827761+00:00",
+      "last_success_at": "2026-10-09T17:29:56.061315+00:00",
       "last_candidate_at": null,
       "consecutive_failures": 0,
       "http_status": 200,
@@ -12344,14 +12344,14 @@
       ],
       "last_success_at": null,
       "last_candidate_at": null,
-      "consecutive_failures": 410,
+      "consecutive_failures": 411,
       "http_status": null,
       "fetch_method": "http"
     },
     "yugioh_official_products": {
       "outcome": "success",
-      "last_success_at": "2026-10-09T12:40:53.170772+00:00",
-      "last_candidate_at": "2026-10-09T12:40:53.170772+00:00",
+      "last_success_at": "2026-10-09T17:25:42.953372+00:00",
+      "last_candidate_at": "2026-10-09T17:25:42.953372+00:00",
       "consecutive_failures": 0,
       "http_status": 200,
       "fetch_method": "http"
