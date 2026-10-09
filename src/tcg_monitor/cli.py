@@ -46,6 +46,7 @@ from tcg_monitor.models import (
 from tcg_monitor.parsers.local_lottery import preserve_first_detection_start
 from tcg_monitor.pipeline import run_pipeline
 from tcg_monitor.purchase_review import run_purchase_reviews
+from tcg_monitor.rakuten_batches import already_grouped, build_rakuten_batches, sync_rakuten_batch
 from tcg_monitor.release_sources import is_accepted_release, is_trusted_retailer_release
 from tcg_monitor.result_date import RESULT_REMINDER_RETAILERS
 from tcg_monitor.source_groups import active_source_filter
@@ -1360,6 +1361,17 @@ def main(argv: list[str] | None = None) -> int:
             )
         return 0
 
+    if args.cmd == "run" and state.data.get("armed") and "rakuten_books" in source_filter:
+        # 既に分かっている楽天の未来予定は、全監視先の巡回を待たずに整理する。
+        # この後の通常処理でも同じ予定・配信履歴を使うので通知は増えない。
+        saved_batches = build_rakuten_batches(
+            state, [], config, datetime.now(ZoneInfo(config.timezone)).date(),
+        )
+        if saved_batches:
+            saved_calendar, saved_discord = CalendarAdapter(), DiscordAdapter()
+            for batch in saved_batches:
+                sync_rakuten_batch(state, saved_calendar, saved_discord, batch)
+
     cases, releases, alerts = run_pipeline(
         config,
         args.fixture_dir,
@@ -1435,8 +1447,15 @@ def main(argv: list[str] | None = None) -> int:
         today = detected_at.date()
         last_day = today + timedelta(days=int(config.system.get("max_future_days", 365)))
         late_grace_days = int(config.system.get("lottery_late_detection_grace_days", 1))
+        rakuten_batches = build_rakuten_batches(
+            state, cases, config, today, include_saved="rakuten_books" in source_filter,
+        )
+        grouped_case_ids = {case.case_id for batch in rakuten_batches for case in batch.cases}
+        for batch in rakuten_batches:
+            sync_rakuten_batch(state, calendar, discord, batch)
         for case in cases:
-            if case.case_id in baseline_case_ids:
+            if (case.case_id in baseline_case_ids or case.case_id in grouped_case_ids
+                    or already_grouped(state, case)):
                 continue
             previous_case = state.data["seen_cases"].get(case.case_id, {})
             _remember_case(state, case)

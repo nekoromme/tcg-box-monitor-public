@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from hashlib import sha256
 from typing import Any
+from zoneinfo import ZoneInfo
 
 # Google Calendarのイベント色「Tomato」。公式例でも赤背景として使われるID。
 RELEASE_EVENT_COLOR_ID = "11"
@@ -381,6 +382,7 @@ class CalendarAdapter:
         *,
         kind: str,
         internal_id: str,
+        expected_day: date | None = None,
     ) -> dict[str, str]:
         """Delete one monitor-owned event after verifying its private identity."""
 
@@ -421,6 +423,20 @@ class CalendarAdapter:
             raise RuntimeError(
                 "削除対象のGoogle Calendar予定が監視状態の識別情報と一致しません"
             )
+
+        if expected_day is not None:
+            # 同日分の集約では、旧版で予定IDを使い回した過去の別日まで消さない。
+            # 実際のGoogle予定の日付を確認し、確認できないものも保存しておく。
+            start = event.get("start", {})
+            raw_start = str(start.get("dateTime") or start.get("date") or "")
+            try:
+                parsed_start = datetime.fromisoformat(raw_start)
+                actual_day = (parsed_start.astimezone(ZoneInfo("Asia/Tokyo")).date()
+                              if parsed_start.tzinfo else parsed_start.date())
+            except ValueError:
+                actual_day = None
+            if actual_day != expected_day:
+                return {"status": "retained_other_day", "event_id": event_id}
 
         try:
             service.events().delete(

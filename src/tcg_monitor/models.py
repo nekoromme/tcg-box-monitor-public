@@ -7,6 +7,7 @@ from enum import StrEnum
 from hashlib import sha256
 from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from zoneinfo import ZoneInfo
 
 
 def stable_url_identity(value: str) -> str:
@@ -333,6 +334,16 @@ class LotteryCase:
             self.canonical_product_key,
             article_identity,
         ]
+        if self.retailer_id == "rakuten_books" and self.opportunity_kind == OpportunityKind.LOTTERY:
+            # 楽天は商品ページを次回抽選にも再利用する。日付を識別子へ含めて、
+            # 前回の通知済み履歴や集約予定で次回の抽選を抑制しない。
+            start_day = (
+                self.start_at.astimezone(ZoneInfo("Asia/Tokyo")).date()
+                if isinstance(self.start_at, datetime) and self.start_at.tzinfo
+                else self.start_at.date() if isinstance(self.start_at, datetime)
+                else self.start_at
+            )
+            identity_parts.append("rakuten_draw:" + start_day.isoformat())
         if self.application_round:
             # 同じ通販URLで行われる1次・2次の抽選を別の応募機会として保存する。
             identity_parts.append(self.application_round)
