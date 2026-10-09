@@ -170,3 +170,13 @@
 - 条件維持：登録38／有効31／停止7、active pages 77、policy v1（通常105%、通常30thのみ200%）、`monitor-gzip-v1`、sent12・pending0・failed0・連続送信失敗0。
 - メディアワールドは一覧HTTP429で店舗別待機中（success 67 / failure 1）。商品ページのcurrent failuresは0、全体healthは正常。売切れ誤判定・頻度引上げ・制限回避はしていない。
 - 判断：竜のしっぽは最低24時間観察を正常通過。最終48時間は本日20:16 JSTのため、それまでは次店舗を追加しない。到達後の新しい正常snapshotで最終判定する。
+
+
+## 2026-10-09 13:57 JST 竜のしっぽ48時間前・メディアワールド回復確認
+
+- 実行ID：`20261009045658018Z-exp`。本番コード・通知設定の変更なし。
+- 最新inventory-sync [run 37879741783](https://github.com/nekoromme/tcg-box-monitor-public/actions/runs/37879741783) は12:33 JSTにworkflow_run・attempt 1で成功。health=`ok`、lastCompletedAtは12:33:05 JST、Workerは `0.14.2 / 823986b3a3108ced89e76161b5de01885d066110` でmainと一致。
+- 竜のしっぽ一覧は64回成功・0失敗。quiet・60分を維持。GD01商品1273は5,800円・売切れ・価格条件内、商品ページcurrent failures=0、正常観測637回。
+- メディアワールドは最新一覧が2通信とも成功し、success 69 / failure 0、quiet・60分へ回復。商品ページcurrent failuresも0。再発歴があるため完全解消とは断定せず、通常頻度で継続確認する。
+- 条件維持：登録38／有効31／停止7、active pages 77、policy v1（通常105%、通常30thのみ200%）、`monitor-gzip-v1`、sent12・pending0・failed0・連続送信失敗0。
+- 最新保存は最終48時間の本日20:16 JSTより前。次店舗追加と最終完了は行わず、到達後の新しい正常snapshotで判定する。
