@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09T11:19:23.189Z",
-  "phase": "completion_pending_disable",
+  "updatedAt": "2026-10-09T11:19:48.837Z",
+  "phase": "completed",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
     "title": "カード監視の段階的店舗追加",
@@ -17,10 +17,11 @@
     "reasoningRequested": "極高",
     "modelConfigured": false,
     "modelConfigurationNote": "作成APIにモデル/推論強度指定欄なし。ユーザーによる手動設定待ち。",
-    "provisioningStatus": "enabled_verified",
+    "provisioningStatus": "disabled_after_completion",
     "verifiedAt": "2026-10-04T08:32:06.163Z",
     "schedule": "BEGIN:VEVENT\nDTSTART;TZID=Asia/Tokyo:20261005T080000\nRRULE:FREQ=DAILY;BYHOUR=8,14,20;BYMINUTE=0;BYSECOND=0\nEND:VEVENT",
-    "nextRunTimeReported": null
+    "nextRunTimeReported": null,
+    "disabledAt": "2026-10-09T11:19:37.174Z"
   },
   "scope": {
     "maxConcurrentStoreRollouts": 1,
@@ -82,26 +83,9 @@
     "quotaNote": "Cloudflare実利用量の正規メトリクスは未取得。最新health issuesなし、無料枠停止の証拠なし。",
     "activePages": 77
   },
-  "lease": {
-    "runId": "20261009110049107Z-exp",
-    "acquiredAt": "2026-10-09T11:00:49.107Z",
-    "expiresAt": "2026-10-09T12:30:49.107Z"
-  },
+  "lease": null,
   "activeCandidateId": null,
-  "pendingOperation": {
-    "kind": "automation_disable",
-    "status": "intent_recorded",
-    "automationId": "6ac20ed34a788191a90d7b2627aa8643",
-    "expectedTitle": "カード監視の段階的店舗追加",
-    "verifiedCurrentTask": {
-      "id": "6ac20ed34a788191a90d7b2627aa8643",
-      "title": "カード監視の段階的店舗追加",
-      "isEnabled": true
-    },
-    "reason": "全候補を完了または根拠付き最終保留/除外へ整理し、最後の店舗追加後48時間の正常観察を完了",
-    "latestEvidenceAt": "2026-10-09T11:16:43.117Z",
-    "nextCheck": "この店舗拡張タスクだけis_enabled=falseにし、通常の在庫監視workflowを維持したまま結果をSTATEへ記録する。"
-  },
+  "pendingOperation": null,
   "stabilityWindow": {
     "status": "passed",
     "from": "2026-10-04T10:51:38+09:00",
@@ -626,7 +610,7 @@
   ],
   "lastRun": {
     "id": "20261009110049107Z-exp",
-    "status": "completed_all_candidates_and_recorded_automation_disable_intent",
+    "status": "completed_and_automation_disabled",
     "externalChanges": [
       {
         "kind": "ledger",
@@ -637,14 +621,19 @@
         "runId": 37912122019,
         "attempt": 2,
         "jobId": 113794068314
+      },
+      {
+        "kind": "automation_disable",
+        "automationId": "6ac20ed34a788191a90d7b2627aa8643",
+        "disabledAt": "2026-10-09T11:19:37.174Z"
       }
     ],
-    "notes": "20:16 JSTのpost-48h保存で竜のしっぽ一覧72回成功・0失敗、商品1273は5,800円・売切れ・current failures=0。全体health ok、policy v1、停止7弾、sent12、gzipを維持。全候補を完了または根拠付き最終保留/除外へ整理し、automation IDと現在タスクを照合。無効化intentを記録。メディアワールド一覧429は店舗別待機で全体障害ではない。"
+    "notes": "20:16 JSTのpost-48h保存で竜のしっぽ一覧72回成功・0失敗、商品1273は5,800円・売切れ・current failures=0。全体health ok、policy v1、停止7弾、sent12、gzipを維持。全候補を完了または根拠付き最終保留/除外へ整理し、automation IDと現在タスクを照合。無効化intentを記録。メディアワールド一覧429は店舗別待機で全体障害ではない。 店舗拡張automationのみ無効化成功。通常の在庫監視workflowは継続。"
   },
-  "nextAction": "automation 6ac20ed34a788191a90d7b2627aa8643（カード監視の段階的店舗追加）だけを無効化し、結果をSTATEへ記録。通常の在庫監視workflowは継続。",
+  "nextAction": "段階的店舗追加は完了。通常の在庫監視と新弾自動登録を継続。具体的な新品通常BOXの新規掲載や規約変更が出た場合のみ、別の拡張作業として再開する。",
   "completion": {
-    "status": "disable_intent_recorded",
-    "disabledAt": null,
+    "status": "completed_automation_disabled",
+    "disabledAt": "2026-10-09T11:19:37.174Z",
     "remainingManualItems": [
       {
         "candidateId": "hobby-search",
