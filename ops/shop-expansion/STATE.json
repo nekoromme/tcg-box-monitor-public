@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09T11:00:49.107Z",
+  "updatedAt": "2026-10-09T11:15:49.293Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -90,7 +90,7 @@
   "activeCandidateId": "ryuunoshippo",
   "pendingOperation": {
     "kind": "production_observation",
-    "status": "minimum_passed_observing_to_48h",
+    "status": "post_48h_verification_intent_recorded",
     "candidateId": "ryuunoshippo",
     "implementationPrNumber": 33,
     "implementationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/33",
@@ -101,8 +101,15 @@
     "observationStartedAt": "2026-10-07T11:16:38.740Z",
     "minimumObservationEndsAt": "2026-10-08T11:16:38.740Z",
     "finalObservationEndsAt": "2026-10-09T11:16:38.740Z",
-    "latestEvidenceAt": "2026-10-09T03:33:06.748Z",
-    "nextCheck": "24時間最低観察は通過済み。最新保存は2026-10-09 12:33 JSTで、最終48時間の2026-10-09 20:16 JSTより前。到達後の新しいmonitor-stateで一覧成功、商品1273、全体health、価格条件、送信履歴を確認し、正常なら竜のしっぽを最終完了。それまでは次店舗を追加しない。"
+    "latestEvidenceAt": "2026-10-09T09:35:03.002Z",
+    "nextCheck": "既存inventory-sync job 113759512775を一度だけ再実行し、返されたrun attemptとpost-48hのmonitor-stateを同じ操作IDで追跡する。",
+    "verificationIntent": {
+      "action": "rerun_inventory_sync_job_once",
+      "sourceRunId": 37912122019,
+      "sourceJobId": 113759512775,
+      "requestedAfter": "2026-10-09T11:16:38.740Z",
+      "reason": "48時間到達後の新しいhealth、巡回、価格条件、送信履歴を同じ既存secret経路で保存する"
+    }
   },
   "stabilityWindow": {
     "status": "passed",
