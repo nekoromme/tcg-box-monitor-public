@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09T11:15:49.293Z",
+  "updatedAt": "2026-10-09T11:16:08.289Z",
   "phase": "observing",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -90,7 +90,7 @@
   "activeCandidateId": "ryuunoshippo",
   "pendingOperation": {
     "kind": "production_observation",
-    "status": "post_48h_verification_intent_recorded",
+    "status": "post_48h_inventory_sync_running",
     "candidateId": "ryuunoshippo",
     "implementationPrNumber": 33,
     "implementationPrUrl": "https://github.com/nekoromme/tcg-cross-search/pull/33",
@@ -102,13 +102,20 @@
     "minimumObservationEndsAt": "2026-10-08T11:16:38.740Z",
     "finalObservationEndsAt": "2026-10-09T11:16:38.740Z",
     "latestEvidenceAt": "2026-10-09T09:35:03.002Z",
-    "nextCheck": "既存inventory-sync job 113759512775を一度だけ再実行し、返されたrun attemptとpost-48hのmonitor-stateを同じ操作IDで追跡する。",
+    "nextCheck": "inventory-sync run 37912122019 attempt 2の完了を確認し、post-48hのmonitor-stateを読み、正常なら竜のしっぽと店舗拡張タスクを完了する。",
     "verificationIntent": {
       "action": "rerun_inventory_sync_job_once",
       "sourceRunId": 37912122019,
       "sourceJobId": 113759512775,
       "requestedAfter": "2026-10-09T11:16:38.740Z",
       "reason": "48時間到達後の新しいhealth、巡回、価格条件、送信履歴を同じ既存secret経路で保存する"
+    },
+    "verificationRun": {
+      "runId": 37912122019,
+      "attempt": 2,
+      "status": "queued",
+      "sourceJobId": 113759512775,
+      "recordedAt": "2026-10-09T11:16:08.289Z"
     }
   },
   "stabilityWindow": {
