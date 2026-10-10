@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791618319159,
+  "generatedAt": 1791618367118,
   "prices": {
     "version": 1,
-    "checkedAt": 1791618280032,
+    "checkedAt": 1791618333382,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -2015,7 +2015,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791618319158,
+    "checkedAt": 1791618367117,
     "notificationDelay": {
       "samples": 11,
       "medianMs": 32817,
@@ -2195,7 +2195,7 @@
         "pages": 2,
         "minSeconds": 1199,
         "maxSeconds": 3168,
-        "nextAt": 1791618279564,
+        "nextAt": 1791619563519,
         "errors": 0
       },
       {
@@ -2332,7 +2332,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791618319157,
+    "verifiedAt": 1791618367116,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -36042,9 +36042,9 @@
     "budget": {
       "day": 20736,
       "group": 540,
-      "fallback": 592
+      "fallback": 593
     },
-    "nextFallbackAt": 1791618322614,
+    "nextFallbackAt": 1791618482847,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -36067,8 +36067,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791618309565,
-  "lastCompletedAt": 1791618318357,
+  "lastTick": 1791618362847,
+  "lastCompletedAt": 1791618366254,
   "load": {
     "activePages": 78,
     "waitingPages": 0,
@@ -36079,8 +36079,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1503440,
-    "compressedBytes": 117237,
+    "uncompressedBytes": 1503445,
+    "compressedBytes": 117281,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36110,8 +36110,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791618279564,
-    "nextSync": 1791625479564,
+    "lastSync": 1791618332846,
+    "nextSync": 1791625532846,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -37883,12 +37883,6 @@
     ],
     "log": [
       {
-        "at": 1791162789224,
-        "kind": "catalog",
-        "count": 38,
-        "added": []
-      },
-      {
         "at": 1791170001121,
         "kind": "catalog",
         "count": 38,
@@ -38478,6 +38472,12 @@
       },
       {
         "at": 1791618279564,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791618332846,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -43113,13 +43113,13 @@
       "episodes": {
         "a3cfb1ea-b702-4e16-9d24-7875c3911d37": {
           "active": false,
-          "negatives": 222,
+          "negatives": 223,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791618279564,
+      "nextAt": 1791619563104,
       "failures": 0,
-      "lastChecked": 1791615742184,
+      "lastChecked": 1791618364104,
       "lastGood": {
         "title": "★お一人様1点限り（同一住所など重複注文は全キャンセルします。）★ポケモンカードゲーム MEGA 拡張パック アビスアイ BOX 2026年5月22日発売",
         "price": 6000,
@@ -43155,11 +43155,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円以下",
           "at": 1791078266476,
-          "lastAt": 1791615742184,
-          "samples": 206
+          "lastAt": 1791618364104,
+          "samples": 207
         }
       ],
-      "lastGoodAt": 1791615742184,
+      "lastGoodAt": 1791618364104,
       "priceDecisions": {
         "a3cfb1ea-b702-4e16-9d24-7875c3911d37": {
           "referencePrice": 6000,
@@ -43169,14 +43169,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,300円以下",
-          "at": 1791615742184
+          "at": 1791618364104
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078266476,
         "stock": "out_of_stock",
-        "lastAt": 1791615742184,
-        "lastUnavailableAt": 1791615742184
+        "lastAt": 1791618364104,
+        "lastUnavailableAt": 1791618364104
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -43667,13 +43667,13 @@
       "episodes": {
         "47c20f77-b1a8-4a3f-9f66-58a45a8a6d14": {
           "active": false,
-          "negatives": 216,
+          "negatives": 217,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791618279564,
+      "nextAt": 1791619563112,
       "failures": 0,
-      "lastChecked": 1791615902207,
+      "lastChecked": 1791618364112,
       "lastGood": {
         "title": "強化パック「ムニキスゼロ」《BOX》",
         "price": 5400,
@@ -43707,11 +43707,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,670円以下",
           "at": 1791078232241,
-          "lastAt": 1791615902207,
-          "samples": 204
+          "lastAt": 1791618364112,
+          "samples": 205
         }
       ],
-      "lastGoodAt": 1791615902207,
+      "lastGoodAt": 1791618364112,
       "priceDecisions": {
         "47c20f77-b1a8-4a3f-9f66-58a45a8a6d14": {
           "referencePrice": 5400,
@@ -43721,14 +43721,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,670円以下",
-          "at": 1791615902207
+          "at": 1791618364112
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078232241,
         "stock": "out_of_stock",
-        "lastAt": 1791615902207,
-        "lastUnavailableAt": 1791615902207
+        "lastAt": 1791618364112,
+        "lastUnavailableAt": 1791618364112
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -44429,13 +44429,13 @@
       "episodes": {
         "0d4cd221-6a96-4c6c-9dda-6b60629c1b07": {
           "active": false,
-          "negatives": 212,
+          "negatives": 213,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791618279564,
+      "nextAt": 1791619563265,
       "failures": 0,
-      "lastChecked": 1791616066346,
+      "lastChecked": 1791618364265,
       "lastGood": {
         "title": "エクストラブースター EGGHEAD CRISIS【EB-04】(1BOX・24パック入)ワンピースカードゲーム[新品商品]",
         "price": 5280,
@@ -44481,11 +44481,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1791088840708,
-          "lastAt": 1791616066346,
-          "samples": 199
+          "lastAt": 1791618364265,
+          "samples": 200
         }
       ],
-      "lastGoodAt": 1791616066346,
+      "lastGoodAt": 1791618364265,
       "priceDecisions": {
         "0d4cd221-6a96-4c6c-9dda-6b60629c1b07": {
           "referencePrice": 5280,
@@ -44495,14 +44495,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1791616066346
+          "at": 1791618364265
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078197473,
         "stock": "out_of_stock",
-        "lastAt": 1791616066346,
-        "lastUnavailableAt": 1791616066346
+        "lastAt": 1791618364265,
+        "lastUnavailableAt": 1791618364265
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -47449,13 +47449,13 @@
       "episodes": {
         "3f32d2ea-1573-4c22-9587-c77cfefd130b": {
           "active": false,
-          "negatives": 203,
+          "negatives": 204,
           "lastEvent": 1791056377741
         }
       },
-      "nextAt": 1791618279564,
+      "nextAt": 1791619563519,
       "failures": 0,
-      "lastChecked": 1791615517681,
+      "lastChecked": 1791618364519,
       "lastGood": {
         "title": "ドラゴンボールスーパーカードゲーム フュージョンワールド STORY BOOSTER 01 ST01 BOX ｜ 未開封 バンダイ BANDAI DBFW トレカ",
         "price": 17800,
@@ -47491,11 +47491,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,930円を超過",
           "at": 1791078266691,
-          "lastAt": 1791615517681,
-          "samples": 203
+          "lastAt": 1791618364519,
+          "samples": 204
         }
       ],
-      "lastGoodAt": 1791615517681,
+      "lastGoodAt": 1791618364519,
       "priceDecisions": {
         "3f32d2ea-1573-4c22-9587-c77cfefd130b": {
           "referencePrice": 6600,
@@ -47505,7 +47505,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,930円を超過",
-          "at": 1791615517681
+          "at": 1791618364519
         }
       },
       "availabilityTiming": {
@@ -47514,8 +47514,8 @@
         "openAfter": null,
         "firstAvailableAt": 1791078266691,
         "stock": "in_stock",
-        "lastAt": 1791615517681,
-        "lastAvailableAt": 1791615517681
+        "lastAt": 1791618364519,
+        "lastAvailableAt": 1791618364519
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -48434,13 +48434,13 @@
       "episodes": {
         "7e95a72d-18bd-4a12-8d37-26d36df4497b": {
           "active": false,
-          "negatives": 208,
+          "negatives": 209,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791618279564,
+      "nextAt": 1791619563572,
       "failures": 0,
-      "lastChecked": 1791615807309,
+      "lastChecked": 1791618364572,
       "lastGood": {
         "title": "WILDS UNKNOWN 未知なる彼方へ! ディズニー・ロルカナ・TCG(1BOX・16パック入)[ロルカナ新品]",
         "price": 5280,
@@ -48476,11 +48476,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1791078371381,
-          "lastAt": 1791615807309,
-          "samples": 205
+          "lastAt": 1791618364572,
+          "samples": 206
         }
       ],
-      "lastGoodAt": 1791615807309,
+      "lastGoodAt": 1791618364572,
       "priceDecisions": {
         "7e95a72d-18bd-4a12-8d37-26d36df4497b": {
           "referencePrice": 5280,
@@ -48490,14 +48490,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1791615807309
+          "at": 1791618364572
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078371381,
         "stock": "out_of_stock",
-        "lastAt": 1791615807309,
-        "lastUnavailableAt": 1791615807309
+        "lastAt": 1791618364572,
+        "lastUnavailableAt": 1791618364572
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -49106,13 +49106,13 @@
       "episodes": {
         "af0db529-4587-4b60-a855-6d8fb5359de4": {
           "active": false,
-          "negatives": 205,
+          "negatives": 206,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791618279564,
+      "nextAt": 1791619563080,
       "failures": 0,
-      "lastChecked": 1791615838562,
+      "lastChecked": 1791618364080,
       "lastGood": {
         "title": "ブースターパック　アーケイジアと魔法の島　BOX【ディズニー・ロルカナ・トレーディングカードゲーム】",
         "price": 5280,
@@ -49146,11 +49146,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1791078266262,
-          "lastAt": 1791615838562,
-          "samples": 203
+          "lastAt": 1791618364080,
+          "samples": 204
         }
       ],
-      "lastGoodAt": 1791615838562,
+      "lastGoodAt": 1791618364080,
       "priceDecisions": {
         "af0db529-4587-4b60-a855-6d8fb5359de4": {
           "referencePrice": 5280,
@@ -49160,14 +49160,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1791615838562
+          "at": 1791618364080
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078266262,
         "stock": "out_of_stock",
-        "lastAt": 1791615838562,
-        "lastUnavailableAt": 1791615838562
+        "lastAt": 1791618364080,
+        "lastUnavailableAt": 1791618364080
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -55017,23 +55017,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791585494515,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
-        "storeId": "dayya",
-        "result": {
-          "at": 1791585494515,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 110,
-      "errors": 2
-    },
     {
       "at": 1791585538641,
       "checked": 2,
@@ -69478,6 +69461,23 @@
           "requests": 2,
           "status": "ok",
           "previousAt": 1791614700005
+        },
+        "error": ""
+      },
+      "targets": 110,
+      "errors": 2
+    },
+    {
+      "at": 1791618362847,
+      "checked": 6,
+      "discovered": {
+        "ruleId": "dc88575b-6de8-47e3-b2e2-ff31e556ccc4",
+        "storeId": "advantage1",
+        "result": {
+          "at": 1791618362847,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
         },
         "error": ""
       },
