@@ -63,6 +63,16 @@ def test_real_truncated_yahoo_and_complete_public_post_make_one_correct_lottery(
     assert merged[0].official_url == "https://livepocket.jp/e/birt9"
 
 
+def test_actual_start_keeps_priority_over_resolved_link_with_unknown_start():
+    candidates = parsed_fullcomp()
+    actual = replace(candidates[0], start_at=date(2026, 10, 10),
+                     extraction_method="yahoo_realtime_body_application_period")
+    merged, _ = merge_lotteries([candidates[1], actual])
+    assert len(merged) == 1
+    assert merged[0].start_at == date(2026, 10, 10)
+    assert merged[0].extraction_method == actual.extraction_method
+
+
 def test_real_morioka_reposts_keep_one_delivery_before_and_after_restart(tmp_path):
     saved = fixture()
     rows = [case(row) for row in saved["seen_cases"].values()
