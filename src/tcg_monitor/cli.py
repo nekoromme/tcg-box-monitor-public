@@ -513,10 +513,19 @@ def _prepare_cases(state: MonitorState, cases: list[LotteryCase]) -> tuple[list[
     # 先に別々のIDへ履歴を移すと、配信時に先頭のIDが未通知へ戻ってしまう。
     cases, _ = merge_lotteries(stable_cases)
     prepared: list[LotteryCase] = []
+    redirects: dict[str, str] = {}
     new_count = 0
     for case in cases:
         already_known = case.case_id in state.data.get("seen_cases", {})
         migrated_from = state.migrate_case_identity(case)
+        migration = state.data.get("case_id_migrations", {}).get(case.case_id, {})
+        if case.case_id in state.data.get("seen_cases", {}) and migration:
+            # 履歴の照合で同一募集と判明した候補は、最終的に残るIDだけ配信する。
+            # 後続候補への移行で、先に作った候補の通知履歴が消えても再送しない。
+            redirects.pop(case.case_id, None)
+            for legacy_id in migration.get("legacy_ids", []):
+                if legacy_id != case.case_id and legacy_id not in state.data["seen_cases"]:
+                    redirects[legacy_id] = case.case_id
         if not already_known and migrated_from is None:
             new_count += 1
         if migrated_from is not None:
@@ -527,7 +536,23 @@ def _prepare_cases(state: MonitorState, cases: list[LotteryCase]) -> tuple[list[
         prepared.append(_preserve_preferred_case_source(
             state, _reuse_first_detection_start(state, case),
         ))
-    return prepared, new_count
+    survivors: dict[str, LotteryCase] = {}
+    for case in prepared:
+        final_id = case.case_id
+        visited: set[str] = set()
+        while final_id in redirects and final_id not in visited:
+            visited.add(final_id)
+            final_id = redirects[final_id]
+        if final_id != case.case_id:
+            log_event(phase="lottery_delivery_candidates", outcome="consolidated",
+                      reason_code="same_campaign_after_history_migration",
+                      retailer_id=case.retailer_id, case_id=final_id,
+                      previous_case_id=case.case_id,
+                      already_delivered=state.delivered(f"lottery:started:{final_id}"))
+        # 最終IDの候補を優先し、確認済みの商品・日時・リンクを維持する。
+        if final_id not in survivors or case.case_id == final_id:
+            survivors[final_id] = replace(case, case_id=final_id)
+    return list(survivors.values()), new_count
 
 
 def _cleanup_duplicate_lottery_events(
