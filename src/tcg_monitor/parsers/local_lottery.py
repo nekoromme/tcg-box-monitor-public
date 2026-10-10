@@ -2036,7 +2036,10 @@ def parse_yahoo_realtime(
             source,
             "confirmed_application_ends",
             status_id,
-        ) or _application_deadline(combined_text, posted_on)
+        ) or body_end or _application_deadline(ocr_text, posted_on)
+        # 検索の本文は「【応募締切】」の直後で省略されることがある。
+        # 本文と画像を連結して日付を探すと、画像冒頭の発売日を締切にしてしまう。
+        # 本文と画像それぞれの応募ラベルの範囲で読めた日付だけを採用する。
         if application_end is not None:
             if additional_game(combined_text, source, config) and period_has_ended(
                 application_end, config, detected,

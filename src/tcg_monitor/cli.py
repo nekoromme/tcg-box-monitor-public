@@ -509,9 +509,9 @@ def _prepare_cases(state: MonitorState, cases: list[LotteryCase]) -> tuple[list[
     # 開始日不明のX投稿は再取得日を仮の開始日にする。履歴を移す前に初回の日へ
     # 戻して統合しないと、同じ募集の公式とXの間で配信履歴が往復してしまう。
     stable_cases = [_reuse_first_detection_start(state, case) for case in cases]
-    if any(stable.start_at != current.start_at
-           for stable, current in zip(stable_cases, cases, strict=True)):
-        cases, _ = merge_lotteries(stable_cases)
+    # 日付が変わらなくても、応募URLが同じ再告知を履歴移行より前にまとめる。
+    # 先に別々のIDへ履歴を移すと、配信時に先頭のIDが未通知へ戻ってしまう。
+    cases, _ = merge_lotteries(stable_cases)
     prepared: list[LotteryCase] = []
     new_count = 0
     for case in cases:

@@ -68,6 +68,10 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
             *lottery_source_priority(item.source_tier, item.source_url),
             int(is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
                 and item.extraction_method in OBSERVED_START_METHODS),
+            # 同じ告知を複数経路で読めた場合、表示用短縮リンクより応募先を残す。
+            int(urlsplit(item.official_url).netloc.lower() in {
+                "t.co", "x.com", "twitter.com", "www.x.com", "www.twitter.com",
+            }),
             int(item.retailer_id == "lorcana_official"
                 and item.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN),
         ))

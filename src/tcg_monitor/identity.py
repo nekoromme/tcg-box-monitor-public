@@ -3,8 +3,15 @@ from __future__ import annotations
 import re
 import unicodedata
 from datetime import date, datetime
+from urllib.parse import urlsplit
 
-from tcg_monitor.models import LotteryCase, OpportunityKind, Release, stable_url_identity
+from tcg_monitor.models import (
+    LotteryCase,
+    OpportunityKind,
+    Release,
+    is_shared_retailer_application_url,
+    stable_url_identity,
+)
 
 _ONE_PIECE_CODE = re.compile(r"\b(?:OP|EB|PRB)-\d{2}\b", re.I)
 _DRAGONBALL_CODE = re.compile(r"\b(?:FB|SB|ST)\d{2}\b", re.I)
@@ -179,10 +186,18 @@ def lottery_dedupe_key(case: LotteryCase) -> str:
     if (is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
             and case.extraction_method in OBSERVED_START_METHODS):
         # 開始日不明の仮日付は取得日か翌日であり、抽選回の識別には使えない。
-        # 同じ締切の再告知も一回。締切がなければ同じ投稿だけ。
+        # 同じ締切の再告知も一回。締切がなければ個別の応募先か投稿で区別する。
         end_day = (case.end_at.date() if isinstance(case.end_at, datetime) else case.end_at)
+        reference = case.source_url or case.official_url
+        official_host = (urlsplit(case.official_url).hostname or "").removeprefix("www.")
+        if (official_host not in {"x.com", "twitter.com"}
+                and not is_shared_retailer_application_url(case.retailer_id, case.official_url)
+                and case.official_url):
+            # 同じ応募先への再告知は、投稿IDが変わっても一つの募集。
+            # 個別の応募リンクがないX投稿や共通案内ページは、従来の投稿IDを使う。
+            reference = case.official_url
         anchor = ("deadline:" + end_day.isoformat() if end_day is not None
-                  else "notice:" + stable_url_identity(case.source_url or case.official_url))
+                  else "notice:" + stable_url_identity(reference))
         if case.extraction_method == "tsutaya_line_official_form_first_seen":
             # 店舗別のLINEフォームは締切が同じでも別の応募機会。
             # 同じフォームの次回募集は、分かっている締切で区別する。
