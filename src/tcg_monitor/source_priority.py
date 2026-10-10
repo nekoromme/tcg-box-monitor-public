@@ -18,6 +18,8 @@ from tcg_monitor.models import (
     OpportunityKind,
     Release,
     SourceTier,
+    is_shared_retailer_application_url,
+    stable_url_identity,
 )
 from tcg_monitor.release_sources import is_trusted_retailer_release
 
@@ -31,6 +33,47 @@ def lottery_source_priority(tier: SourceTier, url: str) -> tuple[int, int]:
 
 
 def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[Alert]]:
+    # 同じX投稿でも、検索経路は応募リンクを省略し、公開投稿経路はリンクを
+    # 取得できる。投稿URLだけの候補を一意な応募先へ補完してからIDを決める。
+    # 共通記事や複数フォームを根拠に、別の募集までまとめない。
+    linked_posts: dict[tuple[str, str, str, str, str], list[LotteryCase]] = defaultdict(list)
+    for item in items:
+        post = urlsplit(item.source_url)
+        official = urlsplit(item.official_url)
+        if (is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
+                and item.extraction_method in OBSERVED_START_METHODS
+                and post.hostname in {"x.com", "twitter.com", "www.x.com", "www.twitter.com"}
+                and re.fullmatch(r"/[^/]+/status/\d+/?", post.path)
+                and item.official_url
+                and official.hostname not in {
+                    "x.com", "twitter.com", "www.x.com", "www.twitter.com",
+                }
+                and not is_shared_retailer_application_url(item.retailer_id, item.official_url)):
+            key = (item.game_id, item.retailer_id, item.opportunity_kind.value,
+                   item.application_round, stable_url_identity(item.source_url))
+            linked_posts[key].append(item)
+    normalized = []
+    for item in items:
+        if (is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
+                and item.extraction_method in OBSERVED_START_METHODS
+                and urlsplit(item.official_url).hostname in {
+                    "x.com", "twitter.com", "www.x.com", "www.twitter.com", None,
+                }):
+            candidates = linked_posts.get((
+                item.game_id, item.retailer_id, item.opportunity_kind.value,
+                item.application_round, stable_url_identity(item.source_url),
+            ), [])
+            compatible = [candidate for candidate in candidates
+                          if item.end_at is None or candidate.end_at is None
+                          or item.end_at.isoformat()[:10] == candidate.end_at.isoformat()[:10]]
+            # 応募先や締切が複数なら、省略された方をどれかへ勝手に結び付けない。
+            identities = {lottery_dedupe_key(candidate) for candidate in compatible}
+            if len(identities) == 1:
+                linked = compatible[0]
+                item = replace(item, official_url=linked.official_url,
+                               end_at=item.end_at or linked.end_at)
+        normalized.append(item)
+    items = normalized
     observed_aliases: dict[str, set[str]] = defaultdict(set)
     for item in items:
         if (is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
