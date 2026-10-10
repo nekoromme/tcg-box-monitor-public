@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791660684503,
+  "generatedAt": 1791660734689,
   "prices": {
     "version": 1,
-    "checkedAt": 1791660651762,
+    "checkedAt": 1791660698006,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -2027,7 +2027,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791660684502,
+    "checkedAt": 1791660734688,
     "notificationDelay": {
       "samples": 10,
       "medianMs": 32817,
@@ -2344,7 +2344,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791660684497,
+    "verifiedAt": 1791660734686,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -4242,29 +4242,29 @@
     "stores": {
       "193": {
         "storeId": "193",
-        "nextAt": 1791660683746,
+        "nextAt": 1791664327442,
         "createdAt": 1791078090716,
-        "successes": 185,
+        "successes": 186,
         "failures": 0,
         "rapidSales": [],
         "sources": [
           {
             "url": "https://193tcg.com/products/list?name=BOX",
             "role": "search",
-            "depth": 3,
-            "nextUrl": null,
-            "lastAt": 1791657092783
+            "depth": 1,
+            "nextUrl": "https://193tcg.com/products/list?name=BOX&pageno=2",
+            "lastAt": 1791660732515
           },
           {
             "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
-            "depth": 2,
-            "nextUrl": null,
-            "lastAt": 1791653475585
+            "depth": 1,
+            "nextUrl": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&pageno=2",
+            "lastAt": 1791660733749
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1791657083746,
+        "sourceCursor": 0,
+        "lastAttemptAt": 1791660727442,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -4280,20 +4280,20 @@
               "order": "search"
             },
             {
-              "url": "https://193tcg.com/products/list?name=BOX&pageno=3",
-              "head": false,
-              "productLinks": 34,
+              "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 40,
               "scope": "read",
-              "hasMore": false,
+              "hasMore": true,
               "depthLimited": false,
-              "order": "search"
+              "order": "alternate"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1791653468855
+          "previousAt": 1791657083746
         },
-        "lastAt": 1791657083746,
+        "lastAt": 1791660727442,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -5379,40 +5379,6 @@
       }
     },
     "log": [
-      {
-        "kind": "listing",
-        "storeId": "papy",
-        "matched": 2,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://papysougouten.ocnk.net/product-list?keyword=BOX",
-            "head": true,
-            "productLinks": 60,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://papysougouten.ocnk.net/product-list?keyword=BOX&page=2",
-            "head": false,
-            "productLinks": 4,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "search"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1791465937392,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1791473175456,
-        "at": 1791469575456
-      },
       {
         "kind": "listing",
         "storeId": "suns",
@@ -36158,11 +36124,45 @@
         "reason": "取得範囲で24時間以上、対象ページの追加なし",
         "nextAt": 1791664281031,
         "at": 1791660681031
+      },
+      {
+        "kind": "listing",
+        "storeId": "193",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://193tcg.com/products/list?name=BOX",
+            "head": true,
+            "productLinks": 40,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+            "head": true,
+            "productLinks": 40,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1791657083746,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1791664327442,
+        "at": 1791660727442
       }
     ],
     "budget": {
       "day": 20737,
-      "group": 132,
+      "group": 134,
       "fallback": 175
     },
     "nextFallbackAt": 1791660725606,
@@ -36188,8 +36188,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791660681031,
-  "lastCompletedAt": 1791660683263,
+  "lastTick": 1791660727442,
+  "lastCompletedAt": 1791660733749,
   "load": {
     "activePages": 79,
     "waitingPages": 0,
@@ -36200,8 +36200,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1514164,
-    "compressedBytes": 118732,
+    "uncompressedBytes": 1514814,
+    "compressedBytes": 118755,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36231,8 +36231,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791660651030,
-    "nextSync": 1791667851030,
+    "lastSync": 1791660697441,
+    "nextSync": 1791667897441,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38004,12 +38004,6 @@
     ],
     "log": [
       {
-        "at": 1791181791690,
-        "kind": "catalog",
-        "count": 38,
-        "added": []
-      },
-      {
         "at": 1791184087051,
         "kind": "catalog",
         "count": 38,
@@ -38599,6 +38593,12 @@
       },
       {
         "at": 1791660651030,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791660697441,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -43964,13 +43964,13 @@
       "episodes": {
         "0758b3b5-7592-4003-b9aa-6c07f31afb8d": {
           "active": false,
-          "negatives": 230,
+          "negatives": 231,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791660709429,
+      "nextAt": 1791663493947,
       "failures": 0,
-      "lastChecked": 1791657944429,
+      "lastChecked": 1791660728947,
       "lastGood": {
         "title": "★お一人様1点限り（同一住所など重複注文は全キャンセルします。）★(プロモパック２パック付き)ONE PIECEカードゲーム ブースターパック 世界最強の戦士【OP-17】 BOX 2026年8月22日発売",
         "price": 5781,
@@ -44006,11 +44006,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,048円以下",
           "at": 1791078197818,
-          "lastAt": 1791657944429,
-          "samples": 219
+          "lastAt": 1791660728947,
+          "samples": 220
         }
       ],
-      "lastGoodAt": 1791657944429,
+      "lastGoodAt": 1791660728947,
       "priceDecisions": {
         "0758b3b5-7592-4003-b9aa-6c07f31afb8d": {
           "referencePrice": 5760,
@@ -44020,14 +44020,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,048円以下",
-          "at": 1791657944429
+          "at": 1791660728947
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078197818,
         "stock": "out_of_stock",
-        "lastAt": 1791657944429,
-        "lastUnavailableAt": 1791657944429
+        "lastAt": 1791660728947,
+        "lastUnavailableAt": 1791660728947
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -53169,13 +53169,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 128,
+          "negatives": 129,
           "lastEvent": 0
         }
       },
-      "nextAt": 1791660696048,
+      "nextAt": 1791660944799,
       "failures": 0,
-      "lastChecked": 1791660480048,
+      "lastChecked": 1791660728799,
       "lastGood": {
         "title": "Freedom Ascension [GD05] (1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 6000,
@@ -53211,7 +53211,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,300円以下",
-          "at": 1791660480048
+          "at": 1791660728799
         }
       },
       "history": [
@@ -53239,17 +53239,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円以下",
           "at": 1791655184551,
-          "lastAt": 1791660480048,
-          "samples": 24
+          "lastAt": 1791660728799,
+          "samples": 25
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791630947961,
         "stock": "out_of_stock",
-        "lastAt": 1791660480048,
-        "lastUnavailableAt": 1791660480048
+        "lastAt": 1791660728799,
+        "lastUnavailableAt": 1791660728799
       },
-      "lastGoodAt": 1791660480048,
+      "lastGoodAt": 1791660728799,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 216,
@@ -55446,13 +55446,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1791627656424,
-      "checked": 2,
-      "discovered": null,
-      "targets": 110,
-      "errors": 4
-    },
     {
       "at": 1791627688074,
       "checked": 0,
@@ -69794,6 +69787,45 @@
           "requests": 1,
           "status": "ok",
           "previousAt": 1791657051084
+        },
+        "error": ""
+      },
+      "targets": 111,
+      "errors": 1
+    },
+    {
+      "at": 1791660727442,
+      "checked": 2,
+      "discovered": {
+        "storeId": "193",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://193tcg.com/products/list?name=BOX",
+              "head": true,
+              "productLinks": 40,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
+              "head": true,
+              "productLinks": 40,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1791657083746
         },
         "error": ""
       },
