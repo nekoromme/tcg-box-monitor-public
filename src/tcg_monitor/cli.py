@@ -247,7 +247,7 @@ def _cleanup_confirmed_false_positive_cases(
             # 確認し、削除が片方で失敗した場合は履歴を残して次回に再試行する。
             result = calendar.delete_owned_event(
                 result_event_id, kind="lottery_result",
-                internal_id=state.calendar_case_identity(case_id),
+                internal_id=state.calendar_case_identity(case_id, kind="lottery_result"),
             )
             if result.get("status") not in {"deleted", "not_found"}:
                 raise RuntimeError(
@@ -558,31 +558,34 @@ def _prepare_cases(state: MonitorState, cases: list[LotteryCase]) -> tuple[list[
 def _cleanup_duplicate_lottery_events(
     state: MonitorState, calendar: CalendarAdapter, case: LotteryCase,
     summary: str, description: str,
+    *, kind: str = "lottery",
 ) -> None:
     """残す予定が存在することを確認してから、同じ募集の余分な予定だけを消す。"""
     migration = state.data.get("case_id_migrations", {}).get(case.case_id, {})
     duplicates = migration.get("duplicate_calendar_events", {})
     pending = [record for record in duplicates.values()
-               if record.get("status") not in {"deleted", "not_found"}]
-    if not pending:
+               if record.get("status") not in {"deleted", "not_found"}
+               and record.get("kind", "lottery") == kind]
+    when = case.result_at if kind == "lottery_result" else case.start_at
+    if not pending or when is None:
         return
-    sync_key = f"lottery:{case.case_id}"
+    sync_key = f"{kind}:{case.case_id}"
     sync = state.data.get("calendar_sync", {}).get(sync_key, {})
     # 既存予定が手動で消されていても、削除に先立ち残す1件を復元する。
     kept = calendar.reconcile(
-        "lottery", state.calendar_case_identity(case.case_id), summary, case.start_at,
+        kind, state.calendar_case_identity(case.case_id, kind=kind), summary, when,
         description, known_event_id=sync.get("event_id"),
     )
     if kept.get("status") not in {"inserted", "updated", "unchanged"}:
         raise RuntimeError(f"重複整理の前に残す予定を確認できませんでした: {kept}")
     state.mark_calendar_synced(sync_key, _calendar_payload_hash(
-        summary, case.start_at, description,
+        summary, when, description,
     ), kept)
     for record in pending:
         if record["event_id"] == kept.get("event_id"):
             continue
         result = calendar.delete_owned_event(
-            str(record["event_id"]), kind="lottery", internal_id=str(record["internal_id"]),
+            str(record["event_id"]), kind=kind, internal_id=str(record["internal_id"]),
         )
         if result.get("status") not in {"deleted", "not_found"}:
             raise RuntimeError(f"同一募集の重複予定整理が完了しませんでした: {result}")
@@ -1582,12 +1585,18 @@ def main(argv: list[str] | None = None) -> int:
                     )
                     if state.calendar_payload_changed(result_key, result_hash):
                         result = calendar.upsert(
-                            "lottery_result", state.calendar_case_identity(case.case_id),
+                            "lottery_result", state.calendar_case_identity(
+                                case.case_id, kind="lottery_result",
+                            ),
                             result_summary, case.result_at, result_description,
                         )
                         if result.get("status") not in {"inserted", "updated"}:
                             raise RuntimeError(f"結果発表日のカレンダー登録失敗: {result}")
                         state.mark_calendar_synced(result_key, result_hash, result)
+                    _cleanup_duplicate_lottery_events(
+                        state, calendar, case, result_summary, result_description,
+                        kind="lottery_result",
+                    )
         # 記事が受付後に一覧から消えても、保存した発表日に一度だけ知らせる。
         for case_id, record in list(state.data.get("seen_cases", {}).items()):
             if (
