@@ -1873,6 +1873,17 @@ def parse_yahoo_realtime(
             _official_sale_start(post_text, posted_on) if official_lorcana_sale else
             _application_start(post_text, posted_on)
         )
+        if start_at is None and not uses_detection_policy:
+            # 『本日抽選予約開始』は投稿当日の開始を明記している。
+            # 再取得日を仮の開始日にすると、同じ募集の公式と補助記事が分離する。
+            # 発売・締切・当落の『本日』は借りず、本文の開始表現だけを使う。
+            relative = re.search(
+                r"(本日|今日|明日)(?:から|より)?"
+                r"(?:抽選(?:申込(?:み)?|申し込み|応募|予約|販売)(?:受付)?|応募受付|受付)"
+                r"(?:を|が)?(?:開始|スタート)", compact_text,
+            )
+            if relative:
+                start_at = posted_on + timedelta(days=int(relative[1] == "明日"))
         deadline_without_start = (
             False if uses_detection_policy else _deadline_only_application_period(post_text)
         )
