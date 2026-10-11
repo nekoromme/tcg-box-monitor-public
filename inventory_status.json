@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791681309344,
+  "generatedAt": 1791681355884,
   "prices": {
     "version": 1,
-    "checkedAt": 1791681275512,
+    "checkedAt": 1791681324560,
     "records": {
       "onepiece-eb-04": {
         "productId": "onepiece-eb-04",
@@ -2039,7 +2039,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791681309343,
+    "checkedAt": 1791681355883,
     "notificationDelay": {
       "samples": 10,
       "medianMs": 32817,
@@ -2356,7 +2356,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791681309339,
+    "verifiedAt": 1791681355881,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -4784,7 +4784,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 3247580,
+        "intervalMs": 3200912,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -5076,7 +5076,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 11097436,
+        "intervalMs": 11050768,
         "storeName": "CBトレコロ"
       },
       "torezamu": {
@@ -36157,8 +36157,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791681304827,
-  "lastCompletedAt": 1791681308237,
+  "lastTick": 1791681354033,
+  "lastCompletedAt": 1791681354083,
   "load": {
     "activePages": 80,
     "waitingPages": 0,
@@ -36169,8 +36169,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1521971,
-    "compressedBytes": 120211,
+    "uncompressedBytes": 1521823,
+    "compressedBytes": 120173,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36200,8 +36200,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791681274826,
-    "nextSync": 1791688474826,
+    "lastSync": 1791681324031,
+    "nextSync": 1791688524031,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -37973,12 +37973,6 @@
     ],
     "log": [
       {
-        "at": 1791205253716,
-        "kind": "catalog",
-        "count": 38,
-        "added": []
-      },
-      {
         "at": 1791212478295,
         "kind": "catalog",
         "count": 38,
@@ -38568,6 +38562,12 @@
       },
       {
         "at": 1791681274826,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791681324031,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -55567,23 +55567,6 @@
   ],
   "runs": [
     {
-      "at": 1791647946882,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "47c20f77-b1a8-4a3f-9f66-58a45a8a6d14",
-        "storeId": "suns",
-        "result": {
-          "at": 1791647946882,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 111,
-      "errors": 1
-    },
-    {
       "at": 1791647979814,
       "checked": 1,
       "discovered": null,
@@ -70215,6 +70198,13 @@
         },
         "error": ""
       },
+      "targets": 112,
+      "errors": 6
+    },
+    {
+      "at": 1791681354033,
+      "checked": 0,
+      "discovered": null,
       "targets": 112,
       "errors": 6
     }
