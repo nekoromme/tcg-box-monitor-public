@@ -218,6 +218,7 @@ def lottery_dedupe_key(case: LotteryCase) -> str:
         case.canonical_product_key, case.start_at,
         OpportunityKind.DIRECT_SALE if case.extraction_method.startswith("additional_product_")
         else case.opportunity_kind,
+        application_round=case.application_round,
     )
 
 
@@ -228,6 +229,8 @@ def lottery_dedupe_key_values(
     canonical_product_key: str,
     start_at: date | datetime,
     opportunity_kind: OpportunityKind = OpportunityKind.LOTTERY,
+    *,
+    application_round: str = "",
 ) -> str:
     """Identify a campaign across official posts, ticket links and summaries."""
     token = release_title_token(product_name)
@@ -266,6 +269,8 @@ def lottery_dedupe_key_values(
     ]
     if opportunity_kind != OpportunityKind.LOTTERY:
         parts.append(opportunity_kind.value)
+    if application_round:
+        parts.append("round:" + application_round)
     return "|".join(parts)
 
 

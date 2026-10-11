@@ -70,12 +70,14 @@ class DiscordAdapter:
             "content": None,
             "embeds": [{"title": title[:256], "description": description[:4000]}],
         }
-        if self.dry_run or not (self.webhook_url or os.getenv("DISCORD_WEBHOOK_URL")):
+        if self.dry_run:
             return {"status": "dry_run", "payload": str(payload)[:500]}
+        webhook = self.webhook_url or os.getenv("DISCORD_WEBHOOK_URL")
+        if not webhook or not webhook.strip():
+            raise RuntimeError("Discord通知の送信先 DISCORD_WEBHOOK_URL が設定されていません")
         try:
             r = httpx.post(
-                (self.webhook_url or os.environ["DISCORD_WEBHOOK_URL"])
-                + "?wait=true",
+                httpx.URL(webhook).copy_merge_params({"wait": "true"}),
                 json=payload,
                 timeout=20,
             )

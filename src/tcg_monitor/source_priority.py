@@ -33,6 +33,22 @@ def lottery_source_priority(tier: SourceTier, url: str) -> tuple[int, int]:
 
 
 def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[Alert]]:
+    # 回次を省略した補助情報は、その同日募集の回次が一つに確定する場合だけ補う。
+    # 明記された1次・2次を分ける変更で、回次なしの同じ告知を増やさない。
+    rounds: dict[str, set[str]] = defaultdict(set)
+    for item in items:
+        if item.application_round and item.extraction_method not in OBSERVED_START_METHODS:
+            rounds[lottery_dedupe_key(replace(item, application_round=""))].add(
+                item.application_round,
+            )
+    normalized_rounds = []
+    for item in items:
+        known_rounds = rounds.get(lottery_dedupe_key(item), set())
+        if (not item.application_round and len(known_rounds) == 1
+                and item.extraction_method not in OBSERVED_START_METHODS):
+            item = replace(item, application_round=next(iter(known_rounds))).with_id()
+        normalized_rounds.append(item)
+    items = normalized_rounds
     # 同じX投稿でも、検索経路は応募リンクを省略し、公開投稿経路はリンクを
     # 取得できる。投稿URLだけの候補を一意な応募先へ補完してからIDを決める。
     # 共通記事や複数フォームを根拠に、別の募集までまとめない。
@@ -75,6 +91,9 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
         normalized.append(item)
     items = normalized
     observed_aliases: dict[str, set[str]] = defaultdict(set)
+    confirmed_cardsets = [item for item in items
+                          if is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
+                          and item.extraction_method not in OBSERVED_START_METHODS]
     for item in items:
         if (is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
                 and item.end_at is not None
@@ -84,6 +103,36 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
                 item, extraction_method="yahoo_realtime_detected_next_day",
             ))
             observed_aliases[observed_key].add(lottery_dedupe_key(item))
+    for item in items:
+        if (not is_pokemon_30th_cardset(item.game_id, item.canonical_product_key)
+                or item.extraction_method not in OBSERVED_START_METHODS):
+            continue
+        for confirmed in confirmed_cardsets:
+            if ((item.game_id, item.retailer_id, item.opportunity_kind, item.application_round)
+                    != (confirmed.game_id, confirmed.retailer_id,
+                        confirmed.opportunity_kind, confirmed.application_round)):
+                continue
+            if (item.end_at is not None and confirmed.end_at is not None
+                    and item.end_at.isoformat()[:10] != confirmed.end_at.isoformat()[:10]):
+                continue
+            post = urlsplit(stable_url_identity(item.source_url))
+            same_post = (post.hostname == "x.com"
+                         and re.fullmatch(r"/[^/]+/status/\d+/?", post.path)
+                         and stable_url_identity(item.source_url)
+                         == stable_url_identity(confirmed.source_url))
+            same_form = (item.official_url
+                         and urlsplit(item.official_url).hostname not in {
+                             "x.com", "twitter.com", "www.x.com", "www.twitter.com",
+                         }
+                         and not is_shared_retailer_application_url(
+                             item.retailer_id, item.official_url,
+                         )
+                         and stable_url_identity(item.official_url)
+                         == stable_url_identity(confirmed.official_url))
+            if same_post or same_form:
+                # 初回取得にも適用する。保存履歴がまだない時に、仮の開始日と
+                # 確定した開始日の二つを別々に配信しない。
+                observed_aliases[lottery_dedupe_key(item)].add(lottery_dedupe_key(confirmed))
     grouped: dict[str, list[LotteryCase]] = defaultdict(list)
     for item in items:
         grouping_identity = lottery_dedupe_key(item)

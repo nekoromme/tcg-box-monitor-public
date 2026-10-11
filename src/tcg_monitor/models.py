@@ -14,6 +14,16 @@ def stable_url_identity(value: str) -> str:
     """Normalize an article URL while retaining query fields that identify it."""
 
     parts = urlsplit(value)
+    # 同じ投稿の共有URLはX/Twitterの別名や共有用クエリが変わっても同一。
+    # フォーム等の識別用クエリには、この正規化を適用しない。
+    if (parts.hostname in {"x.com", "twitter.com", "www.x.com", "www.twitter.com",
+                           "mobile.twitter.com"}
+            and re.fullmatch(r"/[^/]+/status/\d+/?", parts.path)):
+        parts = parts._replace(
+            scheme="https", netloc="x.com",
+            query=urlencode([(key, item) for key, item in parse_qsl(parts.query)
+                             if key not in {"s", "t"}]),
+        )
     stable_query = urlencode(
         sorted(
             (key, item)

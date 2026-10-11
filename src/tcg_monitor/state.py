@@ -429,6 +429,10 @@ class MonitorState:
             observed_cardset_pair = cardset_pair and bool(OBSERVED_START_METHODS & {
                 case.extraction_method, str(raw_record.get("extraction_method") or ""),
             })
+            if (observed_cardset_pair
+                    and case.application_round != str(raw_record.get("application_round") or "")):
+                # 仮日付の一致だけで回次省略を補完すると、次の募集まで通知済みになる。
+                continue
             if (case.extraction_method == "tsutaya_line_official_form_first_seen"
                     and raw_record.get("extraction_method") == case.extraction_method
                     and stable_url_identity(case.official_url)
@@ -473,6 +477,7 @@ class MonitorState:
                     str(raw_record.get("canonical_product_key") or ""),
                     old_start,
                     OpportunityKind.DIRECT_SALE if additional_sale else case.opportunity_kind,
+                    application_round=case.application_round,
                 )
                 if old_campaign_key == campaign_key:
                     same_campaign.append((old_id, raw_record))
@@ -566,6 +571,12 @@ class MonitorState:
             return None
         candidates = list({old_id: (old_id, record)
                            for old_id, record in [*candidates, *same_campaign]}.values())
+        if not case.application_round and len({
+            record["application_round"] for _, record in candidates
+            if record.get("application_round")
+        }) > 1:
+            # 回次省略の告知を根拠に、明記された複数の回次の履歴を吸収しない。
+            return None
         if isinstance(current_record, dict):
             candidates.append((case.case_id, current_record))
 
@@ -625,6 +636,8 @@ class MonitorState:
         if not kept_sync:
             kept_sync = _mapping(existing_sync.get(f"lottery:{case.case_id}"))
         kept_event_id = str(kept_sync.get("event_id") or "")
+        result_history = self.migrate_result_history(case.case_id, equivalent_ids)
+        duplicate_events.update(result_history.get("duplicate_calendar_events", {}))
         if observed_cardset and kept_event_id:
             for candidate_id in equivalent_ids:
                 sync = _mapping(existing_sync.get(f"lottery:{candidate_id}"))
@@ -652,6 +665,7 @@ class MonitorState:
             "legacy_id": old_id,
             "legacy_ids": equivalent_ids,
             "calendar_identity": calendar_identity,
+            **result_history,
             "migrated_at": datetime.now(UTC).isoformat(),
             **({"duplicate_calendar_events": duplicate_events} if duplicate_events else {}),
             **({"legacy_deliveries": legacy_deliveries} if legacy_deliveries else {}),
@@ -701,6 +715,47 @@ class MonitorState:
             if old_sync_key != new_sync_key:
                 calendar_sync.pop(old_sync_key, None)
         return old_id if old_id != case.case_id else None
+
+    def migrate_result_history(self, case_id: str, legacy_ids: list[str]) -> dict[str, Any]:
+        """同一募集と照合済みのIDだけから、結果通知・予定の履歴を引き継ぐ。"""
+        ids = list(dict.fromkeys([case_id, *legacy_ids]))
+        journal = self.data.setdefault("delivery_journal", {})
+        sync = self.data.setdefault("calendar_sync", {})
+        migrations = self.data.setdefault("case_id_migrations", {})
+        records = [journal[f"lottery:result:{item}"] for item in ids
+                   if f"lottery:result:{item}" in journal]
+        if records:
+            first_delivery = min(records, key=lambda record: (
+                record.get("status") != "complete", str(record.get("updated_at") or "9999"),
+            ))
+            for item in ids:
+                journal.pop(f"lottery:result:{item}", None)
+            journal[f"lottery:result:{case_id}"] = first_delivery
+        owners = [item for item in ids if f"lottery_result:{item}" in sync]
+        updates: dict[str, Any] = {}
+        if owners:
+            owner = owners[0]
+            kept = sync[f"lottery_result:{owner}"]
+            updates["calendar_result_identity"] = self.calendar_case_identity(
+                owner, kind="lottery_result",
+            )
+            duplicates = dict(migrations.get(case_id, {}).get("duplicate_calendar_events", {}))
+            for item in owners:
+                previous = sync[f"lottery_result:{item}"]
+                event_id = str(previous.get("event_id") or "")
+                if kept.get("event_id") and event_id and event_id != kept["event_id"]:
+                    duplicates.setdefault(event_id, {
+                        "event_id": event_id, "kind": "lottery_result",
+                        "internal_id": self.calendar_case_identity(item, kind="lottery_result"),
+                        "status": "pending", "original_sync": dict(previous),
+                    })
+            for item in owners:
+                sync.pop(f"lottery_result:{item}", None)
+            sync[f"lottery_result:{case_id}"] = kept
+            if duplicates:
+                updates["duplicate_calendar_events"] = duplicates
+            migrations.setdefault(case_id, {}).update(updates)
+        return updates
 
     def _drop_same_event_provisional_duplicates(
         self,
@@ -758,15 +813,18 @@ class MonitorState:
             )
             if has_old_history and not same_calendar_event:
                 continue
+            self.migrate_result_history(case.case_id, [old_id])
             seen_cases.pop(old_id, None)
             calendar_sync.pop(old_sync_key, None)
             for key in old_journal_keys:
                 journal.pop(key, None)
 
-    def calendar_case_identity(self, case_id: str) -> str:
+    def calendar_case_identity(self, case_id: str, *, kind: str = "lottery") -> str:
         migration = _mapping(
             _mapping(self.data.setdefault("case_id_migrations", {})).get(case_id)
         )
+        if kind == "lottery_result" and migration.get("calendar_result_identity"):
+            return str(migration["calendar_result_identity"])
         return str(migration.get("calendar_identity") or case_id)
 
     def canonical_release_identity(self, release: Release) -> str:
