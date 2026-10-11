@@ -37,14 +37,15 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
     # 明記された1次・2次を分ける変更で、回次なしの同じ告知を増やさない。
     rounds: dict[str, set[str]] = defaultdict(set)
     for item in items:
-        if item.application_round:
+        if item.application_round and item.extraction_method not in OBSERVED_START_METHODS:
             rounds[lottery_dedupe_key(replace(item, application_round=""))].add(
                 item.application_round,
             )
     normalized_rounds = []
     for item in items:
         known_rounds = rounds.get(lottery_dedupe_key(item), set())
-        if not item.application_round and len(known_rounds) == 1:
+        if (not item.application_round and len(known_rounds) == 1
+                and item.extraction_method not in OBSERVED_START_METHODS):
             item = replace(item, application_round=next(iter(known_rounds))).with_id()
         normalized_rounds.append(item)
     items = normalized_rounds

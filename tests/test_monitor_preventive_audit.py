@@ -123,6 +123,17 @@ def test_missing_round_is_enriched_only_when_unique(tmp_path):
     assert state.delivered(f"lottery:started:{prepared[0].case_id}")
 
 
+def test_observed_start_cannot_borrow_a_different_application_round(tmp_path):
+    initial = merge_lotteries([campaign()])[0][0]
+    next_round = campaign(application_round="2次")
+    state = MonitorState(tmp_path / "state.json")
+    _remember_case(state, initial)
+    state.mark_delivered(f"lottery:started:{initial.case_id}")
+    prepared, count = _prepare_cases(state, [initial, next_round])
+    assert len(prepared) == 2 and count == 1
+    assert sum(state.delivered(f"lottery:started:{row.case_id}") for row in prepared) == 1
+
+
 def test_reference_aliasing_keeps_conflicting_deadlines_and_forms_separate():
     observed = campaign(end_at=date(2026, 10, 12))
     later = campaign(extraction_method="confirmed", end_at=date(2026, 11, 12))

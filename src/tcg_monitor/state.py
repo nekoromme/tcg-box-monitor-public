@@ -429,6 +429,10 @@ class MonitorState:
             observed_cardset_pair = cardset_pair and bool(OBSERVED_START_METHODS & {
                 case.extraction_method, str(raw_record.get("extraction_method") or ""),
             })
+            if (observed_cardset_pair
+                    and case.application_round != str(raw_record.get("application_round") or "")):
+                # 仮日付の一致だけで回次省略を補完すると、次の募集まで通知済みになる。
+                continue
             if (case.extraction_method == "tsutaya_line_official_form_first_seen"
                     and raw_record.get("extraction_method") == case.extraction_method
                     and stable_url_identity(case.official_url)
