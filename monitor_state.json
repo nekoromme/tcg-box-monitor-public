@@ -2483,11 +2483,11 @@
       "status": "inserted",
       "updated_at": "2026-09-10T07:19:37.187103+00:00"
     },
-    "lottery_result:3c9e8fb594e907a69bc8d71b90aa3311156ddbeaae225da64c750a62cd7c8201": {
-      "event_id": "tcge3e4e8ee9f4236d81b427813469461a62d0bbdda8b9606ef7b7aa423c5841",
-      "payload_hash": "09032a82fda9f18bcd912f58e9541bb0a2c093710067f4c0a30c2a64c241f41e",
-      "status": "inserted",
-      "updated_at": "2026-09-30T00:35:27.369351+00:00"
+    "lottery_result:0056862b80267f0406d12e235c3bcf61c69bde93306cd72521748e42eddf803a": {
+      "event_id": "tcg658f5bd13ab543aeb22574fa33a39d9226f7d242298eccf1a736323099735",
+      "payload_hash": "e1f94f196e700b7448216e634d9f9be8783a01321bbed853f13d0f5196983f71",
+      "status": "updated",
+      "updated_at": "2026-10-11T00:41:52.161243+00:00"
     },
     "lottery_result:3d8afa679763f324865832b3c0991f2a2d02677ea4938ca270535e93425d73ae": {
       "event_id": "tcg5c413c34cc283c6aed37654a2bd567cf86dbcf890856a90959ffafbe4f470",
@@ -2499,19 +2499,13 @@
       "event_id": "tcge3e4e8ee9f4236d81b427813469461a62d0bbdda8b9606ef7b7aa423c5841",
       "payload_hash": "10028efd071f4959409dc2ac8e66dea9d57cb752d2df502381ba813ca49834ce",
       "status": "updated",
-      "updated_at": "2026-09-30T02:07:19.947806+00:00"
+      "updated_at": "2026-10-11T00:41:53.088080+00:00"
     },
     "lottery_result:7cdb6fdbe4cd1f7720287f12047a933941bd2f6b1c9d905a9d9339fa10bce775": {
       "event_id": "tcg02dc8c13dbf37a44e6de4a1ee133a9619615c20bf0fe788647b8fabe775b0",
       "payload_hash": "b3e62f5a7892b52faf080f2ca54458b5a843f90a5c5f90062b3e15e679dd8c14",
       "status": "updated",
       "updated_at": "2026-09-30T03:16:28.910376+00:00"
-    },
-    "lottery_result:9ca5e99ed3967cae1e41f826500cd9c4d53d4935c5a3f60b38a08be8a639b4f9": {
-      "event_id": "tcg658f5bd13ab543aeb22574fa33a39d9226f7d242298eccf1a736323099735",
-      "payload_hash": "2f47db36e07b72810485a6b97a74566f514d933fdbdd80fbc109e154ef585031",
-      "status": "inserted",
-      "updated_at": "2026-09-23T05:51:04.387214+00:00"
     },
     "lottery_result:f74f7f4503e439248cbb96bdc0e8776772b46c0a562b3c87f2d13d1fc62e82c6": {
       "event_id": "tcg372c99dad7affc8dacdeb541aa1906555d044813113e35fcd14f7d3f1e64c",
@@ -2637,6 +2631,7 @@
   "case_id_migrations": {
     "0056862b80267f0406d12e235c3bcf61c69bde93306cd72521748e42eddf803a": {
       "calendar_identity": "9efc08c420067b6b071084485f1703977f981cc13baf1799f6c59f5aa273d94e",
+      "calendar_result_identity": "8e772356aec77816cdef378ee99547cadc392ec87146981c70f37e797954c0d3",
       "duplicate_calendar_events": {
         "tcg1eeeb5d820242cef1698cde09c998360d59f5ee5b891206b77fcbc216f58c": {
           "event_id": "tcg1eeeb5d820242cef1698cde09c998360d59f5ee5b891206b77fcbc216f58c",
@@ -3494,6 +3489,7 @@
     },
     "61ce0341f971a6cefce0ec649d5901bfa1ffef834f8e7145d4c89b05281163aa": {
       "calendar_identity": "3c9e8fb594e907a69bc8d71b90aa3311156ddbeaae225da64c750a62cd7c8201",
+      "calendar_result_identity": "3c9e8fb594e907a69bc8d71b90aa3311156ddbeaae225da64c750a62cd7c8201",
       "legacy_id": "3c9e8fb594e907a69bc8d71b90aa3311156ddbeaae225da64c750a62cd7c8201",
       "legacy_ids": [
         "3c9e8fb594e907a69bc8d71b90aa3311156ddbeaae225da64c750a62cd7c8201"
@@ -4347,7 +4343,7 @@
     }
   },
   "delivery_journal": {
-    "lottery:result:9ca5e99ed3967cae1e41f826500cd9c4d53d4935c5a3f60b38a08be8a639b4f9": {
+    "lottery:result:0056862b80267f0406d12e235c3bcf61c69bde93306cd72521748e42eddf803a": {
       "status": "complete",
       "updated_at": "2026-10-08T16:43:18.437847+00:00"
     },
@@ -25102,6 +25098,15 @@
         "235b5b18d823783ee2d17abd55b7ad01fffdb0a3c1fcf76b15f9d000f7103116"
       ],
       "completed_at": "2026-10-10T08:11:23.965678+00:00",
+      "discord_notifications": 0,
+      "status": "complete"
+    },
+    "lottery_result_history_20261011": {
+      "case_ids": [
+        "0056862b80267f0406d12e235c3bcf61c69bde93306cd72521748e42eddf803a",
+        "61ce0341f971a6cefce0ec649d5901bfa1ffef834f8e7145d4c89b05281163aa"
+      ],
+      "completed_at": "2026-10-11T00:41:53.479604+00:00",
       "discord_notifications": 0,
       "status": "complete"
     },
