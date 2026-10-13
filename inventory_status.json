@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1791934254988,
+  "generatedAt": 1791934305150,
   "prices": {
     "version": 1,
-    "checkedAt": 1791934222721,
+    "checkedAt": 1791934273345,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -2427,7 +2427,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1791934254987,
+    "checkedAt": 1791934305149,
     "notificationDelay": {
       "samples": 4,
       "medianMs": 31477,
@@ -2744,7 +2744,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1791934254986,
+    "verifiedAt": 1791934305148,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -36367,8 +36367,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1791934251890,
-  "lastCompletedAt": 1791934253869,
+  "lastTick": 1791934302733,
+  "lastCompletedAt": 1791934302778,
   "load": {
     "activePages": 83,
     "waitingPages": 0,
@@ -36379,8 +36379,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1558765,
-    "compressedBytes": 125642,
+    "uncompressedBytes": 1558461,
+    "compressedBytes": 125626,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36410,8 +36410,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1791934221889,
-    "nextSync": 1791941421889,
+    "lastSync": 1791934272732,
+    "nextSync": 1791941472732,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38217,12 +38217,6 @@
     ],
     "log": [
       {
-        "at": 1791416955043,
-        "kind": "catalog",
-        "count": 38,
-        "added": []
-      },
-      {
         "at": 1791424161552,
         "kind": "catalog",
         "count": 38,
@@ -38812,6 +38806,12 @@
       },
       {
         "at": 1791934221889,
+        "kind": "catalog",
+        "count": 38,
+        "added": []
+      },
+      {
+        "at": 1791934272732,
         "kind": "catalog",
         "count": 38,
         "added": []
@@ -57722,36 +57722,6 @@
   ],
   "runs": [
     {
-      "at": 1791900819910,
-      "checked": 1,
-      "discovered": {
-        "storeId": "square3rd",
-        "mode": "store-listing",
-        "result": {
-          "matched": 0,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://www.square-3rd.jp/new",
-              "head": true,
-              "productLinks": 182,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "new"
-            }
-          ],
-          "requests": 1,
-          "status": "ok",
-          "previousAt": 1791897209328
-        },
-        "error": ""
-      },
-      "targets": 115,
-      "errors": 4
-    },
-    {
       "at": 1791900852881,
       "checked": 1,
       "discovered": {
@@ -72293,6 +72263,13 @@
     {
       "at": 1791934251890,
       "checked": 1,
+      "discovered": null,
+      "targets": 115,
+      "errors": 0
+    },
+    {
+      "at": 1791934302733,
+      "checked": 0,
       "discovered": null,
       "targets": 115,
       "errors": 0
