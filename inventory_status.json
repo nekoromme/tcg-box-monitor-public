@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1792201206036,
+  "generatedAt": 1792201257944,
   "prices": {
     "version": 1,
-    "checkedAt": 1792201172301,
+    "checkedAt": 1792201222919,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -2589,7 +2589,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1792201206035,
+    "checkedAt": 1792201257943,
     "notificationDelay": {
       "samples": 7,
       "medianMs": 30623,
@@ -2898,7 +2898,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1792201206031,
+    "verifiedAt": 1792201257942,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -35958,9 +35958,9 @@
     "budget": {
       "day": 20743,
       "group": 343,
-      "fallback": 361
+      "fallback": 363
     },
-    "nextFallbackAt": 1792201172476,
+    "nextFallbackAt": 1792201372213,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -35983,8 +35983,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1792201201725,
-  "lastCompletedAt": 1792201205094,
+  "lastTick": 1792201252213,
+  "lastCompletedAt": 1792201256674,
   "load": {
     "activePages": 85,
     "waitingPages": 0,
@@ -35995,8 +35995,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1629569,
-    "compressedBytes": 135283,
+    "uncompressedBytes": 1629723,
+    "compressedBytes": 135269,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36026,8 +36026,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1792201171724,
-    "nextSync": 1792208371724,
+    "lastSync": 1792201222211,
+    "nextSync": 1792208422211,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -37791,12 +37791,6 @@
     ],
     "log": [
       {
-        "at": 1791691709415,
-        "kind": "catalog",
-        "count": 38,
-        "added": []
-      },
-      {
         "at": 1791698929998,
         "kind": "catalog",
         "count": 38,
@@ -38386,6 +38380,12 @@
       },
       {
         "at": 1792201171724,
+        "kind": "catalog",
+        "count": 37,
+        "added": []
+      },
+      {
+        "at": 1792201222211,
         "kind": "catalog",
         "count": 37,
         "added": []
@@ -54585,13 +54585,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 3888,
+          "negatives": 3889,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792201244546,
+      "nextAt": 1792201541927,
       "failures": 0,
-      "lastChecked": 1792200956546,
+      "lastChecked": 1792201253927,
       "lastGood": {
         "title": "拡張パック　30th CELEBRATION　BOX【ポケモンカードゲーム】",
         "price": 7200,
@@ -54702,11 +54702,11 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張商品の1BOX表記を確認",
           "at": 1792182986437,
-          "lastAt": 1792200956546,
-          "samples": 59
+          "lastAt": 1792201253927,
+          "samples": 60
         }
       ],
-      "lastGoodAt": 1792200956546,
+      "lastGoodAt": 1792201253927,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -54716,14 +54716,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1792200956546
+          "at": 1792201253927
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092857,
         "stock": "out_of_stock",
-        "lastAt": 1792200956546,
-        "lastUnavailableAt": 1792200956546
+        "lastAt": 1792201253927,
+        "lastUnavailableAt": 1792201253927
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -56674,13 +56674,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 4428,
+          "negatives": 4429,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792201206856,
+      "nextAt": 1792201469822,
       "failures": 0,
-      "lastChecked": 1792200990856,
+      "lastChecked": 1792201253822,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Newtype Rising [GD01] BOX(24パック入)",
         "price": 5200,
@@ -56714,7 +56714,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1792200990856
+          "at": 1792201253822
         }
       },
       "history": [
@@ -56742,17 +56742,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791439717821,
-          "lastAt": 1792200990856,
-          "samples": 3249
+          "lastAt": 1792201253822,
+          "samples": 3250
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791179154500,
         "stock": "out_of_stock",
-        "lastAt": 1792200990856,
-        "lastUnavailableAt": 1792200990856
+        "lastAt": 1792201253822,
+        "lastUnavailableAt": 1792201253822
       },
-      "lastGoodAt": 1792200990856,
+      "lastGoodAt": 1792201253822,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 216,
@@ -57000,13 +57000,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 3527,
+          "negatives": 3528,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792201238451,
+      "nextAt": 1792201469755,
       "failures": 0,
-      "lastChecked": 1792201022451,
+      "lastChecked": 1792201253755,
       "lastGood": {
         "title": "ブースターパック「Newtype Rising」 1BOX(*24パック入り*) [ _250046939 ]",
         "price": 5800,
@@ -57038,7 +57038,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1792201022451
+          "at": 1792201253755
         }
       },
       "history": [
@@ -57678,17 +57678,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1792193230534,
-          "lastAt": 1792201022451,
-          "samples": 35
+          "lastAt": 1792201253755,
+          "samples": 36
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791372079169,
         "stock": "out_of_stock",
-        "lastAt": 1792201022451,
-        "lastUnavailableAt": 1792201022451
+        "lastAt": 1792201253755,
+        "lastUnavailableAt": 1792201253755
       },
-      "lastGoodAt": 1792201022451,
+      "lastGoodAt": 1792201253755,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 216,
@@ -61715,13 +61715,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1792168116212,
-      "checked": 3,
-      "discovered": null,
-      "targets": 117,
-      "errors": 7
-    },
     {
       "at": 1792168148164,
       "checked": 0,
@@ -76205,6 +76198,23 @@
           "requests": 2,
           "status": "ok",
           "previousAt": 1792197574434
+        },
+        "error": ""
+      },
+      "targets": 117,
+      "errors": 2
+    },
+    {
+      "at": 1792201252213,
+      "checked": 3,
+      "discovered": {
+        "ruleId": "062f25fc-334e-4638-9f20-a3d05f2ae746",
+        "storeId": "advantage1",
+        "result": {
+          "at": 1792201252213,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
         },
         "error": ""
       },
