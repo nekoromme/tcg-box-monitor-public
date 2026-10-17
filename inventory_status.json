@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1792265314028,
+  "generatedAt": 1792266091579,
   "prices": {
     "version": 1,
-    "checkedAt": 1792265278334,
+    "checkedAt": 1792266054939,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -2643,7 +2643,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1792265314027,
+    "checkedAt": 1792266091578,
     "notificationDelay": {
       "samples": 8,
       "medianMs": 31477,
@@ -2952,7 +2952,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1792265314026,
+    "verifiedAt": 1792266091577,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -5011,9 +5011,9 @@
       },
       "cardmax": {
         "storeId": "cardmax",
-        "nextAt": 1792265740932,
+        "nextAt": 1792269363534,
         "createdAt": 1791078090716,
-        "successes": 384,
+        "successes": 385,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -5022,7 +5022,7 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1792262144485
+            "lastAt": 1792265765966
           },
           {
             "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
@@ -5032,8 +5032,8 @@
             "lastAt": 1792262146306
           }
         ],
-        "sourceCursor": 0,
-        "lastAttemptAt": 1792262140932,
+        "sourceCursor": 1,
+        "lastAttemptAt": 1792265763534,
         "lastResult": {
           "matched": 1,
           "registered": 0,
@@ -5047,22 +5047,13 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "search"
-            },
-            {
-              "url": "https://www.cardmax.jp/shop/shopbrand.html?search=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-              "head": true,
-              "productLinks": 47,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "alternate"
             }
           ],
-          "requests": 2,
+          "requests": 1,
           "status": "ok",
-          "previousAt": 1792258516572
+          "previousAt": 1792262140932
         },
-        "lastAt": 1792262140932,
+        "lastAt": 1792265763534,
         "retryAt": 0,
         "error": "",
         "lastNewAt": 1791878086429,
@@ -5075,9 +5066,9 @@
       },
       "cardwiz": {
         "storeId": "cardwiz",
-        "nextAt": 1792265502657,
+        "nextAt": 1792269133969,
         "createdAt": 1791078090716,
-        "successes": 352,
+        "successes": 353,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -5091,20 +5082,20 @@
           {
             "url": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
             "role": "alternate",
-            "depth": 1,
-            "nextUrl": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&page=2",
-            "lastAt": 1792254682924
+            "depth": 2,
+            "nextUrl": null,
+            "lastAt": 1792265536621
           },
           {
             "url": "https://www.cardwiz.jp/new",
             "role": "new",
             "depth": 1,
             "nextUrl": "https://www.cardwiz.jp/new?page=2",
-            "lastAt": 1792261905918
+            "lastAt": 1792265535885
           }
         ],
-        "sourceCursor": 1,
-        "lastAttemptAt": 1792261902657,
+        "sourceCursor": 2,
+        "lastAttemptAt": 1792265533969,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -5120,20 +5111,20 @@
               "order": "new"
             },
             {
-              "url": "https://www.cardwiz.jp/product-list?keyword=BOX&page=10",
+              "url": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&page=2",
               "head": false,
-              "productLinks": 60,
+              "productLinks": 19,
               "scope": "read",
-              "hasMore": true,
+              "hasMore": false,
               "depthLimited": false,
-              "order": "search"
+              "order": "alternate"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1792258286403
+          "previousAt": 1792261902657
         },
-        "lastAt": 1792261902657,
+        "lastAt": 1792265533969,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -5196,18 +5187,18 @@
       },
       "futaki": {
         "storeId": "futaki",
-        "nextAt": 1792265776312,
+        "nextAt": 1792269395970,
         "createdAt": 1791078090716,
-        "successes": 352,
+        "successes": 353,
         "failures": 0,
         "rapidSales": [],
         "sources": [
           {
             "url": "https://www.target.co.jp/view/search?search_keyword=BOX",
             "role": "search",
-            "depth": 8,
-            "nextUrl": "https://www.target.co.jp/view/search?page=9&search_keyword=BOX",
-            "lastAt": 1792251322070
+            "depth": 9,
+            "nextUrl": "https://www.target.co.jp/view/search?page=10&search_keyword=BOX",
+            "lastAt": 1792265801106
           },
           {
             "url": "https://www.target.co.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
@@ -5221,7 +5212,7 @@
             "role": "sorted",
             "depth": 13,
             "nextUrl": "https://www.target.co.jp/view/search?page=14&search_keyword=BOX&sort=order",
-            "lastAt": 1792262180026
+            "lastAt": 1792265799749
           },
           {
             "url": "https://www.target.co.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
@@ -5231,8 +5222,8 @@
             "lastAt": 1792262180934
           }
         ],
-        "sourceCursor": 0,
-        "lastAttemptAt": 1792262176312,
+        "sourceCursor": 1,
+        "lastAttemptAt": 1792265795970,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -5248,20 +5239,20 @@
               "order": "sorted"
             },
             {
-              "url": "https://www.target.co.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
-              "head": true,
+              "url": "https://www.target.co.jp/view/search?page=9&search_keyword=BOX",
+              "head": false,
               "productLinks": 16,
               "scope": "read",
-              "hasMore": false,
+              "hasMore": true,
               "depthLimited": false,
-              "order": "sorted"
+              "order": "search"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1792258548936
+          "previousAt": 1792262176312
         },
-        "lastAt": 1792262176312,
+        "lastAt": 1792265795970,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -5271,18 +5262,18 @@
       },
       "masters_gundam": {
         "storeId": "masters_gundam",
-        "nextAt": 1792266013442,
+        "nextAt": 1792269684275,
         "createdAt": 1791078090716,
-        "successes": 392,
+        "successes": 393,
         "failures": 0,
         "rapidSales": [],
         "sources": [
           {
             "url": "https://www.masters-square.com/product-list?keyword=BOX",
             "role": "search",
-            "depth": 6,
-            "nextUrl": "https://www.masters-square.com/product-list?keyword=BOX&page=7",
-            "lastAt": 1792255179426
+            "depth": 7,
+            "nextUrl": "https://www.masters-square.com/product-list?keyword=BOX&page=8",
+            "lastAt": 1792266090285
           },
           {
             "url": "https://www.masters-square.com/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
@@ -5296,11 +5287,11 @@
             "role": "new",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1792262416811
+            "lastAt": 1792266087892
           }
         ],
-        "sourceCursor": 0,
-        "lastAttemptAt": 1792262413442,
+        "sourceCursor": 1,
+        "lastAttemptAt": 1792266084275,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -5314,13 +5305,22 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "new"
+            },
+            {
+              "url": "https://www.masters-square.com/product-list?keyword=BOX&page=7",
+              "head": false,
+              "productLinks": 100,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
             }
           ],
-          "requests": 1,
+          "requests": 2,
           "status": "ok",
-          "previousAt": 1792258804383
+          "previousAt": 1792262413442
         },
-        "lastAt": 1792262413442,
+        "lastAt": 1792266084275,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -5455,9 +5455,9 @@
       },
       "suns": {
         "storeId": "suns",
-        "nextAt": 1792265884413,
+        "nextAt": 1792269495058,
         "createdAt": 1791078090716,
-        "successes": 352,
+        "successes": 353,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -5466,7 +5466,7 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1792262286361
+            "lastAt": 1792265898774
           },
           {
             "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
@@ -5476,8 +5476,8 @@
             "lastAt": 1792262287474
           }
         ],
-        "sourceCursor": 0,
-        "lastAttemptAt": 1792262284413,
+        "sourceCursor": 1,
+        "lastAttemptAt": 1792265895058,
         "lastResult": {
           "matched": 1,
           "registered": 0,
@@ -5491,22 +5491,13 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "search"
-            },
-            {
-              "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-              "head": true,
-              "productLinks": 30,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "alternate"
             }
           ],
-          "requests": 2,
+          "requests": 1,
           "status": "ok",
-          "previousAt": 1792258672109
+          "previousAt": 1792262284413
         },
-        "lastAt": 1792262284413,
+        "lastAt": 1792265895058,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -5629,18 +5620,18 @@
       },
       "torecolo": {
         "storeId": "torecolo",
-        "nextAt": 1792265566657,
+        "nextAt": 1792269198273,
         "createdAt": 1791078090716,
-        "successes": 286,
+        "successes": 287,
         "failures": 0,
         "rapidSales": [],
         "sources": [
           {
             "url": "https://www.torecolo.jp/shop/goods/search.aspx?search=x&ps=50&keyword=BOX",
             "role": "search",
-            "depth": 19,
-            "nextUrl": "https://www.torecolo.jp/shop/goods/search.aspx?keyword=BOX&search=x&p=20&ps=50",
-            "lastAt": 1792261975171
+            "depth": 20,
+            "nextUrl": null,
+            "lastAt": 1792265607788
           },
           {
             "url": "https://www.torecolo.jp/shop/goods/search.aspx?search=x&ps=50&keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
@@ -5650,8 +5641,8 @@
             "lastAt": 1792261982603
           }
         ],
-        "sourceCursor": 0,
-        "lastAttemptAt": 1792261966657,
+        "sourceCursor": 1,
+        "lastAttemptAt": 1792265598273,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -5667,20 +5658,20 @@
               "order": "search"
             },
             {
-              "url": "https://www.torecolo.jp/shop/goods/search.aspx?search=x&ps=50&keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-              "head": true,
-              "productLinks": 68,
+              "url": "https://www.torecolo.jp/shop/goods/search.aspx?keyword=BOX&search=x&p=20&ps=50",
+              "head": false,
+              "productLinks": 74,
               "scope": "read",
               "hasMore": true,
-              "depthLimited": false,
-              "order": "alternate"
+              "depthLimited": true,
+              "order": "search"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1792258352616
+          "previousAt": 1792261966657
         },
-        "lastAt": 1792261966657,
+        "lastAt": 1792265598273,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -5984,201 +5975,6 @@
       }
     },
     "log": [
-      {
-        "kind": "listing",
-        "storeId": "tcgacademy",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.tcgacademy.com/product-list?keyword=BOX",
-            "head": true,
-            "productLinks": 100,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://www.tcgacademy.com/product-list?keyword=BOX&page=4",
-            "head": false,
-            "productLinks": 100,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1792074269803,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1792081479765,
-        "at": 1792077879765
-      },
-      {
-        "kind": "listing",
-        "storeId": "tier1_gundam",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://tier-one.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
-            "head": true,
-            "productLinks": 22,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "sorted"
-          },
-          {
-            "url": "https://tier-one.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 22,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "search"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1792074303991,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1792081520213,
-        "at": 1792077920213
-      },
-      {
-        "kind": "listing",
-        "storeId": "ryuunoshippo",
-        "matched": 1,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.ryuunoshippo7.com/product-group/2?view=recommend",
-            "head": true,
-            "productLinks": 14,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "search"
-          }
-        ],
-        "requests": 1,
-        "status": "ok",
-        "previousAt": 1792074431430,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1792081646539,
-        "at": 1792078046539
-      },
-      {
-        "kind": "listing",
-        "storeId": "torezamu",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.torezamunet.com/product-list?keyword=BOX",
-            "head": true,
-            "productLinks": 60,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          },
-          {
-            "url": "https://www.torezamunet.com/product-list?keyword=BOX&page=2",
-            "head": false,
-            "productLinks": 60,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1792074464663,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1792081679113,
-        "at": 1792078079113
-      },
-      {
-        "kind": "listing",
-        "storeId": "tier1_op",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://tier-one-onepiece.jp/view/search?search_keyword=BOX&sort=order",
-            "head": true,
-            "productLinks": 48,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "sorted"
-          },
-          {
-            "url": "https://tier-one-onepiece.jp/view/search?search_keyword=BOX",
-            "head": true,
-            "productLinks": 48,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1792074498919,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1792081713172,
-        "at": 1792078113172
-      },
-      {
-        "kind": "listing",
-        "storeId": "square3rd",
-        "matched": 3,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.square-3rd.jp/new",
-            "head": true,
-            "productLinks": 182,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "new"
-          },
-          {
-            "url": "https://www.square-3rd.jp/product-list?keyword=BOX&page=2",
-            "head": false,
-            "productLinks": 100,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "search"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1792074565784,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1792081787175,
-        "at": 1792078187175
-      },
       {
         "kind": "listing",
         "storeId": "advantage2",
@@ -36242,14 +36038,200 @@
         "reason": "取得範囲で24時間以上、対象ページの追加なし",
         "nextAt": 1792268517931,
         "at": 1792264917931
+      },
+      {
+        "kind": "listing",
+        "storeId": "cardwiz",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.cardwiz.jp/new",
+            "head": true,
+            "productLinks": 64,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "new"
+          },
+          {
+            "url": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&page=2",
+            "head": false,
+            "productLinks": 19,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "alternate"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1792261902657,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1792269133969,
+        "at": 1792265533969
+      },
+      {
+        "kind": "listing",
+        "storeId": "torecolo",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.torecolo.jp/shop/goods/search.aspx?search=x&ps=50&keyword=BOX",
+            "head": true,
+            "productLinks": 73,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://www.torecolo.jp/shop/goods/search.aspx?keyword=BOX&search=x&p=20&ps=50",
+            "head": false,
+            "productLinks": 74,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": true,
+            "order": "search"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1792261966657,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1792269198273,
+        "at": 1792265598273
+      },
+      {
+        "kind": "listing",
+        "storeId": "cardmax",
+        "matched": 1,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.cardmax.jp/shop/shopbrand.html?search=BOX",
+            "head": true,
+            "productLinks": 47,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          }
+        ],
+        "requests": 1,
+        "status": "ok",
+        "previousAt": 1792262140932,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1792269363534,
+        "at": 1792265763534
+      },
+      {
+        "kind": "listing",
+        "storeId": "futaki",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.target.co.jp/view/search?search_keyword=BOX&sort=order",
+            "head": true,
+            "productLinks": 16,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "sorted"
+          },
+          {
+            "url": "https://www.target.co.jp/view/search?page=9&search_keyword=BOX",
+            "head": false,
+            "productLinks": 16,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "search"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1792262176312,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1792269395970,
+        "at": 1792265795970
+      },
+      {
+        "kind": "listing",
+        "storeId": "suns",
+        "matched": 1,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=BOX",
+            "head": true,
+            "productLinks": 30,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          }
+        ],
+        "requests": 1,
+        "status": "ok",
+        "previousAt": 1792262284413,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1792269495058,
+        "at": 1792265895058
+      },
+      {
+        "kind": "listing",
+        "storeId": "masters_gundam",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.masters-square.com/new",
+            "head": true,
+            "productLinks": 228,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "new"
+          },
+          {
+            "url": "https://www.masters-square.com/product-list?keyword=BOX&page=7",
+            "head": false,
+            "productLinks": 100,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "search"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1792262413442,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1792269684275,
+        "at": 1792266084275
       }
     ],
     "budget": {
       "day": 20744,
-      "group": 137,
-      "fallback": 165
+      "group": 147,
+      "fallback": 173
     },
-    "nextFallbackAt": 1792265359884,
+    "nextFallbackAt": 1792266080388,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -36272,8 +36254,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1792265307828,
-  "lastCompletedAt": 1792265310251,
+  "lastTick": 1792266084275,
+  "lastCompletedAt": 1792266090285,
   "load": {
     "activePages": 86,
     "waitingPages": 0,
@@ -36284,8 +36266,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1635878,
-    "compressedBytes": 135666,
+    "uncompressedBytes": 1637476,
+    "compressedBytes": 135766,
     "chunks": 2
   },
   "deliveryHealth": {
@@ -36315,8 +36297,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1792265277828,
-    "nextSync": 1792272477828,
+    "lastSync": 1792266054274,
+    "nextSync": 1792273254274,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38080,12 +38062,6 @@
     ],
     "log": [
       {
-        "at": 1791780197333,
-        "kind": "catalog",
-        "count": 38,
-        "added": []
-      },
-      {
         "at": 1791786421395,
         "kind": "catalog",
         "count": 38,
@@ -38675,6 +38651,12 @@
       },
       {
         "at": 1792265277828,
+        "kind": "catalog",
+        "count": 37,
+        "added": []
+      },
+      {
+        "at": 1792266054274,
         "kind": "catalog",
         "count": 37,
         "added": []
@@ -42357,13 +42339,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 3987,
+          "negatives": 3990,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265338041,
+      "nextAt": 1792266283674,
       "failures": 0,
-      "lastChecked": 1792265050041,
+      "lastChecked": 1792265995674,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 8200,
@@ -42589,11 +42571,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1792143176538,
-          "lastAt": 1792265050041,
-          "samples": 392
+          "lastAt": 1792265995674,
+          "samples": 395
         }
       ],
-      "lastGoodAt": 1792265050041,
+      "lastGoodAt": 1792265995674,
       "priceDecisions": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "referencePrice": 6000,
@@ -42603,18 +42585,18 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1792265050041
+          "at": 1792265995674
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078129094,
         "stock": "in_stock",
-        "lastAt": 1792265050041,
+        "lastAt": 1792265995674,
         "lastUnavailableAt": 1791324504511,
         "availableSince": 1791324806385,
         "openAfter": 1791324504511,
         "firstAvailableAt": 1791324806385,
-        "lastAvailableAt": 1792265050041
+        "lastAvailableAt": 1792265995674
       },
       "focusUntil": 1791326606385,
       "focusReason": "購入不可から購入可能への変化",
@@ -42695,13 +42677,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 3900,
+          "negatives": 3902,
           "lastEvent": 1791039217281
         }
       },
-      "nextAt": 1792265497858,
+      "nextAt": 1792266085916,
       "failures": 0,
-      "lastChecked": 1792265209858,
+      "lastChecked": 1792265797916,
       "lastGood": {
         "title": "ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX ｜ シュリンク付き 未開封 ポケカ トレカ トレーディングカード",
         "price": 31500,
@@ -43066,11 +43048,11 @@
           "priceDecision": "通知上限14,400円を超過",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1792253255970,
-          "lastAt": 1792265209858,
-          "samples": 38
+          "lastAt": 1792265797916,
+          "samples": 40
         }
       ],
-      "lastGoodAt": 1792265209858,
+      "lastGoodAt": 1792265797916,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -43080,14 +43062,14 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限14,400円を超過",
-          "at": 1792265209858
+          "at": 1792265797916
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093471,
         "firstAvailableAt": 1791078093471,
         "stock": "out_of_stock",
-        "lastAt": 1792265209858,
+        "lastAt": 1792265797916,
         "lastAvailableAt": 1792116952786,
         "lastSale": {
           "at": 1792117296875,
@@ -43099,7 +43081,7 @@
           "durationLowerMs": 1865484,
           "durationUpperMs": 2503712
         },
-        "lastUnavailableAt": 1792265209858
+        "lastUnavailableAt": 1792265797916
       },
       "focusUntil": 1792116887302,
       "focusReason": "購入不可から購入可能への変化",
@@ -43180,13 +43162,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 4245,
+          "negatives": 4247,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265465830,
+      "nextAt": 1792266085372,
       "failures": 0,
-      "lastChecked": 1792265177830,
+      "lastChecked": 1792265797372,
       "lastGood": {
         "title": "ブースターパック　Newtype Rising　BOX【ガンダムカードゲーム】",
         "price": 5808,
@@ -43237,11 +43219,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791264459142,
-          "lastAt": 1792265177830,
-          "samples": 3247
+          "lastAt": 1792265797372,
+          "samples": 3249
         }
       ],
-      "lastGoodAt": 1792265177830,
+      "lastGoodAt": 1792265797372,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -43251,14 +43233,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1792265177830
+          "at": 1792265797372
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078128567,
         "stock": "out_of_stock",
-        "lastAt": 1792265177830,
-        "lastUnavailableAt": 1792265177830
+        "lastAt": 1792265797372,
+        "lastUnavailableAt": 1792265797372
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -43277,13 +43259,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 5490,
+          "negatives": 5492,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265540384,
+      "nextAt": 1792266063648,
       "failures": 0,
-      "lastChecked": 1792265309384,
+      "lastChecked": 1792265832648,
       "lastGood": {
         "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 5808,
@@ -43914,11 +43896,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1792244392926,
-          "lastAt": 1792265309384,
-          "samples": 84
+          "lastAt": 1792265832648,
+          "samples": 86
         }
       ],
-      "lastGoodAt": 1792265309384,
+      "lastGoodAt": 1792265832648,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -43928,14 +43910,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1792265309384
+          "at": 1792265832648
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092888,
         "stock": "out_of_stock",
-        "lastAt": 1792265309384,
-        "lastUnavailableAt": 1792265309384
+        "lastAt": 1792265832648,
+        "lastUnavailableAt": 1792265832648
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -43954,13 +43936,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 4942,
+          "negatives": 4945,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265343303,
+      "nextAt": 1792266128628,
       "failures": 0,
-      "lastChecked": 1792265112303,
+      "lastChecked": 1792265897628,
       "lastGood": {
         "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
         "price": 5808,
@@ -44825,11 +44807,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1792085088482,
-          "lastAt": 1792265112303,
-          "samples": 763
+          "lastAt": 1792265897628,
+          "samples": 766
         }
       ],
-      "lastGoodAt": 1792265112303,
+      "lastGoodAt": 1792265897628,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -44839,14 +44821,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1792265112303
+          "at": 1792265897628
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093552,
         "stock": "out_of_stock",
-        "lastAt": 1792265112303,
-        "lastUnavailableAt": 1792265112303
+        "lastAt": 1792265897628,
+        "lastUnavailableAt": 1792265897628
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -45658,13 +45640,13 @@
       "episodes": {
         "885eb3d0-c312-4526-a65e-2d9d7c0cc66d": {
           "active": false,
-          "negatives": 431,
+          "negatives": 432,
           "lastEvent": 1791057224030
         }
       },
-      "nextAt": 1792265894560,
+      "nextAt": 1792268985293,
       "failures": 0,
-      "lastChecked": 1792262870560,
+      "lastChecked": 1792265961293,
       "lastGood": {
         "title": "【BOX】 ポケモンカードゲーム MEGA 拡張パック ストームエメラルダ BOX ｜ シュリンク付き 未開封 ポケカ トレカ トレーディングカード",
         "price": 21800,
@@ -45700,11 +45682,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1791078337892,
-          "lastAt": 1792262870560,
-          "samples": 431
+          "lastAt": 1792265961293,
+          "samples": 432
         }
       ],
-      "lastGoodAt": 1792262870560,
+      "lastGoodAt": 1792265961293,
       "priceDecisions": {
         "885eb3d0-c312-4526-a65e-2d9d7c0cc66d": {
           "referencePrice": 6000,
@@ -45714,7 +45696,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1792262870560
+          "at": 1792265961293
         }
       },
       "availabilityTiming": {
@@ -45723,8 +45705,8 @@
         "openAfter": null,
         "firstAvailableAt": 1791078337892,
         "stock": "in_stock",
-        "lastAt": 1792262870560,
-        "lastAvailableAt": 1792262870560
+        "lastAt": 1792265961293,
+        "lastAvailableAt": 1792265961293
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -46072,13 +46054,13 @@
       "episodes": {
         "f0bdc2bc-c189-4692-9e25-472dc03911ed": {
           "active": false,
-          "negatives": 447,
+          "negatives": 448,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265766417,
+      "nextAt": 1792268821358,
       "failures": 0,
-      "lastChecked": 1792262742417,
+      "lastChecked": 1792265797358,
       "lastGood": {
         "title": "強化パック「ニンジャスピナー」《BOX》",
         "price": 5400,
@@ -46214,11 +46196,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,670円以下",
           "at": 1792235770698,
-          "lastAt": 1792262742417,
-          "samples": 11
+          "lastAt": 1792265797358,
+          "samples": 12
         }
       ],
-      "lastGoodAt": 1792262742417,
+      "lastGoodAt": 1792265797358,
       "priceDecisions": {
         "f0bdc2bc-c189-4692-9e25-472dc03911ed": {
           "referencePrice": 5400,
@@ -46228,14 +46210,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,670円以下",
-          "at": 1792262742417
+          "at": 1792265797358
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078337843,
         "stock": "out_of_stock",
-        "lastAt": 1792262742417,
-        "lastUnavailableAt": 1792262742417
+        "lastAt": 1792265797358,
+        "lastUnavailableAt": 1792265797358
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -46254,13 +46236,13 @@
       "episodes": {
         "47c20f77-b1a8-4a3f-9f66-58a45a8a6d14": {
           "active": false,
-          "negatives": 444,
+          "negatives": 445,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265831823,
+      "nextAt": 1792268920351,
       "failures": 0,
-      "lastChecked": 1792262807823,
+      "lastChecked": 1792265896351,
       "lastGood": {
         "title": "★同一住所1点限り（重複と思われる注文は全てキャンセル致します。）★ポケモンカードゲーム MEGA 拡張パック ムニキスゼロ BOX 2026年1月23日発売",
         "price": 5412,
@@ -46313,11 +46295,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,670円以下",
           "at": 1792080469775,
-          "lastAt": 1792262807823,
-          "samples": 62
+          "lastAt": 1792265896351,
+          "samples": 63
         }
       ],
-      "lastGoodAt": 1792262807823,
+      "lastGoodAt": 1792265896351,
       "priceDecisions": {
         "47c20f77-b1a8-4a3f-9f66-58a45a8a6d14": {
           "referencePrice": 5400,
@@ -46327,14 +46309,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,670円以下",
-          "at": 1792262807823
+          "at": 1792265896351
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078469962,
         "stock": "out_of_stock",
-        "lastAt": 1792262807823,
-        "lastUnavailableAt": 1792262807823
+        "lastAt": 1792265896351,
+        "lastUnavailableAt": 1792265896351
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -46839,13 +46821,13 @@
       "episodes": {
         "5c351ab5-8245-48c8-8270-3fb3d6bbcb03": {
           "active": false,
-          "negatives": 441,
+          "negatives": 442,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265765596,
+      "nextAt": 1792268855885,
       "failures": 0,
-      "lastChecked": 1792262741596,
+      "lastChecked": 1792265831885,
       "lastGood": {
         "title": "★お一人様1点限り（同一住所など重複注文は全キャンセルします。）★ONE PIECEカードゲーム ブースターパック 決戦の刻【OP-16】 BOX 2026年5月30日発売",
         "price": 5280,
@@ -46881,11 +46863,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1791078232310,
-          "lastAt": 1792262741596,
-          "samples": 431
+          "lastAt": 1792265831885,
+          "samples": 432
         }
       ],
-      "lastGoodAt": 1792262741596,
+      "lastGoodAt": 1792265831885,
       "priceDecisions": {
         "5c351ab5-8245-48c8-8270-3fb3d6bbcb03": {
           "referencePrice": 5280,
@@ -46895,14 +46877,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1792262741596
+          "at": 1792265831885
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078232310,
         "stock": "out_of_stock",
-        "lastAt": 1792262741596,
-        "lastUnavailableAt": 1792262741596
+        "lastAt": 1792265831885,
+        "lastUnavailableAt": 1792265831885
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -47309,13 +47291,13 @@
       "episodes": {
         "0d4cd221-6a96-4c6c-9dda-6b60629c1b07": {
           "active": false,
-          "negatives": 439,
+          "negatives": 440,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265894659,
+      "nextAt": 1792268953497,
       "failures": 0,
-      "lastChecked": 1792262870659,
+      "lastChecked": 1792265929497,
       "lastGood": {
         "title": "ONE PIECEカードゲーム エクストラブースター EGGHEAD CRISIS【EB-04】 BOX 2026年1月31日発売",
         "price": 5280,
@@ -47361,11 +47343,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1791088840370,
-          "lastAt": 1792262870659,
-          "samples": 425
+          "lastAt": 1792265929497,
+          "samples": 426
         }
       ],
-      "lastGoodAt": 1792262870659,
+      "lastGoodAt": 1792265929497,
       "priceDecisions": {
         "0d4cd221-6a96-4c6c-9dda-6b60629c1b07": {
           "referencePrice": 5280,
@@ -47375,14 +47357,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1792262870659
+          "at": 1792265929497
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078503480,
         "stock": "out_of_stock",
-        "lastAt": 1792262870659,
-        "lastUnavailableAt": 1792262870659
+        "lastAt": 1792265929497,
+        "lastUnavailableAt": 1792265929497
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -47891,13 +47873,13 @@
       "episodes": {
         "34f4a787-caf8-4888-804b-34ede069d8d0": {
           "active": false,
-          "negatives": 443,
+          "negatives": 444,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792266022982,
+      "nextAt": 1792269109399,
       "failures": 0,
-      "lastChecked": 1792262998982,
+      "lastChecked": 1792266085399,
       "lastGood": {
         "title": "ONE PIECEカードゲーム ブースタパック 蒼海の七傑 【OP-14】 BOX 2025年11月22日発売",
         "price": 5280,
@@ -47950,11 +47932,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1792138628539,
-          "lastAt": 1792262998982,
-          "samples": 43
+          "lastAt": 1792266085399,
+          "samples": 44
         }
       ],
-      "lastGoodAt": 1792262998982,
+      "lastGoodAt": 1792266085399,
       "priceDecisions": {
         "34f4a787-caf8-4888-804b-34ede069d8d0": {
           "referencePrice": 5280,
@@ -47964,14 +47946,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1792262998982
+          "at": 1792266085399
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078403335,
         "stock": "out_of_stock",
-        "lastAt": 1792262998982,
-        "lastUnavailableAt": 1792262998982
+        "lastAt": 1792266085399,
+        "lastUnavailableAt": 1792266085399
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -53998,9 +53980,9 @@
           "lastEvent": 1792209431837
         }
       },
-      "nextAt": 1792265831216,
+      "nextAt": 1792268889032,
       "failures": 0,
-      "lastChecked": 1792262807216,
+      "lastChecked": 1792265865032,
       "lastGood": {
         "title": "ディズニー・ロルカナ・TCG 日本語版 ブースターパック ハイペリアシティ BOX ｜ シュリンク付き 未開封 Disney lorcana",
         "price": 5280,
@@ -54160,11 +54142,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1792244876855,
-          "lastAt": 1792262807216,
-          "samples": 8
+          "lastAt": 1792265865032,
+          "samples": 9
         }
       ],
-      "lastGoodAt": 1792262807216,
+      "lastGoodAt": 1792265865032,
       "priceDecisions": {
         "572f8064-fc81-4ac3-a3dd-8224b48c64fd": {
           "referencePrice": 5280,
@@ -54174,15 +54156,15 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1792262807216
+          "at": 1792265865032
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078304531,
         "firstAvailableAt": 1791078304531,
         "stock": "in_stock",
-        "lastAt": 1792262807216,
-        "lastAvailableAt": 1792262807216,
+        "lastAt": 1792265865032,
+        "lastAvailableAt": 1792265865032,
         "lastSale": {
           "at": 1792109948205,
           "targetId": "4743ed20-f768-4bda-a3ec-c2178aedb827",
@@ -54953,13 +54935,13 @@
       "episodes": {
         "9f5f4558-ad74-446c-9908-c497cdec71e2": {
           "active": false,
-          "negatives": 430,
+          "negatives": 431,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265632729,
+      "nextAt": 1792268663240,
       "failures": 0,
-      "lastChecked": 1792262608729,
+      "lastChecked": 1792265639240,
       "lastGood": {
         "title": "【店頭受取のみ 予約販売　10月31日発売予定】遊戯王 IMMORTAL PHOENIX BOX【遊戯王】",
         "price": 5940,
@@ -55020,11 +55002,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,237円以下",
           "at": 1791923812767,
-          "lastAt": 1792262608729,
-          "samples": 116
+          "lastAt": 1792265639240,
+          "samples": 117
         }
       ],
-      "lastGoodAt": 1792262608729,
+      "lastGoodAt": 1792265639240,
       "priceDecisions": {
         "9f5f4558-ad74-446c-9908-c497cdec71e2": {
           "referencePrice": 5940,
@@ -55034,14 +55016,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,237円以下",
-          "at": 1792262608729
+          "at": 1792265639240
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078403835,
         "stock": "out_of_stock",
-        "lastAt": 1792262608729,
-        "lastUnavailableAt": 1792262608729
+        "lastAt": 1792265639240,
+        "lastUnavailableAt": 1792265639240
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -55186,13 +55168,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 4093,
+          "negatives": 4095,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265597205,
+      "nextAt": 1792266184396,
       "failures": 0,
-      "lastChecked": 1792265309205,
+      "lastChecked": 1792265896396,
       "lastGood": {
         "title": "拡張パック　30th CELEBRATION　BOX【ポケモンカードゲーム】",
         "price": 7200,
@@ -55303,11 +55285,11 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張商品の1BOX表記を確認",
           "at": 1792182986437,
-          "lastAt": 1792265309205,
-          "samples": 264
+          "lastAt": 1792265896396,
+          "samples": 266
         }
       ],
-      "lastGoodAt": 1792265309205,
+      "lastGoodAt": 1792265896396,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -55317,14 +55299,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1792265309205
+          "at": 1792265896396
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092857,
         "stock": "out_of_stock",
-        "lastAt": 1792265309205,
-        "lastUnavailableAt": 1792265309205
+        "lastAt": 1792265896396,
+        "lastUnavailableAt": 1792265896396
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -56993,13 +56975,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 3505,
+          "negatives": 3507,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265597113,
+      "nextAt": 1792266218185,
       "failures": 0,
-      "lastChecked": 1792265309113,
+      "lastChecked": 1792265930185,
       "lastGood": {
         "title": "【BOX】 ガンダムカードゲーム ブースターパック Newtype Rising GD01 BOX ｜ ニュータイプ ライジング 未開封 GUNDAM CARD GAME TCG",
         "price": 7200,
@@ -57035,7 +57017,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,098円を超過",
-          "at": 1792265309113
+          "at": 1792265930185
         }
       },
       "history": [
@@ -57165,8 +57147,8 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円を超過",
           "at": 1792149268706,
-          "lastAt": 1792265309113,
-          "samples": 373
+          "lastAt": 1792265930185,
+          "samples": 375
         }
       ],
       "availabilityTiming": {
@@ -57175,10 +57157,10 @@
         "openAfter": null,
         "firstAvailableAt": 1791164189902,
         "stock": "in_stock",
-        "lastAt": 1792265309113,
-        "lastAvailableAt": 1792265309113
+        "lastAt": 1792265930185,
+        "lastAvailableAt": 1792265930185
       },
-      "lastGoodAt": 1792265309113,
+      "lastGoodAt": 1792265930185,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 288,
@@ -57196,13 +57178,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 4701,
+          "negatives": 4704,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265377274,
+      "nextAt": 1792266160520,
       "failures": 0,
-      "lastChecked": 1792265146274,
+      "lastChecked": 1792265929520,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Freedom Ascension [GD05] BOX(24パック入)",
         "price": 6019,
@@ -57236,7 +57218,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,300円以下",
-          "at": 1792265146274
+          "at": 1792265929520
         }
       },
       "history": [
@@ -57247,17 +57229,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円以下",
           "at": 1791179122022,
-          "lastAt": 1792265146274,
-          "samples": 4701
+          "lastAt": 1792265929520,
+          "samples": 4704
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791179122022,
         "stock": "out_of_stock",
-        "lastAt": 1792265146274,
-        "lastUnavailableAt": 1792265146274
+        "lastAt": 1792265929520,
+        "lastUnavailableAt": 1792265929520
       },
-      "lastGoodAt": 1792265146274,
+      "lastGoodAt": 1792265929520,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 231,
@@ -57275,13 +57257,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 4696,
+          "negatives": 4699,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265342428,
+      "nextAt": 1792266127866,
       "failures": 0,
-      "lastChecked": 1792265111428,
+      "lastChecked": 1792265896866,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Newtype Rising [GD01] BOX(24パック入)",
         "price": 5200,
@@ -57315,7 +57297,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1792265111428
+          "at": 1792265896866
         }
       },
       "history": [
@@ -57343,17 +57325,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1791439717821,
-          "lastAt": 1792265111428,
-          "samples": 3517
+          "lastAt": 1792265896866,
+          "samples": 3520
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791179154500,
         "stock": "out_of_stock",
-        "lastAt": 1792265111428,
-        "lastUnavailableAt": 1792265111428
+        "lastAt": 1792265896866,
+        "lastUnavailableAt": 1792265896866
       },
-      "lastGoodAt": 1792265111428,
+      "lastGoodAt": 1792265896866,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 231,
@@ -57501,13 +57483,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 3094,
+          "negatives": 3096,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265497399,
+      "nextAt": 1792266120454,
       "failures": 0,
-      "lastChecked": 1792265209399,
+      "lastChecked": 1792265832454,
       "lastGood": {
         "title": "拡張パック　30th CELEBRATION　BOX【ポケモンカードゲーム】",
         "price": 7200,
@@ -57553,7 +57535,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1792265209399
+          "at": 1792265832454
         }
       },
       "history": [
@@ -57583,17 +57565,17 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張商品の1BOX表記を確認",
           "at": 1791923845534,
-          "lastAt": 1792265209399,
-          "samples": 1092
+          "lastAt": 1792265832454,
+          "samples": 1094
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791298569073,
         "stock": "out_of_stock",
-        "lastAt": 1792265209399,
-        "lastUnavailableAt": 1792265209399
+        "lastAt": 1792265832454,
+        "lastUnavailableAt": 1792265832454
       },
-      "lastGoodAt": 1792265209399,
+      "lastGoodAt": 1792265832454,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 288,
@@ -57611,13 +57593,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 3795,
+          "negatives": 3798,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265541229,
+      "nextAt": 1792266316748,
       "failures": 0,
-      "lastChecked": 1792265310229,
+      "lastChecked": 1792266085748,
       "lastGood": {
         "title": "ブースターパック「Newtype Rising」 1BOX(*24パック入り*) [ _250046939 ]",
         "price": 5800,
@@ -57649,7 +57631,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1792265310229
+          "at": 1792266085748
         }
       },
       "history": [
@@ -58306,17 +58288,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1792202537394,
-          "lastAt": 1792265310229,
-          "samples": 263
+          "lastAt": 1792266085748,
+          "samples": 266
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791372079169,
         "stock": "out_of_stock",
-        "lastAt": 1792265310229,
-        "lastUnavailableAt": 1792265310229
+        "lastAt": 1792266085748,
+        "lastUnavailableAt": 1792266085748
       },
-      "lastGoodAt": 1792265310229,
+      "lastGoodAt": 1792266085748,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 231,
@@ -58750,13 +58732,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 2627,
+          "negatives": 2630,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265408911,
+      "nextAt": 1792266161367,
       "failures": 0,
-      "lastChecked": 1792265177911,
+      "lastChecked": 1792265930367,
       "lastGood": {
         "title": "Freedom Ascension [GD05] (1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 6000,
@@ -58792,7 +58774,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,300円以下",
-          "at": 1792265177911
+          "at": 1792265930367
         }
       },
       "history": [
@@ -59381,17 +59363,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円以下",
           "at": 1792231379148,
-          "lastAt": 1792265177911,
-          "samples": 140
+          "lastAt": 1792265930367,
+          "samples": 143
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791630947961,
         "stock": "out_of_stock",
-        "lastAt": 1792265177911,
-        "lastUnavailableAt": 1792265177911
+        "lastAt": 1792265930367,
+        "lastUnavailableAt": 1792265930367
       },
-      "lastGoodAt": 1792265177911,
+      "lastGoodAt": 1792265930367,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 231,
@@ -59625,13 +59607,13 @@
       "episodes": {
         "df0626b4-5639-4881-ad98-ecb75e0c4c73": {
           "active": false,
-          "negatives": 166,
+          "negatives": 167,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265633778,
+      "nextAt": 1792268696833,
       "failures": 0,
-      "lastChecked": 1792262609778,
+      "lastChecked": 1792265672833,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Stardust Trails GD06 BOX ｜ スターダスト トレイルズ 未開封 GUNDAM",
         "price": 9200,
@@ -59667,7 +59649,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1792262609778
+          "at": 1792265672833
         }
       },
       "history": [
@@ -59712,8 +59694,8 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1792166773537,
-          "lastAt": 1792262609778,
-          "samples": 34
+          "lastAt": 1792265672833,
+          "samples": 35
         }
       ],
       "availabilityTiming": {
@@ -59722,10 +59704,10 @@
         "openAfter": null,
         "firstAvailableAt": 1791801810587,
         "stock": "preorder",
-        "lastAt": 1792262609778,
-        "lastAvailableAt": 1792262609778
+        "lastAt": 1792265672833,
+        "lastAvailableAt": 1792265672833
       },
-      "lastGoodAt": 1792262609778,
+      "lastGoodAt": 1792265672833,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 3024,
@@ -59747,9 +59729,9 @@
           "lastEvent": 1791878122423
         }
       },
-      "nextAt": 1792265863263,
+      "nextAt": 1792268888876,
       "failures": 0,
-      "lastChecked": 1792262839263,
+      "lastChecked": 1792265864876,
       "lastGood": {
         "title": "ブースターパック　ハイペリアシティ　BOX【ディズニー・ロルカナ・トレーディングカードゲーム】",
         "price": 5280,
@@ -59783,7 +59765,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1792262839263
+          "at": 1792265864876
         }
       },
       "history": [
@@ -59804,8 +59786,8 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1792113889843,
-          "lastAt": 1792262839263,
-          "samples": 51
+          "lastAt": 1792265864876,
+          "samples": 52
         }
       ],
       "availabilityTiming": {
@@ -59814,10 +59796,10 @@
         "openAfter": null,
         "firstAvailableAt": 1791878122423,
         "stock": "in_stock",
-        "lastAt": 1792262839263,
-        "lastAvailableAt": 1792262839263
+        "lastAt": 1792265864876,
+        "lastAvailableAt": 1792265864876
       },
-      "lastGoodAt": 1792262839263,
+      "lastGoodAt": 1792265864876,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 3024,
@@ -59835,13 +59817,13 @@
       "episodes": {
         "3136236d-de6f-43fa-b0c7-181e327b298b": {
           "active": false,
-          "negatives": 104,
+          "negatives": 105,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265929163,
+      "nextAt": 1792268985788,
       "failures": 0,
-      "lastChecked": 1792262905163,
+      "lastChecked": 1792265961788,
       "lastGood": {
         "title": "【店頭受取のみ 予約販売　11月21日発売予定】遊戯王 REVOLUTION BOOSTER － 方界・マリンセス・ゴーストリック － BOX【遊戯王】",
         "price": 3960,
@@ -59875,7 +59857,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限4,158円以下",
-          "at": 1792262905163
+          "at": 1792265961788
         }
       },
       "history": [
@@ -59886,17 +59868,17 @@
           "comparable": true,
           "priceDecision": "通知上限4,158円以下",
           "at": 1791974624483,
-          "lastAt": 1792262905163,
-          "samples": 104
+          "lastAt": 1792265961788,
+          "samples": 105
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791974624483,
         "stock": "out_of_stock",
-        "lastAt": 1792262905163,
-        "lastUnavailableAt": 1792262905163
+        "lastAt": 1792265961788,
+        "lastUnavailableAt": 1792265961788
       },
-      "lastGoodAt": 1792262905163,
+      "lastGoodAt": 1792265961788,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 3024,
@@ -60033,13 +60015,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 31,
+          "negatives": 33,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792265540384,
+      "nextAt": 1792266095624,
       "failures": 0,
-      "lastChecked": 1792265309384,
+      "lastChecked": 1792265864624,
       "lastGood": {
         "title": "★1点限り（同一住所と思われる重複注文は全キャンセルします。）★ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX 2026年9月16日発売",
         "price": 7200,
@@ -60089,7 +60071,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1792265309384
+          "at": 1792265864624
         }
       },
       "history": [
@@ -60101,17 +60083,17 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1792257778067,
-          "lastAt": 1792265309384,
-          "samples": 31
+          "lastAt": 1792265864624,
+          "samples": 33
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1792257778067,
         "stock": "out_of_stock",
-        "lastAt": 1792265309384,
-        "lastUnavailableAt": 1792265309384
+        "lastAt": 1792265864624,
+        "lastUnavailableAt": 1792265864624
       },
-      "lastGoodAt": 1792265309384,
+      "lastGoodAt": 1792265864624,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 231,
@@ -62508,242 +62490,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1792232154210,
-      "checked": 1,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232185320,
-      "checked": 0,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232215377,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "58e6fef9-6a37-42ff-9ed2-ed0c877b520f",
-        "storeId": "futaki",
-        "result": {
-          "at": 1792232215377,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232248867,
-      "checked": 1,
-      "discovered": {
-        "storeId": "bigweb",
-        "mode": "store-listing",
-        "result": {
-          "matched": 2,
-          "registered": 0,
-          "limited": 0,
-          "pages": [
-            {
-              "url": "https://api.bigweb.co.jp/products?game_id=186&is_box=1&in_stock=1",
-              "head": true,
-              "productLinks": 5,
-              "scope": "read",
-              "hasMore": false,
-              "order": "official_json_api"
-            }
-          ],
-          "requests": 1,
-          "status": "ok",
-          "previousAt": 1792228644470
-        },
-        "error": ""
-      },
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232281742,
-      "checked": 2,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232313281,
-      "checked": 1,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232344501,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "58e6fef9-6a37-42ff-9ed2-ed0c877b520f",
-        "storeId": "masters_gundam",
-        "result": {
-          "at": 1792232344501,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232378017,
-      "checked": 2,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232410037,
-      "checked": 1,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232470037,
-      "checked": 1,
-      "discovered": {
-        "ruleId": "58e6fef9-6a37-42ff-9ed2-ed0c877b520f",
-        "storeId": "papy",
-        "result": {
-          "at": 1792232470037,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232502692,
-      "checked": 2,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232534276,
-      "checked": 3,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232566909,
-      "checked": 3,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232599061,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "58e6fef9-6a37-42ff-9ed2-ed0c877b520f",
-        "storeId": "suns",
-        "result": {
-          "at": 1792232599061,
-          "status": "ok",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232632226,
-      "checked": 0,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232662258,
-      "checked": 0,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232692300,
-      "checked": 2,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232723950,
-      "checked": 4,
-      "discovered": {
-        "ruleId": "58e6fef9-6a37-42ff-9ed2-ed0c877b520f",
-        "storeId": "tcgacademy",
-        "result": {
-          "at": 1792232723950,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232757405,
-      "checked": 3,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232789017,
-      "checked": 3,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232820651,
-      "checked": 3,
-      "discovered": null,
-      "targets": 117,
-      "errors": 8
-    },
-    {
-      "at": 1792232852242,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "58e6fef9-6a37-42ff-9ed2-ed0c877b520f",
-        "storeId": "torecolo",
-        "result": {
-          "at": 1792232852242,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 117,
-      "errors": 8
-    },
     {
       "at": 1792232886082,
       "checked": 2,
@@ -76910,6 +76656,384 @@
       "at": 1792265307828,
       "checked": 5,
       "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265340258,
+      "checked": 1,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265371835,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "0758b3b5-7592-4003-b9aa-6c07f31afb8d",
+        "storeId": "futaki",
+        "result": {
+          "at": 1792265371835,
+          "status": "ok",
+          "matched": 1,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265405268,
+      "checked": 1,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265435985,
+      "checked": 1,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265467583,
+      "checked": 1,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265499066,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "0758b3b5-7592-4003-b9aa-6c07f31afb8d",
+        "storeId": "masters_gundam",
+        "result": {
+          "at": 1792265499066,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265533969,
+      "checked": 0,
+      "discovered": {
+        "storeId": "cardwiz",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.cardwiz.jp/new",
+              "head": true,
+              "productLinks": 64,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "new"
+            },
+            {
+              "url": "https://www.cardwiz.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&page=2",
+              "head": false,
+              "productLinks": 19,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "alternate"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1792261902657
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265566625,
+      "checked": 3,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265598273,
+      "checked": 2,
+      "discovered": {
+        "storeId": "torecolo",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.torecolo.jp/shop/goods/search.aspx?search=x&ps=50&keyword=BOX",
+              "head": true,
+              "productLinks": 73,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://www.torecolo.jp/shop/goods/search.aspx?keyword=BOX&search=x&p=20&ps=50",
+              "head": false,
+              "productLinks": 74,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": true,
+              "order": "search"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1792261966657
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265637793,
+      "checked": 4,
+      "discovered": {
+        "ruleId": "0758b3b5-7592-4003-b9aa-6c07f31afb8d",
+        "storeId": "papy",
+        "result": {
+          "at": 1792265637793,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265671871,
+      "checked": 3,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265703436,
+      "checked": 0,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265733486,
+      "checked": 0,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265763534,
+      "checked": 0,
+      "discovered": {
+        "storeId": "cardmax",
+        "mode": "store-listing",
+        "result": {
+          "matched": 1,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.cardmax.jp/shop/shopbrand.html?search=BOX",
+              "head": true,
+              "productLinks": 47,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            }
+          ],
+          "requests": 1,
+          "status": "ok",
+          "previousAt": 1792262140932
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265795970,
+      "checked": 3,
+      "discovered": {
+        "storeId": "futaki",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.target.co.jp/view/search?search_keyword=BOX&sort=order",
+              "head": true,
+              "productLinks": 16,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "sorted"
+            },
+            {
+              "url": "https://www.target.co.jp/view/search?page=9&search_keyword=BOX",
+              "head": false,
+              "productLinks": 16,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1792262176312
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265831111,
+      "checked": 4,
+      "discovered": {
+        "ruleId": "0758b3b5-7592-4003-b9aa-6c07f31afb8d",
+        "storeId": "suns",
+        "result": {
+          "at": 1792265831111,
+          "status": "ok",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265863515,
+      "checked": 3,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265895058,
+      "checked": 4,
+      "discovered": {
+        "storeId": "suns",
+        "mode": "store-listing",
+        "result": {
+          "matched": 1,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://store.shopping.yahoo.co.jp/suns-online-store/search.html?p=BOX",
+              "head": true,
+              "productLinks": 30,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            }
+          ],
+          "requests": 1,
+          "status": "ok",
+          "previousAt": 1792262284413
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265928781,
+      "checked": 4,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265960388,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "0758b3b5-7592-4003-b9aa-6c07f31afb8d",
+        "storeId": "tcgacademy",
+        "result": {
+          "at": 1792265960388,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792265994748,
+      "checked": 1,
+      "discovered": null,
+      "targets": 118,
+      "errors": 3
+    },
+    {
+      "at": 1792266084275,
+      "checked": 2,
+      "discovered": {
+        "storeId": "masters_gundam",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.masters-square.com/new",
+              "head": true,
+              "productLinks": 228,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "new"
+            },
+            {
+              "url": "https://www.masters-square.com/product-list?keyword=BOX&page=7",
+              "head": false,
+              "productLinks": 100,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1792262413442
+        },
+        "error": ""
+      },
       "targets": 118,
       "errors": 3
     }
