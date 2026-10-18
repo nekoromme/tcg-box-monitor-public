@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "reviewedAt": 1791704418415,
-  "nextReviewAt": 1792309218415,
+  "reviewedAt": 1792317136613,
+  "nextReviewAt": 1792921936613,
   "scope": "監視店の在庫履歴。市場全体の成約価格ではありません。候補の提示のみで停止・再開はしません。",
   "products": [
     {
@@ -187,6 +187,28 @@
       "evidence": []
     },
     {
+      "productId": "lorcana-hyperia-city",
+      "name": "ハイペリアシティ",
+      "status": "pause_candidate",
+      "reason": "定価105%以下の在庫を同一店で24時間以上・3回以上観測",
+      "evidence": [
+        {
+          "url": "https://www.cardmax.jp/shop/shopdetail.html?brandcode=000000234238&search=%A5%CF%A5%A4%A5%DA%A5%EA%A5%A2%A5%B7%A5%C6%A5%A3&sort=",
+          "price": 5280,
+          "from": 1792111104126,
+          "through": 1792316792505,
+          "samples": 70
+        },
+        {
+          "url": "https://www.cardmax.jp/shop/shopdetail.html?brandcode=000000234238&search=BOX&sort=",
+          "price": 5280,
+          "from": 1792113889843,
+          "through": 1792314539213,
+          "samples": 69
+        }
+      ]
+    },
+    {
       "productId": "lorcana-attack-of-the-vine",
       "name": "ヴァインズ・アタック！",
       "status": "insufficient_evidence",
@@ -210,20 +232,6 @@
     {
       "productId": "lorcana-archazias-island",
       "name": "アーケイジアと魔法の島",
-      "status": "insufficient_evidence",
-      "reason": "継続在庫の根拠不足。現在の設定を維持",
-      "evidence": []
-    },
-    {
-      "productId": "lorcana-azurite-sea",
-      "name": "大いなるアズライト",
-      "status": "paused_preserved",
-      "reason": "既存の停止設定を維持",
-      "evidence": []
-    },
-    {
-      "productId": "lorcana-hyperia-city",
-      "name": "ハイペリアシティ",
       "status": "insufficient_evidence",
       "reason": "継続在庫の根拠不足。現在の設定を維持",
       "evidence": []
