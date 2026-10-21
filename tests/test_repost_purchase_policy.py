@@ -9,6 +9,7 @@ import pytest
 from freezegun import freeze_time
 
 from tcg_monitor.config import load_config
+from tcg_monitor.models import Release, SourceTier
 from tcg_monitor.parsers.local_lottery import (
     _requires_disallowed_application,
     parse_yahoo_realtime,
@@ -145,3 +146,21 @@ def test_closed_repost_purchase_is_not_backfilled_as_new():
     )
     assert not cases and not alerts
     assert diagnostics["application_ended"] == 1
+
+
+def test_actual_image_ocr_uses_official_catalog_when_series_prefix_is_omitted():
+    record = dict(OBSERVED["official_release"])
+    record["release_date"] = date.fromisoformat(record["release_date"])
+    record["source_tier"] = SourceTier(record["source_tier"])
+    release = Release(**record)
+    diagnostics = {}
+    cases, _, alerts = parse_yahoo_realtime(
+        markup(OBSERVED["body"]), SOURCE.discovery_urls[0], SOURCE, CONFIG,
+        date(2026, 10, 21), ocr_reader=lambda _urls: OBSERVED["observed_ocr"],
+        known_releases=[release], diagnostics=diagnostics,
+    )
+    assert len(cases) == 1 and not alerts
+    assert cases[0].game_id == "one_piece_card"
+    assert cases[0].end_at == date(2026, 10, 27)
+    assert "Heroines Edition vol.2" in cases[0].product_name
+    assert "unclassified_lottery" not in diagnostics

@@ -1287,6 +1287,10 @@ def _known_release_for_text(
     ).casefold()
     def matching_token(value: str, game_id: str) -> str:
         token = release_title_token(value)
+        if game_id == "one_piece_card":
+            # 公式カタログの「ONE PIECE Heroines Edition vol.2」に対し、
+            # 店舗は作品名を省く。照合時だけ補正し、保存済みの商品IDは変えない。
+            token = token.removeprefix("onepiece")
         if game_id == "lorcana":
             # 公式投稿の「ハイぺリア」と商品ページの「ハイペリア」は同じ商品。
             token = "".join(chr(ord(c) + 0x60) if "ぁ" <= c <= "ゖ" else c for c in token)
@@ -1299,7 +1303,7 @@ def _known_release_for_text(
         release
         for release in known_releases
         if source.supports(release.game_id)
-        and len(release_title_token(release.product_name)) >= 3
+        and len(matching_token(release.product_name, release.game_id)) >= 3
         and matching_token(release.product_name, release.game_id) in (
             lorcana_folded if release.game_id == "lorcana" else folded
         )
