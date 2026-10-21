@@ -766,7 +766,7 @@ def test_yahoo_image_can_supply_game_before_body_classification() -> None:
     assert cases[0].source_url in cache
 
 
-def test_x_profile_mirror_excludes_actual_yorozuya_repost_application() -> None:
+def test_x_profile_mirror_accepts_actual_yorozuya_repost_purchase() -> None:
     image_url = "https://pbs.twimg.com/media/HNzGQ0LaYAAXOAx.jpg"
     status_id = "2079755316506599865"
     html = f"""
@@ -804,9 +804,9 @@ def test_x_profile_mirror_excludes_actual_yorozuya_repost_application() -> None:
     ).with_id()
     calls: list[list[str]] = []
 
-    def failing_ocr(urls: list[str]) -> str:
+    def purchase_ocr(urls: list[str]) -> str:
         calls.append(urls)
-        raise RuntimeError("temporary OCR failure")
+        return "ポケモンカードゲーム 抽選販売 7月27日 応募締切 7月28日 抽選発表"
 
     cases, _, alerts = parse_yahoo_realtime(
         html,
@@ -814,13 +814,14 @@ def test_x_profile_mirror_excludes_actual_yorozuya_repost_application() -> None:
         _source("yahoo_realtime_yorozuya_morioka"),
         _config(),
         date(2026, 7, 22),
-        failing_ocr,
+        purchase_ocr,
         {},
         [known],
     )
 
-    assert calls == []
-    assert cases == []
+    assert calls == [[image_url]]
+    assert len(cases) == 1
+    assert cases[0].product_name == "ストームエメラルダ"
     assert alerts == []
 
 

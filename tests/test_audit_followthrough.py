@@ -128,8 +128,12 @@ def test_application_conditions_checked_in_both_body_and_image(condition, in_ima
         CONFIG, date(2026, 9, 5), ocr_cache={status: condition if in_image else ""},
         diagnostics=diagnostics,
     )
-    assert not cases
-    assert diagnostics["disallowed_application"] == 1
+    if "QR" in condition:
+        assert not cases
+        assert diagnostics["disallowed_application"] == 1
+    else:
+        assert len(cases) == 1
+        assert "disallowed_application" not in diagnostics
 
 
 def test_itoyokado_follows_campaign_pages_without_leaving_official_host():

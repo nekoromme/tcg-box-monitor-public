@@ -155,38 +155,23 @@ _SECONDARY_ROUNDUP_MARKERS = (
     "抽選リスト",
 )
 
-# The user only wants lotteries that can be entered remotely and need no more
-# than one physical visit to collect a win.  Social accounts also publish
-# repost giveaways and store-only QR/advance-reservation lotteries, so reject
-# those before product classification or OCR can turn them into alerts.
-_DISALLOWED_REMOTE_APPLICATION_MARKERS = (
-    "リポストキャンペーン",
-    "フォロー&リポスト",
-    "フォロー＆リポスト",
-    "フォロー+リポスト",
-    "フォロー＋リポスト",
-    "引用リポスト",
-    "リツイートキャンペーン",
-    "フォロー&rt",
-    "フォロー＆rt",
-    "rt&フォロー",
-    "rt＆フォロー",
-    "フォローとrt",
-    "rtで応募",
-    "rtして応募",
-    "rtキャンペーン",
-    "rpキャンペーン",
-    "フォロー&rp",
-    "フォロー＆rp",
-    "rpで応募",
-    "rpして応募",
+# リポストは応募手段なので、それだけで購入抽選を除外しない。
+# 無料プレゼントかどうかは本文と画像の両方で別途確認する。
+_REPOST_ENTRY = re.compile(
+    r"リ[ポボ]スト|リツイート|(?:フォロー[&＆+＋と]?(?:rt|rp))|"
+    r"(?:rt|rp)(?:[&＆]フォロー|で応募|して応募|キャンペーン)", re.IGNORECASE,
+)
+_PURCHASE_APPLICATION = re.compile(
+    r"抽選(?:販売|予約)|購入(?:権|権利)|(?:予約|販売|購入)(?:の)?(?:受付|抽選)|"
+    r"当選(?:者|された方|した方|後|時|の場合).{0,60}(?:購入|お買い求め)",
+)
+_GIVEAWAY = re.compile(
+    r"プレゼント|プレ企画|プレキャン|giveaway|give-away|"
+    r"無料(?:配布|進呈|提供)|無償(?:配布|提供)|"
+    r"(?:無料|無償)で.{0,30}(?:当たる|もらえる|貰える|贈呈|進呈|差し上げ)",
+    re.IGNORECASE,
 )
 _DISALLOWED_REMOTE_APPLICATION_PATTERNS = (
-    re.compile(
-        r"(?:いいねと|このポストを|指定ポストを|ポストの)リ[ポボ]スト"
-        r"(?!不要|は不要|しなく|必要なし)", re.IGNORECASE,
-    ),
-    re.compile(r"リ[ポボ]スト(?:で|して|が必要|必須)", re.IGNORECASE),
     re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,40}掲示.{0,30}QR(?:コード)?", re.IGNORECASE),
     re.compile(r"店(?:頭|内)(?:に|で|の|へ|にて)?.{0,30}QR(?:コード)?(?:から|より)", re.IGNORECASE),
     re.compile(r"当選(?:者|された方).{0,80}店頭.{0,30}予約(?:を|が|手続)", re.IGNORECASE),
@@ -217,9 +202,16 @@ def _requires_disallowed_application(post_text: str) -> bool:
         _STORE_W_CHANCE_DRAW.search(compact)
         and not _REMOTE_APPLICATION_EVIDENCE.search(compact)
     )
-    return store_draw_only or any(
-        marker in compact for marker in _DISALLOWED_REMOTE_APPLICATION_MARKERS
-    ) or any(
+    # 「プレゼントではありません」と「購入権をプレゼント」は有料の
+    # 購入抽選にも使われる。該当表現だけ除き、別の無料企画は引き続き検出する。
+    giveaway_text = re.sub(
+        r"プレゼント(?:企画|キャンペーン)?(?:では|じゃ|で|は)"
+        r"(?:ござ[さ]?いません|ありません|ない)", "", compact,
+    )
+    giveaway_text = re.sub(
+        r"購入(?:権利|権)(?:を|の)(?:抽選で)?プレゼント", "", giveaway_text,
+    )
+    return store_draw_only or bool(_GIVEAWAY.search(giveaway_text)) or any(
         pattern.search(compact) for pattern in _DISALLOWED_REMOTE_APPLICATION_PATTERNS
     )
 
@@ -712,6 +704,16 @@ def _application_deadline(
             last_date = last.date() if isinstance(last, datetime) else last
             if 0 <= (last_date - first_date).days <= 1:
                 return last
+    # 店舗の告知は「10/27 応募締切」の順も多い。先にこれを拾わないと、
+    # 後続の「10/28 抽選発表」を応募期限として誤読したり期限を失ったりする。
+    preceding_deadline = re.search(
+        r"(?P<date>(?:(?:20\d{2})[/.年])?\d{1,2}[/.月]\d{1,2}日?"
+        r"(?:[（(][月火水木金土日][）)])?(?:\d{1,2}[:：]\d{2}|\d{1,2}時(?:\d{1,2}分)?)?)"
+        r"(?:まで)?[【（(:：]*"
+        r"(?:応募|受付|申込(?:み)?|申し込み)(?:締め?切り?|締切|期限)", compact,
+    )
+    if preceding_deadline:
+        return parse_first_datetime(preceding_deadline["date"], base_date).value
     for marker in (
         "応募締切",
         "受付締切",
@@ -1908,7 +1910,8 @@ def parse_yahoo_realtime(
         # 店舗Xは本文に商品名だけを書き、ゲーム名・BOX分類・応募期間を
         # 添付画像へ寄せることがある。ゲーム判定より先に必要時OCRを実行し、
         # 本文に「ポケカ」「ワンピ」がないという理由で静かに捨てない。
-        if images and (image_only_candidate or not game_id or not product or not start_at):
+        if images and (image_only_candidate or not game_id or not product or not start_at
+                       or _REPOST_ENTRY.search(compact_text)):
             cached_meta = ocr_cache_meta.get(status_url) if ocr_cache_meta is not None else None
             metadata = cached_meta if isinstance(cached_meta, dict) else {}
             image_changed = bool(
@@ -1992,6 +1995,20 @@ def parse_yahoo_realtime(
         if outside_store_scope(config, retailer_id, combined_text, source.id, status_url):
             count("store_outside_scope")
             continue
+        if ocr_error and _REPOST_ENTRY.search(compact_text):
+            # リポスト投稿の画像を読めていない間は、無料企画でないと断定しない。
+            # 未送信のまま再読取対象に残し、一時失敗を通知済みにしない。
+            count("repost_ocr_pending")
+            attempts = _record_ocr_pending(
+                ocr_pending, status_url, source, retailer_name, ocr_error, ocr_attempt_token,
+            )
+            threshold = int(config.system.get("ocr_failure_alert_threshold", 2))
+            if attempts >= max(2, threshold):
+                alerts.append(_alert(
+                    source, status_url, retailer_name, "yahoo_image_ocr_repeated_failure",
+                    f"{ocr_error}（リポスト企画の購入条件を確認できず保留・連続{attempts}回）",
+                ))
+            continue
         if image_only_candidate:
             if ocr_error:
                 count("image_only_ocr_pending")
@@ -2019,6 +2036,12 @@ def parse_yahoo_realtime(
             count("disallowed_application")
             continue
         combined_compact = re.sub(r"\s+", "", combined_text)
+        # 画像にしか販売条件がないことがあるため、リポスト企画の購入根拠は
+        # OCR後に判定する。「抽選で当たる」だけの曖昧な企画は通知しない。
+        if (_REPOST_ENTRY.search(combined_compact)
+                and not _PURCHASE_APPLICATION.search(combined_compact)):
+            count("repost_without_purchase_evidence")
+            continue
         if image_only_candidate and any(
             word in combined_compact for word in ("大会参加", "参加抽選", "当選発表のみ")
         ):

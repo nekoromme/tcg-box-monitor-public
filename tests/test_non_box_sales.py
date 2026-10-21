@@ -384,7 +384,7 @@ def test_exception_can_keep_lottery_enabled_while_disabling_sales() -> None:
 
 
 @freeze_time("2026-10-02 03:00:00Z")
-@pytest.mark.parametrize("extra", ["リポストして応募", "店頭掲示QRから応募"])
+@pytest.mark.parametrize("extra", ["1BOXを抽選でプレゼント", "店頭掲示QRから応募"])
 def test_sale_exceptions_keep_disallowed_application_filters(extra: str) -> None:
     src = source("yahoo_realtime_premium_bandai_onepiece")
     text = DAY25 + " 予約受付期間10/2～10/30 " + extra
