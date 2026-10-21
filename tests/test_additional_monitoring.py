@@ -324,7 +324,7 @@ def test_tierone_still_open_round_uses_verified_deadline_and_product() -> None:
         ),
     ],
 )
-def test_repost_store_qr_and_two_visit_rounds_are_rejected(
+def test_repost_purchase_is_allowed_but_store_qr_is_rejected(
     source_id: str,
     account: str,
     application_text: str,
@@ -352,7 +352,7 @@ def test_repost_store_qr_and_two_visit_rounds_are_rejected(
         date(2026, 7, 24),
     )
 
-    assert cases == []
+    assert len(cases) == (1 if "リポスト" in application_text else 0)
     assert releases == []
     assert alerts == []
 
