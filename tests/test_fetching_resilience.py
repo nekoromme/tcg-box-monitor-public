@@ -1968,7 +1968,7 @@ def test_production_config_uses_three_attempts_and_bounded_host_parallelism() ->
     assert system["request_timeout_seconds"] == 20
     assert system["request_budget_seconds"] == 60
     assert system["max_retries"] == 2
-    assert system["retry_backoff_seconds"] == [0, 0]
+    assert system["retry_backoff_seconds"] == [5, 15]
     assert system["max_parallel_hosts"] == 6
 
 

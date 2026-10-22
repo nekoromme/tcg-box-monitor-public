@@ -174,6 +174,25 @@ def test_fallback_needs_candidate_for_same_retailer_and_game(fallback_retailer, 
     assert bool(result) == covered
 
 
+def test_hobby_station_official_social_covers_site_outage_only_with_both_games():
+    # 10/22のサイト503・公式X取得成功を再現。別店舗や一作品だけでは全補完としない。
+    primary = next(s for s in CONFIG.sources if s.id == "livepocket_hobby_station")
+    backup = next(s for s in CONFIG.sources if s.id == "yahoo_realtime_hobby_station_official")
+    assert primary.fallback_source_ids == [backup.id]
+    config = replace(CONFIG, sources=[primary, backup])
+    metrics = SourceMetrics(backup.id)
+    metrics.retailer_ids.add("hobby_station")
+    metrics.retailer_game_ids.add(("hobby_station", "pokemon_card"))
+    outcomes = {primary.id: False, backup.id: True}
+    assert not _healthy_fallbacks(config, outcomes, evidence={backup.id: metrics})
+    metrics.retailer_game_ids.add(("hobby_station", "one_piece_card"))
+    assert _healthy_fallbacks(config, outcomes, evidence={backup.id: metrics}) == {
+        primary.id: [backup.id]
+    }
+    outcomes[backup.id] = False
+    assert not _healthy_fallbacks(config, outcomes, evidence={backup.id: metrics})
+
+
 @pytest.mark.parametrize("host", ["publish.twitter.com", "publish.x.com"])
 @pytest.mark.parametrize("strict,wrong_account", [(False, False), (True, False), (False, True)])
 def test_mixed_post_selects_box_after_deck_and_preserves_strict_filter(host, strict, wrong_account):

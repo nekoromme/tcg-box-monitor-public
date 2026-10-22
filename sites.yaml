@@ -188,7 +188,8 @@ system:
   request_timeout_seconds: 20
   request_budget_seconds: 60
   max_retries: 2
-  retry_backoff_seconds: [0, 0]
+  # 一時的な503等は間隔を置いて再確認。1リクエスト合計60秒の上限は維持する。
+  retry_backoff_seconds: [5, 15]
   max_parallel_hosts: 6
   minimum_host_interval_seconds: 5
   # 本文・一覧で発見した詳細URLをキャッシュしていないため、304では再解析や
@@ -2666,6 +2667,8 @@ sources:
   enabled: true
   discovery_urls:
   - https://www.hbst.net/category/news/
+  fallback_source_ids:
+  - yahoo_realtime_hobby_station_official
   render_mode: http
   poll_minutes: 120
   expected_elements:

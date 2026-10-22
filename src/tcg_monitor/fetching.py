@@ -553,8 +553,8 @@ class PageFetcher:
                 status_code=status,
                 fetch_method="http",
                 blocked=blocked,
-                cause_code=cause_code if blocked else None,
-                attempts=self.circuit_breaker.threshold if opened else None,
+                cause_code=cause_code,
+                attempts=self.circuit_breaker.threshold if opened else response.attempts,
             )
 
         if (
