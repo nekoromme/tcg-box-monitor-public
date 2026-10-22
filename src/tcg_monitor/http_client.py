@@ -7,6 +7,7 @@ from _thread import LockType
 from collections import defaultdict
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from email.utils import parsedate_to_datetime
 from urllib.parse import urlparse
 
 import httpx
@@ -55,6 +56,7 @@ class FetchResult:
     status_code: int
     text: str
     headers: dict[str, str]
+    attempts: int = 1
 
 
 @dataclass
@@ -95,6 +97,20 @@ class HttpFetcher:
         return self.retry_backoff_seconds[
             min(attempt_index, len(self.retry_backoff_seconds) - 1)
         ]
+
+    def _response_retry_delay(self, attempt_index: int, response: httpx.Response) -> float:
+        # 再試行にも通常の接続間隔を適用する。503直後の連打では復旧を待てない。
+        delay = max(self.minimum_host_interval, self._retry_delay(attempt_index))
+        retry_after = response.headers.get("Retry-After", "").strip()
+        try:
+            if retry_after.isdigit():
+                requested_delay = float(retry_after)
+            else:
+                requested_delay = parsedate_to_datetime(retry_after).timestamp() - time.time()
+            delay = max(delay, requested_delay)
+        except (ValueError, TypeError, OverflowError):
+            pass  # 壊れた日時は通常の待ち時間で扱い、エラー応答はそのまま残す。
+        return delay
 
     def _host_lock(self, host: str) -> LockType:
         """Return the one lock shared by all requests to the same host.
@@ -147,14 +163,17 @@ class HttpFetcher:
                     last_exc = None
                     self._last[host] = self._clock()
                     text = r.text[: self.max_bytes]
-                    last_result = FetchResult(url, r.status_code, text, dict(r.headers))
+                    last_result = FetchResult(url, r.status_code, text, dict(r.headers), attempts)
                     # Ordinary upstream failures can recover within the existing
                     # retry/time budget. Access gates and 429 still reach the
                     # shared circuit breaker immediately.
                     if r.status_code in {408, 500, 502, 503, 504} and i < self.max_retries:
                         remaining = deadline - self._clock()
                         if remaining > 0:
-                            self._sleeper(min(self._retry_delay(i), remaining))
+                            delay = self._response_retry_delay(i, r)
+                            # 相手の指定した待ち時間が予算を超えるなら、早過ぎる
+                            # 再接続をせず失敗を返す。次回の定期巡回で再確認する。
+                            self._sleeper(min(delay, remaining))
                             continue
                     return last_result
                 except httpx.HTTPError as e:
@@ -164,7 +183,9 @@ class HttpFetcher:
                     remaining = deadline - self._clock()
                     if remaining <= 0:
                         raise HttpAttemptsExhausted(url, attempts, e) from e
-                    self._sleeper(min(self._retry_delay(i), remaining))
+                    self._last[host] = self._clock()
+                    delay = max(self.minimum_host_interval, self._retry_delay(i))
+                    self._sleeper(min(delay, remaining))
             if last_exc is not None:
                 raise HttpAttemptsExhausted(url, attempts, last_exc) from last_exc
             if last_result is not None:
