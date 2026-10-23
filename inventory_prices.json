@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "checkedAt": 1792742032482,
+  "checkedAt": 1792746697235,
   "records": {
     "onepiece-eb-04": {
       "parserVersion": 2,
@@ -1218,15 +1218,34 @@
       "basis": "official_pack_times_verified_count",
       "sources": [],
       "nextCheckAt": 1792763632482
+    },
+    "gundam-eb02": {
+      "parserVersion": 2,
+      "productId": "gundam-eb02",
+      "game": "gundam",
+      "name": "Cosmic Crisis [EB02]",
+      "officialUrl": "https://www.gundam-gcg.com/jp/products/eb02.html",
+      "checkedAt": 1792746697235,
+      "status": "quantity_unconfirmed",
+      "packPrice": 250,
+      "packsPerBox": null,
+      "boxPrice": null,
+      "basis": "official_pack_times_verified_count",
+      "sources": [
+        {
+          "url": "https://www.gundam-gcg.com/jp/products/eb02.html",
+          "checkedAt": 1792746697235,
+          "kind": "official_price",
+          "title": "Cosmic Crisis [EB02] | GUNDAM CARD GAME 公式サイト",
+          "packPrice": 250,
+          "boxPrice": null,
+          "packsPerBox": null
+        }
+      ],
+      "nextCheckAt": 1792768297235
     }
   },
   "log": [
-    {
-      "at": 1791618280032,
-      "productId": "gundam-gd03",
-      "status": "quantity_unconfirmed",
-      "boxPrice": null
-    },
     {
       "at": 1791640705353,
       "productId": "gundam-gd07",
@@ -2658,6 +2677,12 @@
     {
       "at": 1792742032482,
       "productId": "gundam-gd02",
+      "status": "quantity_unconfirmed",
+      "boxPrice": null
+    },
+    {
+      "at": 1792746697235,
+      "productId": "gundam-eb02",
       "status": "quantity_unconfirmed",
       "boxPrice": null
     }
