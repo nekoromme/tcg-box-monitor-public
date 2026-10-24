@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1792823596866,
+  "generatedAt": 1792823655116,
   "prices": {
     "version": 1,
-    "checkedAt": 1792823558596,
+    "checkedAt": 1792823620323,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -2973,7 +2973,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1792823596865,
+    "checkedAt": 1792823655116,
     "notificationDelay": {
       "samples": 1,
       "medianMs": 30797,
@@ -2985,7 +2985,7 @@
         "pages": 6,
         "minSeconds": 188,
         "maxSeconds": 288,
-        "nextAt": 1792823638558,
+        "nextAt": 1792823737928,
         "errors": 1
       },
       {
@@ -2993,7 +2993,7 @@
         "pages": 3,
         "minSeconds": 192,
         "maxSeconds": 288,
-        "nextAt": 1792823610057,
+        "nextAt": 1792823843199,
         "errors": 1
       },
       {
@@ -3217,7 +3217,7 @@
         "pages": 5,
         "minSeconds": 2160,
         "maxSeconds": 2592,
-        "nextAt": 1792823626741,
+        "nextAt": 1792824002559,
         "errors": 1
       },
       {
@@ -3298,7 +3298,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1792823596864,
+    "verifiedAt": 1792823655109,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -6333,7 +6333,7 @@
         "lastNewAt": 1791179074496,
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 13562859,
+        "intervalMs": 13505100,
         "storeName": "BIGWEB／ビッグマジック"
       },
       "ryuunoshippo": {
@@ -37491,9 +37491,9 @@
     "budget": {
       "day": 20750,
       "group": 534,
-      "fallback": 525
+      "fallback": 526
     },
-    "nextFallbackAt": 1792823635114,
+    "nextFallbackAt": 1792823769566,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -37516,8 +37516,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1792823587866,
-  "lastCompletedAt": 1792823589772,
+  "lastTick": 1792823649566,
+  "lastCompletedAt": 1792823653751,
   "load": {
     "activePages": 63,
     "waitingPages": 0,
@@ -37528,8 +37528,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1780844,
-    "compressedBytes": 149709,
+    "uncompressedBytes": 1780872,
+    "compressedBytes": 149740,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37559,8 +37559,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1792823557865,
-    "nextSync": 1792830757865,
+    "lastSync": 1792823619565,
+    "nextSync": 1792830819565,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -39366,12 +39366,6 @@
     ],
     "log": [
       {
-        "at": 1792339687553,
-        "kind": "catalog",
-        "count": 37,
-        "added": []
-      },
-      {
         "at": 1792341842374,
         "kind": "catalog",
         "count": 37,
@@ -39969,6 +39963,12 @@
       },
       {
         "at": 1792823557865,
+        "kind": "catalog",
+        "count": 39,
+        "added": []
+      },
+      {
+        "at": 1792823619565,
         "kind": "catalog",
         "count": 39,
         "added": []
@@ -43895,13 +43895,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 5764,
+          "negatives": 5765,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792823610057,
+      "nextAt": 1792823939434,
       "failures": 0,
-      "lastChecked": 1792823322057,
+      "lastChecked": 1792823651434,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 8200,
@@ -44297,11 +44297,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1792784258773,
-          "lastAt": 1792823322057,
-          "samples": 127
+          "lastAt": 1792823651434,
+          "samples": 128
         }
       ],
-      "lastGoodAt": 1792823322057,
+      "lastGoodAt": 1792823651434,
       "priceDecisions": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "referencePrice": 6000,
@@ -44311,18 +44311,18 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1792823322057
+          "at": 1792823651434
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078129094,
         "stock": "in_stock",
-        "lastAt": 1792823322057,
+        "lastAt": 1792823651434,
         "lastUnavailableAt": 1791324504511,
         "availableSince": 1791324806385,
         "openAfter": 1791324504511,
         "firstAvailableAt": 1791324806385,
-        "lastAvailableAt": 1792823322057
+        "lastAvailableAt": 1792823651434
       },
       "focusUntil": 1791326606385,
       "focusReason": "購入不可から購入可能への変化",
@@ -46153,13 +46153,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 7336,
+          "negatives": 7337,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792823638558,
+      "nextAt": 1792823838834,
       "failures": 0,
-      "lastChecked": 1792823450558,
+      "lastChecked": 1792823650834,
       "lastGood": {
         "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
         "price": 5808,
@@ -47024,11 +47024,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1792656475298,
-          "lastAt": 1792823450558,
-          "samples": 822
+          "lastAt": 1792823650834,
+          "samples": 823
         }
       ],
-      "lastGoodAt": 1792823450558,
+      "lastGoodAt": 1792823650834,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -47038,14 +47038,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1792823450558
+          "at": 1792823650834
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093552,
         "stock": "out_of_stock",
-        "lastAt": 1792823450558,
-        "lastUnavailableAt": 1792823450558
+        "lastAt": 1792823650834,
+        "lastUnavailableAt": 1792823650834
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -64467,13 +64467,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 4930,
+          "negatives": 4931,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792823610323,
+      "nextAt": 1792823843199,
       "failures": 0,
-      "lastChecked": 1792823418323,
+      "lastChecked": 1792823651199,
       "lastGood": {
         "title": "Freedom Ascension [GD05] (1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 6000,
@@ -64509,7 +64509,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,300円以下",
-          "at": 1792823418323
+          "at": 1792823651199
         }
       },
       "history": [
@@ -65360,17 +65360,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円以下",
           "at": 1792787607993,
-          "lastAt": 1792823418323,
-          "samples": 172
+          "lastAt": 1792823651199,
+          "samples": 173
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791630947961,
         "stock": "out_of_stock",
-        "lastAt": 1792823418323,
-        "lastUnavailableAt": 1792823418323
+        "lastAt": 1792823651199,
+        "lastUnavailableAt": 1792823651199
       },
-      "lastGoodAt": 1792823418323,
+      "lastGoodAt": 1792823651199,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 192,
@@ -67305,13 +67305,13 @@
       "episodes": {
         "7e95a72d-18bd-4a12-8d37-26d36df4497b": {
           "active": false,
-          "negatives": 23,
+          "negatives": 24,
           "lastEvent": 0
         }
       },
-      "nextAt": 1792823626741,
+      "nextAt": 1792825811369,
       "failures": 0,
-      "lastChecked": 1792821466741,
+      "lastChecked": 1792823651369,
       "lastGood": {
         "title": "【未開封BOX】未知なる彼方へ!【ディズニーロルカナ】 [ DL12-BOX ]",
         "price": 5280,
@@ -67345,7 +67345,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1792821466741
+          "at": 1792823651369
         }
       },
       "history": [
@@ -67390,17 +67390,17 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1792784471263,
-          "lastAt": 1792821466741,
-          "samples": 18
+          "lastAt": 1792823651369,
+          "samples": 19
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1792782675411,
         "stock": "out_of_stock",
-        "lastAt": 1792821466741,
-        "lastUnavailableAt": 1792821466741
+        "lastAt": 1792823651369,
+        "lastUnavailableAt": 1792823651369
       },
-      "lastGoodAt": 1792821466741,
+      "lastGoodAt": 1792823651369,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 2160,
@@ -69944,13 +69944,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1792790190633,
-      "checked": 1,
-      "discovered": null,
-      "targets": 128,
-      "errors": 4
-    },
     {
       "at": 1792790222145,
       "checked": 2,
@@ -84826,6 +84819,23 @@
       "at": 1792823587866,
       "checked": 2,
       "discovered": null,
+      "targets": 128,
+      "errors": 4
+    },
+    {
+      "at": 1792823649566,
+      "checked": 4,
+      "discovered": {
+        "ruleId": "a3cfb1ea-b702-4e16-9d24-7875c3911d37",
+        "storeId": "cardwiz",
+        "result": {
+          "at": 1792823649566,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
       "targets": 128,
       "errors": 4
     }
