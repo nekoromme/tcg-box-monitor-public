@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1793026096152,
+  "generatedAt": 1793026153938,
   "prices": {
     "version": 1,
-    "checkedAt": 1793026063571,
+    "checkedAt": 1793026117196,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -222,8 +222,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1793019381326,
-        "lastAttemptAt": 1792997781326,
+        "nextCheckAt": 1793047717196,
+        "lastAttemptAt": 1793026117196,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "yugioh-/japan/products/yac1/": {
@@ -952,8 +952,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1793019381326,
-        "lastAttemptAt": 1792997781326,
+        "nextCheckAt": 1793047717196,
+        "lastAttemptAt": 1793026117196,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "dragonball-fb10": {
@@ -986,8 +986,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1793019381326,
-        "lastAttemptAt": 1792997781326,
+        "nextCheckAt": 1793047717196,
+        "lastAttemptAt": 1793026117196,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "dragonball-fb09": {
@@ -1214,24 +1214,6 @@
       }
     },
     "log": [
-      {
-        "at": 1792365247171,
-        "productId": "gundam-gd02",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
-      {
-        "at": 1792386819409,
-        "productId": "gundam-gd07",
-        "status": "price_unpublished",
-        "boxPrice": null
-      },
-      {
-        "at": 1792386819409,
-        "productId": "onepiece-op-18",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
       {
         "at": 1792386819409,
         "productId": "gundam-gd03",
@@ -2653,6 +2635,24 @@
         "productId": "dragonball-fb11",
         "status": "quantity_unconfirmed",
         "boxPrice": null
+      },
+      {
+        "at": 1793026117196,
+        "productId": "dragonball-st01",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1793026117196,
+        "productId": "dragonball-fb10",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1793026117196,
+        "productId": "dragonball-fb12",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
       }
     ]
   },
@@ -2974,7 +2974,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1793026096151,
+    "checkedAt": 1793026153937,
     "notificationDelay": {
       "samples": 3,
       "medianMs": 32053,
@@ -2986,7 +2986,7 @@
         "pages": 6,
         "minSeconds": 188,
         "maxSeconds": 288,
-        "nextAt": 1793026121704,
+        "nextAt": 1793026151999,
         "errors": 1
       },
       {
@@ -3074,7 +3074,7 @@
         "pages": 2,
         "minSeconds": 2247,
         "maxSeconds": 2592,
-        "nextAt": 1793026085107,
+        "nextAt": 1793026495951,
         "errors": 0
       },
       {
@@ -3202,7 +3202,7 @@
         "pages": 7,
         "minSeconds": 2247,
         "maxSeconds": 2880,
-        "nextAt": 1793026099125,
+        "nextAt": 1793026495589,
         "errors": 0
       },
       {
@@ -3299,7 +3299,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1793026096150,
+    "verifiedAt": 1793026153934,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -5755,7 +5755,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 1093784,
+        "intervalMs": 1035765,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -6308,7 +6308,7 @@
         "lastNewAt": 1791179074496,
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 5662749,
+        "intervalMs": 5604730,
         "storeName": "BIGWEB／ビッグマジック"
       },
       "ryuunoshippo": {
@@ -37449,8 +37449,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1793026092883,
-  "lastCompletedAt": 1793026094800,
+  "lastTick": 1793026146744,
+  "lastCompletedAt": 1793026148791,
   "load": {
     "activePages": 65,
     "waitingPages": 0,
@@ -37462,7 +37462,7 @@
   "storage": {
     "format": "monitor-gzip-v1",
     "uncompressedBytes": 1782756,
-    "compressedBytes": 149317,
+    "compressedBytes": 149332,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37492,8 +37492,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1793026062881,
-    "nextSync": 1793033262881,
+    "lastSync": 1793026116743,
+    "nextSync": 1793033316743,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -39265,12 +39265,6 @@
     ],
     "log": [
       {
-        "at": 1792541151808,
-        "kind": "catalog",
-        "count": 37,
-        "added": []
-      },
-      {
         "at": 1792547298242,
         "kind": "catalog",
         "count": 37,
@@ -39868,6 +39862,12 @@
       },
       {
         "at": 1793026062881,
+        "kind": "catalog",
+        "count": 39,
+        "added": []
+      },
+      {
+        "at": 1793026116743,
         "kind": "catalog",
         "count": 39,
         "added": []
@@ -45122,13 +45122,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 8736,
+          "negatives": 8737,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793026121704,
+      "nextAt": 1793026340770,
       "failures": 0,
-      "lastChecked": 1793025929704,
+      "lastChecked": 1793026148770,
       "lastGood": {
         "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 5808,
@@ -45995,11 +45995,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1792786643739,
-          "lastAt": 1793025929704,
-          "samples": 1114
+          "lastAt": 1793026148770,
+          "samples": 1115
         }
       ],
-      "lastGoodAt": 1793025929704,
+      "lastGoodAt": 1793026148770,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -46009,14 +46009,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1793025929704
+          "at": 1793026148770
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092888,
         "stock": "out_of_stock",
-        "lastAt": 1793025929704,
-        "lastUnavailableAt": 1793025929704
+        "lastAt": 1793026148770,
+        "lastUnavailableAt": 1793026148770
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -50904,13 +50904,13 @@
       "episodes": {
         "34f4a787-caf8-4888-804b-34ede069d8d0": {
           "active": false,
-          "negatives": 731,
+          "negatives": 732,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793026085107,
+      "nextAt": 1793028740346,
       "failures": 0,
-      "lastChecked": 1793023493107,
+      "lastChecked": 1793026148346,
       "lastGood": {
         "title": "ONE PIECEカードゲーム ブースタパック 蒼海の七傑 【OP-14】 BOX 2025年11月22日発売",
         "price": 5280,
@@ -51014,11 +51014,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1792611772841,
-          "lastAt": 1793023493107,
-          "samples": 179
+          "lastAt": 1793026148346,
+          "samples": 180
         }
       ],
-      "lastGoodAt": 1793023493107,
+      "lastGoodAt": 1793026148346,
       "priceDecisions": {
         "34f4a787-caf8-4888-804b-34ede069d8d0": {
           "referencePrice": 5280,
@@ -51028,14 +51028,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1793023493107
+          "at": 1793026148346
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078403335,
         "stock": "out_of_stock",
-        "lastAt": 1793023493107,
-        "lastUnavailableAt": 1793023493107
+        "lastAt": 1793026148346,
+        "lastUnavailableAt": 1793026148346
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -65999,9 +65999,9 @@
           "lastEvent": 1792044394955
         }
       },
-      "nextAt": 1793026099125,
+      "nextAt": 1793028395627,
       "failures": 0,
-      "lastChecked": 1793023852125,
+      "lastChecked": 1793026148627,
       "lastGood": {
         "title": "【未開封BOX】ハイペリアシティ【ディズニーロルカナ】 [ DL14-BOX ]",
         "price": 4000,
@@ -66035,7 +66035,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1793023852125
+          "at": 1793026148627
         }
       },
       "history": [
@@ -66127,8 +66127,8 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1792738325989,
-          "lastAt": 1793023852125,
-          "samples": 138
+          "lastAt": 1793026148627,
+          "samples": 139
         }
       ],
       "availabilityTiming": {
@@ -66137,10 +66137,10 @@
         "openAfter": null,
         "firstAvailableAt": 1792044394955,
         "stock": "in_stock",
-        "lastAt": 1793023852125,
-        "lastAvailableAt": 1793023852125
+        "lastAt": 1793026148627,
+        "lastAvailableAt": 1793026148627
       },
-      "lastGoodAt": 1793023852125,
+      "lastGoodAt": 1793026148627,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 2247,
@@ -70377,13 +70377,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1792993165849,
-      "checked": 1,
-      "discovered": null,
-      "targets": 129,
-      "errors": 3
-    },
     {
       "at": 1792993197179,
       "checked": 3,
@@ -85158,6 +85151,13 @@
     },
     {
       "at": 1793026092883,
+      "checked": 3,
+      "discovered": null,
+      "targets": 130,
+      "errors": 3
+    },
+    {
+      "at": 1793026146744,
       "checked": 3,
       "discovered": null,
       "targets": 130,
