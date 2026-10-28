@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1793148156714,
+  "generatedAt": 1793148209597,
   "prices": {
     "version": 1,
-    "checkedAt": 1793148123172,
+    "checkedAt": 1793148177621,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -2976,7 +2976,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1793148156714,
+    "checkedAt": 1793148209596,
     "notificationDelay": {
       "samples": 7,
       "medianMs": 32003,
@@ -3180,7 +3180,7 @@
         "pages": 2,
         "minSeconds": 2290,
         "maxSeconds": 2290,
-        "nextAt": 1793148142826,
+        "nextAt": 1793148826839,
         "errors": 0
       },
       {
@@ -3204,7 +3204,7 @@
         "pages": 7,
         "minSeconds": 2290,
         "maxSeconds": 3168,
-        "nextAt": 1793148206059,
+        "nextAt": 1793148238059,
         "errors": 0
       },
       {
@@ -3301,7 +3301,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1793148156706,
+    "verifiedAt": 1793148209594,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -5768,7 +5768,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 1358250,
+        "intervalMs": 1305387,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -6303,7 +6303,7 @@
         "lastNewAt": 1791179074496,
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 13326345,
+        "intervalMs": 13273482,
         "storeName": "BIGWEB／ビッグマジック"
       },
       "ryuunoshippo": {
@@ -37012,8 +37012,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1793148152749,
-  "lastCompletedAt": 1793148155863,
+  "lastTick": 1793148207064,
+  "lastCompletedAt": 1793148208717,
   "load": {
     "activePages": 66,
     "waitingPages": 0,
@@ -37024,8 +37024,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1791263,
-    "compressedBytes": 153235,
+    "uncompressedBytes": 1791111,
+    "compressedBytes": 153188,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37055,8 +37055,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1793148122748,
-    "nextSync": 1793155322748,
+    "lastSync": 1793148177062,
+    "nextSync": 1793155377062,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38830,12 +38830,6 @@
     ],
     "log": [
       {
-        "at": 1792655694308,
-        "kind": "catalog",
-        "count": 38,
-        "added": []
-      },
-      {
         "at": 1792662924744,
         "kind": "catalog",
         "count": 38,
@@ -39429,6 +39423,12 @@
       },
       {
         "at": 1793148122748,
+        "kind": "catalog",
+        "count": 39,
+        "added": []
+      },
+      {
+        "at": 1793148177062,
         "kind": "catalog",
         "count": 39,
         "added": []
@@ -54248,13 +54248,13 @@
       "episodes": {
         "c582cc9d-f015-46cc-99dd-490aab5bb6f0": {
           "active": false,
-          "negatives": 814,
+          "negatives": 815,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793148142826,
+      "nextAt": 1793150498513,
       "failures": 0,
-      "lastChecked": 1793145852826,
+      "lastChecked": 1793148208513,
       "lastGood": {
         "title": "【予約商品・全額前金制】【3/14(土)発売】ブースターパック DUAL EVOLUTION [FB09](1BOX・24パック入)ドラゴンボールスーパーカードゲーム フュージョンワールド[新品商品]",
         "price": 5280,
@@ -54443,11 +54443,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1792769731770,
-          "lastAt": 1793145852826,
-          "samples": 174
+          "lastAt": 1793148208513,
+          "samples": 175
         }
       ],
-      "lastGoodAt": 1793145852826,
+      "lastGoodAt": 1793148208513,
       "priceDecisions": {
         "c582cc9d-f015-46cc-99dd-490aab5bb6f0": {
           "referencePrice": 5280,
@@ -54457,14 +54457,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1793145852826
+          "at": 1793148208513
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078128453,
         "stock": "out_of_stock",
-        "lastAt": 1793145852826,
-        "lastUnavailableAt": 1793145852826
+        "lastAt": 1793148208513,
+        "lastUnavailableAt": 1793148208513
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -65998,9 +65998,9 @@
           "lastEvent": 1792044394955
         }
       },
-      "nextAt": 1793148206059,
+      "nextAt": 1793150498585,
       "failures": 0,
-      "lastChecked": 1793145916059,
+      "lastChecked": 1793148208585,
       "lastGood": {
         "title": "【未開封BOX】ハイペリアシティ【ディズニーロルカナ】 [ DL14-BOX ]",
         "price": 4000,
@@ -66034,7 +66034,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1793145916059
+          "at": 1793148208585
         }
       },
       "history": [
@@ -66126,8 +66126,8 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1792738325989,
-          "lastAt": 1793145916059,
-          "samples": 194
+          "lastAt": 1793148208585,
+          "samples": 195
         }
       ],
       "availabilityTiming": {
@@ -66136,10 +66136,10 @@
         "openAfter": null,
         "firstAvailableAt": 1792044394955,
         "stock": "in_stock",
-        "lastAt": 1793145916059,
-        "lastAvailableAt": 1793145916059
+        "lastAt": 1793148208585,
+        "lastAvailableAt": 1793148208585
       },
-      "lastGoodAt": 1793145916059,
+      "lastGoodAt": 1793148208585,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 2290,
@@ -66679,13 +66679,13 @@
       "episodes": {
         "f25d30bf-5691-43f9-b77e-2c17fc4d24a3": {
           "active": false,
-          "negatives": 198,
+          "negatives": 199,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793148206150,
+      "nextAt": 1793150498702,
       "failures": 0,
-      "lastChecked": 1793145916150,
+      "lastChecked": 1793148208702,
       "lastGood": {
         "title": "【新品】【1BOX】エクストラブースター Anime 25th collection【EB-02】 [ OP ]",
         "price": 5280,
@@ -66719,7 +66719,7 @@
           "shippingIncluded": false,
           "status": "reference_unknown",
           "reason": "BOX定価を確認できないため通知保留",
-          "at": 1793145916150
+          "at": 1793148208702
         }
       },
       "history": [
@@ -66764,17 +66764,17 @@
           "comparable": true,
           "priceDecision": "BOX定価を確認できないため通知保留",
           "at": 1792777357611,
-          "lastAt": 1793145916150,
-          "samples": 173
+          "lastAt": 1793148208702,
+          "samples": 174
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1792748899814,
         "stock": "out_of_stock",
-        "lastAt": 1793145916150,
-        "lastUnavailableAt": 1793145916150
+        "lastAt": 1793148208702,
+        "lastUnavailableAt": 1793148208702
       },
-      "lastGoodAt": 1793145916150,
+      "lastGoodAt": 1793148208702,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 2290,
@@ -70857,23 +70857,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1793114972516,
-      "checked": 2,
-      "discovered": {
-        "ruleId": "0d4cd221-6a96-4c6c-9dda-6b60629c1b07",
-        "storeId": "torecolo",
-        "result": {
-          "at": 1793114972516,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 131,
-      "errors": 3
-    },
     {
       "at": 1793115005676,
       "checked": 1,
@@ -85432,6 +85415,13 @@
         },
         "error": "検索ページの取得失敗。時間をあけて再試行"
       },
+      "targets": 131,
+      "errors": 4
+    },
+    {
+      "at": 1793148207064,
+      "checked": 3,
+      "discovered": null,
       "targets": 131,
       "errors": 4
     }
