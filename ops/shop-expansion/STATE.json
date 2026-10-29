@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-29T10:58:56.521Z",
+  "updatedAt": "2026-10-29T10:59:07.839503Z",
   "phase": "completed",
   "automation": {
     "id": "6ac20ed34a788191a90d7b2627aa8643",
@@ -17,11 +17,11 @@
     "reasoningRequested": "極高",
     "modelConfigured": false,
     "modelConfigurationNote": "作成APIにモデル/推論強度指定欄なし。ユーザーによる手動設定待ち。",
-    "provisioningStatus": "disabled_after_unexpected_reactivation",
+    "provisioningStatus": "disabled_after_second_unexpected_reactivation",
     "verifiedAt": "2026-10-04T08:32:06.163Z",
     "schedule": "BEGIN:VEVENT\nDTSTART;TZID=Asia/Tokyo:20261005T080000\nRRULE:FREQ=DAILY;BYHOUR=8,14,20;BYMINUTE=0;BYSECOND=0\nEND:VEVENT",
     "nextRunTimeReported": null,
-    "disabledAt": "2026-10-21T23:05:45.703944Z"
+    "disabledAt": "2026-10-29T10:59:07.839503Z"
   },
   "scope": {
     "maxConcurrentStoreRollouts": 1,
@@ -83,21 +83,9 @@
     "quotaNote": "Cloudflare実利用量の正規メトリクスは未取得。最新health issuesなし、無料枠停止の証拠なし。",
     "activePages": 77
   },
-  "lease": {
-    "runId": "20261029T105856521Z-exp",
-    "acquiredAt": "2026-10-29T10:58:56.521Z",
-    "expiresAt": "2026-10-29T12:28:56.521Z"
-  },
+  "lease": null,
   "activeCandidateId": null,
-  "pendingOperation": {
-    "kind": "automation_disable",
-    "status": "intent_recorded_after_second_unexpected_reactivation",
-    "automationId": "6ac20ed34a788191a90d7b2627aa8643",
-    "expectedTitle": "カード監視の段階的店舗追加",
-    "observedEnabledAt": "2026-10-29T09:43:36.089560Z",
-    "observedAt": "2026-10-29T10:58:56.521Z",
-    "reason": "全候補と最終48時間観察が完了済みの店舗拡張タスクが再び有効化されていたため、通常監視を触らずこのタスクだけ再停止"
-  },
+  "pendingOperation": null,
   "stabilityWindow": {
     "status": "passed",
     "from": "2026-10-04T10:51:38+09:00",
@@ -621,8 +609,8 @@
     }
   ],
   "lastRun": {
-    "id": "20261021230537532Z-exp",
-    "status": "completed_reactivated_automation_disabled_again",
+    "id": "20261029T105856521Z-exp",
+    "status": "completed_reactivated_automation_disabled_again_second_occurrence",
     "externalChanges": [
       {
         "kind": "ledger",
@@ -631,15 +619,15 @@
       {
         "kind": "automation_disable",
         "automationId": "6ac20ed34a788191a90d7b2627aa8643",
-        "disabledAt": "2026-10-21T23:05:45.703944Z"
+        "disabledAt": "2026-10-29T10:59:07.839503Z"
       }
     ],
-    "notes": "10月9日に完了済みの店舗拡張automationが10月21日に再有効化されていた。候補・本番監視・通知条件には変更せず、この店舗拡張タスクだけ再停止。通常の在庫監視workflowは継続。"
+    "notes": "10月9日に完了し10月22日に再停止した店舗拡張automationが、10月29日に再び有効化されていた。候補・本番監視・通知条件には変更せず、この店舗拡張タスクだけ再停止。通常の在庫監視workflowは継続。"
   },
   "nextAction": "段階的店舗追加は完了。通常の在庫監視と新弾自動登録を継続。具体的な新品通常BOX掲載や規約変更が出た場合のみ、別の拡張作業として再開する。",
   "completion": {
     "status": "completed_automation_disabled",
-    "disabledAt": "2026-10-21T23:05:45.703944Z",
+    "disabledAt": "2026-10-29T10:59:07.839503Z",
     "remainingManualItems": [
       {
         "candidateId": "hobby-search",
@@ -654,10 +642,22 @@
       "normalInventoryMonitorContinues": true
     },
     "reactivationHandled": {
-      "detectedAt": "2026-10-21T23:04:32.953705Z",
-      "disabledAgainAt": "2026-10-21T23:05:45.703944Z",
-      "reason": "完了済みタスクが再有効化されていたため再停止"
-    }
+      "detectedAt": "2026-10-29T10:58:56.521Z",
+      "disabledAgainAt": "2026-10-29T10:59:07.839503Z",
+      "reason": "完了済みタスクが2026-10-29に再有効化されていたため再停止"
+    },
+    "reactivationHistory": [
+      {
+        "detectedAt": "2026-10-21T23:04:32.953705Z",
+        "disabledAgainAt": "2026-10-21T23:05:45.703944Z",
+        "reason": "完了済みタスクが再有効化されていたため再停止"
+      },
+      {
+        "detectedAt": "2026-10-29T10:58:56.521Z",
+        "disabledAgainAt": "2026-10-29T10:59:07.839503Z",
+        "reason": "完了済みタスクが2026-10-29に再有効化されていたため再停止"
+      }
+    ]
   },
   "maintenanceFindings": {
     "checkedAt": "2026-10-09T11:16:43.117Z",
