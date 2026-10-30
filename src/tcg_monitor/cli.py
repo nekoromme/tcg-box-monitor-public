@@ -472,11 +472,16 @@ def _preserve_preferred_case_source(state: MonitorState, case: LotteryCase) -> L
         raw_end = str(previous.get("end_at") or "")
         previous_end = ((datetime.fromisoformat(raw_end) if len(raw_end) > 10
                          else date.fromisoformat(raw_end)) if raw_end else None)
+        raw_result = str(previous.get("result_at") or "")
+        previous_result = ((datetime.fromisoformat(raw_result) if len(raw_result) > 10
+                            else date.fromisoformat(raw_result)) if raw_result else None)
     except (ValueError, TypeError):
         return case
-    if not url or lottery_source_priority(tier, url) >= lottery_source_priority(
-        case.source_tier, case.source_url,
-    ):
+    previous_priority = (*lottery_source_priority(tier, url),
+                         int(previous.get("extraction_method") in OBSERVED_START_METHODS))
+    current_priority = (*lottery_source_priority(case.source_tier, case.source_url),
+                        int(case.extraction_method in OBSERVED_START_METHODS))
+    if not url or previous_priority >= current_priority:
         return case
     # 同じURLで開催される次回抽選や、別商品・別の販売方式に古い告知を使わない。
     # 通知と同じ識別規則を使い、締切でまとめたカードセットでも公式の告知を保持する。
@@ -506,6 +511,8 @@ def _preserve_preferred_case_source(state: MonitorState, case: LotteryCase) -> L
         confidence=str(previous.get("confidence") or case.confidence),
         # 下位の補助記事によって、公式で確認した日時を未確認の日時へ変えない。
         start_at=previous_start,
+        end_at=previous_end or case.end_at,
+        result_at=previous_result or case.result_at,
     )
 
 

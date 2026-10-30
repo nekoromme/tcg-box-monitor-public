@@ -31,12 +31,19 @@ def pairs():
 def test_real_duplicates_notify_once_in_both_orders_and_after_restart(tmp_path, rows, reverse):
     if reverse:
         rows = rows[::-1]
-    assert len(merge_lotteries(rows)[0]) == 1
+    merged = merge_lotteries(rows)[0]
+    assert len(merged) == 1
+    if rows[0].retailer_id == "premium_bandai":
+        assert merged[0].end_at is not None
     state = MonitorState(tmp_path / 'state.json')
     for index, row in enumerate(rows):
         prepared, _ = _prepare_cases(state, [row])
         assert len(prepared) == 1
         case = prepared[0]
+        if row.retailer_id == "premium_bandai" and index == 1:
+            dated = next(candidate for candidate in rows if candidate.end_at is not None)
+            assert case.start_at == dated.start_at
+            assert case.end_at == dated.end_at
         assert state.delivered(f'lottery:started:{case.case_id}') is (index != 0)
         _remember_case(state, case)
         state.mark_delivered(f'lottery:started:{case.case_id}')
