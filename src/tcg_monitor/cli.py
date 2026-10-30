@@ -30,8 +30,9 @@ from tcg_monitor.identity import (
     FIRST_DETECTION_START_OFFSETS,
     OBSERVED_START_METHODS,
     lottery_dedupe_key,
+    lottery_product_matches,
     release_dedupe_key,
-    release_title_token,
+    same_lottery_campaign,
 )
 from tcg_monitor.logging_config import configure_logging, log_event
 from tcg_monitor.models import (
@@ -409,8 +410,10 @@ def _reuse_first_detection_start(state: MonitorState, case: LotteryCase) -> Lott
             if (record.get("game_id") == case.game_id
                     and record.get("retailer_id") == case.retailer_id
                     and record.get("opportunity_kind", "lottery") == case.opportunity_kind.value
-                    and release_title_token(str(record.get("product_name") or ""))
-                    == release_title_token(case.product_name)
+                    and lottery_product_matches(case, replace(
+                        case, product_name=str(record.get("product_name") or ""),
+                        canonical_product_key=str(record.get("canonical_product_key") or ""),
+                    ))
                     and (not case.application_round or not record.get("application_round")
                          or record["application_round"] == case.application_round)):
                 aliases.append(record)
@@ -469,23 +472,29 @@ def _preserve_preferred_case_source(state: MonitorState, case: LotteryCase) -> L
         raw_end = str(previous.get("end_at") or "")
         previous_end = ((datetime.fromisoformat(raw_end) if len(raw_end) > 10
                          else date.fromisoformat(raw_end)) if raw_end else None)
+        raw_result = str(previous.get("result_at") or "")
+        previous_result = ((datetime.fromisoformat(raw_result) if len(raw_result) > 10
+                            else date.fromisoformat(raw_result)) if raw_result else None)
     except (ValueError, TypeError):
         return case
-    if not url or lottery_source_priority(tier, url) >= lottery_source_priority(
-        case.source_tier, case.source_url,
-    ):
+    previous_priority = (*lottery_source_priority(tier, url),
+                         int(previous.get("extraction_method") in OBSERVED_START_METHODS))
+    current_priority = (*lottery_source_priority(case.source_tier, case.source_url),
+                        int(case.extraction_method in OBSERVED_START_METHODS))
+    if not url or previous_priority >= current_priority:
         return case
     # 同じURLで開催される次回抽選や、別商品・別の販売方式に古い告知を使わない。
     # 通知と同じ識別規則を使い、締切でまとめたカードセットでも公式の告知を保持する。
-    previous_key = lottery_dedupe_key(replace(
+    previous_case = replace(
         case, product_name=str(previous.get("product_name") or ""),
         canonical_product_key=str(previous.get("canonical_product_key") or ""),
         start_at=previous_start, end_at=previous_end, opportunity_kind=previous_kind,
         extraction_method=str(previous.get("extraction_method") or ""),
         source_url=url, official_url=str(previous.get("official_url") or ""),
         application_round=str(previous.get("application_round") or ""),
-    ))
-    if previous_key != lottery_dedupe_key(case) or (
+    )
+    if not (same_lottery_campaign(previous_case, case)
+            or lottery_dedupe_key(previous_case) == lottery_dedupe_key(case)) or (
         case.application_round and previous.get("application_round")
         and case.application_round != previous["application_round"]
     ):
@@ -502,6 +511,8 @@ def _preserve_preferred_case_source(state: MonitorState, case: LotteryCase) -> L
         confidence=str(previous.get("confidence") or case.confidence),
         # 下位の補助記事によって、公式で確認した日時を未確認の日時へ変えない。
         start_at=previous_start,
+        end_at=previous_end or case.end_at,
+        result_at=previous_result or case.result_at,
     )
 
 

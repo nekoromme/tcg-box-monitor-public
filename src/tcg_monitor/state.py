@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -16,9 +16,11 @@ from tcg_monitor.identity import (
     is_provisional_product_name,
     lottery_dedupe_key,
     lottery_dedupe_key_values,
+    lottery_product_matches,
     release_dedupe_key,
     release_dedupe_key_values,
     release_title_token,
+    same_lottery_campaign,
 )
 from tcg_monitor.models import (
     LotteryCase,
@@ -371,6 +373,7 @@ class MonitorState:
         same_article: list[tuple[str, dict[str, Any]]] = []
         same_product_without_article: list[tuple[str, dict[str, Any]]] = []
         same_campaign: list[tuple[str, dict[str, Any]]] = []
+        campaign_alias_ids: set[str] = set()
         campaign_key = lottery_dedupe_key(case)
         for old_id, raw_record in seen_cases.items():
             if old_id == case.case_id or not isinstance(raw_record, dict):
@@ -455,11 +458,32 @@ class MonitorState:
                     != case.start_at.isoformat()[:10] and not same_sale_end):
                 # A new dated order window on a reused item URL is a new opportunity.
                 continue
+            # 本文/画像で明記された受付期間と商品名を、別経路の同じ告知へ照合する。
+            # 商品コード省略や仮開始日の違いを救済するが、別回次・古い投稿は通さない。
+            def saved_day(name: str, record: dict[str, Any] = raw_record) -> date | None:
+                try:
+                    return date.fromisoformat(str(record.get(name) or "")[:10])
+                except ValueError:
+                    return None
+
+            saved_start = saved_day("start_at")
+            matched_campaign = saved_start is not None and same_lottery_campaign(case, replace(
+                case, product_name=str(raw_record.get("product_name") or ""),
+                canonical_product_key=str(raw_record.get("canonical_product_key") or ""),
+                start_at=saved_start, end_at=saved_day("end_at"),
+                source_url=str(raw_record.get("source_url") or ""),
+                official_url=str(raw_record.get("official_url") or ""),
+                extraction_method=str(raw_record.get("extraction_method") or ""),
+                application_round=str(raw_record.get("application_round") or ""),
+            ))
+            if matched_campaign:
+                same_campaign.append((old_id, raw_record))
             if (
                 is_shared_retailer_application_url(case.retailer_id, case.official_url)
                 and str(raw_record.get("start_at") or "")[:10]
                 != case.start_at.isoformat()[:10]
                 and not same_cardset_observation
+                and not matched_campaign
             ):
                 continue
             # 公式投稿と補助記事のURLが異なっても、同じ店舗・商品・開始日
@@ -481,6 +505,8 @@ class MonitorState:
                 )
                 if old_campaign_key == campaign_key:
                     same_campaign.append((old_id, raw_record))
+                elif matched_campaign:
+                    campaign_alias_ids.add(old_id)
             if (
                 is_pokemon_30th_cardset(case.game_id, case.canonical_product_key)
                 and str(raw_record.get("start_at") or "")[:10]
@@ -547,8 +573,10 @@ class MonitorState:
             candidate
             for candidate in same_article
             if current_product_token
-            and release_title_token(str(candidate[1].get("product_name") or ""))
-            == current_product_token
+            and lottery_product_matches(case, replace(
+                case, product_name=str(candidate[1].get("product_name") or ""),
+                canonical_product_key=str(candidate[1].get("canonical_product_key") or ""),
+            ))
         ]
         if same_family:
             candidates = same_family
@@ -600,7 +628,10 @@ class MonitorState:
             and any(record.get("extraction_method") in OBSERVED_START_METHODS
                     for _, record in candidates)
         )
-        if observed_cardset:
+        preserve_first_delivery = observed_cardset or any(
+            candidate_id in campaign_alias_ids for candidate_id, _ in candidates
+        )
+        if preserve_first_delivery:
             # 旧版で重複送信した場合は最初の成功履歴を採用し、仮日付も固定する。
             old_id, previous = min(candidates, key=lambda candidate: (
                 -candidate_score(candidate)[0],
@@ -627,7 +658,7 @@ class MonitorState:
             migration = _mapping(migrations.get(candidate_id))
             duplicate_events.update(_mapping(migration.get("duplicate_calendar_events")))
             legacy_deliveries.update(_mapping(migration.get("legacy_deliveries")))
-            if observed_cardset:
+            if preserve_first_delivery:
                 for kind in ("started", "scheduled"):
                     key = f"lottery:{kind}:{candidate_id}"
                     if key in journal:
@@ -638,7 +669,7 @@ class MonitorState:
         kept_event_id = str(kept_sync.get("event_id") or "")
         result_history = self.migrate_result_history(case.case_id, equivalent_ids)
         duplicate_events.update(result_history.get("duplicate_calendar_events", {}))
-        if observed_cardset and kept_event_id:
+        if preserve_first_delivery and kept_event_id:
             for candidate_id in equivalent_ids:
                 sync = _mapping(existing_sync.get(f"lottery:{candidate_id}"))
                 event_id = str(sync.get("event_id") or "")
@@ -681,7 +712,7 @@ class MonitorState:
                 journal[old_key] for old_key in old_keys if old_key in journal
             ]
             if delivered_records:
-                if observed_cardset:
+                if preserve_first_delivery:
                     journal[new_key] = min(delivered_records, key=lambda record: (
                         not (isinstance(record, dict) and record.get("status") == "complete"),
                         str(record.get("updated_at") or "9999")

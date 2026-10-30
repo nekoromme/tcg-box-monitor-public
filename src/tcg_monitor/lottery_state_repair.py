@@ -18,7 +18,11 @@ from tcg_monitor.cli import (
 )
 from tcg_monitor.config import load_config
 from tcg_monitor.google_calendar import CalendarAdapter
-from tcg_monitor.identity import OBSERVED_START_METHODS, is_pokemon_30th_cardset
+from tcg_monitor.identity import (
+    OBSERVED_START_METHODS,
+    is_pokemon_30th_cardset,
+    same_lottery_campaign,
+)
 from tcg_monitor.logging_config import log_event
 from tcg_monitor.models import Config, LotteryCase, OpportunityKind, SourceTier, stable_url_identity
 from tcg_monitor.source_priority import merge_lotteries
@@ -26,6 +30,7 @@ from tcg_monitor.state import MonitorState
 
 REPAIR_KEY = "lottery_duplicates_20261010"
 SOCIAL_REFERENCE_REPAIR_KEY = "lottery_social_reference_duplicates_20261010"
+CROSS_SOURCE_REPAIR_KEY = "lottery_cross_source_duplicates_20261031"
 RESULT_HISTORY_REPAIR_KEY = "lottery_result_history_20261011"
 FULLCOMP_POST = "https://x.com/fc_sendaieki/status/2108806066981282193"
 MORIOKA_FORM = "https://t.co/2uqpB26XsS"
@@ -129,9 +134,49 @@ def repair_social_route_duplicates(
         if (len(merged) < len(rows)
                 and all(state.delivered(f"lottery:started:{case.case_id}") for case in rows)):
             selected.extend(rows)
+    return _repair_selected_duplicates(
+        state, calendar, config, selected, SOCIAL_REFERENCE_REPAIR_KEY,
+    )
+
+
+def repair_cross_source_duplicates(
+    state: MonitorState, calendar: CalendarAdapter, config: Config,
+) -> int:
+    """確認した期間の実配信履歴を整理。OCRキャッシュや通知済み記録は捨てない。"""
+    if state.data.setdefault("maintenance", {}).get(CROSS_SOURCE_REPAIR_KEY, {}).get(
+        "status",
+    ) == "complete":
+        return 0
+    journal = state.data["delivery_journal"]
+    rows = [_case(row) for case_id, row in state.data["seen_cases"].items()
+            if state.delivered(f"lottery:started:{case_id}")
+            and journal[f"lottery:started:{case_id}"].get("updated_at", "") >= "2026-10-24"]
+    selected = [row for row in rows if any(
+        other.case_id != row.case_id and same_lottery_campaign(row, other) for other in rows
+    )]
+    return _repair_selected_duplicates(state, calendar, config, selected, CROSS_SOURCE_REPAIR_KEY)
+
+
+def _repair_selected_duplicates(
+    state: MonitorState, calendar: CalendarAdapter, config: Config,
+    selected: list[LotteryCase], repair_key: str,
+) -> int:
+    maintenance = state.data.setdefault("maintenance", {})
+    # 予定更新が途中で失敗しても、統合済みのIDから残りの整理を再開する。
+    # 既にseen_casesをまとめた後は、元の重複ペアを再検索しても見つからない。
+    selected_ids = {case.case_id for case in selected}
+    for case_id in maintenance.get(repair_key, {}).get("case_ids", []):
+        row = state.data["seen_cases"].get(case_id)
+        if row and case_id not in selected_ids:
+            selected.append(_case(row))
     if not selected:
         return 0
     prepared, _ = _prepare_cases(state, selected)
+    maintenance[repair_key] = {
+        "status": "in_progress", "case_ids": [case.case_id for case in prepared],
+        "discord_notifications": 0,
+    }
+    state.save()
     now = datetime.now(UTC)
     for case in prepared:
         if not state.delivered(f"lottery:started:{case.case_id}"):
@@ -152,13 +197,13 @@ def repair_social_route_duplicates(
         state.mark_calendar_synced(key, _calendar_payload_hash(summary, case.start_at, description),
                                    result)
         _cleanup_duplicate_lottery_events(state, calendar, case, summary, description)
-    maintenance[SOCIAL_REFERENCE_REPAIR_KEY] = {
+    maintenance[repair_key] = {
         "status": "complete", "completed_at": now.isoformat(),
         "case_ids": [case.case_id for case in prepared], "discord_notifications": 0,
     }
     state.save()
     log_event(phase="verified_lottery_repair", outcome="complete",
-              repair=SOCIAL_REFERENCE_REPAIR_KEY, campaigns=len(prepared),
+              repair=repair_key, campaigns=len(prepared),
               discord_notifications=0)
     return len(prepared)
 
@@ -250,4 +295,5 @@ if __name__ == "__main__":
     count = repair(state, calendar, config)
     count += repair_social_route_duplicates(state, calendar, config)
     count += repair_result_histories(state, calendar, config)
+    count += repair_cross_source_duplicates(state, calendar, config)
     print(f"verified_lottery_repair: complete campaigns={count} discord_notifications=0")

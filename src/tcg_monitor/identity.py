@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from urllib.parse import urlsplit
+from zoneinfo import ZoneInfo
 
 from tcg_monitor.models import (
     LotteryCase,
@@ -220,6 +221,92 @@ def lottery_dedupe_key(case: LotteryCase) -> str:
         else case.opportunity_kind,
         application_round=case.application_round,
     )
+
+
+def lottery_product_matches(first: LotteryCase, second: LotteryCase) -> bool:
+    """コードの省略・空白・括弧の違いだけで同じ商品を別扱いしない。"""
+    if first.game_id != second.game_id:
+        return False
+    if is_pokemon_30th_cardset(first.game_id, first.canonical_product_key):
+        return is_pokemon_30th_cardset(second.game_id, second.canonical_product_key)
+    pattern = {"one_piece_card": _ONE_PIECE_CODE,
+               "dragon_ball_fusion_world": _DRAGONBALL_CODE}.get(first.game_id)
+
+    def parts(case: LotteryCase) -> tuple[str, str]:
+        name = unicodedata.normalize("NFKC", case.product_name)
+        code = pattern.search(f"{case.canonical_product_key} {name}") if pattern else None
+        # 引用内にあるコードも先に除く。コードだけの名前はタイトル一致に使わない。
+        if pattern:
+            name = pattern.sub("", name)
+        token = release_title_token(name)
+        if case.game_id == "one_piece_card":
+            # ONEPIECE/ONE PIECEやブランド名の繰り返し、告知の「など」を除く。
+            token = re.sub(r"onepiece|カードゲーム|カード", "", token)
+            token = re.sub(r"(?:など|他)$", "", token)
+        return code.group(0).upper() if code else "", token
+
+    first_code, first_title = parts(first)
+    second_code, second_title = parts(second)
+    if first_code and second_code:
+        return first_code == second_code
+    return bool(first_title and first_title == second_title
+                and not is_provisional_product_name(first.product_name)
+                and not is_provisional_product_name(second.product_name))
+
+
+def same_lottery_campaign(first: LotteryCase, second: LotteryCase) -> bool:
+    """取得元に依存せず同じ応募機会か照合する。次回・別店舗・別回次は残す。"""
+    if ((first.game_id, first.retailer_id, first.opportunity_kind)
+            != (second.game_id, second.retailer_id, second.opportunity_kind)
+            or first.application_round != second.application_round
+            or not lottery_product_matches(first, second)):
+        return False
+    # カードセット固有のフォーム・締切規則は既存のキーに任せる。
+    if is_pokemon_30th_cardset(first.game_id, first.canonical_product_key):
+        return lottery_dedupe_key(first) == lottery_dedupe_key(second)
+
+    def day(value: date | datetime) -> date:
+        if isinstance(value, datetime):
+            return (value.astimezone(ZoneInfo("Asia/Tokyo")).date() if value.tzinfo
+                    else value.date())
+        return value
+
+    if day(first.start_at) == day(second.start_at):
+        return True
+    # 推定開始日を実日程へ結び付けるのは、明記された受付期間内の同商品告知だけ。
+    # 取得した日が期間内でも、古いX投稿なら別回の履歴を借りない。
+    for observed, dated in ((first, second), (second, first)):
+        if (observed.opportunity_kind != OpportunityKind.LOTTERY
+                or observed.extraction_method not in OBSERVED_START_METHODS
+                or dated.extraction_method in OBSERVED_START_METHODS
+                or (observed.end_at is not None
+                    and dated.end_at is not None
+                    and day(observed.end_at) != day(dated.end_at))):
+            continue
+        # ふるいちの個別ニュースIDは募集単位。開始日を読めなかった経路も
+        # 同じ記事の商品なら照合する。商品ページや共通一覧には適用しない。
+        article = urlsplit(observed.official_url)
+        if (observed.retailer_id == "furuichi"
+                and article.hostname in {"furu1.net", "www.furu1.net"}
+                and re.fullmatch(r"/news/news_information/[A-Za-z0-9_-]+/?", article.path)
+                and stable_url_identity(observed.official_url)
+                == stable_url_identity(dated.official_url)):
+            return True
+        if dated.end_at is None:
+            continue
+        if not day(dated.start_at) <= day(observed.start_at) <= day(dated.end_at):
+            continue
+        post = urlsplit(observed.source_url)
+        match = re.fullmatch(r"/[^/]+/status/(\d+)/?", post.path)
+        if post.hostname not in {"x.com", "twitter.com", "www.x.com", "www.twitter.com"}:
+            continue
+        if match:
+            posted = datetime.fromtimestamp(
+                ((int(match[1]) >> 22) + 1288834974657) / 1000, UTC,
+            )
+            if day(dated.start_at) <= day(posted) <= day(dated.end_at):
+                return True
+    return False
 
 
 def lottery_dedupe_key_values(
