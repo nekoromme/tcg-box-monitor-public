@@ -11,6 +11,7 @@ from tcg_monitor.identity import (
     is_pokemon_30th_cardset,
     lottery_dedupe_key,
     release_dedupe_key,
+    same_lottery_campaign,
 )
 from tcg_monitor.models import (
     Alert,
@@ -151,6 +152,13 @@ def merge_lotteries(items: list[LotteryCase]) -> tuple[list[LotteryCase], list[A
                 canonical_product_key="pokemon_30th_cardset",
                 case_id=sha256(identity.encode()).hexdigest(),
             )
+        if grouping_identity not in grouped:
+            # キーに商品コードを含む側と、名前だけの側を同じ応募機会へ結び付ける。
+            # 候補が複数ある場合は曖昧なので統合しない。全員と照合して連鎖誤統合も防ぐ。
+            campaign_aliases = [key for key, values in grouped.items()
+                                if all(same_lottery_campaign(item, other) for other in values)]
+            if len(campaign_aliases) == 1:
+                grouping_identity = campaign_aliases[0]
         grouped[grouping_identity].append(item)
     merged = []
     for values in grouped.values():
