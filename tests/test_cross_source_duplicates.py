@@ -93,7 +93,10 @@ def test_existing_duplicate_deliveries_and_calendar_ids_are_preserved(tmp_path):
     assert state.data['calendar_sync'][f'lottery:{case.case_id}']['event_id'] == 'synthetic-event-0'
 
 
-def test_saved_recent_duplicates_are_repaired_without_discord_and_are_restart_safe(tmp_path):
+@pytest.mark.parametrize("interrupt", [False, True])
+def test_saved_recent_duplicates_are_repaired_without_discord_and_are_restart_safe(
+    tmp_path, interrupt,
+):
     state = MonitorState(tmp_path / 'state.json')
     for rows in pairs():
         for index, row in enumerate(rows):
@@ -110,6 +113,13 @@ def test_saved_recent_duplicates_are_repaired_without_discord_and_are_restart_sa
     }
     calendar.delete_owned_event.return_value = {'status': 'deleted'}
     config = load_config('sites.yaml')
+    if interrupt:
+        calendar.delete_owned_event.side_effect = RuntimeError("temporary calendar failure")
+        with pytest.raises(RuntimeError, match="temporary calendar failure"):
+            repair_cross_source_duplicates(state, calendar, config)
+        state = MonitorState.load(state.path)
+        calendar.reset_mock()
+        calendar.delete_owned_event.side_effect = None
     assert repair_cross_source_duplicates(state, calendar, config) == 6
     assert len(state.data['seen_cases']) == 6
     assert calendar.delete_owned_event.call_count == 6

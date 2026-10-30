@@ -162,9 +162,21 @@ def _repair_selected_duplicates(
     selected: list[LotteryCase], repair_key: str,
 ) -> int:
     maintenance = state.data.setdefault("maintenance", {})
+    # 予定更新が途中で失敗しても、統合済みのIDから残りの整理を再開する。
+    # 既にseen_casesをまとめた後は、元の重複ペアを再検索しても見つからない。
+    selected_ids = {case.case_id for case in selected}
+    for case_id in maintenance.get(repair_key, {}).get("case_ids", []):
+        row = state.data["seen_cases"].get(case_id)
+        if row and case_id not in selected_ids:
+            selected.append(_case(row))
     if not selected:
         return 0
     prepared, _ = _prepare_cases(state, selected)
+    maintenance[repair_key] = {
+        "status": "in_progress", "case_ids": [case.case_id for case in prepared],
+        "discord_notifications": 0,
+    }
+    state.save()
     now = datetime.now(UTC)
     for case in prepared:
         if not state.delivered(f"lottery:started:{case.case_id}"):
