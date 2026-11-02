@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1793620045510,
+  "generatedAt": 1793620105400,
   "prices": {
     "version": 1,
-    "checkedAt": 1793620003239,
+    "checkedAt": 1793620069876,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -222,8 +222,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1793595625618,
-        "lastAttemptAt": 1793574025618,
+        "nextCheckAt": 1793641669876,
+        "lastAttemptAt": 1793620069876,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "yugioh-/japan/products/yac1/": {
@@ -954,8 +954,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1793595625618,
-        "lastAttemptAt": 1793574025618,
+        "nextCheckAt": 1793641669876,
+        "lastAttemptAt": 1793620069876,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "dragonball-fb10": {
@@ -988,8 +988,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1793595625618,
-        "lastAttemptAt": 1793574025618,
+        "nextCheckAt": 1793641669876,
+        "lastAttemptAt": 1793620069876,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "dragonball-fb09": {
@@ -1216,24 +1216,6 @@
       }
     },
     "log": [
-      {
-        "at": 1793281150905,
-        "productId": "pokemon-m3",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
-      {
-        "at": 1793281150905,
-        "productId": "onepiece-op-17",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
-      {
-        "at": 1793281150905,
-        "productId": "onepiece-op-16",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
       {
         "at": 1793281150905,
         "productId": "onepiece-op-18",
@@ -2655,6 +2637,24 @@
         "productId": "dragonball-fb11",
         "status": "quantity_unconfirmed",
         "boxPrice": null
+      },
+      {
+        "at": 1793620069876,
+        "productId": "dragonball-st01",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1793620069876,
+        "productId": "dragonball-fb10",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1793620069876,
+        "productId": "dragonball-fb12",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
       }
     ]
   },
@@ -2970,7 +2970,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1793620045510,
+    "checkedAt": 1793620105399,
     "notificationDelay": {
       "samples": 6,
       "medianMs": 32003,
@@ -2982,7 +2982,7 @@
         "pages": 6,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1793620064343,
+        "nextAt": 1793620193970,
         "errors": 1
       },
       {
@@ -2990,7 +2990,7 @@
         "pages": 3,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1793620032787,
+        "nextAt": 1793620194194,
         "errors": 1
       },
       {
@@ -2998,7 +2998,7 @@
         "pages": 5,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1793620064563,
+        "nextAt": 1793620116074,
         "errors": 0
       },
       {
@@ -3214,7 +3214,7 @@
         "pages": 2,
         "minSeconds": 2204,
         "maxSeconds": 3168,
-        "nextAt": 1793620061667,
+        "nextAt": 1793620737852,
         "errors": 0
       },
       {
@@ -3279,7 +3279,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1793620045508,
+    "verifiedAt": 1793620105397,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -5630,7 +5630,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 2180921,
+        "intervalMs": 2121369,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -37059,9 +37059,9 @@
     "budget": {
       "day": 20759,
       "group": 672,
-      "fallback": 713
+      "fallback": 714
     },
-    "nextFallbackAt": 1793620076565,
+    "nextFallbackAt": 1793620219083,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -37084,8 +37084,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1793620032561,
-  "lastCompletedAt": 1793620034524,
+  "lastTick": 1793620099083,
+  "lastCompletedAt": 1793620102262,
   "load": {
     "activePages": 65,
     "waitingPages": 0,
@@ -37096,8 +37096,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1822567,
-    "compressedBytes": 153894,
+    "uncompressedBytes": 1822718,
+    "compressedBytes": 153890,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37127,8 +37127,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1793620002561,
-    "nextSync": 1793627202561,
+    "lastSync": 1793620069081,
+    "nextSync": 1793627269081,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38795,12 +38795,6 @@
     ],
     "log": [
       {
-        "at": 1793084165167,
-        "kind": "catalog",
-        "count": 39,
-        "added": []
-      },
-      {
         "at": 1793091375416,
         "kind": "catalog",
         "count": 39,
@@ -39390,6 +39384,12 @@
       },
       {
         "at": 1793620002561,
+        "kind": "catalog",
+        "count": 37,
+        "added": []
+      },
+      {
+        "at": 1793620069081,
         "kind": "catalog",
         "count": 37,
         "added": []
@@ -44665,13 +44665,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 11405,
+          "negatives": 11406,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793620064343,
+      "nextAt": 1793620268047,
       "failures": 0,
-      "lastChecked": 1793619862343,
+      "lastChecked": 1793620066047,
       "lastGood": {
         "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 5808,
@@ -45538,11 +45538,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1793610646237,
-          "lastAt": 1793619862343,
-          "samples": 41
+          "lastAt": 1793620066047,
+          "samples": 42
         }
       ],
-      "lastGoodAt": 1793619862343,
+      "lastGoodAt": 1793620066047,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -45552,14 +45552,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1793619862343
+          "at": 1793620066047
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092888,
         "stock": "out_of_stock",
-        "lastAt": 1793619862343,
-        "lastUnavailableAt": 1793619862343
+        "lastAt": 1793620066047,
+        "lastUnavailableAt": 1793620066047
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -55885,9 +55885,9 @@
           "lastEvent": 1793091342097
         }
       },
-      "nextAt": 1793620096497,
+      "nextAt": 1793622304452,
       "failures": 0,
-      "lastChecked": 1793617892497,
+      "lastChecked": 1793620100452,
       "lastGood": {
         "title": "WILDS UNKNOWN 未知なる彼方へ! ディズニー・ロルカナ・TCG(1BOX・16パック入)[ロルカナ新品]",
         "price": 5280,
@@ -56035,11 +56035,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1793091342097,
-          "lastAt": 1793617892497,
-          "samples": 245
+          "lastAt": 1793620100452,
+          "samples": 246
         }
       ],
-      "lastGoodAt": 1793617892497,
+      "lastGoodAt": 1793620100452,
       "priceDecisions": {
         "7e95a72d-18bd-4a12-8d37-26d36df4497b": {
           "referencePrice": 5280,
@@ -56049,18 +56049,18 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1793617892497
+          "at": 1793620100452
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078371381,
         "stock": "in_stock",
-        "lastAt": 1793617892497,
+        "lastAt": 1793620100452,
         "lastUnavailableAt": 1793089087020,
         "availableSince": 1793091342097,
         "openAfter": 1793089087020,
         "firstAvailableAt": 1793091342097,
-        "lastAvailableAt": 1793617892497
+        "lastAvailableAt": 1793620100452
       },
       "focusUntil": 1793093142097,
       "focusReason": "購入不可から購入可能への変化",
@@ -57510,13 +57510,13 @@
       "episodes": {
         "af0db529-4587-4b60-a855-6d8fb5359de4": {
           "active": false,
-          "negatives": 1028,
+          "negatives": 1029,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793620061667,
+      "nextAt": 1793622269884,
       "failures": 0,
-      "lastChecked": 1793617857667,
+      "lastChecked": 1793620065884,
       "lastGood": {
         "title": "アーケイジアと魔法の島 ディズニー・ロルカナ・TCG(1BOX・16パック入)[ロルカナ新品]",
         "price": 5280,
@@ -57603,11 +57603,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1793597812999,
-          "lastAt": 1793617857667,
-          "samples": 10
+          "lastAt": 1793620065884,
+          "samples": 11
         }
       ],
-      "lastGoodAt": 1793617857667,
+      "lastGoodAt": 1793620065884,
       "priceDecisions": {
         "af0db529-4587-4b60-a855-6d8fb5359de4": {
           "referencePrice": 5280,
@@ -57617,14 +57617,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1793617857667
+          "at": 1793620065884
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078162794,
         "stock": "out_of_stock",
-        "lastAt": 1793617857667,
-        "lastUnavailableAt": 1793617857667
+        "lastAt": 1793620065884,
+        "lastUnavailableAt": 1793620065884
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -62527,9 +62527,9 @@
           "lastEvent": 1793152662600
         }
       },
-      "nextAt": 1793620032787,
-      "failures": 257,
-      "lastChecked": 1793618232787,
+      "nextAt": 1793621866105,
+      "failures": 258,
+      "lastChecked": 1793620066105,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Freedom Ascension [GD05] BOX(24パック入)",
         "price": 6000,
@@ -62618,8 +62618,8 @@
           "kind": "error",
           "reason": "公式商品一覧で対象ページを確認できず",
           "at": 1793158099177,
-          "lastAt": 1793618232787,
-          "samples": 257
+          "lastAt": 1793620066105,
+          "samples": 258
         }
       ],
       "availabilityTiming": {
@@ -66359,13 +66359,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 5991,
+          "negatives": 5992,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793620064563,
+      "nextAt": 1793620302644,
       "failures": 0,
-      "lastChecked": 1793619862563,
+      "lastChecked": 1793620100644,
       "lastGood": {
         "title": "★1点限り（同一住所と思われる重複注文は全キャンセルします。）★ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX 2026年9月16日発売",
         "price": 7200,
@@ -66415,7 +66415,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1793619862563
+          "at": 1793620100644
         }
       },
       "history": [
@@ -66679,17 +66679,17 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1793278151187,
-          "lastAt": 1793619862563,
-          "samples": 1513
+          "lastAt": 1793620100644,
+          "samples": 1514
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1792257778067,
         "stock": "out_of_stock",
-        "lastAt": 1793619862563,
-        "lastUnavailableAt": 1793619862563
+        "lastAt": 1793620100644,
+        "lastUnavailableAt": 1793620100644
       },
-      "lastGoodAt": 1793619862563,
+      "lastGoodAt": 1793620100644,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 202,
@@ -72154,20 +72154,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1793587236154,
-      "checked": 1,
-      "discovered": null,
-      "targets": 132,
-      "errors": 4
-    },
-    {
-      "at": 1793587267482,
-      "checked": 2,
-      "discovered": null,
-      "targets": 132,
-      "errors": 4
-    },
     {
       "at": 1793587299169,
       "checked": 2,
@@ -86509,6 +86495,30 @@
       "at": 1793620032561,
       "checked": 5,
       "discovered": null,
+      "targets": 132,
+      "errors": 6
+    },
+    {
+      "at": 1793620064530,
+      "checked": 3,
+      "discovered": null,
+      "targets": 132,
+      "errors": 6
+    },
+    {
+      "at": 1793620099083,
+      "checked": 2,
+      "discovered": {
+        "ruleId": "b76fc915-313c-4fa5-baa1-176ecdaf25ec",
+        "storeId": "cardmax",
+        "result": {
+          "at": 1793620099083,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
       "targets": 132,
       "errors": 6
     }
