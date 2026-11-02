@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1793587736557,
+  "generatedAt": 1793587792317,
   "prices": {
     "version": 1,
-    "checkedAt": 1793587702461,
+    "checkedAt": 1793587759772,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -2970,7 +2970,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1793587736556,
+    "checkedAt": 1793587792316,
     "notificationDelay": {
       "samples": 8,
       "medianMs": 32053,
@@ -2982,7 +2982,7 @@
         "pages": 6,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1793587752806,
+        "nextAt": 1793587828712,
         "errors": 1
       },
       {
@@ -2998,7 +2998,7 @@
         "pages": 5,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1793587731848,
+        "nextAt": 1793587784770,
         "errors": 0
       },
       {
@@ -3279,7 +3279,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1793587736552,
+    "verifiedAt": 1793587792313,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -5621,7 +5621,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 770387,
+        "intervalMs": 714506,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -37057,8 +37057,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1793587731834,
-  "lastCompletedAt": 1793587735459,
+  "lastTick": 1793587789121,
+  "lastCompletedAt": 1793587790697,
   "load": {
     "activePages": 65,
     "waitingPages": 0,
@@ -37070,7 +37070,7 @@
   "storage": {
     "format": "monitor-gzip-v1",
     "uncompressedBytes": 1818788,
-    "compressedBytes": 153719,
+    "compressedBytes": 153709,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37100,8 +37100,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1793587701833,
-    "nextSync": 1793594901833,
+    "lastSync": 1793587759119,
+    "nextSync": 1793594959119,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38768,12 +38768,6 @@
     ],
     "log": [
       {
-        "at": 1793054584541,
-        "kind": "catalog",
-        "count": 39,
-        "added": []
-      },
-      {
         "at": 1793059376167,
         "kind": "catalog",
         "count": 39,
@@ -39363,6 +39357,12 @@
       },
       {
         "at": 1793587701833,
+        "kind": "catalog",
+        "count": 37,
+        "added": []
+      },
+      {
+        "at": 1793587759119,
         "kind": "catalog",
         "count": 37,
         "added": []
@@ -44507,13 +44507,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 8400,
+          "negatives": 8401,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793587786155,
+      "nextAt": 1793588078341,
       "failures": 0,
-      "lastChecked": 1793587498155,
+      "lastChecked": 1793587790341,
       "lastGood": {
         "title": "ブースターパック　Newtype Rising　BOX【ガンダムカードゲーム】",
         "price": 5808,
@@ -44598,11 +44598,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1793037942619,
-          "lastAt": 1793587498155,
-          "samples": 1769
+          "lastAt": 1793587790341,
+          "samples": 1770
         }
       ],
-      "lastGoodAt": 1793587498155,
+      "lastGoodAt": 1793587790341,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -44612,14 +44612,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1793587498155
+          "at": 1793587790341
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078128567,
         "stock": "out_of_stock",
-        "lastAt": 1793587498155,
-        "lastUnavailableAt": 1793587498155
+        "lastAt": 1793587790341,
+        "lastUnavailableAt": 1793587790341
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -45551,13 +45551,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 10929,
+          "negatives": 10930,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793587762917,
+      "nextAt": 1793587992631,
       "failures": 0,
-      "lastChecked": 1793587560917,
+      "lastChecked": 1793587790631,
       "lastGood": {
         "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
         "price": 5808,
@@ -46422,11 +46422,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1793372619830,
-          "lastAt": 1793587560917,
-          "samples": 943
+          "lastAt": 1793587790631,
+          "samples": 944
         }
       ],
-      "lastGoodAt": 1793587560917,
+      "lastGoodAt": 1793587790631,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -46436,14 +46436,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1793587560917
+          "at": 1793587790631
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093552,
         "stock": "out_of_stock",
-        "lastAt": 1793587560917,
-        "lastUnavailableAt": 1793587560917
+        "lastAt": 1793587790631,
+        "lastUnavailableAt": 1793587790631
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -61973,13 +61973,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 7538,
+          "negatives": 7539,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793587752806,
+      "nextAt": 1793588174359,
       "failures": 0,
-      "lastChecked": 1793587368806,
+      "lastChecked": 1793587790359,
       "lastGood": {
         "title": "【BOX】 ガンダムカードゲーム ブースターパック Newtype Rising GD01 BOX ｜ ニュータイプ ライジング 未開封 GUNDAM CARD GAME TCG",
         "price": 7200,
@@ -62015,7 +62015,7 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,098円を超過",
-          "at": 1793587368806
+          "at": 1793587790359
         }
       },
       "history": [
@@ -62417,8 +62417,8 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円を超過",
           "at": 1792789652444,
-          "lastAt": 1793587368806,
-          "samples": 2368
+          "lastAt": 1793587790359,
+          "samples": 2369
         }
       ],
       "availabilityTiming": {
@@ -62427,10 +62427,10 @@
         "openAfter": null,
         "firstAvailableAt": 1791164189902,
         "stock": "in_stock",
-        "lastAt": 1793587368806,
-        "lastAvailableAt": 1793587368806
+        "lastAt": 1793587790359,
+        "lastAvailableAt": 1793587790359
       },
-      "lastGoodAt": 1793587368806,
+      "lastGoodAt": 1793587790359,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 384,
@@ -66276,13 +66276,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 5850,
+          "negatives": 5851,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793587731848,
+      "nextAt": 1793587992679,
       "failures": 0,
-      "lastChecked": 1793587529848,
+      "lastChecked": 1793587790679,
       "lastGood": {
         "title": "★1点限り（同一住所と思われる重複注文は全キャンセルします。）★ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX 2026年9月16日発売",
         "price": 7200,
@@ -66332,7 +66332,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1793587529848
+          "at": 1793587790679
         }
       },
       "history": [
@@ -66596,17 +66596,17 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1793278151187,
-          "lastAt": 1793587529848,
-          "samples": 1372
+          "lastAt": 1793587790679,
+          "samples": 1373
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1792257778067,
         "stock": "out_of_stock",
-        "lastAt": 1793587529848,
-        "lastUnavailableAt": 1793587529848
+        "lastAt": 1793587790679,
+        "lastUnavailableAt": 1793587790679
       },
-      "lastGoodAt": 1793587529848,
+      "lastGoodAt": 1793587790679,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 202,
@@ -71989,13 +71989,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1793554757997,
-      "checked": 3,
-      "discovered": null,
-      "targets": 132,
-      "errors": 3
-    },
     {
       "at": 1793554789754,
       "checked": 1,
@@ -86379,6 +86372,13 @@
         },
         "error": ""
       },
+      "targets": 132,
+      "errors": 4
+    },
+    {
+      "at": 1793587789121,
+      "checked": 4,
+      "discovered": null,
       "targets": 132,
       "errors": 4
     }
