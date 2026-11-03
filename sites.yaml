@@ -3247,13 +3247,16 @@ sources:
   discovery_urls:
   - https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan%20%E6%8A%BD%E9%81%B8&ei=UTF-8
   - https://search.yahoo.co.jp/realtime/search?p=id%3AHMV_Japan&ei=UTF-8
+  fallback_source_ids:
+  - snkrdunk_pokemon
+  - snkrdunk_onepiece
   render_mode: http
   poll_minutes: 120
   fallback_on_empty_result: true
   expected_elements:
   - official_x_status
   - conditional_image_ocr
-  notes: HMV公式投稿をYahooの抽選語検索・アカウント全投稿検索で監視する。総合公式に出ないトレカ抽選は既存のonepiecenyuka・SNKRDUNK・入荷NowのHMV欄で補完し、同じ店舗・商品・開始日の通知は統合する。LivePocket自体は取得しない。
+  notes: HMV公式投稿をYahooの抽選語検索・アカウント全投稿検索で監視する。総合公式に出ないトレカ抽選は既存のonepiecenyuka・SNKRDUNK・入荷NowのHMV欄で補完し、同じ店舗・商品・開始日の通知は統合する。LivePocket自体は取得しない。取得不調時も、同店・同作品の解析済み根拠を得た既存スニダン経路だけを補完完了の判定に使う。
   parser_kind: yahoo_realtime
   parser_options:
     account: HMV_Japan

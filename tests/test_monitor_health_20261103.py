@@ -163,3 +163,40 @@ def test_actual_seagull_candidates_cover_optional_api_failure(tmp_path, unresolv
     assert record['routes'][root]['status'] == 'fetch_failed'
     assert record['routes'][source.discovery_urls[0]]['diagnostics']['accepted_post'] > 0
     assert bool(alerts) is unresolved
+
+
+def test_hmv_existing_backups_cover_only_both_verified_games():
+    outcomes = {'yahoo_realtime_hmv': False,
+                'snkrdunk_pokemon': True, 'snkrdunk_onepiece': True}
+    evidence = {}
+    for source_id, game_id in [('snkrdunk_pokemon', 'pokemon_card'),
+                               ('snkrdunk_onepiece', 'one_piece_card')]:
+        metrics = SourceMetrics(source_id)
+        metrics.retailer_ids.add('hmv')
+        metrics.retailer_game_ids.add(('hmv', game_id))
+        evidence[source_id] = metrics
+    covered = _healthy_fallbacks(CONFIG, outcomes, evidence=evidence)
+    assert covered['yahoo_realtime_hmv'] == ['snkrdunk_pokemon', 'snkrdunk_onepiece']
+    evidence['snkrdunk_onepiece'].retailer_game_ids.clear()
+    assert 'yahoo_realtime_hmv' not in _healthy_fallbacks(CONFIG, outcomes, evidence=evidence)
+    assert 'yahoo_realtime_hmv' not in _healthy_fallbacks(CONFIG, outcomes, evidence={})
+
+
+def test_small_diagnostics_keep_failed_routes_without_ocr_cache():
+    import runpy
+
+    diagnostics = runpy.run_path('scripts/write_monitor_diagnostics.py')['diagnostics']
+    routes = {'https://example.test/': {'status': 'fetch_failed', 'http_status': 404}}
+    result = diagnostics({
+        'last_run_summary': {'monitored_source_ids': ['hmv', 'healthy']},
+        'ocr_cache': {'large': 'cached-image-text'},
+        'monitors': {
+            'hmv': {'outcome': 'failed', 'last_error': 'http_status_404',
+                    'failure_cause': 'http_status_404', 'routes': routes},
+            'healthy': {'outcome': 'success', 'routes': {'large': 'details'}},
+        },
+    })
+    assert result['monitors']['hmv']['routes'] == routes
+    assert result['monitors']['hmv']['failure_cause'] == 'http_status_404'
+    assert 'routes' not in result['monitors']['healthy']
+    assert 'ocr_cache' not in result
