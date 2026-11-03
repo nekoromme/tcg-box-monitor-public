@@ -1748,25 +1748,6 @@ def parse_yahoo_realtime(
         # 受付の証拠になる。「販売期間」は当選者向けの購入期間なので
         # ここでは使わず、結果発表だけの投稿を受付と取り違えない。
         body_announced = _lottery_application_signal(post_text, detected)
-        # 当選者向け案内や「通常販売なし」は新しい応募ではない。
-        # 本文だけで判定できる場合は、添付写真のOCR・再試行も終了する。
-        # 同じ投稿に新しい受付が明記された混載告知は従来どおり解析する。
-        closed_only = re.search(
-            r"(?:ご?当選者(?:の方)?(?:の|への)?(?:発表|お知らせ)|"
-            r"当選(?:された|した)方(?:のみ|への))", compact_text,
-        ) or (
-            re.search(r"抽選販売(?:分)?のみ(?:と)?(?:なります|です)", compact_text)
-            and re.search(r"通常(?:の)?(?:店頭)?販売.{0,6}(?:ございません|ありません)",
-                          compact_text)
-        )
-        new_application = any(word in compact_text for word in _OPEN_APPLICATION_WORDS) or (
-            re.search(r"(?:応募|申込|受付).{0,10}(?:開始|受付|期間|ください|中)", compact_text)
-        )
-        if closed_only and not new_application:
-            count("closed_or_result_notice")
-            if ocr_pending is not None:
-                ocr_pending.pop(status_url, None)
-            continue
         amazon_invitation = (
             bool(source.parser_options.get("amazon_invitation"))
             and "招待リクエスト" in compact_text
@@ -1794,6 +1775,27 @@ def parse_yahoo_realtime(
         selected_sale = additional_sale_signal(post_text) and bool(
             additional_game(post_text, source, config)
         )
+        # 当選者向け案内や「通常販売なし」は新しい応募ではない。
+        # 本文だけで判定できる場合は、添付写真のOCR・再試行も終了する。
+        # 同じ投稿に新しい受付が明記された混載告知は従来どおり解析する。
+        closed_only = re.search(
+            r"(?:ご?当選者(?:の方)?(?:の|への)?(?:発表|お知らせ)|"
+            r"当選(?:された|した)方(?:のみ|への))", compact_text,
+        ) or (
+            re.search(r"抽選販売(?:分)?のみ(?:と)?(?:なります|です)", compact_text)
+            and re.search(r"通常(?:の)?(?:店頭)?販売.{0,6}(?:ございません|ありません)",
+                          compact_text)
+        )
+        new_application = any(word in compact_text for word in _OPEN_APPLICATION_WORDS) or (
+            re.search(r"(?:応募|申込|受付).{0,10}(?:開始|受付|期間|ください|中)", compact_text)
+        )
+        if closed_only and not new_application and not (
+            amazon_invitation or official_lorcana_sale or selected_sale
+        ):
+            count("closed_or_result_notice")
+            if ocr_pending is not None:
+                ocr_pending.pop(status_url, None)
+            continue
         # A vending-machine oripa restock is explicitly an ordinary sale.  Its
         # prize-card picture cannot make it an unread BOX lottery merely because
         # the attachment expires.  Mixed/possible application notices still OCR.

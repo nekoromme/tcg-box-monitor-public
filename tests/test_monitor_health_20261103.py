@@ -200,3 +200,18 @@ def test_small_diagnostics_keep_failed_routes_without_ocr_cache():
     assert result['monitors']['hmv']['failure_cause'] == 'http_status_404'
     assert 'routes' not in result['monitors']['healthy']
     assert 'ocr_cache' not in result
+
+
+@freeze_time('2026-11-03T04:00:00Z')
+def test_result_notice_keeps_a_mixed_new_official_sale():
+    source = next(s for s in CONFIG.sources if s.id == 'yahoo_realtime_lorcana_official')
+    post = {
+        'url': 'https://x.com/DisneyLOR_JP/status/2117104414586515803',
+        'text': 'ご当選者の発表です。新たにディズニー・ロルカナTCG '
+                'ブースターパック「アーケイジアと魔法の島」の販売開始。',
+        'images': [],
+    }
+    cases, _, alerts = parse_yahoo_realtime(markup(post), source.discovery_urls[0],
+                                           source, CONFIG)
+    assert cases and not alerts
+    assert all(c.game_id == 'lorcana' for c in cases)
