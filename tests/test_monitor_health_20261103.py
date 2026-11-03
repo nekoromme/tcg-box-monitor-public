@@ -133,3 +133,33 @@ def test_existing_geo_and_yamada_backups_require_actual_same_retailer_evidence()
     evidence['snkrdunk_onepiece'].retailer_game_ids.clear()
     assert 'yamada_denki' not in _healthy_fallbacks(CONFIG, outcomes, evidence=evidence)
     assert 'geo' not in _healthy_fallbacks(CONFIG, outcomes, evidence={})
+
+
+@pytest.mark.parametrize('unresolved', [False, True])
+@freeze_time('2026-11-03T09:00:00Z')
+def test_actual_seagull_candidates_cover_optional_api_failure(tmp_path, unresolved):
+    # 本番巡回で最後に残った警告。4投稿中2投稿を案件化できても404警告が残っていた。
+    data = json.loads(Path('tests/fixtures/seagull_health_20261103.json').read_text())
+    original = next(s for s in CONFIG.sources if s.id == 'yahoo_realtime_seagull_common')
+    source = replace(original, discovery_urls=original.discovery_urls[:1])
+    html = ''.join(markup(p) for p in data['posts'])
+    if unresolved:
+        # 正常な抽選を検出していても、別の投稿が未解決なら障害を隠さない。
+        html += ('<article><p>新商品の抽選販売受付開始。詳細はこちら。</p>'
+                 '<a href="https://x.com/SeagullJP/status/2117104414586515803">投稿</a>'
+                 '</article>')
+    root = timeline_url(source)
+    fetcher = Responses({source.discovery_urls[0]: (200, html), root: (404, 'not found')})
+    config = replace(CONFIG, sources=[source], system={**CONFIG.system,
+        'social_account_fallback': False, 'max_parallel_hosts': 1})
+    state = MonitorState.load(tmp_path / 'state.json')
+    state.data['ocr_cache'] = data['ocr_cache']
+    state.data['ocr_cache_meta'] = data['ocr_cache_meta']
+    cases, _, alerts = run_pipeline(config, monitor_state=state, http_fetcher=fetcher,
+                                    ocr_cache=state.data['ocr_cache'])
+    assert cases
+    record = state.data['monitors'][source.id]
+    assert record['outcome'] == 'success'
+    assert record['routes'][root]['status'] == 'fetch_failed'
+    assert record['routes'][source.discovery_urls[0]]['diagnostics']['accepted_post'] > 0
+    assert bool(alerts) is unresolved
