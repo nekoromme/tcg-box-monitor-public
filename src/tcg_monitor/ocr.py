@@ -44,6 +44,9 @@ def _color_text_variant(path: Path, destination: Path) -> Path | None:
                 return None
             # 赤字は緑成分が小さい。黒字とともに黒くし、白い背景を維持する。
             channel = original.convert("RGB").getchannel("G")
+            # RGB画像の透過色情報(tuple)はL画像へ引き継げない。
+            # OCR用の単色画像からメタデータを外し、保存時の例外を防ぐ。
+            channel.info.pop("transparency", None)
             enlarged = channel.resize((original.width * 2, original.height * 2))
             enlarged.point([0] * 161 + [255] * 95).save(destination)
     except (OSError, UnidentifiedImageError):

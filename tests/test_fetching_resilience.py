@@ -1888,6 +1888,9 @@ def test_prospective_game_is_not_accepted_as_verified_fallback(
     invalid = yaml.safe_load(Path("sites.yaml").read_text(encoding="utf-8"))
     source = next(item for item in invalid["sources"] if item["id"] == "geo")
     source["fallback_source_ids"] = ["yamada_denki"]
+    # 参照元の現在の対応状況に依存せず、prospectiveだけの代替先を検証する。
+    backup = next(item for item in invalid["sources"] if item["id"] == "yamada_denki")
+    backup["supported_games"]["pokemon_card"] = "prospective"
     path = tmp_path / "invalid-sites.yaml"
     path.write_text(yaml.safe_dump(invalid, allow_unicode=True), encoding="utf-8")
 
@@ -1902,7 +1905,9 @@ def test_access_limited_production_sources_declare_healthy_alternatives() -> Non
     config = _legacy_config()
     by_id = {source.id: source for source in config.sources}
 
-    assert by_id["geo"].fallback_source_ids == ["yahoo_realtime_geo_official"]
+    assert by_id["geo"].fallback_source_ids == [
+        "yahoo_realtime_geo_official", "snkrdunk_pokemon",
+    ]
     assert by_id["yamada_denki"].fallback_source_ids == [
         "snkrdunk_pokemon",
         "snkrdunk_onepiece",

@@ -1329,6 +1329,7 @@ sources:
   - https://geo-online.co.jp/news/
   fallback_source_ids:
   - yahoo_realtime_geo_official
+  - snkrdunk_pokemon
   page_url_patterns:
   - ^https://geo-online\.co\.jp/news/\d+/?$
   include_keywords:
@@ -1388,7 +1389,7 @@ sources:
   calendar_policy: timed_or_all_day_when_date_explicit
   poll_minutes: 120
   robots_url: https://geo-online.co.jp/robots.txt
-  notes: ワンピースの過去公式例は今回十分確認できていないため、不掲載を異常にしない。関連ページが出た時だけ同じ共通判定へ渡す。
+  notes: 公式サイトの403時は公式Xを優先し、ポケカを取得できない回は既存スニダンの同店・同作品の抽選根拠で補完する。ワンピースの過去公式例は今回十分確認できていないため、不掲載を異常にしない。関連ページが出た時だけ同じ共通判定へ渡す。
 - id: yahoo_realtime_donki_official
   name: ドン・キホーテ公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search
@@ -1928,8 +1929,8 @@ sources:
   source_tier: official
   supported_games:
     dragon_ball_fusion_world: prospective
-    pokemon_card: prospective
-    one_piece_card: prospective
+    pokemon_card: verified
+    one_piece_card: verified
     yu_gi_oh: prospective
     lorcana: prospective
     gundam_card: prospective

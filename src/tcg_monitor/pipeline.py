@@ -1648,13 +1648,26 @@ def run_pipeline(
         )
         if healthy_quiet_yahoo:
             completed_page = True
+            # 任意のX補完経路の障害と、正常に解析済みの公式検索を区別する。
+            # 取得失敗の生ログはroutesに残す。必須フォーム・未読画像は免除しない。
+            alerts[:] = [
+                alert for alert in alerts
+                if not (
+                    alert.source_id == source.id
+                    and alert.target_url == fx_url
+                    and alert.reason_code in _TRANSPORT_ALERT_REASONS
+                )
+            ]
         # An unread detail, required LINE form, malformed primary result, or
         # unresolved image must still fail even when another route is empty.
         if (
             metrics.parsed_count == 0
             and any(
                 item.get("status") in {"fetch_failed", "parser_failed", "discovery_failed"}
-                and not (healthy_quiet_yahoo and item_url in remaining_configured_roots)
+                and not (
+                    healthy_quiet_yahoo
+                    and (item_url in remaining_configured_roots or item_url == fx_url)
+                )
                 for item_url, item in metrics.routes.items()
             )
         ):
