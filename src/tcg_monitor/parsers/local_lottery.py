@@ -1786,8 +1786,10 @@ def parse_yahoo_realtime(
             and re.search(r"通常(?:の)?(?:店頭)?販売.{0,6}(?:ございません|ありません)",
                           compact_text)
         )
-        new_application = any(word in compact_text for word in _OPEN_APPLICATION_WORDS) or (
-            re.search(r"(?:応募|申込|受付).{0,10}(?:開始|受付|期間|ください|中)", compact_text)
+        new_application = (
+            any(word in compact_text for word in _OPEN_APPLICATION_WORDS)
+            or _LOTTERY_APPLICATION_START.search(compact_text)
+            or re.search(r"(?:応募|申込|受付).{0,10}(?:開始|受付|期間|ください|中)", compact_text)
         )
         if closed_only and not new_application and not (
             amazon_invitation or official_lorcana_sale or selected_sale

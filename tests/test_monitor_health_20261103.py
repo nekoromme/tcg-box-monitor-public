@@ -41,11 +41,11 @@ def test_actual_result_or_stock_notice_does_not_retry_ocr(post):
     assert not cases and not releases and not alerts and not pending
 
 
+@pytest.mark.parametrize('opening', ['抽選受付開始。応募期間：11/3〜11/5。', '抽選販売開始。'])
 @freeze_time("2026-11-03T04:00:00Z")
-def test_mixed_result_and_new_lottery_is_still_read():
+def test_mixed_result_and_new_lottery_is_still_read(opening):
     post = {**POSTS[1], 'text': POSTS[1]['text'] +
-            ' 新たにONE PIECEカードゲーム ブースターパック「神の支配」抽選受付開始。'
-            '応募期間：11/3〜11/5。'}
+            ' 新たにONE PIECEカードゲーム ブースターパック「神の支配」' + opening}
     source = next(s for s in CONFIG.sources if s.id == post['source_id'])
     cases, _, _ = parse_yahoo_realtime(markup(post), source.discovery_urls[0], source, CONFIG,
                                       ocr_reader=lambda _: '')
