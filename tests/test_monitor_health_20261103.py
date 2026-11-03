@@ -41,11 +41,11 @@ def test_actual_result_or_stock_notice_does_not_retry_ocr(post):
     assert not cases and not releases and not alerts and not pending
 
 
+@pytest.mark.parametrize('opening', ['抽選受付開始。応募期間：11/3〜11/5。', '抽選販売開始。'])
 @freeze_time("2026-11-03T04:00:00Z")
-def test_mixed_result_and_new_lottery_is_still_read():
+def test_mixed_result_and_new_lottery_is_still_read(opening):
     post = {**POSTS[1], 'text': POSTS[1]['text'] +
-            ' 新たにONE PIECEカードゲーム ブースターパック「神の支配」抽選受付開始。'
-            '応募期間：11/3〜11/5。'}
+            ' 新たにONE PIECEカードゲーム ブースターパック「神の支配」' + opening}
     source = next(s for s in CONFIG.sources if s.id == post['source_id'])
     cases, _, _ = parse_yahoo_realtime(markup(post), source.discovery_urls[0], source, CONFIG,
                                       ocr_reader=lambda _: '')
@@ -200,3 +200,18 @@ def test_small_diagnostics_keep_failed_routes_without_ocr_cache():
     assert result['monitors']['hmv']['failure_cause'] == 'http_status_404'
     assert 'routes' not in result['monitors']['healthy']
     assert 'ocr_cache' not in result
+
+
+@freeze_time('2026-11-03T04:00:00Z')
+def test_result_notice_keeps_a_mixed_new_official_sale():
+    source = next(s for s in CONFIG.sources if s.id == 'yahoo_realtime_lorcana_official')
+    post = {
+        'url': 'https://x.com/DisneyLOR_JP/status/2117104414586515803',
+        'text': 'ご当選者の発表です。新たにディズニー・ロルカナTCG '
+                'ブースターパック「アーケイジアと魔法の島」の販売開始。',
+        'images': [],
+    }
+    cases, _, alerts = parse_yahoo_realtime(markup(post), source.discovery_urls[0],
+                                           source, CONFIG)
+    assert cases and not alerts
+    assert all(c.game_id == 'lorcana' for c in cases)
