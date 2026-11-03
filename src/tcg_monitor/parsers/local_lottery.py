@@ -2150,7 +2150,7 @@ def parse_yahoo_realtime(
         # 画像の受付開始日が投稿日以降なら開始告知として扱い、投稿日より
         # 前なら過去の受付期間を載せた結果投稿として従来どおり除外する。
         if any(word in combined_compact for word in _CLOSED_OR_RESULT_WORDS) and not (
-            any(word in compact_text for word in _OPEN_APPLICATION_WORDS)
+            new_application or amazon_invitation or official_lorcana_sale or selected_sale
             or ocr_has_current_or_future_open_period
         ):
             count("closed_or_result_notice")
