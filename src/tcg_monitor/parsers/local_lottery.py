@@ -2539,6 +2539,8 @@ def parse_yahoo_realtime(
                 and case.opportunity_kind == OpportunityKind.DIRECT_SALE_SEEN
             ):
                 cases[case.case_id] = case
+        # 1投稿に複数商品があるため、案件数ではなく解析済み投稿数を記録する。
+        count("accepted_post")
         if ocr_pending is not None:
             ocr_pending.pop(status_url, None)
     return list(cases.values()), [], alerts

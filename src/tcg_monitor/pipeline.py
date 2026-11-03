@@ -1465,9 +1465,16 @@ def run_pipeline(
                                 "unsupported_game", "store_outside_scope",
                             )
                         )
-                        if excluded_posts == diagnostics["account_posts"]:
+                        # 案件数は複数商品で増える。投稿単位の分類完了数で照合する。
+                        classified_posts = excluded_posts + sum(
+                            diagnostics.get(reason, 0) for reason in (
+                                "accepted_post", "additional_sale_accepted",
+                                "additional_sale_excluded", "application_url_outside_scope",
+                            )
+                        )
+                        if classified_posts == diagnostics["account_posts"] and not parsed_alerts:
                             yahoo_primary_complete_posts = True
-                        elif not parsed_cases and not parsed_releases:
+                        else:
                             yahoo_primary_unresolved_posts = True
                     has_queued_primary = any(
                         queued_url in primary_roots
@@ -1636,17 +1643,15 @@ def run_pipeline(
                     and alert.target_url not in still_pending
                 )
             ]
-        # New-candidate count is not a fetch-health signal: fully interpreted
-        # official posts may all be closed or outside the configured scope.
-        # Keep trying mirrors for search-index lag, but their failure cannot
-        # turn those valid primary results into a source outage.
-        healthy_quiet_yahoo = (
+        # 募集を検出した回も静かな回も、公式検索の全投稿を分類できたかで判断する。
+        # 検索漏れに備えて補完取得は継続するが、正常な本文解析とAPI障害は分ける。
+        healthy_primary_yahoo = (
             is_yahoo_source
             and yahoo_primary_complete_posts
             and not yahoo_primary_unresolved_posts
             and not _current_ocr_pending_urls(ocr_pending, source.id, run_token)
         )
-        if healthy_quiet_yahoo:
+        if healthy_primary_yahoo:
             completed_page = True
             # 任意のX補完経路の障害と、正常に解析済みの公式検索を区別する。
             # 取得失敗の生ログはroutesに残す。必須フォーム・未読画像は免除しない。
@@ -1665,7 +1670,7 @@ def run_pipeline(
             and any(
                 item.get("status") in {"fetch_failed", "parser_failed", "discovery_failed"}
                 and not (
-                    healthy_quiet_yahoo
+                    healthy_primary_yahoo
                     and (item_url in remaining_configured_roots or item_url == fx_url)
                 )
                 for item_url, item in metrics.routes.items()
