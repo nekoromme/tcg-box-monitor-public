@@ -289,8 +289,13 @@ class FxEmbedReader:
                 ((int(str(p["id"])) >> 22) + X_EPOCH_MS) // 1000 < cutoff
                 for p in own_rows[-3:]
             )
-            reached_boundary = bool(previous_id and len(own_rows) >= 3) and all(
-                int(str(p["id"])) <= previous_id for p in own_rows[-3:]
+            # 前回の正常取得で保存した投稿そのものに達したら、既読範囲と接続した。
+            # 投稿数が少ないアカウントにも有効。固定投稿・リポストは境界にしない。
+            reached_boundary = bool(previous_id) and (
+                any(int(str(p["id"])) == previous_id for p in own_rows)
+                or (len(own_rows) >= 3 and all(
+                    int(str(p["id"])) <= previous_id for p in own_rows[-3:]
+                ))
             )
             if reached_boundary or old_tail or not rows or not bottom:
                 report["complete"] = True
