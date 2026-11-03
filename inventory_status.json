@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1793701110740,
+  "generatedAt": 1793701174116,
   "prices": {
     "version": 1,
-    "checkedAt": 1793701078819,
+    "checkedAt": 1793701135734,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -2970,7 +2970,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1793701110739,
+    "checkedAt": 1793701174115,
     "notificationDelay": {
       "samples": 2,
       "medianMs": 33351,
@@ -2998,7 +2998,7 @@
         "pages": 5,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1793701111882,
+        "nextAt": 1793701277586,
         "errors": 0
       },
       {
@@ -3086,7 +3086,7 @@
         "pages": 2,
         "minSeconds": 2204,
         "maxSeconds": 2204,
-        "nextAt": 1793701123154,
+        "nextAt": 1793702606847,
         "errors": 0
       },
       {
@@ -3279,7 +3279,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1793701110722,
+    "verifiedAt": 1793701174100,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -5376,9 +5376,9 @@
       },
       "dayya": {
         "storeId": "dayya",
-        "nextAt": 1793701158162,
+        "nextAt": 1793704765028,
         "createdAt": 1791078090716,
-        "successes": 732,
+        "successes": 733,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -5387,7 +5387,7 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1793697566061
+            "lastAt": 1793701172616
           },
           {
             "url": "https://www.tcg-dayya.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
@@ -5397,8 +5397,8 @@
             "lastAt": 1793697571461
           }
         ],
-        "sourceCursor": 0,
-        "lastAttemptAt": 1793697558162,
+        "sourceCursor": 1,
+        "lastAttemptAt": 1793701165028,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -5412,22 +5412,13 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "search"
-            },
-            {
-              "url": "https://www.tcg-dayya.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-              "head": true,
-              "productLinks": 102,
-              "scope": "read",
-              "hasMore": false,
-              "depthLimited": false,
-              "order": "alternate"
             }
           ],
-          "requests": 2,
+          "requests": 1,
           "status": "ok",
-          "previousAt": 1793693954820
+          "previousAt": 1793697558162
         },
-        "lastAt": 1793697558162,
+        "lastAt": 1793701165028,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -6250,40 +6241,6 @@
       }
     },
     "log": [
-      {
-        "kind": "listing",
-        "storeId": "tier1_gundam",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://tier-one.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9&sort=order",
-            "head": true,
-            "productLinks": 22,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "sorted"
-          },
-          {
-            "url": "https://tier-one.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 22,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "search"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1793506745946,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1793513957756,
-        "at": 1793510357756
-      },
       {
         "kind": "listing",
         "storeId": "ryuunoshippo",
@@ -37052,11 +37009,36 @@
         "reason": "取得範囲で24時間以上、対象ページの追加なし",
         "nextAt": 1793704555869,
         "at": 1793700955869
+      },
+      {
+        "kind": "listing",
+        "storeId": "dayya",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.tcg-dayya.com/products/list?name=BOX",
+            "head": true,
+            "productLinks": 56,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          }
+        ],
+        "requests": 1,
+        "status": "ok",
+        "previousAt": 1793697558162,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1793704765028,
+        "at": 1793701165028
       }
     ],
     "budget": {
       "day": 20760,
-      "group": 617,
+      "group": 618,
       "fallback": 655
     },
     "nextFallbackAt": 1793701139838,
@@ -37082,8 +37064,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1793701108204,
-  "lastCompletedAt": 1793701109627,
+  "lastTick": 1793701165028,
+  "lastCompletedAt": 1793701172616,
   "load": {
     "activePages": 65,
     "waitingPages": 0,
@@ -37094,8 +37076,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1823993,
-    "compressedBytes": 153467,
+    "uncompressedBytes": 1823873,
+    "compressedBytes": 153481,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37125,8 +37107,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1793701078203,
-    "nextSync": 1793708278203,
+    "lastSync": 1793701135026,
+    "nextSync": 1793708335026,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38793,12 +38775,6 @@
     ],
     "log": [
       {
-        "at": 1793173487584,
-        "kind": "catalog",
-        "count": 39,
-        "added": []
-      },
-      {
         "at": 1793173556953,
         "kind": "catalog",
         "count": 39,
@@ -39388,6 +39364,12 @@
       },
       {
         "at": 1793701078203,
+        "kind": "catalog",
+        "count": 37,
+        "added": []
+      },
+      {
+        "at": 1793701135026,
         "kind": "catalog",
         "count": 37,
         "added": []
@@ -43731,13 +43713,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 8221,
+          "negatives": 8222,
           "lastEvent": 1791039217281
         }
       },
-      "nextAt": 1793701111882,
+      "nextAt": 1793701550619,
       "failures": 0,
-      "lastChecked": 1793700727882,
+      "lastChecked": 1793701166619,
       "lastGood": {
         "title": "ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX ｜ シュリンク付き 未開封 ポケカ トレカ トレーディングカード",
         "price": 31500,
@@ -44331,11 +44313,11 @@
           "priceDecision": "通知上限14,400円を超過",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1792788273501,
-          "lastAt": 1793700727882,
-          "samples": 2652
+          "lastAt": 1793701166619,
+          "samples": 2653
         }
       ],
-      "lastGoodAt": 1793700727882,
+      "lastGoodAt": 1793701166619,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -44345,14 +44327,14 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限14,400円を超過",
-          "at": 1793700727882
+          "at": 1793701166619
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093471,
         "firstAvailableAt": 1791078093471,
         "stock": "out_of_stock",
-        "lastAt": 1793700727882,
+        "lastAt": 1793701166619,
         "lastAvailableAt": 1792558297352,
         "lastSale": {
           "at": 1792558605107,
@@ -44364,7 +44346,7 @@
           "durationLowerMs": 211271220,
           "durationUpperMs": 211870315
         },
-        "lastUnavailableAt": 1793700727882
+        "lastUnavailableAt": 1793701166619
       },
       "focusUntil": 1792348826132,
       "focusReason": "購入不可から購入可能への変化",
@@ -58540,13 +58522,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 8617,
+          "negatives": 8618,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793701146723,
+      "nextAt": 1793701454305,
       "failures": 0,
-      "lastChecked": 1793700858723,
+      "lastChecked": 1793701166305,
       "lastGood": {
         "title": "拡張パック　30th CELEBRATION　BOX【ポケモンカードゲーム】",
         "price": 7200,
@@ -58684,11 +58666,11 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張商品の1BOX表記を確認",
           "at": 1793038070738,
-          "lastAt": 1793700858723,
-          "samples": 2138
+          "lastAt": 1793701166305,
+          "samples": 2139
         }
       ],
-      "lastGoodAt": 1793700858723,
+      "lastGoodAt": 1793701166305,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -58698,14 +58680,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1793700858723
+          "at": 1793701166305
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092857,
         "stock": "out_of_stock",
-        "lastAt": 1793700858723,
-        "lastUnavailableAt": 1793700858723
+        "lastAt": 1793701166305,
+        "lastUnavailableAt": 1793701166305
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -63729,13 +63711,13 @@
       "episodes": {
         "df0626b4-5639-4881-ad98-ecb75e0c4c73": {
           "active": false,
-          "negatives": 847,
+          "negatives": 848,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793701123154,
+      "nextAt": 1793703370521,
       "failures": 0,
-      "lastChecked": 1793698919154,
+      "lastChecked": 1793701166521,
       "lastGood": {
         "title": "Stardust Trails[GD06] (1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 6000,
@@ -63771,7 +63753,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,300円以下",
-          "at": 1793698919154
+          "at": 1793701166521
         }
       },
       "history": [
@@ -63799,17 +63781,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円以下",
           "at": 1791983363540,
-          "lastAt": 1793698919154,
-          "samples": 726
+          "lastAt": 1793701166521,
+          "samples": 727
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791666708216,
         "stock": "out_of_stock",
-        "lastAt": 1793698919154,
-        "lastUnavailableAt": 1793698919154
+        "lastAt": 1793701166521,
+        "lastUnavailableAt": 1793701166521
       },
-      "lastGoodAt": 1793698919154,
+      "lastGoodAt": 1793701166521,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 2204,
@@ -64720,13 +64702,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 6345,
+          "negatives": 6346,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793701127864,
+      "nextAt": 1793701368645,
       "failures": 0,
-      "lastChecked": 1793700925864,
+      "lastChecked": 1793701166645,
       "lastGood": {
         "title": "★1点限り（同一住所と思われる重複注文は全キャンセルします。）★ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX 2026年9月16日発売",
         "price": 7200,
@@ -64776,7 +64758,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1793700925864
+          "at": 1793701166645
         }
       },
       "history": [
@@ -65058,17 +65040,17 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1793623523774,
-          "lastAt": 1793700925864,
-          "samples": 340
+          "lastAt": 1793701166645,
+          "samples": 341
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1792257778067,
         "stock": "out_of_stock",
-        "lastAt": 1793700925864,
-        "lastUnavailableAt": 1793700925864
+        "lastAt": 1793701166645,
+        "lastUnavailableAt": 1793701166645
       },
-      "lastGoodAt": 1793700925864,
+      "lastGoodAt": 1793701166645,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 202,
@@ -70648,13 +70630,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1793667831771,
-      "checked": 4,
-      "discovered": null,
-      "targets": 132,
-      "errors": 5
-    },
     {
       "at": 1793667891806,
       "checked": 5,
@@ -85092,6 +85067,36 @@
       "at": 1793701108204,
       "checked": 1,
       "discovered": null,
+      "targets": 132,
+      "errors": 3
+    },
+    {
+      "at": 1793701165028,
+      "checked": 4,
+      "discovered": {
+        "storeId": "dayya",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.tcg-dayya.com/products/list?name=BOX",
+              "head": true,
+              "productLinks": 56,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            }
+          ],
+          "requests": 1,
+          "status": "ok",
+          "previousAt": 1793697558162
+        },
+        "error": ""
+      },
       "targets": 132,
       "errors": 3
     }
