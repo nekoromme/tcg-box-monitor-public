@@ -16,6 +16,7 @@ def diagnostics(state: dict[str, Any]) -> dict[str, Any]:
         "outcome", "coverage_status", "healthy_fallbacks", "checked_at", "last_success_at",
         "last_candidate_at", "consecutive_failures", "http_status", "reason_code",
         "fetch_method", "lottery_candidates", "release_candidates",
+        "last_error", "failure_cause", "failure_attempts",
     )
     return {
         "schema_version": 1,
@@ -28,8 +29,16 @@ def diagnostics(state: dict[str, Any]) -> dict[str, Any]:
         "delivery_journal": state.get("delivery_journal", {}),
         "calendar_sync": state.get("calendar_sync", {}),
         "case_id_migrations": state.get("case_id_migrations", {}),
-        "monitors": {key: {field: value[field] for field in monitor_fields if field in value}
-                     for key, value in state.get("monitors", {}).items() if key in active},
+        # 画像キャッシュで本体が大きくなっても、障害経路は小さい診断ファイルで追える。
+        # 正常経路の本文・大量の過去ログは複写せず、失敗のある監視先だけ残す。
+        "monitors": {
+            key: {
+                **{field: value[field] for field in monitor_fields if field in value},
+                **({"routes": value.get("routes", {})}
+                   if value.get("last_error") or value.get("outcome") != "success" else {}),
+            }
+            for key, value in state.get("monitors", {}).items() if key in active
+        },
         "ocr_pending_count": len(state.get("ocr_pending", {})),
     }
 
