@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1793780577637,
+  "generatedAt": 1793780636249,
   "prices": {
     "version": 1,
-    "checkedAt": 1793780536156,
+    "checkedAt": 1793780601806,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -222,8 +222,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1793756766698,
-        "lastAttemptAt": 1793735166698,
+        "nextCheckAt": 1793802201806,
+        "lastAttemptAt": 1793780601806,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "yugioh-/japan/products/yac1/": {
@@ -954,8 +954,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1793756766698,
-        "lastAttemptAt": 1793735166698,
+        "nextCheckAt": 1793802201806,
+        "lastAttemptAt": 1793780601806,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "dragonball-fb10": {
@@ -988,8 +988,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1793756766698,
-        "lastAttemptAt": 1793735166698,
+        "nextCheckAt": 1793802201806,
+        "lastAttemptAt": 1793780601806,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "dragonball-fb09": {
@@ -1216,24 +1216,6 @@
       }
     },
     "log": [
-      {
-        "at": 1793431850489,
-        "productId": "dragonball-st01",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
-      {
-        "at": 1793431850489,
-        "productId": "dragonball-fb10",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
-      {
-        "at": 1793431850489,
-        "productId": "dragonball-fb12",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
       {
         "at": 1793440559760,
         "productId": "gundam-eb02",
@@ -2655,6 +2637,24 @@
         "productId": "dragonball-fb11",
         "status": "quantity_unconfirmed",
         "boxPrice": null
+      },
+      {
+        "at": 1793780601806,
+        "productId": "dragonball-st01",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1793780601806,
+        "productId": "dragonball-fb10",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1793780601806,
+        "productId": "dragonball-fb12",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
       }
     ]
   },
@@ -2970,7 +2970,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1793780577636,
+    "checkedAt": 1793780636248,
     "notificationDelay": {
       "samples": 0,
       "medianMs": null,
@@ -2982,7 +2982,7 @@
         "pages": 6,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1793780619620,
+        "nextAt": 1793780705889,
         "errors": 1
       },
       {
@@ -2990,7 +2990,7 @@
         "pages": 3,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1793780577074,
+        "nextAt": 1793780682945,
         "errors": 1
       },
       {
@@ -2998,7 +2998,7 @@
         "pages": 5,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1793780619724,
+        "nextAt": 1793780642369,
         "errors": 0
       },
       {
@@ -3270,7 +3270,7 @@
         "pages": 2,
         "minSeconds": 3168,
         "maxSeconds": 3168,
-        "nextAt": 1793780602007,
+        "nextAt": 1793781988311,
         "errors": 0
       }
     ],
@@ -3279,7 +3279,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1793780577635,
+    "verifiedAt": 1793780636246,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -37161,8 +37161,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1793780565797,
-  "lastCompletedAt": 1793780569004,
+  "lastTick": 1793780631396,
+  "lastCompletedAt": 1793780633478,
   "load": {
     "activePages": 65,
     "waitingPages": 0,
@@ -37174,7 +37174,7 @@
   "storage": {
     "format": "monitor-gzip-v1",
     "uncompressedBytes": 1821643,
-    "compressedBytes": 153257,
+    "compressedBytes": 153258,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37204,8 +37204,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1793780535797,
-    "nextSync": 1793787735797,
+    "lastSync": 1793780601395,
+    "nextSync": 1793787801395,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -38872,12 +38872,6 @@
     ],
     "log": [
       {
-        "at": 1793254997588,
-        "kind": "catalog",
-        "count": 39,
-        "added": []
-      },
-      {
         "at": 1793259770970,
         "kind": "catalog",
         "count": 39,
@@ -39467,6 +39461,12 @@
       },
       {
         "at": 1793780535797,
+        "kind": "catalog",
+        "count": 37,
+        "added": []
+      },
+      {
+        "at": 1793780601395,
         "kind": "catalog",
         "count": 37,
         "added": []
@@ -43253,13 +43253,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 8498,
+          "negatives": 8499,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793780577074,
+      "nextAt": 1793780984219,
       "failures": 0,
-      "lastChecked": 1793780193074,
+      "lastChecked": 1793780600219,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 8200,
@@ -43663,11 +43663,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1793009148240,
-          "lastAt": 1793780193074,
-          "samples": 2139
+          "lastAt": 1793780600219,
+          "samples": 2140
         }
       ],
-      "lastGoodAt": 1793780193074,
+      "lastGoodAt": 1793780600219,
       "priceDecisions": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "referencePrice": 6000,
@@ -43677,18 +43677,18 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1793780193074
+          "at": 1793780600219
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078129094,
         "stock": "in_stock",
-        "lastAt": 1793780193074,
+        "lastAt": 1793780600219,
         "lastUnavailableAt": 1791324504511,
         "availableSince": 1791324806385,
         "openAfter": 1791324504511,
         "firstAvailableAt": 1791324806385,
-        "lastAvailableAt": 1793780193074
+        "lastAvailableAt": 1793780600219
       },
       "focusUntil": 1791326606385,
       "focusReason": "購入不可から購入可能への変化",
@@ -44571,13 +44571,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 12106,
+          "negatives": 12107,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793780620041,
+      "nextAt": 1793780835460,
       "failures": 0,
-      "lastChecked": 1793780418041,
+      "lastChecked": 1793780633460,
       "lastGood": {
         "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 5808,
@@ -45444,11 +45444,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1793610646237,
-          "lastAt": 1793780418041,
-          "samples": 742
+          "lastAt": 1793780633460,
+          "samples": 743
         }
       ],
-      "lastGoodAt": 1793780418041,
+      "lastGoodAt": 1793780633460,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -45458,14 +45458,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1793780418041
+          "at": 1793780633460
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092888,
         "stock": "out_of_stock",
-        "lastAt": 1793780418041,
-        "lastUnavailableAt": 1793780418041
+        "lastAt": 1793780633460,
+        "lastUnavailableAt": 1793780633460
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -45484,13 +45484,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 11774,
+          "negatives": 11775,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793780619620,
+      "nextAt": 1793780835094,
       "failures": 0,
-      "lastChecked": 1793780417620,
+      "lastChecked": 1793780633094,
       "lastGood": {
         "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
         "price": 5808,
@@ -46355,11 +46355,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1793701610695,
-          "lastAt": 1793780417620,
-          "samples": 349
+          "lastAt": 1793780633094,
+          "samples": 350
         }
       ],
-      "lastGoodAt": 1793780417620,
+      "lastGoodAt": 1793780633094,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -46369,14 +46369,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1793780417620
+          "at": 1793780633094
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093552,
         "stock": "out_of_stock",
-        "lastAt": 1793780417620,
-        "lastUnavailableAt": 1793780417620
+        "lastAt": 1793780633094,
+        "lastUnavailableAt": 1793780633094
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -64549,13 +64549,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 6693,
+          "negatives": 6694,
           "lastEvent": 0
         }
       },
-      "nextAt": 1793780619724,
+      "nextAt": 1793780834432,
       "failures": 0,
-      "lastChecked": 1793780417724,
+      "lastChecked": 1793780632432,
       "lastGood": {
         "title": "★1点限り（同一住所と思われる重複注文は全キャンセルします。）★ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX 2026年9月16日発売",
         "price": 7200,
@@ -64605,7 +64605,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1793780417724
+          "at": 1793780632432
         }
       },
       "history": [
@@ -64905,17 +64905,17 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1793738083352,
-          "lastAt": 1793780417724,
-          "samples": 186
+          "lastAt": 1793780632432,
+          "samples": 187
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1792257778067,
         "stock": "out_of_stock",
-        "lastAt": 1793780417724,
-        "lastUnavailableAt": 1793780417724
+        "lastAt": 1793780632432,
+        "lastUnavailableAt": 1793780632432
       },
-      "lastGoodAt": 1793780417724,
+      "lastGoodAt": 1793780632432,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 202,
@@ -67506,9 +67506,9 @@
           "lastEvent": 1793005647826
         }
       },
-      "nextAt": 1793780602007,
+      "nextAt": 1793783800778,
       "failures": 0,
-      "lastChecked": 1793777434007,
+      "lastChecked": 1793780632778,
       "lastGood": {
         "title": "【店頭受取のみ 予約販売　11月21日発売予定】遊戯王 REVOLUTION BOOSTER － 方界・マリンセス・ゴーストリック － BOX【遊戯王】",
         "price": 3960,
@@ -67542,7 +67542,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限4,158円以下",
-          "at": 1793777434007
+          "at": 1793780632778
         }
       },
       "history": [
@@ -67570,8 +67570,8 @@
           "comparable": true,
           "priceDecision": "通知上限4,158円以下",
           "at": 1793038431034,
-          "lastAt": 1793777434007,
-          "samples": 238
+          "lastAt": 1793780632778,
+          "samples": 239
         }
       ],
       "availabilityTiming": {
@@ -67580,10 +67580,10 @@
         "openAfter": null,
         "firstAvailableAt": 1793005647826,
         "stock": "preorder",
-        "lastAt": 1793777434007,
-        "lastAvailableAt": 1793777434007
+        "lastAt": 1793780632778,
+        "lastAvailableAt": 1793780632778
       },
-      "lastGoodAt": 1793777434007,
+      "lastGoodAt": 1793780632778,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 3168,
@@ -70563,20 +70563,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1793747513356,
-      "checked": 1,
-      "discovered": null,
-      "targets": 132,
-      "errors": 3
-    },
-    {
-      "at": 1793747544450,
-      "checked": 2,
-      "discovered": null,
-      "targets": 132,
-      "errors": 3
-    },
     {
       "at": 1793747576141,
       "checked": 2,
@@ -85041,6 +85027,20 @@
         },
         "error": ""
       },
+      "targets": 132,
+      "errors": 3
+    },
+    {
+      "at": 1793780599007,
+      "checked": 1,
+      "discovered": null,
+      "targets": 132,
+      "errors": 3
+    },
+    {
+      "at": 1793780631396,
+      "checked": 4,
+      "discovered": null,
       "targets": 132,
       "errors": 3
     }
