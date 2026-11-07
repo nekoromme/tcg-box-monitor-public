@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "checkedAt": 1793998907529,
+  "checkedAt": 1794009673743,
   "records": {
     "onepiece-eb-04": {
       "parserVersion": 2,
@@ -220,8 +220,8 @@
           "kind": "observed_box_quantity"
         }
       ],
-      "nextCheckAt": 1794000036752,
-      "lastAttemptAt": 1793978436752,
+      "nextCheckAt": 1794031273743,
+      "lastAttemptAt": 1794009673743,
       "lastAttemptStatus": "quantity_unconfirmed"
     },
     "yugioh-/japan/products/yac1/": {
@@ -918,8 +918,8 @@
           "kind": "observed_box_quantity"
         }
       ],
-      "nextCheckAt": 1794000036752,
-      "lastAttemptAt": 1793978436752,
+      "nextCheckAt": 1794031273743,
+      "lastAttemptAt": 1794009673743,
       "lastAttemptStatus": "quantity_unconfirmed"
     },
     "dragonball-st01": {
@@ -952,8 +952,8 @@
           "kind": "observed_box_quantity"
         }
       ],
-      "nextCheckAt": 1794000036752,
-      "lastAttemptAt": 1793978436752,
+      "nextCheckAt": 1794031273743,
+      "lastAttemptAt": 1794009673743,
       "lastAttemptStatus": "quantity_unconfirmed"
     },
     "dragonball-fb10": {
@@ -986,8 +986,8 @@
           "kind": "observed_box_quantity"
         }
       ],
-      "nextCheckAt": 1794000036752,
-      "lastAttemptAt": 1793978436752,
+      "nextCheckAt": 1794031273743,
+      "lastAttemptAt": 1794009673743,
       "lastAttemptStatus": "quantity_unconfirmed"
     },
     "dragonball-fb09": {
@@ -1218,24 +1218,31 @@
       "game": "pokemon",
       "name": "ハドウシーカー",
       "officialUrl": "https://www.pokemon-card.com/ex/m7/",
-      "checkedAt": 1793988626780,
-      "status": "quantity_unconfirmed",
+      "checkedAt": 1794009673743,
+      "status": "confirmed",
       "packPrice": 200,
-      "packsPerBox": null,
-      "boxPrice": null,
+      "packsPerBox": 30,
+      "boxPrice": 6000,
       "basis": "official_pack_times_verified_count",
       "sources": [
         {
           "url": "https://www.pokemon-card.com/ex/m7/",
-          "checkedAt": 1793988626780,
+          "checkedAt": 1794009673743,
           "kind": "official_price",
           "title": "ポケモンカードゲーム MEGA 拡張パック「ハドウシーカー」|ポケモンカードゲーム公式ホームページ「トレーナーズウェブサイト」",
           "packPrice": 200,
           "boxPrice": null,
           "packsPerBox": null
+        },
+        {
+          "count": 30,
+          "url": "https://mediaworld.co.jp/products/13921728000",
+          "title": "【予約】[TCG] (BOX) ポケモンカードゲーム MEGA(メガ) 拡張パック ハドウシーカー ポケモン(30パック)(20261127)",
+          "checkedAt": 1794008873164,
+          "kind": "observed_box_quantity"
         }
       ],
-      "nextCheckAt": 1794010226780
+      "nextCheckAt": 1794614473743
     },
     "onepiece-op-19": {
       "parserVersion": 2,
@@ -1291,36 +1298,6 @@
   "log": [
     {
       "at": 1793653201309,
-      "productId": "gundam-gd07",
-      "status": "price_unpublished",
-      "boxPrice": null
-    },
-    {
-      "at": 1793653201309,
-      "productId": "yugioh-/japan/products/",
-      "status": "identity_unconfirmed",
-      "boxPrice": null
-    },
-    {
-      "at": 1793653201309,
-      "productId": "pokemon-m6a",
-      "status": "quantity_unconfirmed",
-      "boxPrice": null
-    },
-    {
-      "at": 1793653201309,
-      "productId": "pokemon-m6",
-      "status": "quantity_unconfirmed",
-      "boxPrice": null
-    },
-    {
-      "at": 1793653201309,
-      "productId": "pokemon-m5",
-      "status": "quantity_unconfirmed",
-      "boxPrice": null
-    },
-    {
-      "at": 1793653201309,
       "productId": "pokemon-m4",
       "status": "quantity_unconfirmed",
       "boxPrice": null
@@ -2726,6 +2703,36 @@
     {
       "at": 1793998907529,
       "productId": "gundam-gd03",
+      "status": "quantity_unconfirmed",
+      "boxPrice": null
+    },
+    {
+      "at": 1794009673743,
+      "productId": "pokemon-/ex/m7/",
+      "status": "confirmed",
+      "boxPrice": 6000
+    },
+    {
+      "at": 1794009673743,
+      "productId": "dragonball-fb11",
+      "status": "quantity_unconfirmed",
+      "boxPrice": null
+    },
+    {
+      "at": 1794009673743,
+      "productId": "dragonball-st01",
+      "status": "quantity_unconfirmed",
+      "boxPrice": null
+    },
+    {
+      "at": 1794009673743,
+      "productId": "dragonball-fb10",
+      "status": "quantity_unconfirmed",
+      "boxPrice": null
+    },
+    {
+      "at": 1794009673743,
+      "productId": "dragonball-fb12",
       "status": "quantity_unconfirmed",
       "boxPrice": null
     }
