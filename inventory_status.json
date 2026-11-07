@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1794080355865,
+  "generatedAt": 1794080414346,
   "prices": {
     "version": 1,
-    "checkedAt": 1794080323403,
+    "checkedAt": 1794080379925,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -3052,7 +3052,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1794080355864,
+    "checkedAt": 1794080414346,
     "notificationDelay": {
       "samples": 2,
       "medianMs": 33618,
@@ -3064,7 +3064,7 @@
         "pages": 6,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1794080403895,
+        "nextAt": 1794080471775,
         "errors": 1
       },
       {
@@ -3224,7 +3224,7 @@
         "pages": 7,
         "minSeconds": 2333,
         "maxSeconds": 2333,
-        "nextAt": 1794077869419,
+        "nextAt": 1794077935026,
         "errors": 0
       },
       {
@@ -3385,7 +3385,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1794080355862,
+    "verifiedAt": 1794080414344,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -37554,9 +37554,9 @@
     "budget": {
       "day": 20765,
       "group": 150,
-      "fallback": 163
+      "fallback": 165
     },
-    "nextFallbackAt": 1794080353736,
+    "nextFallbackAt": 1794080528957,
     "policy": {
       "version": 1,
       "normalMs": 1800000,
@@ -37579,8 +37579,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1794080352335,
-  "lastCompletedAt": 1794080353980,
+  "lastTick": 1794080408957,
+  "lastCompletedAt": 1794080413002,
   "load": {
     "activePages": 68,
     "waitingPages": 0,
@@ -37591,8 +37591,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1849886,
-    "compressedBytes": 158174,
+    "uncompressedBytes": 1849885,
+    "compressedBytes": 158182,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37622,8 +37622,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1794080322307,
-    "nextSync": 1794087522307,
+    "lastSync": 1794080378953,
+    "nextSync": 1794087578953,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -39375,12 +39375,6 @@
     ],
     "log": [
       {
-        "at": 1793568115192,
-        "kind": "catalog",
-        "count": 37,
-        "added": []
-      },
-      {
         "at": 1793574024614,
         "kind": "catalog",
         "count": 37,
@@ -39981,6 +39975,12 @@
       },
       {
         "at": 1794080322307,
+        "kind": "catalog",
+        "count": 40,
+        "added": []
+      },
+      {
+        "at": 1794080378953,
         "kind": "catalog",
         "count": 40,
         "added": []
@@ -45074,13 +45074,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 13403,
+          "negatives": 13404,
           "lastEvent": 0
         }
       },
-      "nextAt": 1794080404112,
+      "nextAt": 1794080612442,
       "failures": 0,
-      "lastChecked": 1794080202112,
+      "lastChecked": 1794080410442,
       "lastGood": {
         "title": "ブースターパック Newtype Rising【GD01】(1BOX・24パック入)ガンダムカードゲーム [新品商品]",
         "price": 5808,
@@ -45947,11 +45947,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1793861504813,
-          "lastAt": 1794080202112,
-          "samples": 948
+          "lastAt": 1794080410442,
+          "samples": 949
         }
       ],
-      "lastGoodAt": 1794080202112,
+      "lastGoodAt": 1794080410442,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -45961,14 +45961,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1794080202112
+          "at": 1794080410442
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078092888,
         "stock": "out_of_stock",
-        "lastAt": 1794080202112,
-        "lastUnavailableAt": 1794080202112
+        "lastAt": 1794080410442,
+        "lastUnavailableAt": 1794080410442
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -60999,13 +60999,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 11974,
+          "negatives": 11975,
           "lastEvent": 0
         }
       },
-      "nextAt": 1794080403895,
+      "nextAt": 1794080612241,
       "failures": 0,
-      "lastChecked": 1794080201895,
+      "lastChecked": 1794080410241,
       "lastGood": {
         "title": "ブースターパック「Newtype Rising」 1BOX(*24パック入り*) [ _250046939 ]",
         "price": 5800,
@@ -61037,7 +61037,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1794080201895
+          "at": 1794080410241
         }
       },
       "history": [
@@ -61888,17 +61888,17 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1793884390477,
-          "lastAt": 1794080201895,
-          "samples": 858
+          "lastAt": 1794080410241,
+          "samples": 859
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1791372079169,
         "stock": "out_of_stock",
-        "lastAt": 1794080201895,
-        "lastUnavailableAt": 1794080201895
+        "lastAt": 1794080410241,
+        "lastUnavailableAt": 1794080410241
       },
-      "lastGoodAt": 1794080201895,
+      "lastGoodAt": 1794080410241,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 202,
@@ -66463,13 +66463,13 @@
       "episodes": {
         "f25d30bf-5691-43f9-b77e-2c17fc4d24a3": {
           "active": false,
-          "negatives": 244,
+          "negatives": 245,
           "lastEvent": 0
         }
       },
-      "nextAt": 1794077869419,
+      "nextAt": 1794082742944,
       "failures": 0,
-      "lastChecked": 1794075536419,
+      "lastChecked": 1794080409944,
       "lastGood": {
         "title": "【新品】【お取り寄せ】[TCG] (BOX)フューチャーカード バディファイト ハンドレッド エクストラブースター第2弾 Wヒーロー大戦(BF-H-EB02)(15パック)(20150807)",
         "price": 4430,
@@ -66501,7 +66501,7 @@
           "shippingIncluded": false,
           "status": "reference_unknown",
           "reason": "BOX定価を確認できないため通知保留",
-          "at": 1794075536419
+          "at": 1794080409944
         }
       },
       "history": [
@@ -66835,17 +66835,17 @@
           "comparable": true,
           "priceDecision": "BOX定価を確認できないため通知保留",
           "at": 1793721259049,
-          "lastAt": 1794075536419,
-          "samples": 138
+          "lastAt": 1794080409944,
+          "samples": 139
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1792778305400,
         "stock": "out_of_stock",
-        "lastAt": 1794075536419,
-        "lastUnavailableAt": 1794075536419
+        "lastAt": 1794080409944,
+        "lastUnavailableAt": 1794080409944
       },
-      "lastGoodAt": 1794075536419,
+      "lastGoodAt": 1794080409944,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 2333,
@@ -70865,23 +70865,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1794047496932,
-      "checked": 4,
-      "discovered": {
-        "ruleId": "47c20f77-b1a8-4a3f-9f66-58a45a8a6d14",
-        "storeId": "torezamu",
-        "result": {
-          "at": 1794047496932,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 135,
-      "errors": 3
-    },
     {
       "at": 1794047529887,
       "checked": 5,
@@ -85421,6 +85404,23 @@
       "at": 1794080352335,
       "checked": 4,
       "discovered": null,
+      "targets": 135,
+      "errors": 3
+    },
+    {
+      "at": 1794080408957,
+      "checked": 3,
+      "discovered": {
+        "ruleId": "c582cc9d-f015-46cc-99dd-490aab5bb6f0",
+        "storeId": "cardwiz",
+        "result": {
+          "at": 1794080408957,
+          "status": "no_hit",
+          "matched": 0,
+          "registered": 0
+        },
+        "error": ""
+      },
       "targets": 135,
       "errors": 3
     }
