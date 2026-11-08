@@ -1831,7 +1831,8 @@ def parse_yahoo_realtime(
             # 購入抽選の応募手順（フォロー＋RP）は募集の根拠になる。
             # 注意事項に「当選者」「当選DM」があっても結果発表にしない。
             or (
-                re.search(r"(?:応募|申込)(?:方法|手順)", compact_text)
+                not closed_only
+                and re.search(r"(?:応募|申込)(?:方法|手順)", compact_text)
                 and _REPOST_ENTRY.search(compact_text)
                 and _PURCHASE_APPLICATION.search(compact_text)
             )

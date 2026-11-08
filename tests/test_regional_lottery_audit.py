@@ -79,3 +79,8 @@ def test_actual_yahoo_hashtags_do_not_replace_product_with_store_name():
     )
     assert len(cases) == 1 and not alerts
     assert cases[0].product_name == '拡張パック「30th CELEBRATION」'
+
+
+def test_explicit_winner_notice_cannot_be_revived_by_repeated_entry_instructions():
+    body = '当選者のお知らせ。' + FIXTURE['body']
+    assert not parse(body, FIXTURE['image_transcription'])[0]
