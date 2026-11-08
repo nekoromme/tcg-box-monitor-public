@@ -4596,6 +4596,9 @@ sources:
     account: Pokedou_Kitakam
     retailer_id: pokedou_kitakami
     retailer_name: ポケ堂北上店
+    # 公式画像を目視確認。開始日は記載がないため投稿日時から推測しない。
+    confirmed_application_ends:
+      '2118591090244947978': '2026-11-12T23:59:00+09:00'
 - id: yahoo_realtime_tsutaya_tsukidate
   name: TSUTAYA築館店公式X Yahooリアルタイム検索
   source_type: retailer_official_social_search

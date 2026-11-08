@@ -1828,6 +1828,13 @@ def parse_yahoo_realtime(
             any(word in compact_text for word in _OPEN_APPLICATION_WORDS)
             or _LOTTERY_APPLICATION_START.search(compact_text)
             or re.search(r"(?:応募|申込|受付).{0,10}(?:開始|受付|期間|ください|中)", compact_text)
+            # 購入抽選の応募手順（フォロー＋RP）は募集の根拠になる。
+            # 注意事項に「当選者」「当選DM」があっても結果発表にしない。
+            or (
+                re.search(r"(?:応募|申込)(?:方法|手順)", compact_text)
+                and _REPOST_ENTRY.search(compact_text)
+                and _PURCHASE_APPLICATION.search(compact_text)
+            )
         )
         if closed_only and not new_application and not (
             amazon_invitation or official_lorcana_sale or selected_sale
@@ -2320,6 +2327,11 @@ def parse_yahoo_realtime(
             and (
                 not product
                 or is_provisional_product_name(product[0])
+                # 店名のハッシュタグが商品名として先に選ばれた場合も、
+                # 本文に一致済みの公式商品名を優先する。
+                or re.sub(r"\s+", "", product[0]).casefold() in re.sub(
+                    r"\s+", "", retailer_name,
+                ).casefold()
             )
         ):
             # A social post may spell only the official title (without
