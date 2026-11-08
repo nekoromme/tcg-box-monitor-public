@@ -23,21 +23,24 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
   let state,policy,deployment={},issues=[],stage='configuration';
   // 本番情報の一時的な通信失敗を、稼働版の不一致と取り違えない。
   // 公開情報の読取だけを再試行し、アクセス拒否・制限はそのまま異常に残す。
-  async function readDeploymentJson(url,headers={}) {
+  async function readDeploymentJson(url,headers={},source='worker_health') {
     let last;
-    for(let n=0;n<3;n++) {
+    // 1〜2秒の再試行では同じゲートウェイ障害を続けて踏む。約2分の範囲で
+    // 間隔を広げる。403/429は再試行・別経路への切替で回避しない。
+    const backoff=[5000,15000,30000];
+    for(let n=0;n<=backoff.length;n++) {
       try {
-        const response=await fetcher(url,{redirect:'error',headers,signal:AbortSignal.timeout(15000)});
+        const response=await fetcher(url,{redirect:'error',headers,signal:AbortSignal.timeout(20000)});
         if(response.ok)return await response.json();
-        last=Object.assign(new Error('本番情報への接続失敗'),{status:response.status});
-        if(![408,500,502,503,504].includes(response.status))break;
-      }catch{last=new Error('本番情報の通信・JSON読取に失敗');}
-      if(n<2) {
-        log(JSON.stringify({event:'inventory_metadata_retry',attempt:n+1,...(last?.status?{httpStatus:last.status}:{})}));
-        await pause(1000*(n+1));
+        last=Object.assign(new Error('本番情報への接続失敗'),{status:response.status,retryable:[408,500,502,503,504].includes(response.status),failureKind:'http'});
+        if(!last.retryable)break;
+      }catch{last=Object.assign(new Error('本番情報の通信・JSON読取に失敗'),{retryable:true,failureKind:'transport_or_json'});}
+      if(n<backoff.length) {
+        log(JSON.stringify({event:'inventory_metadata_retry',source,attempt:n+1,delayMs:backoff[n],failureKind:last.failureKind,...(last?.status?{httpStatus:last.status}:{})}));
+        await pause(backoff[n]);
       }
     }
-    throw last;
+    throw Object.assign(last,{metadataSource:source});
   }
   // 同期操作は重複しても同じ対象へ収束するため、通信の一時失敗を3回まで再試行する。
   async function api(body) {
@@ -61,8 +64,18 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
     // 読めない停止設定を空リストとして扱わない。既存設定を保持して異常を残す。
     try{policy=await loadInventoryPolicy();}catch{throw Object.assign(new Error('通知対象設定を確認できない'),{code:'notification_policy_invalid'});}
     stage='deployment';
-    const ref=await readDeploymentJson('https://api.github.com/repos/nekoromme/tcg-cross-search/git/ref/heads/main',{Accept:'application/vnd.github+json','User-Agent':'TCGInventoryHealth/1.0'});
-    const expectedCommit=ref.object?.sha;
+    const githubHeaders={Accept:'application/vnd.github+json','User-Agent':'TCGInventoryHealth/1.0'};
+    let expectedCommit;
+    try {
+      const ref=await readDeploymentJson('https://api.github.com/repos/nekoromme/tcg-cross-search/git/ref/heads/main',githubHeaders,'github_ref');
+      expectedCommit=ref.object?.sha;
+    }catch(error) {
+      if(!error.retryable)throw error;
+      // 保存済みの古い変更番号で正常判定しない。別の公式APIからmainの現在値を読む。
+      log(JSON.stringify({event:'inventory_metadata_fallback',source:'github_ref',destination:'github_commit',failureKind:error.failureKind,...(error.status?{httpStatus:error.status}:{})}));
+      const commit=await readDeploymentJson('https://api.github.com/repos/nekoromme/tcg-cross-search/commits/main',githubHeaders,'github_commit');
+      expectedCommit=commit.sha;
+    }
     if(!/^[a-f0-9]{40}$/.test(expectedCommit||''))throw new Error('変更番号の形式が不正');
     // 公開中の数分だけ待つ。旧版のままなら設定を触らず、外部から異常を知らせる。
     for(let n=0;n<12;n++) {
@@ -151,7 +164,8 @@ export async function runInventorySync({root=process.env.INVENTORY_LOG_DIR||'.mo
     // 接続前に失敗しても、古いログを最新正常に見せない。秘密を含む例外本文は出さない。
     const code=error?.backend||error?.code||(stage==='deployment'?'deployment_check_failed':'monitor_connection_failed');
     const known=new Set(['storage_quota','storage_data','runtime_limit','monitor_unavailable','deployment_mismatch','deployment_check_failed','monitor_connection_failed','notification_policy_invalid','notification_policy_not_applied','official_prices_not_applied']);
-    issues=[{code:known.has(code)?code:'monitor_connection_failed',message:code==='notification_policy_invalid'?'自動通知の停止設定を読み出せない':code==='notification_policy_not_applied'?'自動通知の停止設定を反映できない':stage==='deployment'?'本番の修正版・変更番号を確認できない':`監視との接続・確認に失敗${error?.status?`（HTTP ${error.status}）`:''}`,stage,...(error?.status?{httpStatus:error.status}:{}),...(error?.limitTerms?.length?{limitTerms:error.limitTerms}:{})}];
+    const metadataLabel=error?.metadataSource==='worker_health'?'本番の稼働版':error?.metadataSource?.startsWith('github_')?'GitHubの最新変更番号':'本番の修正版・変更番号';
+    issues=[{code:known.has(code)?code:'monitor_connection_failed',message:code==='notification_policy_invalid'?'自動通知の停止設定を読み出せない':code==='notification_policy_not_applied'?'自動通知の停止設定を反映できない':stage==='deployment'?code==='deployment_mismatch'?'本番の稼働版が最新の修正版と一致しない':`${metadataLabel}を確認できない${error?.status?`（HTTP ${error.status}）`:''}`:`監視との接続・確認に失敗${error?.status?`（HTTP ${error.status}）`:''}`,stage,...(error?.metadataSource?{metadataSource:error.metadataSource,failureKind:error.failureKind}:{}),...(error?.status?{httpStatus:error.status}:{}),...(error?.limitTerms?.length?{limitTerms:error.limitTerms}:{})}];
   }
   const health={checkedAt:now(),status:issues.length?'degraded':state?.enabled===false?'paused':'ok',issues,deployment,lastCompletedAt:state?.lastCompletedAt||null};
   await writeFile(join(root,'inventory_health.json'),JSON.stringify(health,null,2)+'\n');
