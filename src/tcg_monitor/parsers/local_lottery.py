@@ -417,6 +417,18 @@ def discover_livepocket_event_urls(
     soup = BeautifulSoup(html, "lxml")
     found: list[str] = []
     seen: set[str] = set()
+    # 非掲載の抽選は店舗のLivePocket一覧にも出ない。設定した店舗別索引を
+    # URL発見だけに使い、日付や商品は必ずリンク先の公式本文で確認する。
+    store_index = source.parser_options.get("store_index_url") == url
+    if store_index:
+        expected = str(source.parser_options.get("retailer_name", ""))
+        heading = soup.find("h1")
+        def compact(value: str) -> str:
+            return re.sub(r"\s+", "", value)
+        if not expected or heading is None or compact(expected) not in compact(heading.get_text()):
+            raise ValueError("livepocket store index identity missing")
+        if soup.select_one("#list") is None:
+            raise ValueError("livepocket store index event list missing")
     for anchor in soup.find_all("a", href=True):
         if not isinstance(anchor, Tag):
             continue
@@ -426,7 +438,13 @@ def discover_livepocket_event_urls(
             continue
         heading = anchor.find(["h1", "h2", "h3", "h4"])
         anchor_text = (heading or anchor).get_text(" ", strip=True)
-        if "抽選" not in anchor_text:
+        if store_index:
+            # 索引の応募リンク自体は「応募ページ」。商品名は同じli内にある。
+            row = anchor.find_parent("li")
+            if row is None or row.find_parent(id="list") is None:
+                continue
+            anchor_text = row.get_text(" ", strip=True)
+        if "抽選" not in anchor_text and not store_index:
             continue
         game_id = _game_id(anchor_text)
         if not game_id or not source.supports(game_id):
@@ -452,7 +470,10 @@ def discover_livepocket_event_urls(
 
 
 def is_livepocket_search_page(url: str) -> bool:
-    return "/event/search" in url
+    parts = urlsplit(url)
+    return "/event/search" in url or (
+        parts.netloc == "tcg-chusen.com" and parts.path.startswith("/store/")
+    )
 
 
 def is_livepocket_source(source: SourceConfig | str) -> bool:
@@ -908,12 +929,26 @@ def _deadline_only_application_period(text: str) -> bool:
 def parse_livepocket_event(
     html: str, url: str, source: SourceConfig, config: Config
 ) -> tuple[list[LotteryCase], list[Release], list[Alert]]:
-    page_title = title(html) or source.name
+    soup = BeautifulSoup(html, "lxml")
+    heading = soup.find("h1")
+    page_title = heading.get_text(" ", strip=True) if heading else title(html) or source.name
     text = visible_text(html)
+    expected_store = source.parser_options.get("required_store_name")
+    if isinstance(expected_store, str) and re.sub(r"\s+", "", expected_store) not in re.sub(
+        r"\s+", "", text,
+    ):
+        raise ValueError("livepocket official event store identity missing")
     game_id = _game_id(f"{page_title} {text}")
     if not game_id or not source.supports(game_id):
         return [], [], []
-    products = _box_products(f"{page_title}\n{text}", game_id, config)
+    # 新LivePocketのナビには「デッキ」等の別商品名もあるため、商品情報欄を使う。
+    detail = soup.select_one("#detail")
+    product_text = detail.get_text(" ", strip=True) if detail else text
+    named = re.search(r"商品名[：:]\s*[「『](.+?)[」』]", product_text)
+    product_title = named.group(1).strip() if named else page_title
+    if game_id == "one_piece_card":
+        product_title = re.sub(r"\b(OP|EB|PRB)(\d{2})\b", r"\1-\2", product_title)
+    products = _box_products(f"{product_title}\n{product_text}", game_id, config)
     if not products:
         return [], [], []
     start_at = _application_start(text)
@@ -938,6 +973,8 @@ def parse_livepocket_event(
     retailer_id, retailer_name = profile
     if outside_store_scope(config, retailer_id, text, source.id, url):
         return [], [], []
+    start_day = start_at.date() if isinstance(start_at, datetime) else start_at
+    end_at = _application_deadline(text, start_day)
     cases = [
         LotteryCase(
             game_id,
@@ -952,6 +989,7 @@ def parse_livepocket_event(
             source.source_tier,
             "livepocket_detail_application_period",
             "high",
+            end_at=end_at,
         ).with_id()
         for product_name, product_category, product_key in products
     ]
