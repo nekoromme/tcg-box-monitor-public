@@ -84,7 +84,7 @@ for(const endpoint of ['github','health'])for(const failure of ['transport','htt
   });
 }
 
-for(const [status,expectedAttempts] of [[503,3],[403,1],[429,1]]) {
+for(const [status,expectedAttempts] of [[503,8],[403,1],[429,1]]) {
   test(`本番情報が読めない場合は異常を保持し、設定を変えない HTTP ${status}`,async t=>{
     const root=await mkdtemp(join(tmpdir(),'inventory-metadata-failure-'));t.after(()=>rm(root,{recursive:true,force:true}));
     let attempts=0,commands=0;
@@ -98,8 +98,59 @@ for(const [status,expectedAttempts] of [[503,3],[403,1],[429,1]]) {
     const health=await runInventorySync({root,webhook:WEBHOOK,fetcher,now:()=>NOW,pause:async()=>{},log:()=>{}});
     assert.equal(health.status,'degraded');assert.equal(attempts,expectedAttempts);assert.equal(commands,0);
     assert.equal(health.issues[0].code,'deployment_check_failed');assert.equal(health.issues[0].httpStatus,status);
+    assert.equal(health.issues[0].metadataSource,status===503?'github_commit':'github_ref');
+    assert.match(health.issues[0].message,/GitHubの最新変更番号/);
   });
 }
+
+test('変更番号APIの504が続いても別の公式APIで現在値を確認し、巡回を検証する',async t=>{
+  const root=await mkdtemp(join(tmpdir(),'inventory-ref-fallback-'));t.after(()=>rm(root,{recursive:true,force:true}));
+  await writeFile(join(root,'monitor_state.json'),JSON.stringify({seen_releases:{}}));
+  let refs=0,commits=0,reads=0;const waits=[],logs=[];
+  const fetcher=async(input,options={})=>{
+    const url=String(input);
+    if(url.includes('/git/ref/')){refs++;return new Response('',{status:504});}
+    if(url.endsWith('/commits/main')){commits++;return Response.json({sha:SHA});}
+    if(url.endsWith('/api/health'))return Response.json({version:'0.14.2',commit:SHA});
+    if(url.endsWith('/api/monitor')){if(options.method==='GET')reads++;return Response.json({...state(),lastCompletedAt:reads>1?NOW+1:NOW});}
+    throw new Error('unexpected request');
+  };
+  const health=await runInventorySync({root,webhook:WEBHOOK,fetcher,now:()=>NOW+100,pause:async ms=>waits.push(ms),log:s=>logs.push(JSON.parse(s.startsWith('{')?s:'{}'))});
+  assert.equal(health.status,'ok');assert.equal(refs,4);assert.equal(commits,1);assert(reads>=2);
+  assert.deepEqual(waits.slice(0,3),[5000,15000,30000]);
+  assert(logs.some(x=>x.event==='inventory_metadata_fallback'&&x.httpStatus===504));
+});
+
+test('本番ヘルスの504が3回続いても間隔を広げて回復し、変更番号の一致を検証する',async t=>{
+  const root=await mkdtemp(join(tmpdir(),'inventory-health-504-'));t.after(()=>rm(root,{recursive:true,force:true}));
+  await writeFile(join(root,'monitor_state.json'),JSON.stringify({seen_releases:{}}));
+  let healthReads=0,reads=0;
+  const fetcher=async(input,options={})=>{
+    const url=String(input);
+    if(url.includes('api.github.com'))return Response.json({object:{sha:SHA}});
+    if(url.endsWith('/api/health'))return ++healthReads<4?new Response('',{status:504}):Response.json({version:'0.14.2',commit:SHA});
+    if(url.endsWith('/api/monitor')){if(options.method==='GET')reads++;return Response.json({...state(),lastCompletedAt:reads>1?NOW+1:NOW});}
+    throw new Error('unexpected request');
+  };
+  const health=await runInventorySync({root,webhook:WEBHOOK,fetcher,now:()=>NOW+100,pause:async()=>{},log:()=>{}});
+  assert.equal(health.status,'ok');assert.equal(healthReads,4);assert.equal(health.deployment.expectedCommit,SHA);assert(reads>=2);
+});
+
+test('本番ヘルスが504のままなら接続先を記録して異常を維持する',async t=>{
+  const root=await mkdtemp(join(tmpdir(),'inventory-health-persistent-504-'));t.after(()=>rm(root,{recursive:true,force:true}));
+  let reads=0;
+  const fetcher=async input=>{
+    const url=String(input);
+    if(url.includes('api.github.com'))return Response.json({object:{sha:SHA}});
+    if(url.endsWith('/api/health')){reads++;return new Response('',{status:504});}
+    if(url.startsWith('https://discord.com'))return Response.json({id:'message'});
+    throw new Error('must not change monitor settings');
+  };
+  const health=await runInventorySync({root,webhook:WEBHOOK,fetcher,now:()=>NOW,pause:async()=>{},log:()=>{}});
+  assert.equal(health.status,'degraded');assert.equal(reads,4);
+  assert.equal(health.issues[0].metadataSource,'worker_health');assert.equal(health.issues[0].httpStatus,504);
+  assert.match(health.issues[0].message,/本番の稼働版.*HTTP 504/);
+});
 
 test('通信が正常でも本当に古い稼働版は正常扱いにせず、設定を変えない',async t=>{
   const root=await mkdtemp(join(tmpdir(),'inventory-old-deployment-'));t.after(()=>rm(root,{recursive:true,force:true}));
