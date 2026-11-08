@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1794172905074,
+  "generatedAt": 1794172966224,
   "prices": {
     "version": 1,
-    "checkedAt": 1794172869691,
+    "checkedAt": 1794172931385,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -3073,7 +3073,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1794172905074,
+    "checkedAt": 1794172966224,
     "notificationDelay": {
       "samples": 2,
       "medianMs": 33618,
@@ -3101,7 +3101,7 @@
         "pages": 5,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1794172952485,
+        "nextAt": 1794172964017,
         "errors": 0
       },
       {
@@ -3317,7 +3317,7 @@
         "pages": 2,
         "minSeconds": 2333,
         "maxSeconds": 3456,
-        "nextAt": 1794172936095,
+        "nextAt": 1794173540980,
         "errors": 0
       },
       {
@@ -3406,7 +3406,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1794172905072,
+    "verifiedAt": 1794172966222,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -5824,7 +5824,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 3262696,
+        "intervalMs": 3201681,
         "storeName": "メディアワールド本店"
       },
       "papy": {
@@ -6268,18 +6268,18 @@
       },
       "square3rd": {
         "storeId": "square3rd",
-        "nextAt": 1794172914489,
+        "nextAt": 1794176560351,
         "createdAt": 1791078090716,
-        "successes": 879,
+        "successes": 880,
         "failures": 0,
         "rapidSales": [],
         "sources": [
           {
             "url": "https://www.square-3rd.jp/product-list?keyword=BOX",
             "role": "search",
-            "depth": 2,
-            "nextUrl": "https://www.square-3rd.jp/product-list?keyword=BOX&page=3",
-            "lastAt": 1794162104761
+            "depth": 3,
+            "nextUrl": null,
+            "lastAt": 1794172964487
           },
           {
             "url": "https://www.square-3rd.jp/product-list?keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
@@ -6293,11 +6293,11 @@
             "role": "new",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1794169318029
+            "lastAt": 1794172963588
           }
         ],
-        "sourceCursor": 0,
-        "lastAttemptAt": 1794169314489,
+        "sourceCursor": 1,
+        "lastAttemptAt": 1794172960351,
         "lastResult": {
           "matched": 0,
           "registered": 0,
@@ -6311,13 +6311,22 @@
               "hasMore": false,
               "depthLimited": false,
               "order": "new"
+            },
+            {
+              "url": "https://www.square-3rd.jp/product-list?keyword=BOX&page=3",
+              "head": false,
+              "productLinks": 29,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
             }
           ],
-          "requests": 1,
+          "requests": 2,
           "status": "ok",
-          "previousAt": 1794165710022
+          "previousAt": 1794169314489
         },
-        "lastAt": 1794169314489,
+        "lastAt": 1794172960351,
         "retryAt": 0,
         "error": "",
         "lastNewAt": 1791078640817,
@@ -6417,40 +6426,6 @@
       }
     },
     "log": [
-      {
-        "kind": "listing",
-        "storeId": "futaki",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.target.co.jp/view/search?search_keyword=BOX&sort=order",
-            "head": true,
-            "productLinks": 16,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "sorted"
-          },
-          {
-            "url": "https://www.target.co.jp/view/search?search_keyword=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-            "head": true,
-            "productLinks": 16,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "alternate"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1793986562066,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1793993767885,
-        "at": 1793990167885
-      },
       {
         "kind": "listing",
         "storeId": "advantage2",
@@ -37474,11 +37449,45 @@
           }
         ],
         "at": 1794172566825
+      },
+      {
+        "kind": "listing",
+        "storeId": "square3rd",
+        "matched": 0,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.square-3rd.jp/new",
+            "head": true,
+            "productLinks": 186,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "new"
+          },
+          {
+            "url": "https://www.square-3rd.jp/product-list?keyword=BOX&page=3",
+            "head": false,
+            "productLinks": 29,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1794169314489,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1794176560351,
+        "at": 1794172960351
       }
     ],
     "budget": {
       "day": 20766,
-      "group": 207,
+      "group": 209,
       "fallback": 217
     },
     "nextFallbackAt": 1794172975280,
@@ -37504,8 +37513,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1794172900988,
-  "lastCompletedAt": 1794172902554,
+  "lastTick": 1794172960351,
+  "lastCompletedAt": 1794172964487,
   "load": {
     "activePages": 68,
     "waitingPages": 0,
@@ -37516,8 +37525,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1821263,
-    "compressedBytes": 157085,
+    "uncompressedBytes": 1821602,
+    "compressedBytes": 157075,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37547,8 +37556,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1794172868446,
-    "nextSync": 1794180068446,
+    "lastSync": 1794172930350,
+    "nextSync": 1794180130350,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -39300,12 +39309,6 @@
     ],
     "log": [
       {
-        "at": 1793676654079,
-        "kind": "catalog",
-        "count": 37,
-        "added": []
-      },
-      {
         "at": 1793677247285,
         "kind": "catalog",
         "count": 37,
@@ -39906,6 +39909,12 @@
       },
       {
         "at": 1794172868446,
+        "kind": "catalog",
+        "count": 40,
+        "added": []
+      },
+      {
+        "at": 1794172930350,
         "kind": "catalog",
         "count": 40,
         "added": []
@@ -54188,13 +54197,13 @@
       "episodes": {
         "58e6fef9-6a37-42ff-9ed2-ed0c877b520f": {
           "active": false,
-          "negatives": 1059,
+          "negatives": 1060,
           "lastEvent": 0
         }
       },
-      "nextAt": 1794172936095,
+      "nextAt": 1794176417731,
       "failures": 0,
-      "lastChecked": 1794169480095,
+      "lastChecked": 1794172961731,
       "lastGood": {
         "title": "ブースターパック　ヴァインズ・アタック！　BOX【ディズニー・ロルカナ・トレーディングカードゲーム】",
         "price": 5280,
@@ -54270,11 +54279,11 @@
           "comparable": true,
           "priceDecision": "通知上限5,544円以下",
           "at": 1793038102233,
-          "lastAt": 1794169480095,
-          "samples": 357
+          "lastAt": 1794172961731,
+          "samples": 358
         }
       ],
-      "lastGoodAt": 1794169480095,
+      "lastGoodAt": 1794172961731,
       "priceDecisions": {
         "58e6fef9-6a37-42ff-9ed2-ed0c877b520f": {
           "referencePrice": 5280,
@@ -54284,14 +54293,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限5,544円以下",
-          "at": 1794169480095
+          "at": 1794172961731
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078437198,
         "stock": "out_of_stock",
-        "lastAt": 1794169480095,
-        "lastUnavailableAt": 1794169480095
+        "lastAt": 1794172961731,
+        "lastUnavailableAt": 1794172961731
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -67453,13 +67462,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 51,
+          "negatives": 52,
           "lastEvent": 1794069738565
         }
       },
-      "nextAt": 1794172952485,
+      "nextAt": 1794173345376,
       "failures": 0,
-      "lastChecked": 1794172568485,
+      "lastChecked": 1794172961376,
       "lastGood": {
         "title": "ポケモンカードゲーム MEGA グミ 30th CELEBRATION 20個入り BOX 食玩 ｜ タカラトミーアーツ TAKARATOMY A.R.T.S",
         "price": 6800,
@@ -67505,7 +67514,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1794172568485
+          "at": 1794172961376
         }
       },
       "history": [
@@ -67579,15 +67588,15 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張商品の1BOX表記を確認",
           "at": 1794152446777,
-          "lastAt": 1794172568485,
-          "samples": 51
+          "lastAt": 1794172961376,
+          "samples": 52
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1793320070329,
         "stock": "out_of_stock",
-        "lastAt": 1794172568485,
-        "lastUnavailableAt": 1794172568485,
+        "lastAt": 1794172961376,
+        "lastUnavailableAt": 1794172961376,
         "firstAvailableAt": 1793945536862,
         "lastAvailableAt": 1794152044883,
         "lastSale": {
@@ -67601,7 +67610,7 @@
           "durationUpperMs": 83109236
         }
       },
-      "lastGoodAt": 1794172568485,
+      "lastGoodAt": 1794172961376,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 384,
@@ -70845,23 +70854,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1794139914009,
-      "checked": 4,
-      "discovered": {
-        "ruleId": "58e6fef9-6a37-42ff-9ed2-ed0c877b520f",
-        "storeId": "mediaworld",
-        "result": {
-          "at": 1794139914009,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": "ページの容量上限"
-      },
-      "targets": 136,
-      "errors": 3
-    },
     {
       "at": 1794139947225,
       "checked": 3,
@@ -85463,6 +85455,45 @@
       "at": 1794172900988,
       "checked": 2,
       "discovered": null,
+      "targets": 136,
+      "errors": 3
+    },
+    {
+      "at": 1794172960351,
+      "checked": 2,
+      "discovered": {
+        "storeId": "square3rd",
+        "mode": "store-listing",
+        "result": {
+          "matched": 0,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.square-3rd.jp/new",
+              "head": true,
+              "productLinks": 186,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "new"
+            },
+            {
+              "url": "https://www.square-3rd.jp/product-list?keyword=BOX&page=3",
+              "head": false,
+              "productLinks": 29,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1794169314489
+        },
+        "error": ""
+      },
       "targets": 136,
       "errors": 3
     }
