@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1794254853395,
+  "generatedAt": 1794254919208,
   "prices": {
     "version": 1,
-    "checkedAt": 1794254811066,
+    "checkedAt": 1794254880172,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -222,8 +222,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1794235155650,
-        "lastAttemptAt": 1794213555650,
+        "nextCheckAt": 1794276480172,
+        "lastAttemptAt": 1794254880172,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "yugioh-/japan/products/yac1/": {
@@ -830,7 +830,7 @@
         "game": "gundam",
         "name": "Steel Requiem",
         "officialUrl": "https://www.gundam-gcg.com/jp/products/gd03.html",
-        "checkedAt": 1794213555650,
+        "checkedAt": 1794254880172,
         "status": "quantity_unconfirmed",
         "packPrice": 242,
         "packsPerBox": null,
@@ -839,7 +839,7 @@
         "sources": [
           {
             "url": "https://www.gundam-gcg.com/jp/products/gd03.html",
-            "checkedAt": 1794213555650,
+            "checkedAt": 1794254880172,
             "kind": "official_price",
             "title": "Steel Requiem [GD03] | GUNDAM CARD GAME 公式サイト",
             "packPrice": 242,
@@ -847,7 +847,7 @@
             "packsPerBox": null
           }
         ],
-        "nextCheckAt": 1794235155650
+        "nextCheckAt": 1794276480172
       },
       "gundam-gd02": {
         "parserVersion": 2,
@@ -920,8 +920,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1794235155650,
-        "lastAttemptAt": 1794213555650,
+        "nextCheckAt": 1794276480172,
+        "lastAttemptAt": 1794254880172,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "dragonball-st01": {
@@ -954,8 +954,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1794235155650,
-        "lastAttemptAt": 1794213555650,
+        "nextCheckAt": 1794276480172,
+        "lastAttemptAt": 1794254880172,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "dragonball-fb10": {
@@ -988,8 +988,8 @@
             "kind": "observed_box_quantity"
           }
         ],
-        "nextCheckAt": 1794235155650,
-        "lastAttemptAt": 1794213555650,
+        "nextCheckAt": 1794276480172,
+        "lastAttemptAt": 1794254880172,
         "lastAttemptStatus": "quantity_unconfirmed"
       },
       "dragonball-fb09": {
@@ -1298,36 +1298,6 @@
       }
     },
     "log": [
-      {
-        "at": 1793949522156,
-        "productId": "dragonball-fb12",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
-      {
-        "at": 1793964406713,
-        "productId": "pokemon-/ex/m7/",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
-      {
-        "at": 1793964406713,
-        "productId": "gundam-eb02",
-        "status": "quantity_unconfirmed",
-        "boxPrice": null
-      },
-      {
-        "at": 1793964406713,
-        "productId": "gundam-gd07",
-        "status": "price_unpublished",
-        "boxPrice": null
-      },
-      {
-        "at": 1793964406713,
-        "productId": "yugioh-/japan/products/",
-        "status": "identity_unconfirmed",
-        "boxPrice": null
-      },
       {
         "at": 1793964406713,
         "productId": "pokemon-m6a",
@@ -2737,6 +2707,36 @@
         "productId": "gundam-gd04",
         "status": "quantity_unconfirmed",
         "boxPrice": null
+      },
+      {
+        "at": 1794254880172,
+        "productId": "gundam-gd03",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1794254880172,
+        "productId": "dragonball-fb11",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1794254880172,
+        "productId": "dragonball-st01",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1794254880172,
+        "productId": "dragonball-fb10",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
+      },
+      {
+        "at": 1794254880172,
+        "productId": "dragonball-fb12",
+        "status": "quantity_unconfirmed",
+        "boxPrice": null
       }
     ]
   },
@@ -3073,7 +3073,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1794254853394,
+    "checkedAt": 1794254919207,
     "notificationDelay": {
       "samples": 2,
       "medianMs": 33618,
@@ -3085,7 +3085,7 @@
         "pages": 6,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1794254907457,
+        "nextAt": 1794254937782,
         "errors": 1
       },
       {
@@ -3101,7 +3101,7 @@
         "pages": 5,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1794254831831,
+        "nextAt": 1794254945851,
         "errors": 0
       },
       {
@@ -3406,7 +3406,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1794254853355,
+    "verifiedAt": 1794254919205,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -5284,18 +5284,18 @@
     "stores": {
       "193": {
         "storeId": "193",
-        "nextAt": 1794254886508,
+        "nextAt": 1794258509342,
         "createdAt": 1791078090716,
-        "successes": 913,
+        "successes": 914,
         "failures": 0,
         "rapidSales": [],
         "sources": [
           {
             "url": "https://193tcg.com/products/list?name=BOX",
             "role": "search",
-            "depth": 1,
-            "nextUrl": "https://193tcg.com/products/list?name=BOX&pageno=2",
-            "lastAt": 1794251292818
+            "depth": 2,
+            "nextUrl": "https://193tcg.com/products/list?name=BOX&pageno=3",
+            "lastAt": 1794254917617
           },
           {
             "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
@@ -5305,8 +5305,8 @@
             "lastAt": 1794251294812
           }
         ],
-        "sourceCursor": 0,
-        "lastAttemptAt": 1794251286508,
+        "sourceCursor": 1,
+        "lastAttemptAt": 1794254909342,
         "lastResult": {
           "matched": 1,
           "registered": 0,
@@ -5322,20 +5322,20 @@
               "order": "search"
             },
             {
-              "url": "https://193tcg.com/products/list?name=%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9",
-              "head": true,
+              "url": "https://193tcg.com/products/list?name=BOX&pageno=2",
+              "head": false,
               "productLinks": 40,
               "scope": "read",
               "hasMore": true,
               "depthLimited": false,
-              "order": "alternate"
+              "order": "search"
             }
           ],
           "requests": 2,
           "status": "ok",
-          "previousAt": 1794247663420
+          "previousAt": 1794251286508
         },
-        "lastAt": 1794251286508,
+        "lastAt": 1794254909342,
         "retryAt": 0,
         "error": "",
         "mode": "quiet",
@@ -6473,40 +6473,6 @@
       }
     },
     "log": [
-      {
-        "kind": "listing",
-        "storeId": "cardwiz",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://www.cardwiz.jp/new",
-            "head": true,
-            "productLinks": 64,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "new"
-          },
-          {
-            "url": "https://www.cardwiz.jp/new?page=2",
-            "head": false,
-            "productLinks": 6,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "new"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1794066637106,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1794073864916,
-        "at": 1794070264916
-      },
       {
         "kind": "listing",
         "storeId": "torecolo",
@@ -37645,11 +37611,45 @@
         "reason": "取得範囲で24時間以上、対象ページの追加なし",
         "nextAt": 1794258077850,
         "at": 1794254477850
+      },
+      {
+        "kind": "listing",
+        "storeId": "193",
+        "matched": 1,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://193tcg.com/products/list?name=BOX",
+            "head": true,
+            "productLinks": 40,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "search"
+          },
+          {
+            "url": "https://193tcg.com/products/list?name=BOX&pageno=2",
+            "head": false,
+            "productLinks": 40,
+            "scope": "read",
+            "hasMore": true,
+            "depthLimited": false,
+            "order": "search"
+          }
+        ],
+        "requests": 2,
+        "status": "ok",
+        "previousAt": 1794251286508,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1794258509342,
+        "at": 1794254909342
       }
     ],
     "budget": {
       "day": 20767,
-      "group": 166,
+      "group": 168,
       "fallback": 165
     },
     "nextFallbackAt": 1794254926603,
@@ -37675,8 +37675,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1794254840087,
-  "lastCompletedAt": 1794254841657,
+  "lastTick": 1794254909342,
+  "lastCompletedAt": 1794254917617,
   "load": {
     "activePages": 68,
     "waitingPages": 0,
@@ -37687,8 +37687,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1864160,
-    "compressedBytes": 159584,
+    "uncompressedBytes": 1864488,
+    "compressedBytes": 159587,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37718,8 +37718,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1794254810087,
-    "nextSync": 1794262010087,
+    "lastSync": 1794254879342,
+    "nextSync": 1794262079342,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -39471,12 +39471,6 @@
     ],
     "log": [
       {
-        "at": 1793742387149,
-        "kind": "catalog",
-        "count": 37,
-        "added": []
-      },
-      {
         "at": 1793749616785,
         "kind": "catalog",
         "count": 37,
@@ -40077,6 +40071,12 @@
       },
       {
         "at": 1794254810087,
+        "kind": "catalog",
+        "count": 40,
+        "added": []
+      },
+      {
+        "at": 1794254879342,
         "kind": "catalog",
         "count": 40,
         "added": []
@@ -44372,13 +44372,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 9587,
+          "negatives": 9588,
           "lastEvent": 1791039217281
         }
       },
-      "nextAt": 1794254906417,
+      "nextAt": 1794255294296,
       "failures": 0,
-      "lastChecked": 1794254522417,
+      "lastChecked": 1794254910296,
       "lastGood": {
         "title": "ポケモンカードゲーム MEGA 拡張パック 30th CELEBRATION BOX ｜ シュリンク付き 未開封 ポケカ トレカ トレーディングカード",
         "price": 31500,
@@ -44889,11 +44889,11 @@
           "priceDecision": "通知上限14,400円を超過",
           "identityDecision": "通常拡張BOX・20パック仕様を確認",
           "at": 1792788273501,
-          "lastAt": 1794254522417,
-          "samples": 4018
+          "lastAt": 1794254910296,
+          "samples": 4019
         }
       ],
-      "lastGoodAt": 1794254522417,
+      "lastGoodAt": 1794254910296,
       "priceDecisions": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "referencePrice": 7200,
@@ -44903,14 +44903,14 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限14,400円を超過",
-          "at": 1794254522417
+          "at": 1794254910296
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093471,
         "firstAvailableAt": 1791078093471,
         "stock": "out_of_stock",
-        "lastAt": 1794254522417,
+        "lastAt": 1794254910296,
         "lastAvailableAt": 1792558297352,
         "lastSale": {
           "at": 1792558605107,
@@ -44922,7 +44922,7 @@
           "durationLowerMs": 211271220,
           "durationUpperMs": 211870315
         },
-        "lastUnavailableAt": 1794254522417
+        "lastUnavailableAt": 1794254910296
       },
       "focusUntil": 1792348826132,
       "focusReason": "購入不可から購入可能への変化",
@@ -44986,13 +44986,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 10561,
+          "negatives": 10562,
           "lastEvent": 0
         }
       },
-      "nextAt": 1794254907457,
+      "nextAt": 1794255198738,
       "failures": 0,
-      "lastChecked": 1794254619457,
+      "lastChecked": 1794254910738,
       "lastGood": {
         "title": "ブースターパック　Newtype Rising　BOX【ガンダムカードゲーム】",
         "price": 5808,
@@ -45051,11 +45051,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1793037942619,
-          "lastAt": 1794254619457,
-          "samples": 3930
+          "lastAt": 1794254910738,
+          "samples": 3931
         }
       ],
-      "lastGoodAt": 1794254619457,
+      "lastGoodAt": 1794254910738,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -45065,14 +45065,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1794254619457
+          "at": 1794254910738
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078128567,
         "stock": "out_of_stock",
-        "lastAt": 1794254619457,
-        "lastUnavailableAt": 1794254619457
+        "lastAt": 1794254910738,
+        "lastUnavailableAt": 1794254910738
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -67468,13 +67468,13 @@
       "episodes": {
         "28c5e09d-cea2-41c9-8c9a-c402fb07374b": {
           "active": false,
-          "negatives": 253,
+          "negatives": 254,
           "lastEvent": 1794069738565
         }
       },
-      "nextAt": 1794254831831,
+      "nextAt": 1794255256739,
       "failures": 0,
-      "lastChecked": 1794254447831,
+      "lastChecked": 1794254872739,
       "lastGood": {
         "title": "ポケモンカードゲーム MEGA グミ 30th CELEBRATION 20個入り BOX 食玩 ｜ タカラトミーアーツ TAKARATOMY A.R.T.S",
         "price": 6800,
@@ -67520,7 +67520,7 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限14,400円以下",
-          "at": 1794254447831
+          "at": 1794254872739
         }
       },
       "history": [
@@ -67612,15 +67612,15 @@
           "priceDecision": "通知上限14,400円以下",
           "identityDecision": "通常拡張商品の1BOX表記を確認",
           "at": 1794241164906,
-          "lastAt": 1794254447831,
-          "samples": 34
+          "lastAt": 1794254872739,
+          "samples": 35
         }
       ],
       "availabilityTiming": {
         "firstObservedAt": 1793320070329,
         "stock": "out_of_stock",
-        "lastAt": 1794254447831,
-        "lastUnavailableAt": 1794254447831,
+        "lastAt": 1794254872739,
+        "lastUnavailableAt": 1794254872739,
         "firstAvailableAt": 1793945536862,
         "lastAvailableAt": 1794152044883,
         "lastSale": {
@@ -67634,7 +67634,7 @@
           "durationUpperMs": 83109236
         }
       },
-      "lastGoodAt": 1794254447831,
+      "lastGoodAt": 1794254872739,
       "monitorStatus": "監視中",
       "monitorActive": true,
       "intervalSeconds": 384,
@@ -70912,30 +70912,6 @@
     }
   ],
   "runs": [
-    {
-      "at": 1794221954747,
-      "checked": 0,
-      "discovered": {
-        "ruleId": "51eedfe0-b4ef-4789-99ac-45667087da0e",
-        "storeId": "cardwiz",
-        "result": {
-          "at": 1794221954747,
-          "status": "no_hit",
-          "matched": 0,
-          "registered": 0
-        },
-        "error": ""
-      },
-      "targets": 136,
-      "errors": 4
-    },
-    {
-      "at": 1794221986562,
-      "checked": 2,
-      "discovered": null,
-      "targets": 136,
-      "errors": 4
-    },
     {
       "at": 1794222018362,
       "checked": 3,
@@ -85355,6 +85331,52 @@
       "at": 1794254840087,
       "checked": 2,
       "discovered": null,
+      "targets": 136,
+      "errors": 3
+    },
+    {
+      "at": 1794254871660,
+      "checked": 1,
+      "discovered": null,
+      "targets": 136,
+      "errors": 3
+    },
+    {
+      "at": 1794254909342,
+      "checked": 2,
+      "discovered": {
+        "storeId": "193",
+        "mode": "store-listing",
+        "result": {
+          "matched": 1,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://193tcg.com/products/list?name=BOX",
+              "head": true,
+              "productLinks": 40,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
+            },
+            {
+              "url": "https://193tcg.com/products/list?name=BOX&pageno=2",
+              "head": false,
+              "productLinks": 40,
+              "scope": "read",
+              "hasMore": true,
+              "depthLimited": false,
+              "order": "search"
+            }
+          ],
+          "requests": 2,
+          "status": "ok",
+          "previousAt": 1794251286508
+        },
+        "error": ""
+      },
       "targets": 136,
       "errors": 3
     }
