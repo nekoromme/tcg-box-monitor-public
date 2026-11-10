@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import base64
+import gzip
 import json
 import os
 from collections.abc import Mapping
@@ -35,6 +37,43 @@ ALERT_RETENTION_DAYS = 30
 OCR_RETENTION_DAYS = 90
 DELIVERY_RETENTION_DAYS = 730
 HTTP_CACHE_RETENTION_DAYS = 90
+OCR_COMPRESSION_MIN_BYTES = 100_000
+
+
+def _pack_ocr_caches(data: dict[str, Any]) -> dict[str, Any]:
+    """通知台帳は普通のJSONのまま、大きい文字読取り結果だけ可逆圧縮する。"""
+    packed = dict(data)
+    compressed: dict[str, str] = {}
+    for name in ("ocr_cache", "fxembed_ocr_cache"):
+        raw = json.dumps(data.get(name, {}), ensure_ascii=False,
+                         separators=(",", ":"), allow_nan=False).encode("utf-8")
+        if len(raw) < OCR_COMPRESSION_MIN_BYTES:
+            continue
+        compressed[name] = base64.b64encode(gzip.compress(raw, compresslevel=1, mtime=0)).decode()
+        packed[name] = {}
+    if compressed:
+        packed["compressed_ocr_caches"] = {"encoding": "gzip-base64-v1", "fields": compressed}
+    return packed
+
+
+def _unpack_ocr_caches(data: dict[str, Any]) -> None:
+    compressed = data.pop("compressed_ocr_caches", None)
+    if compressed is None:
+        return  # 以前の非圧縮JSONも、そのまま読み込める。
+    if (not isinstance(compressed, dict)
+            or compressed.get("encoding") != "gzip-base64-v1"
+            or not isinstance(compressed.get("fields"), dict)):
+        raise ValueError("monitor_stateのOCR圧縮形式が不正です")
+    for name, value in compressed["fields"].items():
+        if name not in {"ocr_cache", "fxembed_ocr_cache"} or not isinstance(value, str):
+            raise ValueError("monitor_stateのOCR圧縮フィールドが不正です")
+        # 壊れた圧縮データを空キャッシュとして扱わず、保存前の検査でも止める。
+        restored = json.loads(gzip.decompress(base64.b64decode(value, validate=True)))
+        if (not isinstance(restored, dict)
+                or not all(isinstance(k, str) and isinstance(v, str) for k, v in restored.items())
+                or data.get(name)):
+            raise ValueError("monitor_stateのOCR圧縮内容が不正です")
+        data[name] = restored
 
 
 def _default_data() -> dict[str, Any]:
@@ -92,6 +131,7 @@ class MonitorState:
         loaded = json.loads(state_path.read_text(encoding="utf-8"))
         if not isinstance(loaded, dict):
             raise ValueError("monitor_state.jsonのルートはJSONオブジェクトである必要があります")
+        _unpack_ocr_caches(loaded)
         version = int(loaded.get("schema_version", 1))
         if version > SCHEMA_VERSION:
             raise ValueError(
@@ -142,16 +182,16 @@ class MonitorState:
             raise ValueError("monitor_stateの直列化結果がJSONオブジェクトではありません")
         if decoded.get("schema_version") != SCHEMA_VERSION:
             raise ValueError("monitor_state schema_versionが不正です")
+        _unpack_ocr_caches(decoded)
 
     def save(self, now: datetime | None = None) -> None:
         """Atomically replace the state only after a complete JSON round-trip."""
 
         self.prune(now)
         serialized = json.dumps(
-            self.data,
+            _pack_ocr_caches(self.data),
             ensure_ascii=False,
-            # 投稿画像の解析履歴が増え、整形JSONがGitHubの100 MiB上限に
-            # 迫っていた。履歴を削らず空白だけ省き、通常のJSONとして保存する。
+            # 台帳・予定IDは平文JSONを保ち、連動する診断・在庫処理も従来通り読む。
             separators=(",", ":"),
             sort_keys=True,
             default=str,

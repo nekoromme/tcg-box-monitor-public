@@ -13,6 +13,79 @@ from tcg_monitor.models import LotteryCase, Release, SourceTier
 from tcg_monitor.state import MonitorState
 
 
+def test_compressed_ocr_roundtrip_keeps_delivery_calendar_and_both_caches(tmp_path):
+    state = MonitorState.load(tmp_path / "monitor_state.json")
+    text = "公開商品画像の読取り結果と応募期間。\n" * 10000
+    state.data["ocr_cache"] = {"post-one": text}
+    state.data["fxembed_ocr_cache"] = {"post-two": text + "別画像"}
+    state.data["ocr_cache_meta"] = {"post-one": {"updated_at": datetime.now(UTC).isoformat()}}
+    state.data["delivery_journal"] = {"lottery:started:already-sent": {
+        "status": "complete", "updated_at": datetime.now(UTC).isoformat()}}
+    state.data["calendar_sync"] = {"lottery:already-sent": {"event_id": "tcg-existing"}}
+    expected = json.loads(json.dumps(state.data))
+    state.save()
+    wire = json.loads(state.path.read_text())
+    assert "compressed_ocr_caches" in wire
+    assert state.path.stat().st_size < len(text.encode()) // 4
+    assert wire["delivery_journal"] == expected["delivery_journal"]
+    assert wire["calendar_sync"] == expected["calendar_sync"]
+    assert MonitorState.load(state.path).data == expected
+    # 保存のためにメモリ上のキャッシュを空にしてはいけない。
+    assert state.data["ocr_cache"]["post-one"] == text
+
+
+def test_old_plain_state_stays_readable_and_small_state_stays_plain(tmp_path):
+    state = MonitorState.load(tmp_path / "monitor_state.json")
+    state.data["ocr_cache"] = {"post-one": "短い読取り結果"}
+    state.save()
+    wire = json.loads(state.path.read_text())
+    assert "compressed_ocr_caches" not in wire
+    assert MonitorState.load(state.path).data["ocr_cache"] == wire["ocr_cache"]
+
+
+def test_corrupt_compressed_cache_is_not_silently_ignored(tmp_path):
+    path = tmp_path / "monitor_state.json"
+    path.write_text(json.dumps({"compressed_ocr_caches": {
+        "encoding": "gzip-base64-v1", "fields": {"ocr_cache": "not-valid-base64"}}}))
+    with pytest.raises(ValueError):
+        MonitorState.load(path)
+
+
+def test_compression_failure_preserves_previous_file(tmp_path, monkeypatch):
+    state = MonitorState.load(tmp_path / "monitor_state.json")
+    state.save()
+    before = state.path.read_bytes()
+    state.data["ocr_cache"] = {"post-one": "文字" * 100000}
+    def fail(*args, **kwargs):
+        raise OSError("compression failed")
+    monkeypatch.setattr(state_module.gzip, "compress", fail)
+    with pytest.raises(OSError, match="compression failed"):
+        state.save()
+    assert state.path.read_bytes() == before
+
+
+def test_verified_failed_save_recovery_is_idempotent_and_keeps_unrelated_history(tmp_path):
+    from tcg_monitor.lottery_state_repair import (
+        COMPLETED_DELIVERIES_20261110,
+        recover_completed_deliveries,
+    )
+    state = MonitorState.load(tmp_path / "monitor_state.json")
+    assert recover_completed_deliveries(state) == 0  # 未稼働の環境は変更しない。
+    state.data["armed"] = True
+    state.mark_delivered("lottery:started:unrelated")
+    first = "lottery:started:" + COMPLETED_DELIVERIES_20261110[0]
+    state.mark_delivered(first)
+    previous = dict(state.data["delivery_journal"][first])
+    assert recover_completed_deliveries(state) == 5
+    assert state.data["delivery_journal"][first] == previous
+    assert state.delivered("lottery:started:unrelated")
+    assert len(state.data["delivery_journal"]) == 7
+    assert recover_completed_deliveries(state) == 0
+    loaded = MonitorState.load(state.path)
+    assert all(loaded.delivered("lottery:started:" + key)
+               for key in COMPLETED_DELIVERIES_20261110)
+
+
 def _lottery(start_at: date) -> LotteryCase:
     return LotteryCase(
         "pokemon_card",
