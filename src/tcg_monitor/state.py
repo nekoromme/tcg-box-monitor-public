@@ -32,7 +32,7 @@ from tcg_monitor.models import (
     stable_url_identity,
 )
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 ALERT_RETENTION_DAYS = 30
 OCR_RETENTION_DAYS = 90
 DELIVERY_RETENTION_DAYS = 730

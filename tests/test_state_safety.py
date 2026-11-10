@@ -13,7 +13,7 @@ from tcg_monitor.models import LotteryCase, Release, SourceTier
 from tcg_monitor.state import MonitorState
 
 
-def test_compressed_ocr_roundtrip_keeps_delivery_calendar_and_both_caches(tmp_path):
+def test_compressed_ocr_roundtrip_keeps_delivery_calendar_and_both_caches(tmp_path, monkeypatch):
     state = MonitorState.load(tmp_path / "monitor_state.json")
     text = "公開商品画像の読取り結果と応募期間。\n" * 10000
     state.data["ocr_cache"] = {"post-one": text}
@@ -32,6 +32,10 @@ def test_compressed_ocr_roundtrip_keeps_delivery_calendar_and_both_caches(tmp_pa
     assert MonitorState.load(state.path).data == expected
     # 保存のためにメモリ上のキャッシュを空にしてはいけない。
     assert state.data["ocr_cache"]["post-one"] == text
+    # 圧縮形式を知らない旧版へ戻して空キャッシュを上書き保存させない。
+    monkeypatch.setattr(state_module, "SCHEMA_VERSION", 2)
+    with pytest.raises(ValueError, match="未対応"):
+        MonitorState.load(state.path)
 
 
 def test_old_plain_state_stays_readable_and_small_state_stays_plain(tmp_path):
@@ -519,7 +523,7 @@ def test_schema_v1_state_is_upgraded_without_losing_delivery_history(
     state.save()
     reloaded = MonitorState.load(path)
 
-    assert reloaded.data["schema_version"] == 2
+    assert reloaded.data["schema_version"] == 3
     assert reloaded.data["seen_cases"]["legacy"]["case_id"] == "legacy"
     assert reloaded.delivered("lottery:started:legacy")
     assert reloaded.data["delivery_journal"]["lottery:started:legacy"]["updated_at"]
