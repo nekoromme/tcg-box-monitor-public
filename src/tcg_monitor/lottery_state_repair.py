@@ -32,9 +32,43 @@ REPAIR_KEY = "lottery_duplicates_20261010"
 SOCIAL_REFERENCE_REPAIR_KEY = "lottery_social_reference_duplicates_20261010"
 CROSS_SOURCE_REPAIR_KEY = "lottery_cross_source_duplicates_20261031"
 RESULT_HISTORY_REPAIR_KEY = "lottery_result_history_20261011"
+DELIVERY_RECOVERY_KEY = "completed_discord_before_state_limit_20261110"
+# 実行42749162175は6件のDiscord送信が全てHTTP 200で完了した後、
+# 100 MiB超過で状態保存だけ失敗。同時刻に作成されたCalendarの内部ID6件と
+# 件数を照合済み。この確定した送信だけを復元し、再通知を防ぐ。
+COMPLETED_DELIVERIES_20261110 = (
+    "6052cbfdfab3f851450c5431c3b35a3cf1f883e686685d17d6ffe105f893c87a",
+    "c2dd77ecc9372a38b8ee5c1b0bf05ffd9805a3db122986614ec1bbfbd513ec91",
+    "cbfe93efdadc6233a5a4710d526b7cca9354dc49688343c7b06514621a806ebe",
+    "b0ef618a2be02944136f7378df0d002aa641c02d79df9f8b4649d4d129abe21e",
+    "f1d3041b1574347d23fd82e1075e12878de7be0c80880ea0a6fa51d74b3736a4",
+    "e3772deba7e28e876ba27c516d12d5592abdacfe67d7ceb3e9016f08d756091c",
+)
 FULLCOMP_POST = "https://x.com/fc_sendaieki/status/2108806066981282193"
 MORIOKA_FORM = "https://t.co/2uqpB26XsS"
 MORIOKA_POST_IDS = {"2108220330569584791", "2108397146928226791", "2108728929368633617"}
+
+
+def recover_completed_deliveries(state: MonitorState) -> int:
+    maintenance = state.data.setdefault("maintenance", {})
+    if maintenance.get(DELIVERY_RECOVERY_KEY, {}).get("status") == "complete":
+        return 0
+    if not state.data.get("armed"):
+        return 0
+    recovered = 0
+    for case_id in COMPLETED_DELIVERIES_20261110:
+        key = f"lottery:started:{case_id}"
+        if not state.delivered(key):
+            state.mark_delivered(key)
+            recovered += 1
+    maintenance[DELIVERY_RECOVERY_KEY] = {
+        "status": "complete", "source_run_id": 42749162175,
+        "completed_at": datetime.now(UTC).isoformat(), "deliveries": recovered,
+    }
+    state.save()
+    log_event(phase="verified_delivery_recovery", outcome="complete",
+              deliveries=recovered, discord_notifications=0)
+    return recovered
 
 
 def _case(row: dict[str, Any]) -> LotteryCase:
@@ -292,7 +326,8 @@ if __name__ == "__main__":
     state = MonitorState.load(args.state)
     calendar = CalendarAdapter()
     config = load_config(args.config)
-    count = repair(state, calendar, config)
+    count = recover_completed_deliveries(state)
+    count += repair(state, calendar, config)
     count += repair_social_route_duplicates(state, calendar, config)
     count += repair_result_histories(state, calendar, config)
     count += repair_cross_source_duplicates(state, calendar, config)

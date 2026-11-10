@@ -76,6 +76,11 @@ from tcg_monitor.parsers.lorcana_official import (
     is_lorcana_product_index,
     parse_lorcana_official_product,
 )
+from tcg_monitor.parsers.lottery_index_fallback import (
+    IndexDetailFallback,
+    discover_index_detail_fallbacks,
+    parse_index_detail_fallback,
+)
 from tcg_monitor.parsers.official_retailers import (
     KONAMI_STYLE_SOURCE,
     ONEPIECE_SHOP_SOURCE,
@@ -745,6 +750,7 @@ def run_pipeline(
     source_outcomes: dict[str, bool] = {}
     source_failed_hosts: dict[str, set[str]] = {}
     source_evidence: dict[str, SourceMetrics] = {}
+    internal_coverage: dict[str, list[str]] = {}
     run_token = datetime.now(UTC).isoformat()
     selected_sources = [
         source
@@ -810,6 +816,9 @@ def run_pipeline(
     for source in selected_sources:
         started = time.perf_counter()
         metrics = SourceMetrics(source.id)
+        index_fallbacks: dict[str, IndexDetailFallback] = {}
+        queued_index_fallbacks: dict[str, IndexDetailFallback] = {}
+        recovered_event_urls: set[str] = set()
 
         def recover_expired_proxy(status_url: str, source_config: SourceConfig = source) -> str:
             return read_image_text(fxembed_reader.post_image_urls(status_url, source_config))
@@ -982,6 +991,12 @@ def run_pipeline(
                     prior_failure_attempts=problem.prior_attempts,
                 )
                 metrics.failed(problem)
+                if url in index_fallbacks:
+                    # 公式で確認画面が出ても突破を試みない。同じ店舗索引の
+                    # 詳細本文へ切り替え、元の失敗はroutesに残す。
+                    fallback = index_fallbacks[url]
+                    queued_index_fallbacks[fallback.url] = fallback
+                    discovery_urls.append((fallback.url, False))
                 source_failed_hosts.setdefault(source.id, set()).add(
                     provider_host(problem.url)
                 )
@@ -1283,6 +1298,9 @@ def run_pipeline(
                     discovered = discover_livepocket_event_urls(
                         html, url, source, config
                     )
+                    index_fallbacks.update(discover_index_detail_fallbacks(
+                        html, url, source, config, discovered,
+                    ))
                     route.update(status="discovery", discovered_urls=discovered)
                     discovery_urls.extend(
                         (item, False)
@@ -1517,6 +1535,13 @@ def run_pipeline(
                         )
                     ):
                         enqueue_fallback_root()
+                elif url in queued_index_fallbacks:
+                    fallback = queued_index_fallbacks[url]
+                    parsed_cases = parse_index_detail_fallback(html, fallback, source, config)
+                    parsed_releases, parsed_alerts = [], []
+                    if parsed_cases:
+                        recovered_event_urls.add(fallback.official_url)
+                        route["covers_official_url"] = fallback.official_url
                 elif is_furuichi_source(source.id):
                     parsed_cases, parsed_releases, parsed_alerts = (
                         parse_furuichi_lottery_detail(
@@ -1677,6 +1702,21 @@ def run_pipeline(
             )
         ):
             completed_page = False
+        if recovered_event_urls:
+            # 一部だけ補完して全件復旧と扱わない。未読の別抽選・壊れた詳細が
+            # 残る回は異常通知を維持する。公式取得の失敗回数もリセットしない。
+            failed_routes = {
+                route_url for route_url, item in metrics.routes.items()
+                if item.get("status") in {"fetch_failed", "parser_failed", "discovery_failed"}
+            }
+            completed_page = False
+            if failed_routes and failed_routes <= recovered_event_urls:
+                internal_coverage[source.id] = sorted({
+                    index_fallbacks[event].url for event in recovered_event_urls
+                })
+            failed_url = sorted(recovered_event_urls)[0]
+            metrics.http_status = cast(int | None, metrics.routes[failed_url].get("http_status"))
+            metrics.fetch_method = "http_with_index_detail_fallback"
         if not completed_page and last_failure_alert:
             alerts.append(last_failure_alert)
         source_outcomes[source.id] = completed_page
@@ -1760,6 +1800,7 @@ def run_pipeline(
         set(source_failed_hosts),
         source_evidence,
     )
+    covered_sources.update(internal_coverage)
     visible_alerts = _suppress_covered_transport_alerts(
         alerts + lottery_merge_alerts + release_merge_alerts,
         config,
