@@ -150,7 +150,9 @@ class MonitorState:
         serialized = json.dumps(
             self.data,
             ensure_ascii=False,
-            indent=2,
+            # 投稿画像の解析履歴が増え、整形JSONがGitHubの100 MiB上限に
+            # 迫っていた。履歴を削らず空白だけ省き、通常のJSONとして保存する。
+            separators=(",", ":"),
             sort_keys=True,
             default=str,
             allow_nan=False,
