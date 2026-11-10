@@ -5580,7 +5580,7 @@ sources:
     retailer_name: ホビーステーション
 
 - id: livepocket_tsutaya_wakuya
-  name: TSUTAYA涌谷店 BOX抽選（店舗索引→LivePocket原文）
+  name: TSUTAYA涌谷店 BOX抽選（LivePocket原文・索引詳細補完）
   source_type: retailer_official_ticketing
   source_tier: official_indirect
   supported_games:
@@ -5600,10 +5600,11 @@ sources:
   expected_elements:
   - livepocket_event_link
   - application_period
-  notes: X・LivePocket店舗一覧に非掲載の抽選を店舗別索引から発見し、公式個別ページで店名・商品・応募期間を確認する。索引の締切だけでは通知しない。11/8実取得でOP18を確認。販売時にビニールと箱の開封条件あり。
+  notes: X・LivePocket店舗一覧に非掲載の抽選を店舗別索引から発見し、公式個別ページで確認する。公式取得失敗時だけ同じ索引の詳細から店名・商品・同一応募URLと開始・締切を照合し、二次情報として補完する。索引の締切だけでは通知しない。公式の失敗記録は維持。販売時にビニールと箱の開封条件あり。
   parser_kind: livepocket
   parser_options:
     retailer_id: tsutaya_wakuya
     retailer_name: TSUTAYA涌谷店
     required_store_name: TSUTAYA涌谷店
     store_index_url: https://tcg-chusen.com/store/tsutaya-dd323/
+    store_index_detail_fallback: true
