@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "reviewedAt": 1794154412189,
-  "nextReviewAt": 1794759212189,
+  "reviewedAt": 1794765500638,
+  "nextReviewAt": 1795370300638,
   "scope": "監視店の在庫履歴。市場全体の成約価格ではありません。候補の提示のみで停止・再開はしません。",
   "products": [
     {
@@ -119,9 +119,17 @@
     {
       "productId": "gundam-gd06",
       "name": "Stardust Trails[GD06]",
-      "status": "insufficient_evidence",
-      "reason": "継続在庫の根拠不足。現在の設定を維持",
-      "evidence": []
+      "status": "pause_candidate",
+      "reason": "定価105%以下の在庫を同一店で24時間以上・3回以上観測",
+      "evidence": [
+        {
+          "url": "https://www.advantagetcg.jp/product/137359",
+          "price": 6000,
+          "from": 1794647436872,
+          "through": 1794765246786,
+          "samples": 59
+        }
+      ]
     },
     {
       "productId": "gundam-eb01",
@@ -210,29 +218,22 @@
           "url": "https://www.cardmax.jp/shop/shopdetail.html?brandcode=000000234238&search=%A5%CF%A5%A4%A5%DA%A5%EA%A5%A2%A5%B7%A5%C6%A5%A3&sort=",
           "price": 5280,
           "from": 1793038494477,
-          "through": 1794153300683,
-          "samples": 354
-        },
-        {
-          "url": "https://www.square-3rd.jp/product/60759",
-          "price": 5280,
-          "from": 1793729652717,
-          "through": 1794152446502,
-          "samples": 190
+          "through": 1794763587167,
+          "samples": 531
         },
         {
           "url": "https://www.cardmax.jp/shop/shopdetail.html?brandcode=000000234238&search=BOX&sort=",
           "price": 5280,
           "from": 1793038397606,
-          "through": 1794153027307,
-          "samples": 353
+          "through": 1794763301761,
+          "samples": 530
         },
         {
           "url": "https://www.advantagetcg.jp/product/135961",
           "price": 3700,
-          "from": 1793787415184,
-          "through": 1794152381717,
-          "samples": 163
+          "from": 1794393762040,
+          "through": 1794763914874,
+          "samples": 159
         }
       ]
     },
@@ -250,18 +251,11 @@
       "reason": "定価105%以下の在庫を同一店で24時間以上・3回以上観測",
       "evidence": [
         {
-          "url": "https://www.square-3rd.jp/product/56900",
-          "price": 5280,
-          "from": 1793811454565,
-          "through": 1794152250776,
-          "samples": 152
-        },
-        {
           "url": "https://www.torecolo.jp/shop/g/g4904810093565/",
           "price": 5280,
           "from": 1793084890965,
-          "through": 1794152706726,
-          "samples": 487
+          "through": 1794763619137,
+          "samples": 747
         }
       ]
     },
