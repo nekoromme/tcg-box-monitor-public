@@ -1,8 +1,8 @@
 {
-  "generatedAt": 1794977235429,
+  "generatedAt": 1794977291638,
   "prices": {
     "version": 1,
-    "checkedAt": 1794977199390,
+    "checkedAt": 1794977258335,
     "records": {
       "onepiece-eb-04": {
         "parserVersion": 2,
@@ -3067,7 +3067,7 @@
     ]
   },
   "cadence": {
-    "checkedAt": 1794977235428,
+    "checkedAt": 1794977291637,
     "notificationDelay": {
       "samples": 2,
       "medianMs": 43291,
@@ -3087,7 +3087,7 @@
         "pages": 3,
         "minSeconds": 202,
         "maxSeconds": 384,
-        "nextAt": 1794977269108,
+        "nextAt": 1794977462190,
         "errors": 2
       },
       {
@@ -3400,7 +3400,7 @@
   "notificationPolicy": {
     "version": 1,
     "reviewedAt": "2026-10-04T12:08:00+09:00",
-    "verifiedAt": 1794977235427,
+    "verifiedAt": 1794977291636,
     "sourceUrl": "https://github.com/nekoromme/tcg-box-monitor-public/blob/main/config/inventory-notification-policy.json",
     "productSettings": {
       "gundam-gd01": {
@@ -6275,7 +6275,7 @@
         "error": "掲載一覧の確認失敗（売切れとは判定しません）",
         "mode": "waiting",
         "reason": "掲載一覧の確認失敗（売切れとは判定しません）",
-        "intervalMs": 7509333,
+        "intervalMs": 7453139,
         "storeName": "ティアワン ワンピース"
       },
       "square3rd": {
@@ -6392,9 +6392,9 @@
       },
       "ryuunoshippo": {
         "storeId": "ryuunoshippo",
-        "nextAt": 1794977239660,
+        "nextAt": 1794980887970,
         "createdAt": 1791371975195,
-        "successes": 1018,
+        "successes": 1019,
         "failures": 0,
         "rapidSales": [],
         "sources": [
@@ -6403,11 +6403,11 @@
             "role": "search",
             "depth": 1,
             "nextUrl": null,
-            "lastAt": 1794973642220
+            "lastAt": 1794977291001
           }
         ],
         "sourceCursor": 0,
-        "lastAttemptAt": 1794973639660,
+        "lastAttemptAt": 1794977287970,
         "lastResult": {
           "matched": 1,
           "registered": 0,
@@ -6425,9 +6425,9 @@
           ],
           "requests": 1,
           "status": "ok",
-          "previousAt": 1794970032818
+          "previousAt": 1794973639660
         },
-        "lastAt": 1794973639660,
+        "lastAt": 1794977287970,
         "retryAt": 0,
         "error": "",
         "lastNewAt": 1791372044044,
@@ -6438,40 +6438,6 @@
       }
     },
     "log": [
-      {
-        "kind": "listing",
-        "storeId": "tier1_op",
-        "matched": 0,
-        "registered": 0,
-        "limited": 0,
-        "pages": [
-          {
-            "url": "https://tier-one-onepiece.jp/view/search?search_keyword=BOX&sort=order",
-            "head": true,
-            "productLinks": 48,
-            "scope": "read",
-            "hasMore": true,
-            "depthLimited": false,
-            "order": "sorted"
-          },
-          {
-            "url": "https://tier-one-onepiece.jp/view/search?page=2&search_keyword=BOX",
-            "head": false,
-            "productLinks": 3,
-            "scope": "read",
-            "hasMore": false,
-            "depthLimited": false,
-            "order": "search"
-          }
-        ],
-        "requests": 2,
-        "status": "ok",
-        "previousAt": 1794780569196,
-        "mode": "quiet",
-        "reason": "取得範囲で24時間以上、対象ページの追加なし",
-        "nextAt": 1794787780082,
-        "at": 1794784180082
-      },
       {
         "kind": "listing",
         "storeId": "cardmax",
@@ -37231,11 +37197,36 @@
         "reason": "取得範囲で24時間以上、対象ページの追加なし",
         "nextAt": 1794980828627,
         "at": 1794977228627
+      },
+      {
+        "kind": "listing",
+        "storeId": "ryuunoshippo",
+        "matched": 1,
+        "registered": 0,
+        "limited": 0,
+        "pages": [
+          {
+            "url": "https://www.ryuunoshippo7.com/product-group/2?view=recommend",
+            "head": true,
+            "productLinks": 14,
+            "scope": "read",
+            "hasMore": false,
+            "depthLimited": false,
+            "order": "search"
+          }
+        ],
+        "requests": 1,
+        "status": "ok",
+        "previousAt": 1794973639660,
+        "mode": "quiet",
+        "reason": "取得範囲で24時間以上、対象ページの追加なし",
+        "nextAt": 1794980887970,
+        "at": 1794977287970
       }
     ],
     "budget": {
       "day": 20775,
-      "group": 415,
+      "group": 416,
       "fallback": 452
     },
     "nextFallbackAt": 1794977225721,
@@ -37261,8 +37252,8 @@
   },
   "enabled": true,
   "notificationConfigured": true,
-  "lastTick": 1794977228627,
-  "lastCompletedAt": 1794977231772,
+  "lastTick": 1794977287970,
+  "lastCompletedAt": 1794977291001,
   "load": {
     "activePages": 70,
     "waitingPages": 0,
@@ -37273,8 +37264,8 @@
   "error": "",
   "storage": {
     "format": "monitor-gzip-v1",
-    "uncompressedBytes": 1822348,
-    "compressedBytes": 155354,
+    "uncompressedBytes": 1822507,
+    "compressedBytes": 155331,
     "chunks": 3
   },
   "deliveryHealth": {
@@ -37304,8 +37295,8 @@
       }
     },
     "enabled": true,
-    "lastSync": 1794977198626,
-    "nextSync": 1794984398626,
+    "lastSync": 1794977257969,
+    "nextSync": 1794984457969,
     "error": "",
     "lastFailure": {
       "at": 1791050218649,
@@ -39057,12 +39048,6 @@
     ],
     "log": [
       {
-        "at": 1794411128721,
-        "kind": "catalog",
-        "count": 40,
-        "added": []
-      },
-      {
         "at": 1794414759125,
         "kind": "catalog",
         "count": 40,
@@ -39652,6 +39637,12 @@
       },
       {
         "at": 1794977198626,
+        "kind": "catalog",
+        "count": 40,
+        "added": []
+      },
+      {
+        "at": 1794977257969,
         "kind": "catalog",
         "count": 40,
         "added": []
@@ -43037,13 +43028,13 @@
       "episodes": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "active": false,
-          "negatives": 11446,
+          "negatives": 11447,
           "lastEvent": 0
         }
       },
-      "nextAt": 1794977269108,
+      "nextAt": 1794977673632,
       "failures": 0,
-      "lastChecked": 1794976885108,
+      "lastChecked": 1794977289632,
       "lastGood": {
         "title": "ガンダムカードゲーム ブースターパック Freedom Ascension GD05 BOX ｜ フリーダム アセンション 未開封 GUNDAM",
         "price": 8200,
@@ -43379,11 +43370,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,300円を超過",
           "at": 1794813480233,
-          "lastAt": 1794976885108,
-          "samples": 398
+          "lastAt": 1794977289632,
+          "samples": 399
         }
       ],
-      "lastGoodAt": 1794976885108,
+      "lastGoodAt": 1794977289632,
       "priceDecisions": {
         "0cffc351-4771-4c54-9159-44f554d95760": {
           "referencePrice": 6000,
@@ -43393,16 +43384,16 @@
           "shippingIncluded": false,
           "status": "over_limit",
           "reason": "通知上限6,300円を超過",
-          "at": 1794976885108
+          "at": 1794977289632
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078129094,
         "stock": "in_stock",
-        "lastAt": 1794976885108,
+        "lastAt": 1794977289632,
         "lastUnavailableAt": 1793845274168,
         "firstAvailableAt": 1791324806385,
-        "lastAvailableAt": 1794976885108,
+        "lastAvailableAt": 1794977289632,
         "lastSale": {
           "at": 1793796299812,
           "targetId": "1c17851c-be9a-4bf4-9c7c-eda322b4f6f9",
@@ -44838,13 +44829,13 @@
       "episodes": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "active": false,
-          "negatives": 17015,
+          "negatives": 17016,
           "lastEvent": 0
         }
       },
-      "nextAt": 1794977274598,
+      "nextAt": 1794977491344,
       "failures": 0,
-      "lastChecked": 1794977072598,
+      "lastChecked": 1794977289344,
       "lastGood": {
         "title": "【ボックス販売】ガンダムCG Newtype Rising【GD01】",
         "price": 5808,
@@ -45243,11 +45234,11 @@
           "comparable": true,
           "priceDecision": "通知上限6,098円以下",
           "at": 1794932475490,
-          "lastAt": 1794977072598,
-          "samples": 196
+          "lastAt": 1794977289344,
+          "samples": 197
         }
       ],
-      "lastGoodAt": 1794977072598,
+      "lastGoodAt": 1794977289344,
       "priceDecisions": {
         "956d1cf9-469b-48ef-904c-22dcc1743cc5": {
           "referencePrice": 5808,
@@ -45257,14 +45248,14 @@
           "shippingIncluded": false,
           "status": "within_limit",
           "reason": "通知上限6,098円以下",
-          "at": 1794977072598
+          "at": 1794977289344
         }
       },
       "availabilityTiming": {
         "firstObservedAt": 1791078093552,
         "stock": "out_of_stock",
-        "lastAt": 1794977072598,
-        "lastUnavailableAt": 1794977072598
+        "lastAt": 1794977289344,
+        "lastUnavailableAt": 1794977289344
       },
       "monitorStatus": "監視中",
       "monitorActive": true,
@@ -67151,13 +67142,6 @@
   ],
   "runs": [
     {
-      "at": 1794944881646,
-      "checked": 3,
-      "discovered": null,
-      "targets": 136,
-      "errors": 17
-    },
-    {
       "at": 1794944912917,
       "checked": 2,
       "discovered": null,
@@ -81205,6 +81189,36 @@
           "requests": 1,
           "status": "ok",
           "previousAt": 1794973575114
+        },
+        "error": ""
+      },
+      "targets": 136,
+      "errors": 15
+    },
+    {
+      "at": 1794977287970,
+      "checked": 2,
+      "discovered": {
+        "storeId": "ryuunoshippo",
+        "mode": "store-listing",
+        "result": {
+          "matched": 1,
+          "registered": 0,
+          "limited": 0,
+          "pages": [
+            {
+              "url": "https://www.ryuunoshippo7.com/product-group/2?view=recommend",
+              "head": true,
+              "productLinks": 14,
+              "scope": "read",
+              "hasMore": false,
+              "depthLimited": false,
+              "order": "search"
+            }
+          ],
+          "requests": 1,
+          "status": "ok",
+          "previousAt": 1794973639660
         },
         "error": ""
       },
