@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "reviewedAt": 1794765500638,
-  "nextReviewAt": 1795370300638,
+  "reviewedAt": 1795373401924,
+  "nextReviewAt": 1795978201924,
   "scope": "監視店の在庫履歴。市場全体の成約価格ではありません。候補の提示のみで停止・再開はしません。",
   "products": [
     {
@@ -61,6 +61,13 @@
       "evidence": []
     },
     {
+      "productId": "onepiece-op-18",
+      "name": "神の支配【OP-18】",
+      "status": "insufficient_evidence",
+      "reason": "継続在庫の根拠不足。現在の設定を維持",
+      "evidence": []
+    },
+    {
       "productId": "onepiece-eb-05",
       "name": "ONE PIECE Heroines Edition vol.2【EB-05】",
       "status": "insufficient_evidence",
@@ -89,13 +96,6 @@
       "evidence": []
     },
     {
-      "productId": "onepiece-eb-04",
-      "name": "EGGHEAD CRISIS",
-      "status": "insufficient_evidence",
-      "reason": "継続在庫の根拠不足。現在の設定を維持",
-      "evidence": []
-    },
-    {
       "productId": "onepiece-op-19",
       "name": "応答せよ、世界【OP-19】",
       "status": "insufficient_evidence",
@@ -110,13 +110,6 @@
       "evidence": []
     },
     {
-      "productId": "onepiece-op-18",
-      "name": "神の支配【OP-18】",
-      "status": "insufficient_evidence",
-      "reason": "継続在庫の根拠不足。現在の設定を維持",
-      "evidence": []
-    },
-    {
       "productId": "gundam-gd06",
       "name": "Stardust Trails[GD06]",
       "status": "pause_candidate",
@@ -126,8 +119,8 @@
           "url": "https://www.advantagetcg.jp/product/137359",
           "price": 6000,
           "from": 1794647436872,
-          "through": 1794765246786,
-          "samples": 59
+          "through": 1795372830020,
+          "samples": 312
         }
       ]
     },
@@ -218,31 +211,39 @@
           "url": "https://www.cardmax.jp/shop/shopdetail.html?brandcode=000000234238&search=%A5%CF%A5%A4%A5%DA%A5%EA%A5%A2%A5%B7%A5%C6%A5%A3&sort=",
           "price": 5280,
           "from": 1793038494477,
-          "through": 1794763587167,
-          "samples": 531
+          "through": 1795371706513,
+          "samples": 712
         },
         {
           "url": "https://www.cardmax.jp/shop/shopdetail.html?brandcode=000000234238&search=BOX&sort=",
           "price": 5280,
           "from": 1793038397606,
-          "through": 1794763301761,
-          "samples": 530
+          "through": 1795371903847,
+          "samples": 711
         },
         {
           "url": "https://www.advantagetcg.jp/product/135961",
           "price": 3700,
           "from": 1794393762040,
-          "through": 1794763914874,
-          "samples": 159
+          "through": 1795372657152,
+          "samples": 412
         }
       ]
     },
     {
       "productId": "lorcana-attack-of-the-vine",
       "name": "ヴァインズ・アタック！",
-      "status": "insufficient_evidence",
-      "reason": "継続在庫の根拠不足。現在の設定を維持",
-      "evidence": []
+      "status": "pause_candidate",
+      "reason": "定価105%以下の在庫を同一店で24時間以上・3回以上観測",
+      "evidence": [
+        {
+          "url": "https://www.torecolo.jp/shop/g/g4904810093589/",
+          "price": 5280,
+          "from": 1795171843378,
+          "through": 1795372861006,
+          "samples": 86
+        }
+      ]
     },
     {
       "productId": "lorcana-wilds-unknown",
@@ -253,9 +254,9 @@
         {
           "url": "https://www.torecolo.jp/shop/g/g4904810093565/",
           "price": 5280,
-          "from": 1793084890965,
-          "through": 1794763619137,
-          "samples": 747
+          "from": 1795084751535,
+          "through": 1795372701600,
+          "samples": 121
         }
       ]
     },
@@ -269,6 +270,13 @@
     {
       "productId": "lorcana-archazias-island",
       "name": "アーケイジアと魔法の島",
+      "status": "insufficient_evidence",
+      "reason": "継続在庫の根拠不足。現在の設定を維持",
+      "evidence": []
+    },
+    {
+      "productId": "yugioh-/japan/products/rv02/",
+      "name": "REVOLUTION BOOSTER - 方界・マリンセス・ゴーストリック -",
       "status": "insufficient_evidence",
       "reason": "継続在庫の根拠不足。現在の設定を維持",
       "evidence": []
@@ -302,13 +310,6 @@
       "evidence": []
     },
     {
-      "productId": "yugioh-/japan/products/betb/",
-      "name": "BEYOND THE BRAVE",
-      "status": "insufficient_evidence",
-      "reason": "継続在庫の根拠不足。現在の設定を維持",
-      "evidence": []
-    },
-    {
       "productId": "yugioh-/japan/products/",
       "name": "PRIDE AND SOUL",
       "status": "insufficient_evidence",
@@ -316,8 +317,15 @@
       "evidence": []
     },
     {
-      "productId": "yugioh-/japan/products/rv02/",
-      "name": "REVOLUTION BOOSTER - 方界・マリンセス・ゴーストリック -",
+      "productId": "yugioh-/japan/products/paso/",
+      "name": "PRIDE AND SOUL",
+      "status": "insufficient_evidence",
+      "reason": "継続在庫の根拠不足。現在の設定を維持",
+      "evidence": []
+    },
+    {
+      "productId": "yugioh-/japan/products/27pp/",
+      "name": "PREMIUM PACK 2027",
       "status": "insufficient_evidence",
       "reason": "継続在庫の根拠不足。現在の設定を維持",
       "evidence": []
